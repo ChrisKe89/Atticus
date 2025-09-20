@@ -1,0 +1,2 @@
+# Atticus
+Embedding RAG Model
