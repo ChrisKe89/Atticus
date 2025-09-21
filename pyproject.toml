@@ -1,19 +1,50 @@
 [project]
 name = "atticus"
 version = "0.1.0"
-description = "Atticus RAG ingestion and evaluation utilities"
-authors = [{name = "Atticus Ops", email = "ops@example.com"}]
+description = "Atticus Retrieval-Augmented Generation service"
+readme = "README.md"
+authors = [{ name = "Atticus Ops", email = "ops@example.com" }]
 requires-python = ">=3.12"
-dependencies = [
-    "openai>=1.14.2",
-    "numpy>=1.26.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.4",
-]
+dev = ["pip-tools"]
 
 [build-system]
-requires = ["setuptools>=67", "wheel"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["atticus"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC", "RUF", "PL"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+strict = true
+packages = ["atticus", "api", "ingest", "retriever", "eval"]
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra"
+testpaths = ["tests", "eval/harness"]
+markers = ["eval: evaluation harness"]

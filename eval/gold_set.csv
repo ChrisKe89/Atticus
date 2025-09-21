@@ -1,0 +1,11 @@
+question,relevant_documents,notes
+"What is the rated print speed of the AC7070?","content/model/AC7070/20240115_ac7070_specs_v1.md","Specification lookup"
+"How do I enable secure print release with Papercut?","content/software/Papercut/20231110_papercut_integration_v1.md","Secure release setup"
+"Where can I find jam code J-4207 troubleshooting guidance?","content/service/20240205_service_troubleshooting_v1.md","Service troubleshooting"
+"Which document describes disk encryption requirements?","content/model/generic/20231201_security_baseline_v1.md","Security baseline"
+"How do I calibrate color registration on the AC7070?","content/model/AC7070/20240312_ac7070_service_guide_v1.pdf","Calibration"
+"What ports must be opened for Papercut integration?","content/software/Papercut/20231110_papercut_integration_v1.md","Network requirements"
+"Which file documents allowed cipher suites?","content/model/generic/20231201_security_baseline_v1.md","Security baseline"
+"Where is the preventive maintenance schedule located?","content/service/20240108_pm_schedule_v1.xlsx","Maintenance"
+"Which accessory enables high-capacity stapling?","content/model/AC7070/20240122_ac7070_options_v1.docx","Accessories"
+"How do I reset administrator credentials after lockout?","content/service/20240220_recovery_guide_v1.pdf","Credential recovery"
