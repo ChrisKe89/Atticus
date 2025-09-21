@@ -14,7 +14,7 @@ from .config import AppSettings
 class JsonFormatter(logging.Formatter):
     """Formats log records as JSON lines."""
 
-    def format(self, record: logging.LogRecord) -> str:  # noqa: D401
+    def format(self, record: logging.LogRecord) -> str:
         payload: dict[str, Any] = {
             "level": record.levelname,
             "logger": record.name,

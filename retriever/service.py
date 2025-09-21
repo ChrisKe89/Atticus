@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, List
 
-from atticus.config import AppSettings
+from atticus.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
 
 from .generator import GeneratorClient
@@ -13,9 +12,9 @@ from .models import Answer, Citation
 from .vector_store import SearchResult, VectorStore
 
 
-def _format_contexts(results: List[SearchResult], limit: int) -> tuple[List[str], List[Citation]]:
-    contexts: List[str] = []
-    citations: List[Citation] = []
+def _format_contexts(results: list[SearchResult], limit: int) -> tuple[list[str], list[Citation]]:
+    contexts: list[str] = []
+    citations: list[Citation] = []
     for result in results[:limit]:
         descriptor = result.source_path
         if result.page_number:
@@ -36,16 +35,16 @@ def _format_contexts(results: List[SearchResult], limit: int) -> tuple[List[str]
 def answer_question(
     question: str,
     settings: AppSettings | None = None,
-    filters: Dict[str, str] | None = None,
+    filters: dict[str, str] | None = None,
     logger: logging.Logger | None = None,
 ) -> Answer:
-    settings = settings or AppSettings()
+    settings = settings or load_settings()
     logger = logger or configure_logging(settings)
     store = VectorStore(settings, logger)
     results = store.search(question, top_k=settings.top_k, filters=filters, hybrid=True)
 
     if not results:
-        response = "I could not locate supporting content for this question. Please escalate."
+        response = "I don't have enough information in the current index to answer this."
         confidence = 0.2
         should_escalate = True
         answer = Answer(
@@ -60,7 +59,16 @@ def answer_question(
 
     contexts, citations = _format_contexts(results, settings.max_context_chunks)
     generator = GeneratorClient(settings, logger)
-    response = generator.generate(question, contexts)
+    citation_texts = []
+    for item in citations:
+        descriptor = item.source_path
+        if item.page_number is not None:
+            descriptor += f" (page {item.page_number})"
+        if item.heading:
+            descriptor += f" — {item.heading}"
+        citation_texts.append(descriptor)
+
+    response = generator.generate(question, contexts, citation_texts)
 
     top_scores = [max(0.0, min(1.0, result.score)) for result in results[: settings.max_context_chunks]]
     retrieval_conf = sum(top_scores) / len(top_scores) if top_scores else 0.0

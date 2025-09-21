@@ -1,0 +1,459 @@
+#!/usr/bin/env python3
+"""Chunk CED PDF documents into JSONL artifacts."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+from collections import Counter
+from collections.abc import Iterable
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from statistics import median
+
+import fitz  # type: ignore[import-untyped]
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from atticus.config import load_settings  # noqa: E402
+from atticus.tokenization import decode, encode, split_tokens  # noqa: E402
+from atticus.utils import sha256_file, sha256_text  # noqa: E402
+
+try:  # pragma: no cover - optional dependency
+    import camelot  # type: ignore[import-untyped]
+except Exception:  # pragma: no cover
+    camelot = None
+
+try:  # pragma: no cover - optional dependency
+    import tabula  # type: ignore[import-untyped]
+except Exception:  # pragma: no cover
+    tabula = None
+
+STOPWORDS = {
+    "the",
+    "and",
+    "for",
+    "with",
+    "that",
+    "from",
+    "this",
+    "will",
+    "your",
+    "have",
+    "into",
+    "when",
+    "where",
+    "such",
+    "each",
+    "over",
+    "there",
+    "should",
+    "their",
+    "which",
+    "these",
+    "between",
+}
+
+HEADING_WORD_LIMIT = 12
+TABLE_EMPTY_RATIO = 0.2
+GARBLE_THRESHOLD = 0.05
+FONT_SIZE_PADDING = 2.0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Chunk a CED PDF into JSONL outputs")
+    parser.add_argument("--input", type=Path, required=True, help="Path to the source PDF")
+    parser.add_argument("--output", type=Path, required=True, help="JSONL file for text chunks")
+    parser.add_argument("--tables", type=Path, required=True, help="JSONL file for table chunks")
+    parser.add_argument(
+        "--doc-index",
+        type=Path,
+        required=True,
+        help="Path to write document-level index metadata",
+    )
+    parser.add_argument("--target-tokens", type=int)
+    parser.add_argument("--min-tokens", type=int)
+    parser.add_argument("--overlap", type=int)
+    parser.add_argument("--config", type=Path, help="Alternate config.yaml path")
+    return parser.parse_args()
+
+
+@dataclass(slots=True)
+class Section:
+    heading: str | None
+    text: str
+    pages: set[int]
+    breadcrumbs: list[str]
+
+
+@dataclass(slots=True)
+class Chunk:
+    text: str
+    pages: set[int]
+    headings: set[str]
+    breadcrumbs: list[str]
+    token_count: int
+    is_table: bool = False
+    table_headers: list[str] | None = None
+
+
+def _sanitize(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _extract_models(source: Path) -> list[str]:
+    stem = source.stem
+    match = re.search(r"CED[-_]?(\d+)", stem, flags=re.IGNORECASE)
+    prefix = stem
+    if match:
+        prefix = stem[: match.start()].rstrip("-_ ")
+    if "_" in prefix:
+        prefix = prefix.split("_", 1)[1]
+    models_part = re.split(r"-CED[-_]?\d+", prefix, flags=re.IGNORECASE)[0]
+    raw_models = [item for item in re.split(r"[-_]", models_part) if item]
+    return raw_models
+
+
+def _ced_id(source: Path) -> tuple[str, str]:
+    match = re.search(r"CED[-_]?(\d+)", source.stem, flags=re.IGNORECASE)
+    if not match:
+        return ("ced-unknown", "0")
+    value = match.group(1)
+    return (f"ced-{value}", value)
+
+
+def _compute_font_baseline(document: fitz.Document) -> float:
+    sizes: list[float] = []
+    for page in document:
+        content = page.get_text("dict")
+        for block in content.get("blocks", []):
+            for line in block.get("lines", []):
+                for span in line.get("spans", []):
+                    size = span.get("size")
+                    if size:
+                        sizes.append(float(size))
+    if not sizes:
+        return 11.0
+    return median(sizes)
+
+
+def extract_sections(document: fitz.Document, heading_threshold: float) -> list[Section]:
+    sections: list[Section] = []
+    buffer: list[str] = []
+    pages: set[int] = set()
+    current_heading: str | None = None
+
+    def flush() -> None:
+        nonlocal buffer, pages
+        if not buffer:
+            return
+        sections.append(
+            Section(
+                heading=current_heading,
+                text="\n".join(buffer).strip(),
+                pages=pages.copy() or {1},
+                breadcrumbs=[breadcrumb for breadcrumb in ([current_heading] if current_heading else [])],
+            )
+        )
+        buffer.clear()
+        pages.clear()
+
+    for index, page in enumerate(document, start=1):
+        page_dict = page.get_text("dict")
+        for block in page_dict.get("blocks", []):
+            for line in block.get("lines", []):
+                spans = line.get("spans", [])
+                text = _sanitize("".join(span.get("text", "") for span in spans))
+                if not text:
+                    continue
+                max_size = max(float(span.get("size", 0.0)) for span in spans)
+                if max_size >= heading_threshold and len(text.split()) <= HEADING_WORD_LIMIT:
+                    flush()
+                    current_heading = text
+                    continue
+                buffer.append(text)
+                pages.add(index)
+
+    flush()
+    return sections
+
+
+def extract_tables(path: Path) -> list[Chunk]:  # noqa: PLR0912
+    tables: list[Chunk] = []
+    if camelot is not None:  # pragma: no cover - requires camelot deps
+        try:
+            camelot_tables = camelot.read_pdf(str(path), pages="all")
+        except Exception:
+            camelot_tables = []
+        for index, table in enumerate(camelot_tables, start=1):
+            try:
+                dataframe = table.df  # type: ignore[attr-defined]
+            except Exception:
+                continue
+            if dataframe.empty:
+                continue
+            cleaned = dataframe.fillna("")
+            total_cells = cleaned.size
+            empty_cells = sum(1 for value in cleaned.to_numpy().flatten() if not str(value).strip())
+            if total_cells and (empty_cells / total_cells) > TABLE_EMPTY_RATIO:
+                continue
+            header = [str(item).strip() for item in cleaned.iloc[0].tolist()]
+            body = cleaned.iloc[1:]
+            rows = [" | ".join(str(cell).strip() for cell in row.tolist()) for _, row in body.iterrows()]
+            text = "\n".join(rows).strip()
+            if not text:
+                continue
+            table_breadcrumbs = [f"Table {index}"]
+            tables.append(
+                Chunk(
+                    text=text,
+                    pages={int(getattr(table, "page", 1))},
+                    headings={f"Table {index}"},
+                    breadcrumbs=table_breadcrumbs,
+                    token_count=len(encode(text)),
+                    is_table=True,
+                    table_headers=header,
+                )
+            )
+        if tables:
+            return tables
+    if tabula is not None:  # pragma: no cover - requires java
+        try:
+            dataframes = tabula.read_pdf(str(path), pages="all", multiple_tables=True)
+        except Exception:
+            dataframes = []
+        for index, dataframe in enumerate(dataframes, start=1):
+            if dataframe is None or dataframe.empty:
+                continue
+            cleaned = dataframe.fillna("")
+            total_cells = cleaned.size
+            empty_cells = sum(1 for value in cleaned.to_numpy().flatten() if not str(value).strip())
+            if total_cells and (empty_cells / total_cells) > TABLE_EMPTY_RATIO:
+                continue
+            header = [str(col).strip() for col in cleaned.columns]
+            rows = [" | ".join(str(cell).strip() for cell in row) for row in cleaned.to_numpy()]
+            text = "\n".join(rows).strip()
+            if not text:
+                continue
+            table_breadcrumbs = [f"Table {index}"]
+            tables.append(
+                Chunk(
+                    text=text,
+                    pages={1},
+                    headings={f"Table {index}"},
+                    breadcrumbs=table_breadcrumbs,
+                    token_count=len(encode(text)),
+                    is_table=True,
+                    table_headers=header,
+                )
+            )
+    return tables
+
+
+def merge_small_chunks(chunks: list[Chunk], min_tokens: int) -> list[Chunk]:
+    if not chunks:
+        return chunks
+    merged: list[Chunk] = []
+    for chunk in chunks:
+        if merged and chunk.token_count < min_tokens and not chunk.is_table:
+            target = merged[-1]
+            target.text = f"{target.text}\n{chunk.text}".strip()
+            target.token_count += chunk.token_count
+            target.pages.update(chunk.pages)
+            target.headings.update(chunk.headings)
+            target.breadcrumbs = list(dict.fromkeys(target.breadcrumbs + chunk.breadcrumbs))
+        else:
+            merged.append(chunk)
+    return merged
+
+
+def chunk_sections(
+    sections: list[Section],
+    target_tokens: int,
+    min_tokens: int,
+    overlap: int,
+    base_breadcrumbs: list[str],
+) -> list[Chunk]:
+    all_chunks: list[Chunk] = []
+    for section in sections:
+        tokens = encode(section.text)
+        if not tokens:
+            continue
+        splits = list(split_tokens(tokens, target_tokens, overlap))
+        section_chunks: list[Chunk] = []
+        for start, end in splits:
+            piece = tokens[start:end]
+            text = decode(piece).strip()
+            if not text:
+                continue
+            section_chunks.append(
+                Chunk(
+                    text=text,
+                    pages=section.pages.copy() or {1},
+                    headings={heading for heading in [section.heading] if heading},
+                    breadcrumbs=list(
+                        dict.fromkeys(base_breadcrumbs + (section.breadcrumbs if section.breadcrumbs else []))
+                    ),
+                    token_count=len(piece),
+                )
+            )
+        section_chunks = merge_small_chunks(section_chunks, min_tokens)
+        all_chunks.extend(section_chunks)
+    return all_chunks
+
+
+def garble_ratio(text: str) -> float:
+    if not text:
+        return 0.0
+    garbled = sum(1 for char in text if char == "\ufffd")
+    return garbled / max(1, len(text))
+
+
+def summarize(text: str) -> str:
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
+    return sentences[0][:240] if sentences else text[:240]
+
+
+def extract_keywords(text: str, top_n: int = 5) -> list[str]:
+    words = [re.sub(r"[^a-z0-9]", "", token.lower()) for token in text.split()]
+    words = [word for word in words if word and word not in STOPWORDS]
+    counts = Counter(words)
+    return [word for word, _ in counts.most_common(top_n)]
+
+
+def write_jsonl(path: Path, entries: Iterable[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        for entry in entries:
+            handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
+def main() -> None:
+    args = parse_args()
+    if args.config:
+        os.environ["CONFIG_PATH"] = str(args.config)
+
+    settings = load_settings()
+    source_file = args.input
+    if not source_file.exists():
+        raise FileNotFoundError(source_file)
+
+    ced_id, version = _ced_id(source_file)
+    models = _extract_models(source_file)
+    timestamp = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+
+    document = fitz.open(str(source_file))
+    font_baseline = _compute_font_baseline(document)
+    sections = extract_sections(document, font_baseline + FONT_SIZE_PADDING)
+    tables = extract_tables(source_file)
+    base_breadcrumbs = [ced_id.upper(), source_file.stem]
+    target_tokens = args.target_tokens or settings.chunk_target_tokens or 800
+    min_tokens = args.min_tokens or settings.chunk_min_tokens or 400
+    overlap = args.overlap or settings.chunk_overlap_tokens_setting or 120
+    chunks = chunk_sections(sections, target_tokens, min_tokens, overlap, base_breadcrumbs)
+    document.close()
+
+    chunk_payloads: list[dict[str, object]] = []
+    table_payloads: list[dict[str, object]] = []
+    chunk_index = 0
+    for chunk in chunks:
+        if garble_ratio(chunk.text) > GARBLE_THRESHOLD:
+            continue
+        chunk_index += 1
+        pages = sorted(chunk.pages)
+        models_present = [model for model in models if model.lower() in chunk.text.lower()]
+        payload = {
+            "chunk_id": f"{ced_id}::chunk_{chunk_index:04d}",
+            "source_file": str(source_file),
+            "doc_type": "ced",
+            "ced_id": ced_id,
+            "version": version,
+            "page_range": pages,
+            "section_titles": sorted(chunk.headings),
+            "breadcrumbs": chunk.breadcrumbs or base_breadcrumbs,
+            "is_table": False,
+            "table_headers": [],
+            "models": models,
+            "models_present": models_present,
+            "token_index": chunk_index - 1,
+            "token_count": chunk.token_count,
+            "embedding_model": settings.embed_model,
+            "embedding_model_version": settings.embedding_model_version,
+            "ingested_at": timestamp,
+            "hash": sha256_text(chunk.text),
+            "keywords": extract_keywords(chunk.text),
+            "context_summary": summarize(chunk.text),
+            "text": chunk.text,
+        }
+        chunk_payloads.append(payload)
+
+    table_index = 0
+    for table in tables:
+        if garble_ratio(table.text) > GARBLE_THRESHOLD:
+            continue
+        table_index += 1
+        pages = sorted(table.pages)
+        models_present = [model for model in models if model.lower() in table.text.lower()]
+        payload = {
+            "table_id": f"{ced_id}::table_{table_index:04d}",
+            "source_file": str(source_file),
+            "doc_type": "ced",
+            "ced_id": ced_id,
+            "version": version,
+            "page_range": pages,
+            "section_titles": sorted(table.headings),
+            "breadcrumbs": table.breadcrumbs or base_breadcrumbs,
+            "is_table": True,
+            "table_headers": table.table_headers or [],
+            "models": models,
+            "models_present": models_present,
+            "token_index": chunk_index + table_index - 1,
+            "token_count": table.token_count,
+            "embedding_model": settings.embed_model,
+            "embedding_model_version": settings.embedding_model_version,
+            "ingested_at": timestamp,
+            "hash": sha256_text(table.text),
+            "keywords": extract_keywords(table.text),
+            "context_summary": summarize(table.text),
+            "text": table.text,
+        }
+        table_payloads.append(payload)
+
+    write_jsonl(args.output, chunk_payloads)
+    write_jsonl(args.tables, table_payloads)
+
+    doc_index = {
+        "ced_id": ced_id,
+        "version": version,
+        "source_file": str(source_file),
+        "models": models,
+        "chunk_count": len(chunk_payloads),
+        "table_count": len(table_payloads),
+        "generated_at": timestamp,
+        "embedding_model": settings.embed_model,
+        "embedding_model_version": settings.embedding_model_version,
+        "document_hash": sha256_file(source_file),
+    }
+    args.doc_index.parent.mkdir(parents=True, exist_ok=True)
+    args.doc_index.write_text(json.dumps(doc_index, indent=2), encoding="utf-8")
+
+    print(
+        json.dumps(
+            {
+                "chunks": len(chunk_payloads),
+                "tables": len(table_payloads),
+                "doc_index": str(args.doc_index),
+            },
+            indent=2,
+        )
+    )
+
+
+if __name__ == "__main__":
+    main()
