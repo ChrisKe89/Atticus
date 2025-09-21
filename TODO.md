@@ -35,7 +35,6 @@ atticus/
 - [ ] Add **.editorconfig**, **.gitattributes**, **.gitignore** (Python, VS Code, OS cruft).
 - [ ] Add **.vscode** settings (format on save, Python 3.12, markdownlint rules).
 - [ ] Add **pre-commit** with `ruff`, `mypy`, `black` (or `ruff format`), `markdownlint-cli2`.
-- [ ] Provide **.env.example** (see §10.3).
 
 ---
 
@@ -51,110 +50,12 @@ atticus/
 ---
 
 ## 3) Dockerization
-- [ ] **api/Dockerfile** (Python 3.12-slim)
-- [ ] **nginx/Dockerfile** (nginx:stable-alpine)
-- [ ] **docker-compose.yml** with `api`, `nginx`, named volumes for `indices/`, `logs/`, bind mount `content/`.
-- [ ] Healthchecks for API and Nginx.
-- [ ] `Makefile` commands: `make up`, `make down`, `make logs`, `make ingest`, `make eval`.
-
-**Minimal docker-compose.yml**
-```yaml
-version: "3.9"
-services:
-  api:
-    build: ./api
-    container_name: atticus-api
-    env_file: .env
-    volumes:
-      - ./content:/app/content:ro
-      - ./indices:/app/indices
-      - ./logs:/app/logs
-    ports: ["8000:8000"]
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
-  nginx:
-    build: ./nginx
-    container_name: atticus-nginx
-    depends_on: [api]
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-    healthcheck:
-      test: ["CMD", "nginx", "-t"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-
-volumes:
-  indices:
-  logs:
-```
+_No active items — completed 2025-09-21 (see `ToDo-Complete.md`)._
 
 ---
 
 ## 4) Nginx Reverse Proxy (Current Release, No Azure Auth)
-- [ ] Provide **TLS termination** (self-signed or real certs). Place certs under `nginx/certs/`.
-- [ ] Proxy to `api:8000`, gzip, security headers, large upload size for PDFs.
-
-**nginx/nginx.conf**
-```nginx
-user  nginx;
-worker_processes auto;
-error_log /var/log/nginx/error.log warn;
-pid       /var/run/nginx.pid;
-
-events { worker_connections 1024; }
-
-http {
-  include       /etc/nginx/mime.types;
-  default_type  application/octet-stream;
-  sendfile      on;
-  keepalive_timeout  65;
-  gzip on;
-  gzip_types text/plain text/css application/json application/javascript application/xml;
-  client_max_body_size 64m;
-
-  map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      close;
-  }
-
-  server {
-    listen 80;
-    server_name _;
-    return 301 https://$host$request_uri;
-  }
-
-  server {
-    listen              443 ssl http2;
-    server_name         _;
-
-    ssl_certificate     /etc/nginx/certs/fullchain.pem;
-    ssl_certificate_key /etc/nginx/certs/privkey.pem;
-
-    add_header X-Content-Type-Options nosniff;
-    add_header X-Frame-Options DENY;
-    add_header Referrer-Policy no-referrer-when-downgrade;
-
-    location / {
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection $connection_upgrade;
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_pass http://api:8000/;
-    }
-  }
-}
-```
+_No active items — completed 2025-09-21 (see `ToDo-Complete.md`)._
 
 ---
 
