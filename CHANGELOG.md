@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-09-21
+
+### Fixed
+
+- Windows install failure by replacing `uvicorn[standard]` with `uvicorn` and excluding `uvloop` on Windows; regenerated `requirements.txt` to keep `httptools`, `websockets`, and `watchfiles`.
+- Evaluation harness: lazy-load heavy imports and fix `main()` settings initialization to allow unit tests without FAISS/OpenAI available.
+- OCR resilience: guard Tesseract OCR calls in PDF/image parsers; ingestion no longer fails if Tesseract binary is missing.
+
+### Operations
+
+- Ran full ingestion over `content/` and generated FAISS index and manifest.
+- Executed smoke evaluation; artifacts written under `eval/runs/YYYYMMDD/`.
+
 ## [0.2.0] - 2025-09-21
 
 ### Added
