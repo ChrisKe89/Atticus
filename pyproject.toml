@@ -1,0 +1,19 @@
+[project]
+name = "atticus"
+version = "0.1.0"
+description = "Atticus RAG ingestion and evaluation utilities"
+authors = [{name = "Atticus Ops", email = "ops@example.com"}]
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.14.2",
+    "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+]
+
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
