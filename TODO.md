@@ -286,7 +286,6 @@ LOG_LEVEL=INFO
 - [ ] Azure AD/SSO integration for Admin UI.
 - [ ] pgvector/Postgres deployment for multi-user scaling.
 - [ ] Prometheus/Grafana metrics at cluster scope.
-- [ ] Open-weight model path + LoRA adapters (if OpenAI SFT is insufficient).
 
 ---
 
