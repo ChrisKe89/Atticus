@@ -15,6 +15,10 @@ from atticus.logging import configure_logging, log_event
 from retriever.vector_store import VectorStore
 
 
+def _default_output_dir(settings: AppSettings) -> Path:
+    return settings.evaluation_runs_dir / datetime.now(tz=settings.tzinfo).strftime("%Y%m%d")
+
+
 @dataclass(slots=True)
 class GoldExample:
     question: str
@@ -79,7 +83,7 @@ def run_evaluation(
     settings = settings or AppSettings()
     gold_path = gold_path or settings.gold_set_path
     baseline_path = baseline_path or settings.baseline_path
-    output_dir = output_dir or (settings.evaluation_runs_dir / datetime.now(tz=settings.tzinfo).strftime("%Y%m%d"))
+    output_dir = output_dir or _default_output_dir(settings)
 
     logger = configure_logging(settings)
     store = VectorStore(settings, logger)
@@ -142,4 +146,20 @@ def run_evaluation(
     )
 
     return EvaluationResult(metrics=metrics, deltas=deltas, summary_csv=summary_csv, summary_json=summary_json)
+
+
+def main() -> None:
+    settings = AppSettings()
+    result = run_evaluation(settings=settings)
+    payload = {
+        "metrics": result.metrics,
+        "deltas": result.deltas,
+        "summary_csv": str(result.summary_csv),
+        "summary_json": str(result.summary_json),
+    }
+    print(json.dumps(payload, indent=2))
+
+
+if __name__ == "__main__":
+    main()
 
