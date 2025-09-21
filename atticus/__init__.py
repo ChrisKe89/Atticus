@@ -1,5 +1,5 @@
-"""Atticus RAG utilities."""
+"""Atticus core utilities."""
 
-from .config import Settings
+from .config import AppSettings
 
-__all__ = ["Settings"]
+__all__ = ["AppSettings"]
