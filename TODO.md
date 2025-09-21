@@ -1,4 +1,4 @@
-# TODO Backlog — Atticus (Full Build, No Azure Auth in Current State)
+# TODO — Atticus
 
 > Scope: deliver a **fully working** RAG agent using OpenAI (`text-embedding-3-large`, `gpt-4.1`) with Dockerized FastAPI + Nginx reverse proxy, evaluation harness, and observability — **without** Azure AD/SSO in the current release. Any existing Azure auth/code paths must be removed or disabled now and tracked as future work.
 
