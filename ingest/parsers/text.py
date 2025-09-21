@@ -9,7 +9,7 @@ from ..models import ParsedDocument, ParsedSection
 
 def parse_text(path: Path) -> ParsedDocument:
     text = path.read_text(encoding="utf-8")
-    section = ParsedSection(text=text)
+    section = ParsedSection(text=text, breadcrumbs=["Text"])
     return ParsedDocument(
         source_path=path,
         source_type="text",

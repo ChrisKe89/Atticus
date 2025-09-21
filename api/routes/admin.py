@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import HTMLResponse
 
 from atticus.logging import log_event
 
 from ..dependencies import LoggerDep, SettingsDep
-from ..schemas import DictionaryEntry, DictionaryPayload, ErrorLogEntry
-from ..utils import load_dictionary, load_error_logs, save_dictionary
+from ..schemas import (
+    DictionaryEntry,
+    DictionaryPayload,
+    ErrorLogEntry,
+    SessionLogEntry,
+    SessionLogResponse,
+)
+from ..utils import load_dictionary, load_error_logs, load_session_logs, save_dictionary
 
 router = APIRouter(prefix="/admin")
 
@@ -65,4 +73,50 @@ async def get_errors(
             )
         )
     return filtered
+
+
+def _render_session_html(entries: list[dict[str, object]]) -> str:
+    rows = []
+    for entry in entries:
+        filters = entry.get("filters")
+        filters_str = json.dumps(filters, indent=2) if isinstance(filters, dict) else str(filters)
+        rows.append(
+            "<tr>"
+            f"<td>{entry.get('time', '')}</td>"
+            f"<td>{entry.get('request_id', '')}</td>"
+            f"<td>{entry.get('method', '')}</td>"
+            f"<td>{entry.get('path', '')}</td>"
+            f"<td>{entry.get('status', '')}</td>"
+            f"<td>{entry.get('latency_ms', '')}</td>"
+            f"<td>{entry.get('confidence', '')}</td>"
+            f"<td>{entry.get('escalate', '')}</td>"
+            f"<td><pre>{filters_str}</pre></td>"
+            "</tr>"
+        )
+    table_rows = "\n".join(rows)
+    return (
+        "<html><head><title>Session Logs</title>"
+        "<style>table{border-collapse:collapse;width:100%;}"
+        "th,td{border:1px solid #ccc;padding:8px;text-align:left;}"
+        "pre{margin:0;white-space:pre-wrap;}</style></head><body>"
+        "<h1>Recent Sessions</h1>"
+        "<table>"
+        "<thead><tr><th>Time</th><th>Request ID</th><th>Method</th><th>Path</th><th>Status</th>"
+        "<th>Latency (ms)</th><th>Confidence</th><th>Escalate</th><th>Filters</th></tr></thead>"
+        f"<tbody>{table_rows}</tbody></table></body></html>"
+    )
+
+
+@router.get("/sessions", response_model=SessionLogResponse, responses={200: {"content": {"text/html": {}}}})
+async def get_sessions(
+    settings: SettingsDep,
+    format: str = Query("json", pattern="^(json|html)$", description="Return JSON or HTML"),
+    limit: int = Query(20, ge=1, le=200),
+) -> SessionLogResponse | HTMLResponse:
+    entries = load_session_logs(settings.logs_path, limit=limit)
+    if format.lower() == "html":
+        html = _render_session_html(entries)
+        return HTMLResponse(html)
+    payload = [SessionLogEntry(**entry) for entry in entries]
+    return SessionLogResponse(sessions=payload)
 

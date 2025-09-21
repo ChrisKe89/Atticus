@@ -29,7 +29,13 @@ class GeneratorClient:
         else:
             self.logger.info("No OpenAI API key detected; using offline summarizer")
 
-    def generate(self, prompt: str, contexts: Iterable[str], temperature: float = 0.2) -> str:
+    def generate(
+        self,
+        prompt: str,
+        contexts: Iterable[str],
+        citations: Iterable[str] | None = None,
+        temperature: float = 0.2,
+    ) -> str:
         context_text = "\n\n".join(contexts)
         if not context_text:
             return "I was unable to find supporting context for this question."
@@ -59,9 +65,16 @@ class GeneratorClient:
                     extra={"extra_payload": {"error": str(exc)}},
                 )
 
-        summary_lines = ["Key findings:"]
+        summary_lines = ["I found the following grounded details:"]
         for idx, snippet in enumerate(contexts, start=1):
-            summary_lines.append(f"{idx}. {snippet.splitlines()[0][:200]}")
+            headline = snippet.splitlines()[0][:200]
+            summary_lines.append(f"- [{idx}] {headline}")
+        citation_list = list(citations or [])
+        if citation_list:
+            summary_lines.append("")
+            summary_lines.append("Citations:")
+            for idx, citation in enumerate(citation_list, start=1):
+                summary_lines.append(f"[{idx}] {citation}")
         return "\n".join(summary_lines)
 
     def heuristic_confidence(self, answer: str) -> float:

@@ -6,7 +6,6 @@ import csv
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
 
 from .config import AppSettings
 
@@ -18,7 +17,7 @@ class MetricsRecorder:
     total_confidence: float = 0.0
     escalations: int = 0
     total_latency_ms: float = 0.0
-    store_path: Path = field(default_factory=lambda: Path("logs/metrics.csv"))
+    store_path: Path = field(default_factory=lambda: Path("logs/metrics/metrics.csv"))
 
     def record(self, confidence: float, latency_ms: float, escalated: bool) -> None:
         self.queries += 1
@@ -27,7 +26,7 @@ class MetricsRecorder:
         if escalated:
             self.escalations += 1
 
-    def snapshot(self) -> Dict[str, float]:
+    def snapshot(self) -> dict[str, float]:
         if self.queries == 0:
             return {
                 "queries": 0,

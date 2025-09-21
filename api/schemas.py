@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -13,12 +13,13 @@ class HealthResponse(BaseModel):
     manifest_present: bool
     document_count: int
     chunk_count: int
-    embedding_model: Optional[str] = None
+    embedding_model: str | None = None
+    embedding_model_version: str | None = None
 
 
 class IngestRequest(BaseModel):
     full_refresh: bool = False
-    paths: Optional[List[Path]] = None
+    paths: list[Path] | None = None
 
 
 class IngestResponse(BaseModel):
@@ -29,18 +30,21 @@ class IngestResponse(BaseModel):
     manifest_path: str
     index_path: str
     snapshot_path: str
+    ingested_at: str
+    embedding_model: str
+    embedding_model_version: str
 
 
 class AskRequest(BaseModel):
     question: str
-    filters: Optional[Dict[str, str]] = Field(default=None, description="Metadata filters such as path_prefix or source_type")
+    filters: dict[str, str] | None = Field(default=None, description="Metadata filters such as path_prefix or source_type")
 
 
 class CitationModel(BaseModel):
     chunk_id: str
     source_path: str
-    page_number: Optional[int] = None
-    heading: Optional[str] = None
+    page_number: int | None = None
+    heading: str | None = None
     score: float
 
 
@@ -48,28 +52,44 @@ class AskResponse(BaseModel):
     answer: str
     confidence: float
     should_escalate: bool
-    citations: List[CitationModel]
+    citations: list[CitationModel]
     request_id: str
 
 
 class EvalResponse(BaseModel):
-    metrics: Dict[str, float]
-    deltas: Dict[str, float]
+    metrics: dict[str, float]
+    deltas: dict[str, float]
     summary_csv: str
     summary_json: str
 
 
 class DictionaryEntry(BaseModel):
     term: str
-    synonyms: List[str]
+    synonyms: list[str]
 
 
 class DictionaryPayload(BaseModel):
-    entries: List[DictionaryEntry]
+    entries: list[DictionaryEntry]
 
 
 class ErrorLogEntry(BaseModel):
     time: str
     message: str
-    details: Dict[str, str] = Field(default_factory=dict)
+    details: dict[str, str] = Field(default_factory=dict)
+
+
+class SessionLogEntry(BaseModel):
+    request_id: str
+    method: str | None = None
+    path: str | None = None
+    status: int | None = None
+    latency_ms: float | None = None
+    time: str | None = None
+    confidence: float | None = None
+    escalate: bool | None = None
+    filters: dict[str, Any] | None = None
+
+
+class SessionLogResponse(BaseModel):
+    sessions: list[SessionLogEntry]
 

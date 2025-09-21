@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from atticus.config import AppSettings, Manifest, load_manifest, write_manifest
+from atticus.config import AppSettings, Manifest, load_manifest, load_settings, write_manifest
 from atticus.embeddings import EmbeddingClient
 from atticus.faiss_index import (
     StoredChunk,
@@ -40,6 +40,9 @@ class IngestionSummary:
     manifest_path: Path
     index_path: Path
     snapshot_path: Path
+    ingested_at: str
+    embedding_model: str
+    embedding_model_version: str
 
 
 def _snapshot_directory(settings: AppSettings, timestamp: str) -> Path:
@@ -53,14 +56,15 @@ def _reuse_chunks(metadata: list[StoredChunk], path: str) -> list[StoredChunk]:
     return [chunk for chunk in metadata if chunk.source_path == path]
 
 
-def ingest_corpus(  # noqa: PLR0915
+def ingest_corpus(  # noqa: PLR0915, PLR0912
     settings: AppSettings | None = None, options: IngestionOptions | None = None
 ) -> IngestionSummary:
-    settings = settings or AppSettings()
+    settings = settings or load_settings()
     options = options or IngestionOptions()
     settings.ensure_directories()
     logger = configure_logging(settings)
 
+    ingest_time = settings.timestamp()
     start_time = time.time()
     manifest = load_manifest(settings.manifest_path)
     existing_metadata = load_metadata(settings.metadata_path)
@@ -79,6 +83,11 @@ def ingest_corpus(  # noqa: PLR0915
         if manifest_entry and manifest_entry.get("sha256") == file_hash:
             reused = _reuse_chunks(existing_metadata, str(file_path))
             if reused:
+                for item in reused:
+                    item.extra.setdefault("embedding_model", settings.embed_model)
+                    item.extra.setdefault(
+                        "embedding_model_version", settings.embedding_model_version
+                    )
                 reused_chunks.extend(reused)
                 skipped += 1
                 continue
@@ -86,15 +95,37 @@ def ingest_corpus(  # noqa: PLR0915
         document.sha256 = file_hash
         new_documents.append(document)
 
+    document_lookup: dict[str, str] = {}
+    for chunk in reused_chunks:
+        manifest_entry = previous_docs.get(chunk.source_path, {})
+        document_lookup[chunk.source_path] = str(manifest_entry.get("source_type", ""))
+
     new_chunks = []
     for document in new_documents:
+        document_lookup[str(document.source_path)] = document.source_type
         new_chunks.extend(chunk_document(document, settings))
 
     embed_client = EmbeddingClient(settings, logger=logger)
     embeddings = embed_client.embed_texts(chunk.text for chunk in new_chunks)
 
     stored_chunks: list[StoredChunk] = list(reused_chunks)
-    for parsed_chunk, embedding in zip(new_chunks, embeddings, strict=False):
+    for index_counter, (parsed_chunk, embedding) in enumerate(
+        zip(new_chunks, embeddings, strict=False), start=len(stored_chunks)
+    ):
+        metadata = {key: str(value) for key, value in parsed_chunk.extra.items()}
+        if parsed_chunk.breadcrumbs:
+            metadata.setdefault("breadcrumbs", " > ".join(parsed_chunk.breadcrumbs))
+        metadata.setdefault("source_path", parsed_chunk.source_path)
+        metadata.setdefault("document_id", parsed_chunk.document_id)
+        metadata.setdefault("chunk_index", str(index_counter))
+        metadata.setdefault("source_type", metadata.get("source_type", document_lookup.get(parsed_chunk.source_path, "")))
+        metadata.setdefault("ingested_at", ingest_time)
+        metadata.setdefault("embedding_model", settings.embed_model)
+        metadata.setdefault("embedding_model_version", settings.embedding_model_version)
+        metadata.setdefault("token_span", f"{parsed_chunk.start_token}:{parsed_chunk.end_token}")
+        metadata.setdefault(
+            "token_count", str(max(0, parsed_chunk.end_token - parsed_chunk.start_token))
+        )
         stored_chunks.append(
             StoredChunk(
                 chunk_id=parsed_chunk.chunk_id,
@@ -106,7 +137,7 @@ def ingest_corpus(  # noqa: PLR0915
                 page_number=parsed_chunk.page_number,
                 section=parsed_chunk.heading,
                 embedding=embedding,
-                extra=parsed_chunk.extra,
+                extra=metadata,
             )
         )
 
@@ -114,8 +145,7 @@ def ingest_corpus(  # noqa: PLR0915
     save_faiss_index(index, settings.faiss_index_path)
     save_metadata(stored_chunks, settings.metadata_path)
 
-    timestamp = settings.timestamp()
-    snapshot_dir = _snapshot_directory(settings, timestamp)
+    snapshot_dir = _snapshot_directory(settings, ingest_time)
     shutil.copy2(settings.faiss_index_path, snapshot_dir / "index.faiss")
     shutil.copy2(settings.metadata_path, snapshot_dir / "index_metadata.json")
 
@@ -151,13 +181,14 @@ def ingest_corpus(  # noqa: PLR0915
 
     manifest = Manifest(
         embedding_model=settings.embed_model,
+        embedding_model_version=settings.embedding_model_version,
         embedding_dimensions=settings.embed_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap_ratio=settings.chunk_overlap_ratio,
         corpus_hash=corpus_hash,
         document_count=len(document_records),
         chunk_count=len(stored_chunks),
-        created_at=timestamp,
+        created_at=ingest_time,
         metadata_path=settings.metadata_path,
         index_path=settings.faiss_index_path,
         snapshot_path=snapshot_dir / "index.faiss",
@@ -174,6 +205,9 @@ def ingest_corpus(  # noqa: PLR0915
         manifest_path=settings.manifest_path,
         index_path=settings.faiss_index_path,
         snapshot_path=snapshot_dir / "index.faiss",
+        ingested_at=ingest_time,
+        embedding_model=settings.embed_model,
+        embedding_model_version=settings.embedding_model_version,
     )
 
     log_event(
@@ -184,6 +218,8 @@ def ingest_corpus(  # noqa: PLR0915
         chunks_indexed=summary.chunks_indexed,
         elapsed_seconds=summary.elapsed_seconds,
         embedding_model=settings.embed_model,
+        embedding_model_version=settings.embedding_model_version,
+        ingested_at=ingest_time,
     )
 
     return summary

@@ -5,12 +5,14 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
+import yaml
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from zoneinfo import ZoneInfo
 
 
 class AppSettings(BaseSettings):
@@ -27,10 +29,17 @@ class AppSettings(BaseSettings):
     dictionary_path: Path = Field(default=Path("indices/dictionary.json"))
     chunk_size: int = Field(default=512, ge=64)
     chunk_overlap_ratio: float = Field(default=0.2, ge=0.0, lt=1.0)
+    chunk_target_tokens: int = Field(default=512, alias="CHUNK_TARGET_TOKENS")
+    chunk_min_tokens: int = Field(default=256, alias="CHUNK_MIN_TOKENS")
+    chunk_overlap_tokens_setting: int = Field(default=100, alias="CHUNK_OVERLAP_TOKENS")
     max_context_chunks: int = Field(default=10, ge=1)
     top_k: int = Field(default=20, ge=1)
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     embed_model: str = Field(default="text-embedding-3-large", alias="EMBED_MODEL")
+    embedding_model_version: str = Field(
+        default="text-embedding-3-large@2025-01-15",
+        alias="EMBEDDING_MODEL_VERSION",
+    )
     embed_dimensions: int = Field(default=3072, ge=128)
     generation_model: str = Field(default="gpt-4.1", alias="GEN_MODEL")
     confidence_threshold: float = Field(default=0.70, alias="CONFIDENCE_THRESHOLD")
@@ -40,6 +49,7 @@ class AppSettings(BaseSettings):
     baseline_path: Path = Field(default=Path("eval/baseline.json"))
     gold_set_path: Path = Field(default=Path("eval/gold_set.csv"))
     eval_regression_threshold: float = Field(default=3.0, alias="EVAL_REGRESSION_THRESHOLD")
+    config_path: Path = Field(default=Path("config.yaml"), alias="CONFIG_PATH")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
@@ -49,6 +59,8 @@ class AppSettings(BaseSettings):
 
     @property
     def chunk_overlap_tokens(self) -> int:
+        if self.chunk_overlap_tokens_setting:
+            return max(1, self.chunk_overlap_tokens_setting)
         return max(1, int(self.chunk_size * self.chunk_overlap_ratio))
 
     def ensure_directories(self) -> None:
@@ -70,6 +82,7 @@ class Manifest:
     """Represents a stored manifest of the active index."""
 
     embedding_model: str
+    embedding_model_version: str
     embedding_dimensions: int
     chunk_size: int
     chunk_overlap_ratio: float
@@ -85,6 +98,7 @@ class Manifest:
     def to_dict(self) -> dict[str, Any]:
         return {
             "embedding_model": self.embedding_model,
+            "embedding_model_version": self.embedding_model_version,
             "embedding_dimensions": self.embedding_dimensions,
             "chunk_size": self.chunk_size,
             "chunk_overlap_ratio": self.chunk_overlap_ratio,
@@ -105,6 +119,7 @@ def load_manifest(path: Path) -> Manifest | None:
     data = json.loads(path.read_text(encoding="utf-8"))
     return Manifest(
         embedding_model=data["embedding_model"],
+        embedding_model_version=data.get("embedding_model_version", "unknown"),
         embedding_dimensions=int(data["embedding_dimensions"]),
         chunk_size=int(data["chunk_size"]),
         chunk_overlap_ratio=float(data["chunk_overlap_ratio"]),
@@ -121,4 +136,24 @@ def load_manifest(path: Path) -> Manifest | None:
 
 def write_manifest(path: Path, manifest: Manifest) -> None:
     path.write_text(json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def _load_yaml_config(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if isinstance(data, dict):
+        return {str(key): value for key, value in data.items()}
+    raise ValueError(f"Configuration file {path} must contain a mapping")
+
+
+@lru_cache(maxsize=1)
+def load_settings() -> AppSettings:
+    base = AppSettings()
+    config_data = _load_yaml_config(base.config_path)
+    if not config_data:
+        return base
+    merged: dict[str, Any] = base.model_dump()
+    merged.update(config_data)
+    return AppSettings(**merged)
 
