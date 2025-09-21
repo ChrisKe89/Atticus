@@ -4,3 +4,73 @@
 - [x] Provide `.env.example` for local configuration scaffolding — completed 2025-09-21 (commit 5df0d73).
 - [x] Deliver Dockerized stack (API/Nginx Dockerfiles, docker-compose workflow, healthchecks, Makefile targets) — completed 2025-09-21 (commit 5df0d73).
 - [x] Publish hardened `nginx.conf` for TLS termination and proxying to the FastAPI service — completed 2025-09-21 (commit 5df0d73).
+- [x] **Single-node, containerized stack** (Docker Compose) with minimal dependencies — completed 2025-09-21 (commit 3013a1a).
+- [x] **No Azure auth now**; move all Azure-AD/SSO to future-state — completed 2025-09-21 (commit 3013a1a).
+- [x] **Python 3.12** across runtime, CI, and local dev — completed 2025-09-21 (commit 3013a1a).
+- [x] **OpenAI defaults pinned**: `text-embedding-3-large` + `gpt-4.1` — completed 2025-09-21 (commit 3013a1a).
+- [x] Reproducible builds; everything runnable via `make` tasks — completed 2025-09-21 (commit 3013a1a).
+- [x] Create base repository structure (`atticus/`, `api/`, `ingest/`, etc.) — completed 2025-09-21 (commit 3013a1a).
+- [x] Add `.editorconfig`, `.gitattributes`, `.gitignore` — completed 2025-09-21 (commit 3013a1a).
+- [x] Add `.vscode` settings (format on save, Python 3.12, markdownlint rules) — completed 2025-09-21 (commit 3013a1a).
+- [x] Add pre-commit with `ruff`, `mypy`, `markdownlint-cli2` — completed 2025-09-21 (commit 3013a1a).
+- [x] Adopt `pip-tools` for locked dependencies — completed 2025-09-21 (commit 3013a1a).
+- [x] Pin core libraries: `fastapi`, `uvicorn[standard]`, `pydantic`, `httpx`, `python-dotenv`, `pydantic-settings` — completed 2025-09-21 (commit 3013a1a).
+- [x] Include parsing/OCR stack (`pymupdf`, `pdfminer.six`, `pytesseract`, `Pillow`) — completed 2025-09-21 (commit 3013a1a).
+- [x] Table extraction dependencies (`camelot-py`, `tabula-py`) — completed 2025-09-21 (commit 3013a1a).
+- [x] Embeddings/retrieval dependencies (`faiss-cpu`, `numpy`, `scikit-learn`, `rapidfuzz`) — completed 2025-09-21 (commit 3013a1a).
+- [x] Testing dependencies (`pytest`, `pytest-cov`) — completed 2025-09-21 (commit 3013a1a).
+- [x] Lint/type tooling (`ruff`, `mypy`) — completed 2025-09-21 (commit 3013a1a).
+- [x] Implement `/health`, `/ingest`, `/ask`, `/eval/run`, `/admin/dictionary` endpoints — completed 2025-09-21 (commit 3013a1a).
+- [x] Add middleware for request ID, structured JSON logging, timing, and error handling — completed 2025-09-21 (commit 3013a1a).
+- [x] Define Pydantic request/response models and enable OpenAPI — completed 2025-09-21 (commit 3013a1a).
+- [x] Build parsers for PDF, DOCX, XLSX (Q/A), HTML — completed 2025-09-21 (commit 3013a1a).
+- [x] OCR via Tesseract with scanned PDF detection — completed 2025-09-21 (commit 3013a1a).
+- [x] Table extraction pipeline with Camelot/Tabula fallbacks — completed 2025-09-21 (commit 3013a1a).
+- [x] Chunking at ~512 tokens with overlap and breadcrumbs — completed 2025-09-21 (commit 3013a1a).
+- [x] Embed with `text-embedding-3-large` and rich metadata (source, page, section, timestamp, model version) — completed 2025-09-21 (commit 3013a1a).
+- [x] Persist FAISS-flat index on disk — completed 2025-09-21 (commit 3013a1a).
+- [x] Write `indices/manifest.json` with embedding model/version and corpus hash — completed 2025-09-21 (commit 3013a1a).
+- [x] Provide CLI `scripts/ingest.py` for incremental reprocessing — completed 2025-09-21 (commit 3013a1a).
+- [x] Vector top-K retrieval with metadata filters — completed 2025-09-21 (commit 3013a1a).
+- [x] Optional hybrid re-rank (BM25-lite) in retriever — completed 2025-09-21 (commit 3013a1a).
+- [x] Return citations (filepath + page) with answers — completed 2025-09-21 (commit 3013a1a).
+- [x] Prompt template for grounded answers with citations and fallback messaging — completed 2025-09-21 (commit 3013a1a).
+- [x] Use `gpt-4.1` with temperature ~0.2 for generation — completed 2025-09-21 (commit 3013a1a).
+- [x] Combine vector similarity + LLM self-check for confidence scoring — completed 2025-09-21 (commit 3013a1a).
+- [x] Escalate when confidence <70% or after three clarifications — completed 2025-09-21 (commit 3013a1a).
+- [x] Maintain gold set at `eval/gold_set.csv` — completed 2025-09-21 (commit 3013a1a).
+- [x] Evaluation harness (`eval/harness/test_eval.py`) computing nDCG@10, Recall@50, MRR — completed 2025-09-21 (commit 3013a1a).
+- [x] CI gate failing on >3% regression — completed 2025-09-21 (commit 3013a1a).
+- [x] Store evaluation outputs under `eval/runs/YYYYMMDD/` — completed 2025-09-21 (commit 3013a1a).
+- [x] Central `config.yaml` for settings — completed 2025-09-21 (commit 3013a1a).
+- [x] `.env` scaffolding for secrets — completed 2025-09-21 (commit 3013a1a).
+- [x] JSON logs to `logs/app.jsonl` — completed 2025-09-21 (commit 3013a1a).
+- [x] Log schema capturing request_id, route, timings, top_k, confidence, status, error — completed 2025-09-21 (commit 3013a1a).
+- [x] CSV rollups for queries/day, avg confidence, escalations — completed 2025-09-21 (commit 3013a1a).
+- [x] GitHub Actions workflows for lint/test, eval gate, release — completed 2025-09-21 (commit 3013a1a).
+- [x] Documentation set (AGENTS.md, README.md, CODEX_PROMPT.md, CHANGELOG.md) — completed 2025-09-21 (commit de2b371).
+- [x] Auto-generated API docs via `scripts/generate_api_docs.py` — completed 2025-09-21 (commit de2b371).
+- [x] Remove Azure AD/SSO code paths and note migration in README — completed 2025-09-21 (commit 3013a1a).
+- [x] Abstract authentication for future integration — completed 2025-09-21 (commit 3013a1a).
+- [x] Admin dictionary editor endpoints — completed 2025-09-21 (commit 3013a1a).
+- [x] Admin session log viewer (JSON/HTML) — completed 2025-09-21 (commit 3013a1a).
+- [x] Error triage API — completed 2025-09-21 (commit 3013a1a).
+- [x] Snapshot `indices/` per release — completed 2025-09-21 (commit 3013a1a).
+- [x] `scripts/rollback.py` for restoring snapshots — completed 2025-09-21 (commit 3013a1a).
+- [x] Smoke-test gold queries after rollback — completed 2025-09-21 (commit 3013a1a).
+- [x] Gold set seeded with starter rows — completed 2025-09-21 (commit 3013a1a).
+- [x] Example files under `content/` — completed 2025-09-21 (commit 3013a1a).
+- [x] Postman/HTTPie samples (`dev.http`) — completed 2025-09-21 (commit de2b371).
+- [x] `dev.http` with sample requests — completed 2025-09-21 (commit de2b371).
+- [x] `make dev` alias for uvicorn reload — completed 2025-09-21 (commit 3013a1a).
+- [x] Windows install notes for Ghostscript/Tesseract — completed 2025-09-21 (commit de2b371).
+- [x] `docker compose up` health-checked API + Nginx (validated via compose config and healthchecks) — completed 2025-09-21 (commit 3013a1a).
+- [x] `/ingest` indexes sample corpus — completed 2025-09-21 (commit 3013a1a).
+- [x] `/ask` returns grounded answers with citations — completed 2025-09-21 (commit 3013a1a).
+- [x] `/eval/run` outputs metrics CSV — completed 2025-09-21 (commit 3013a1a).
+- [x] Logs structured per specification — completed 2025-09-21 (commit 3013a1a).
+- [x] CI enforced with release tags capturing eval summary — completed 2025-09-21 (commit 3013a1a).
+- [x] Generate CED smoke eval CSV (`eval/ced-362-smoke.csv`) — completed 2025-09-21 (commit de2b371).
+- [x] Codex task “Build CED smoke eval CSV (10)” — completed 2025-09-21 (commit de2b371).
+- [x] Pin embedding model `text-embedding-3-large@2025-01-15` — completed 2025-09-21 (commit 3013a1a).
+- [x] Expose env vars `CONFIDENCE_THRESHOLD`, `EMBEDDING_MODEL_VERSION`, `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, `CHUNK_OVERLAP_TOKENS` — completed 2025-09-21 (commit 3013a1a).

@@ -48,7 +48,8 @@ def parse_xlsx(path: Path) -> ParsedDocument:
         extra = {}
         if source:
             extra["source"] = source
-        section = ParsedSection(text=text, page_number=page, extra=extra)
+        breadcrumbs = ["Q&A"]
+        section = ParsedSection(text=text, page_number=page, extra=extra, breadcrumbs=breadcrumbs)
         sections.append(section)
 
     return ParsedDocument(

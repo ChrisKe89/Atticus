@@ -34,4 +34,7 @@ async def trigger_ingestion(
         manifest_path=str(summary.manifest_path),
         index_path=str(summary.index_path),
         snapshot_path=str(summary.snapshot_path),
+        ingested_at=summary.ingested_at,
+        embedding_model=summary.embedding_model,
+        embedding_model_version=summary.embedding_model_version,
     )

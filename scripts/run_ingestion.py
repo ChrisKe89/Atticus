@@ -1,27 +1,15 @@
 #!/usr/bin/env python3
-"""Run the Atticus ingestion pipeline."""
+"""Legacy wrapper for the Atticus ingestion CLI."""
 
 from __future__ import annotations
 
-import json
-import sys
+import runpy
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from dataclasses import asdict
-
-from atticus.config import AppSettings
-from atticus.ingestion.pipeline import IngestionOptions, ingest_corpus
 
 
 def main() -> None:
-    settings = AppSettings()
-    options = IngestionOptions()
-    summary = ingest_corpus(settings=settings, options=options)
-    print(json.dumps(asdict(summary), indent=2))
+    target = Path(__file__).with_name("ingest.py")
+    runpy.run_path(str(target), run_name="__main__")
 
 
 if __name__ == "__main__":

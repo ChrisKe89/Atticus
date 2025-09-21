@@ -1,0 +1,28 @@
+# Default configuration for the Atticus RAG service.
+# Values can be overridden via environment variables (see .env.example).
+content_dir: content
+indices_dir: indices
+logs_path: logs/app.jsonl
+errors_path: logs/errors.jsonl
+manifest_path: indices/manifest.json
+metadata_path: indices/index_metadata.json
+faiss_index_path: indices/index.faiss
+snapshots_dir: indices/snapshots
+dictionary_path: indices/dictionary.json
+chunk_size: 512
+chunk_overlap_ratio: 0.2
+chunk_target_tokens: 512
+chunk_min_tokens: 256
+chunk_overlap_tokens_setting: 100
+max_context_chunks: 10
+top_k: 20
+embed_model: text-embedding-3-large
+embedding_model_version: text-embedding-3-large@2025-01-15
+generation_model: gpt-4.1
+confidence_threshold: 0.7
+log_level: INFO
+timezone: UTC
+evaluation_runs_dir: eval/runs
+baseline_path: eval/baseline.json
+gold_set_path: eval/gold_set.csv
+eval_regression_threshold: 3.0

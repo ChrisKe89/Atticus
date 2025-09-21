@@ -9,14 +9,14 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from atticus.config import AppSettings
+from atticus.config import AppSettings, load_settings
 from atticus.logging import configure_logging
 from atticus.metrics import MetricsRecorder
 
 
 @lru_cache(maxsize=1)
 def get_settings() -> AppSettings:
-    settings = AppSettings()
+    settings = load_settings()
     settings.ensure_directories()
     return settings
 
@@ -30,7 +30,7 @@ def get_logger(settings: SettingsDep) -> logging.Logger:
 
 @lru_cache(maxsize=1)
 def get_metrics(settings: SettingsDep) -> MetricsRecorder:
-    recorder = MetricsRecorder(settings=settings, store_path=Path("logs/metrics.csv"))
+    recorder = MetricsRecorder(settings=settings, store_path=Path("logs/metrics/metrics.csv"))
     return recorder
 
 
