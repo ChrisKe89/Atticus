@@ -1,4 +1,8 @@
-"""Evaluation harness computing nDCG@10, Recall@50, and MRR."""
+"""Evaluation harness computing nDCG@10, Recall@50, and MRR.
+
+This module lazily imports heavy runtime dependencies so its pure functions
+can be unit tested without requiring optional system packages (e.g. FAISS).
+"""
 
 from __future__ import annotations
 
@@ -9,10 +13,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from atticus.config import AppSettings, load_settings
-from atticus.logging import configure_logging, log_event
-from retriever.vector_store import VectorStore
+if TYPE_CHECKING:  # avoid importing heavy deps at import time
+    from atticus.config import AppSettings
 
 
 def _default_output_dir(settings: AppSettings) -> Path:
@@ -80,6 +84,11 @@ def run_evaluation(
     baseline_path: Path | None = None,
     output_dir: Path | None = None,
 ) -> EvaluationResult:
+    # Lazy imports to keep unit tests lightweight
+    from atticus.config import load_settings  # noqa: PLC0415
+    from atticus.logging import configure_logging, log_event  # noqa: PLC0415
+    from retriever.vector_store import VectorStore  # noqa: PLC0415
+
     settings = settings or load_settings()
     gold_path = gold_path or settings.gold_set_path
     baseline_path = baseline_path or settings.baseline_path
@@ -149,6 +158,7 @@ def run_evaluation(
 
 
 def main() -> None:
+    from atticus.config import load_settings  # noqa: PLC0415
     settings = load_settings()
     result = run_evaluation(settings=settings)
     payload = {
@@ -162,4 +172,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

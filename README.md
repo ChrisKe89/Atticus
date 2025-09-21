@@ -25,20 +25,50 @@ content taxonomy, ingestion controls, evaluation gates, and observability guidan
 
 The compose file mounts `content/`, `indices/`, and `logs/` so local changes persist across container rebuilds.
 
-## Local Environment Setup
+## Local Environment Setup (No Make)
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-make install
+Windows PowerShell
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-Helpful development shortcuts:
+macOS/Linux
 
-- `make dev` – runs `uvicorn` with autoreload.
-- `make lint`, `make typecheck`, `make test`, or `make check` – run the individual or combined quality gates.
-- `make compile` – regenerate `requirements.txt` from `requirements.in` using `pip-compile`.
-- `dev.http` – ready-to-run HTTPie/VS Code REST Client snippets for `/health`, `/ask`, `/ingest`, `/eval/run`, and admin endpoints.
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Then build the index and run a smoke eval:
+
+```bash
+python scripts/ingest.py
+python scripts/eval_run.py --json
+```
+
+Start the API locally:
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+Helpful development shortcuts (if GNU Make is available):
+
+- `make dev` - runs `uvicorn` with autoreload.
+- `make lint`, `make typecheck`, `make test`, or `make check` - run the individual or combined quality gates.
+- `make compile` - regenerate `requirements.txt` from `requirements.in` using `pip-compile`.
+- `dev.http` - ready-to-run HTTPie/VS Code REST Client snippets for `/health`, `/ask`, `/ingest`, `/eval/run`, and admin endpoints.
+
+## Testing & Quality
+
+- Unit tests: `pytest -q`
+- Coverage (target ≥90%): `pytest --cov --cov-report=term-missing`
+- Lint: `ruff check .`
+- Type check: `mypy`
 
 ## API Documentation
 

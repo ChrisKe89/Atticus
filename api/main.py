@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.2.0",
+    version="0.2.1",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -43,4 +43,3 @@ app.include_router(ingest.router)
 app.include_router(ask.router)
 app.include_router(admin.router)
 app.include_router(eval_routes.router)
-

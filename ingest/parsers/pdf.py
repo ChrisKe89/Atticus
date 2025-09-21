@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import io
 from collections.abc import Iterable
 from pathlib import Path
@@ -12,20 +13,22 @@ from PIL import Image
 
 from ..models import ParsedDocument, ParsedSection
 
+pytesseract: Any | None
+camelot: Any | None
+tabula: Any | None
+
 try:  # pragma: no cover - optional dependency
-    import pytesseract as _pytesseract  # type: ignore[import-untyped]
+    pytesseract = importlib.import_module("pytesseract")
 except Exception:  # pragma: no cover - runtime fallback
-    _pytesseract = None
-
-pytesseract: Any | None = _pytesseract
+    pytesseract = None
 
 try:  # pragma: no cover - optional dependency
-    import camelot  # type: ignore[import-not-found]
+    camelot = importlib.import_module("camelot")
 except Exception:  # pragma: no cover
     camelot = None
 
 try:  # pragma: no cover - optional dependency
-    import tabula  # type: ignore[import-not-found]
+    tabula = importlib.import_module("tabula")
 except Exception:  # pragma: no cover
     tabula = None
 
@@ -33,10 +36,14 @@ except Exception:  # pragma: no cover
 def _extract_ocr(page: fitz.Page) -> str:
     if pytesseract is None:  # pragma: no cover - optional binary
         return ""
-    pix = page.get_pixmap()
-    buffer = io.BytesIO(pix.tobytes("png"))
-    with Image.open(buffer) as image:
-        return cast(str, pytesseract.image_to_string(image))
+    try:
+        pix = page.get_pixmap()
+        buffer = io.BytesIO(pix.tobytes("png"))
+        with Image.open(buffer) as image:
+            return cast(str, pytesseract.image_to_string(image))
+    except Exception:
+        # If OCR tooling is unavailable at runtime, fall back silently
+        return ""
 
 
 def parse_pdf(path: Path) -> ParsedDocument:
@@ -114,9 +121,7 @@ def _extract_tables(path: Path) -> Iterable[ParsedSection]:  # noqa: PLR0912
                 continue
             cleaned = dataframe.fillna("")
             header = [str(col).strip() for col in cleaned.columns]
-            lines = [
-                " | ".join(str(value).strip() for value in row) for row in cleaned.to_numpy()
-            ]
+            lines = [" | ".join(str(value).strip() for value in row) for row in cleaned.to_numpy()]
             content = "\n".join(lines)
             if not content.strip():
                 continue
@@ -131,4 +136,3 @@ def _extract_tables(path: Path) -> Iterable[ParsedSection]:  # noqa: PLR0912
                 extra=extra,
                 breadcrumbs=breadcrumbs,
             )
-

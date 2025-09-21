@@ -20,12 +20,14 @@ pytesseract: Any | None = _pytesseract
 def parse_image(path: Path) -> ParsedDocument:
     text = ""
     if pytesseract is not None:  # pragma: no cover - requires external binary
-        with Image.open(str(path)) as image:
-            text = cast(str, pytesseract.image_to_string(image))
+        try:
+            with Image.open(str(path)) as image:
+                text = cast(str, pytesseract.image_to_string(image))
+        except Exception:
+            text = ""
     section = ParsedSection(text=text.strip(), breadcrumbs=["Image"])
     return ParsedDocument(
         source_path=path,
         source_type="image",
         sections=[section],
     )
-
