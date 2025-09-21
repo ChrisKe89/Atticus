@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from atticus.config import AppSettings
+from atticus.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
 from retriever.vector_store import VectorStore
 
@@ -80,7 +80,7 @@ def run_evaluation(
     baseline_path: Path | None = None,
     output_dir: Path | None = None,
 ) -> EvaluationResult:
-    settings = settings or AppSettings()
+    settings = settings or load_settings()
     gold_path = gold_path or settings.gold_set_path
     baseline_path = baseline_path or settings.baseline_path
     output_dir = output_dir or _default_output_dir(settings)
@@ -149,7 +149,7 @@ def run_evaluation(
 
 
 def main() -> None:
-    settings = AppSettings()
+    settings = load_settings()
     result = run_evaluation(settings=settings)
     payload = {
         "metrics": result.metrics,

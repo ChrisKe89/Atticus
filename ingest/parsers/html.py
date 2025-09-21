@@ -30,7 +30,11 @@ def parse_html(path: Path) -> ParsedDocument:
         body_text = soup.get_text("\n", strip=True)
         texts.append(("", body_text))
 
-    sections = [ParsedSection(text=content, heading=heading) for heading, content in texts if content]
+    sections = [
+        ParsedSection(text=content, heading=heading or None, breadcrumbs=[heading] if heading else [])
+        for heading, content in texts
+        if content
+    ]
     return ParsedDocument(
         source_path=path,
         source_type="html",

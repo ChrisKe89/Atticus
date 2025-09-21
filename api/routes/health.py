@@ -21,4 +21,7 @@ async def health(settings: SettingsDep) -> HealthResponse:
         document_count=manifest.document_count if manifest else 0,
         chunk_count=manifest.chunk_count if manifest else 0,
         embedding_model=(manifest.embedding_model if manifest else settings.embed_model),
+        embedding_model_version=(
+            manifest.embedding_model_version if manifest else settings.embedding_model_version
+        ),
     )

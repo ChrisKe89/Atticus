@@ -21,6 +21,8 @@ python-docx
 openpyxl
 beautifulsoup4
 pandas
+camelot-py
+tabula-py
 
 # Utilities
 tenacity
@@ -33,4 +35,5 @@ pytest-cov
 # Tooling
 ruff
 mypy
+types-PyYAML
 pip-tools

@@ -4,23 +4,23 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional
 
 
 @dataclass(slots=True)
 class ParsedSection:
     text: str
-    page_number: Optional[int] = None
-    heading: Optional[str] = None
-    extra: Dict[str, str] = field(default_factory=dict)
+    page_number: int | None = None
+    heading: str | None = None
+    extra: dict[str, str] = field(default_factory=dict)
+    breadcrumbs: list[str] = field(default_factory=list)
 
 
 @dataclass(slots=True)
 class ParsedDocument:
     source_path: Path
     source_type: str
-    sections: List[ParsedSection]
-    sha256: Optional[str] = None
+    sections: list[ParsedSection]
+    sha256: str | None = None
 
     @property
     def document_id(self) -> str:
@@ -35,7 +35,8 @@ class Chunk:
     text: str
     start_token: int
     end_token: int
-    page_number: Optional[int]
-    heading: Optional[str]
-    extra: Dict[str, str]
+    page_number: int | None
+    heading: str | None
+    extra: dict[str, str]
+    breadcrumbs: list[str] = field(default_factory=list)
 

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass(slots=True)
@@ -19,7 +18,7 @@ class Citation:
 class Answer:
     question: str
     response: str
-    citations: List[Citation]
+    citations: list[Citation]
     confidence: float
     should_escalate: bool
 

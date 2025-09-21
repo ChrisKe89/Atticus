@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 from pathlib import Path
 
-from atticus import AppSettings
-from atticus.config import Manifest, load_manifest, write_manifest
+from atticus.config import AppSettings, Manifest, load_manifest, load_settings, write_manifest
 from atticus.logging import configure_logging, log_event
 from atticus.utils import sha256_text
 from eval.runner import load_gold_set
@@ -23,6 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--snapshot", type=Path, default=None, help="Specific snapshot directory to restore")
     parser.add_argument("--skip-smoke", action="store_true", help="Skip smoke tests after rollback")
     parser.add_argument("--limit", type=int, default=20, help="Number of gold queries for smoke testing")
+    parser.add_argument("--config", type=Path, help="Path to an alternate config.yaml")
     return parser.parse_args()
 
 
@@ -53,7 +54,9 @@ def _run_smoke_tests(settings: AppSettings, logger, limit: int) -> list[str]:
 
 def main() -> None:
     args = parse_args()
-    settings = AppSettings()
+    if args.config:
+        os.environ["CONFIG_PATH"] = str(args.config)
+    settings = load_settings()
     logger = configure_logging(settings)
 
     snapshot_dir = args.snapshot or _latest_snapshot_dir(settings.snapshots_dir)
@@ -70,6 +73,7 @@ def main() -> None:
     chunk_count = _load_metadata_count(settings.metadata_path)
     updated_manifest = Manifest(
         embedding_model=settings.embed_model,
+        embedding_model_version=settings.embedding_model_version,
         embedding_dimensions=settings.embed_dimensions,
         chunk_size=settings.chunk_size,
         chunk_overlap_ratio=settings.chunk_overlap_ratio,
