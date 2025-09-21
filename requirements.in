@@ -1,0 +1,36 @@
+# Core runtime
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+httpx
+python-dotenv
+openai
+faiss-cpu
+numpy
+scikit-learn
+rapidfuzz
+tiktoken
+
+# Parsing / ingestion
+pymupdf
+pdfminer.six
+pytesseract
+Pillow
+python-docx
+openpyxl
+beautifulsoup4
+pandas
+
+# Utilities
+tenacity
+structlog
+
+# Testing
+pytest
+pytest-cov
+
+# Tooling
+ruff
+mypy
+pip-tools
