@@ -11,14 +11,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from atticus.config import Settings
-from atticus.ingestion.pipeline import run_ingestion
+from dataclasses import asdict
+
+from atticus.config import AppSettings
+from atticus.ingestion.pipeline import IngestionOptions, ingest_corpus
 
 
 def main() -> None:
-    settings = Settings()
-    summary = run_ingestion(settings)
-    print(json.dumps(summary, indent=2))
+    settings = AppSettings()
+    options = IngestionOptions()
+    summary = ingest_corpus(settings=settings, options=options)
+    print(json.dumps(asdict(summary), indent=2))
 
 
 if __name__ == "__main__":
