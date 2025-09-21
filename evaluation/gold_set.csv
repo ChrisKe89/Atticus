@@ -1,5 +1,0 @@
-query,relevant_documents,notes
-"Which document lists that the AC7070 prints 70 pages per minute?","content/model/AC7070/20240115_ac7070_specs_v1.md","Speed query"
-"How do I enable secure print release with Papercut?","content/software/Papercut/20231110_papercut_integration_v1.md","Papercut workflow"
-"Where is jam code J-4207 documented for the AC7070?","content/service/20240205_service_troubleshooting_v1.md","Service troubleshooting"
-"What security controls are required for disk encryption?","content/model/generic/20231201_security_baseline_v1.md","Security baseline"

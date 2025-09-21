@@ -1,6 +1,39 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+*.egg-info/
+.venv/
 .env
-logs/*.log
-logs/*.bak
-indexes/*.tmp
+.env.local
+.env.*
+
+# IDE
+.idea/
+
+# Logs and indices (keep directory placeholders)
+logs/*
+!logs/.gitkeep
+indices/*
+!indices/.gitkeep
+indexes/*
+!indexes/.gitkeep
+
+# Build
+build/
+dist/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Notebooks
+*.ipynb_checkpoints
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+
+# Certificates (kept via .gitkeep)
+nginx/certs/*
+!nginx/certs/.gitkeep
