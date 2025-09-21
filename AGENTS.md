@@ -119,14 +119,14 @@
 - **Semantic Versioning**
   - **X.Y.Z** where X=major, Y=minor, Z=patch. Increment on any evaluation-impacting change.
 - **Release Checklist**
-  - ✅ Ingestion complete  
-  - ✅ Evaluations pass (no metric regression >3%)  
-  - ✅ README updated with user-facing steps  
-  - ✅ CHANGELOG updated with notable changes  
+  - ✅ Ingestion complete
+  - ✅ Evaluations pass (no metric regression >3%)
+  - ✅ README updated with user-facing steps
+  - ✅ CHANGELOG updated with notable changes
   - ✅ Git tag created and pushed
 - **Automation (Codex)**
   - On merges affecting pipelines, **auto-update `README.md` and `CHANGELOG.md`** with release notes and version bump.
-  - **To-Do Workflow Rule (NEW):**  
+  - **To-Do Workflow Rule (NEW):**
     - When an item in `ToDo.md` is completed, **mark it complete** in place, and **move the completed item** (with completion date and commit hash) into a separate file **`ToDo-Complete.md`**. Keep `ToDo.md` limited to active items only. This operation should be performed automatically by Codex as part of the PR merge tasks.
 
 ---

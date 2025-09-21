@@ -5,6 +5,7 @@
 ---
 
 ## 19) Future-State
+
 - [ ] Azure AD/SSO for Admin UI.
   - Blocked: see REQUIREMENTS.md#future-state-roadmap.
 - [ ] pgvector/Postgres backend.
@@ -14,9 +15,10 @@
 
 ---
 
-# TODO — CED Chunking & Eval
+## TODO — CED Chunking & Eval
 
 ## Retrieval & Indexing
+
 - [ ] **Implement CED chunking pipeline**
   - Blocked: see REQUIREMENTS.md#ced-362-source.
   - Chunk size: 800 tokens (target), min 400, overlap 120.
@@ -30,6 +32,7 @@
     - `data/index/ced-362.doc_index.json`
 
 **Command (Codex):**
+
 ```bash
 python scripts/chunk_ced.py \
   --input content/model/AC7070/Apeos_C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf \
@@ -42,6 +45,6 @@ python scripts/chunk_ced.py \
 ---
 
 ## Tooling & Config
+
 - [ ] Codex task “Chunk CED PDFs → JSONL” using the above command.
   - Blocked: see REQUIREMENTS.md#ced-362-source.
-
