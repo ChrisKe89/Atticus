@@ -9,43 +9,49 @@ content taxonomy, ingestion controls, evaluation gates, and observability guidan
 - **Embedding model:** `text-embedding-3-large` (deterministic fallback used when no OpenAI key is present)
 - **Content taxonomy:** see `content/` or `docs/README.md` for placement rules (§3.1)
 
-## Environment Setup
+## Quick Start (Docker Compose)
+1. Copy `.env.example` to `.env` and set your OpenAI credentials and tuning parameters.
+2. Build and launch the stack:
+   ```bash
+   make up
+   ```
+   This runs the FastAPI app on port `8000` behind Nginx (`80/443`).
+3. Tail service logs as needed with `make logs` and stop the stack with `make down`.
+
+The compose file mounts `content/`, `indices/`, and `logs/` so local changes persist across container rebuilds.
+
+## Local Environment Setup
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install numpy openai pytest
+pip install -r requirements.txt
 ```
 
 ## Ingestion Workflow (§3)
-1. Add or update source files under `content/` using the taxonomy in §3.1.
-2. Run `python scripts/run_ingestion.py` to parse, chunk (~512 tokens with ~20% overlap), embed, and persist the index.
-3. Review the structured JSON log in `logs/app.jsonl` for the `ingestion_complete` event and snapshot path.
-4. Commit the updated `indexes/atticus_index.json` and the new `indexes/snapshots/*.json` snapshot.
+1. Place new or updated documents under `content/` following the taxonomy in §3.1.
+2. Run the ingestion pipeline:
+   ```bash
+   make ingest  # or: python scripts/run_ingestion.py
+   ```
+3. Inspect `logs/app.jsonl` for the `ingestion_complete` event. A manifest, FAISS index, and snapshot are written under `indices/`.
 
 ## Retrieval & Observability
-- Retrieval helpers live in `atticus/retrieval.py`; they perform cosine search over the persisted vectors.
-- JSON logs rotate via `logs/app.jsonl`. Additional usage metrics can be emitted with `MetricsRecorder` in
-  `atticus/observability/metrics.py` (records queries/day, average confidence, escalations/day, latency).
+- The vector store implementation lives in `retriever/vector_store.py` and powers `/ask` queries.
+- Structured JSON logs are emitted to `logs/app.jsonl`. Additional counters are written via `atticus/metrics.py`.
 
 ## Evaluation Runbook (§4)
-1. Ensure the latest index is committed.
-2. Execute `pytest evaluation/harness` to regenerate metrics and artifacts.
-3. Results are written under `evaluation/runs/YYYYMMDD/<timestamp>/` as `metrics.csv` and `summary.json`.
-4. The pytest harness fails if nDCG@10, Recall@50, or MRR regress by more than **3%** versus `evaluation/baseline/metrics.json`.
-
-### Latest Evaluation (2025-09-20)
-| Metric    | Score | Δ vs. baseline |
-|-----------|-------|----------------|
-| nDCG@10   | 1.00  | +0.00          |
-| Recall@50 | 1.00  | +0.00          |
-| MRR       | 1.00  | +0.00          |
-
-Artifacts: `evaluation/runs/20250920/235132/`
+1. Ensure the latest index is on disk (run ingestion first if required).
+2. Execute the evaluation harness:
+   ```bash
+   make eval  # or: python -m eval.runner
+   ```
+3. Metrics and per-query breakdowns are stored under `eval/runs/YYYYMMDD/`.
+4. Compare results against `eval/baseline.json`; releases fail if any metric regresses by more than **3%**.
 
 ## Release Checklist (§8)
-1. Ingest new/updated content and commit the index snapshot.
+1. Ingest new content and capture the updated manifest/index snapshot in `indices/snapshots/`.
 2. Run the evaluation harness and confirm metrics stay within the 3% regression guardrail.
-3. Update `CHANGELOG.md` and this `README.md` with model versions, content highlights, and evaluation deltas.
+3. Update `CHANGELOG.md` and this `README.md` with notable changes and evaluation deltas.
 4. Tag the repo using Semantic Versioning (e.g., `v0.1.0`) and include evaluation notes in the tag message.
 
 ## Rollback Guidance (§7)
