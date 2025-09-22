@@ -21,4 +21,3 @@ class Answer:
     citations: list[Citation]
     confidence: float
     should_escalate: bool
-

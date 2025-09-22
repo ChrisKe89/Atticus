@@ -23,9 +23,13 @@ class GeneratorClient:
             try:
                 openai_module = importlib.import_module("openai")
                 openai_class = cast(Any, openai_module).OpenAI
-                self._client = openai_class()
+                # Pass the key explicitly so we don't rely on process env
+                self._client = openai_class(api_key=api_key)
             except Exception as exc:  # pragma: no cover - network path
-                self.logger.warning("OpenAI client unavailable; using offline summarizer", extra={"extra_payload": {"error": str(exc)}})
+                self.logger.warning(
+                    "OpenAI client unavailable; using offline summarizer",
+                    extra={"extra_payload": {"error": str(exc)}},
+                )
         else:
             self.logger.info("No OpenAI API key detected; using offline summarizer")
 
@@ -42,9 +46,7 @@ class GeneratorClient:
 
         if self._client is not None:  # pragma: no cover - requires network
             try:
-                system_prompt = (
-                    "You are Atticus, a factual assistant. Respond with concise paragraphs and cite the provided context snippets."
-                )
+                system_prompt = "You are Atticus, a factual assistant. Respond with concise paragraphs and cite the provided context snippets."
                 user_prompt = f"Context:\n{context_text}\n\nPrompt:\n{prompt}"
                 response: Any = self._client.responses.create(
                     model=self.settings.generation_model,
@@ -84,11 +86,12 @@ class GeneratorClient:
         if "confidence" in lowered and "%" in lowered:
             try:
                 percent_tokens = (
-                    int(token.strip("%")) for token in lowered.split() if token.strip("% ").isdigit()
+                    int(token.strip("%"))
+                    for token in lowered.split()
+                    if token.strip("% ").isdigit()
                 )
                 percent = next(percent_tokens)
                 return max(0.0, min(1.0, percent / 100.0))
             except Exception:
                 return 0.6
         return 0.8
-

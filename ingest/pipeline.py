@@ -69,7 +69,9 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     manifest = load_manifest(settings.manifest_path)
     existing_metadata = load_metadata(settings.metadata_path)
 
-    target_paths = list(options.paths) if options.paths else list(discover_documents(settings.content_dir))
+    target_paths = (
+        list(options.paths) if options.paths else list(discover_documents(settings.content_dir))
+    )
     previous_docs = manifest.documents if manifest else {}
 
     reused_chunks: list[StoredChunk] = []
@@ -79,7 +81,9 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     for raw_path in target_paths:
         file_path = Path(raw_path)
         file_hash = sha256_file(file_path)
-        manifest_entry = previous_docs.get(str(file_path)) if manifest and not options.full_refresh else None
+        manifest_entry = (
+            previous_docs.get(str(file_path)) if manifest and not options.full_refresh else None
+        )
         if manifest_entry and manifest_entry.get("sha256") == file_hash:
             reused = _reuse_chunks(existing_metadata, str(file_path))
             if reused:
@@ -118,7 +122,10 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         metadata.setdefault("source_path", parsed_chunk.source_path)
         metadata.setdefault("document_id", parsed_chunk.document_id)
         metadata.setdefault("chunk_index", str(index_counter))
-        metadata.setdefault("source_type", metadata.get("source_type", document_lookup.get(parsed_chunk.source_path, "")))
+        metadata.setdefault(
+            "source_type",
+            metadata.get("source_type", document_lookup.get(parsed_chunk.source_path, "")),
+        )
         metadata.setdefault("ingested_at", ingest_time)
         metadata.setdefault("embedding_model", settings.embed_model)
         metadata.setdefault("embedding_model_version", settings.embedding_model_version)
@@ -154,9 +161,13 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         entry = document_records.setdefault(
             chunk.source_path,
             {
-                "sha256": previous_docs.get(chunk.source_path, {}).get("sha256") if manifest else None,
+                "sha256": previous_docs.get(chunk.source_path, {}).get("sha256")
+                if manifest
+                else None,
                 "chunk_count": 0,
-                "source_type": previous_docs.get(chunk.source_path, {}).get("source_type") if manifest else None,
+                "source_type": previous_docs.get(chunk.source_path, {}).get("source_type")
+                if manifest
+                else None,
             },
         )
         raw_count = entry.get("chunk_count", 0)
@@ -176,8 +187,12 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         record["sha256"] = document.sha256
         record["source_type"] = document.source_type
 
-    document_hashes = [f"{path}:{info.get('sha256', '')}" for path, info in sorted(document_records.items())]
-    corpus_hash = sha256_text("|".join(document_hashes)) if document_hashes else sha256_text("empty")
+    document_hashes = [
+        f"{path}:{info.get('sha256', '')}" for path, info in sorted(document_records.items())
+    ]
+    corpus_hash = (
+        sha256_text("|".join(document_hashes)) if document_hashes else sha256_text("empty")
+    )
 
     manifest = Manifest(
         embedding_model=settings.embed_model,
@@ -223,4 +238,3 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     )
 
     return summary
-

@@ -36,4 +36,3 @@ def get_metrics(settings: SettingsDep) -> MetricsRecorder:
 
 LoggerDep = Annotated[logging.Logger, Depends(get_logger)]
 MetricsDep = Annotated[MetricsRecorder, Depends(get_metrics)]
-

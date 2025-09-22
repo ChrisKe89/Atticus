@@ -72,7 +72,9 @@ def main() -> None:
     if args.json or not args.output_dir:
         print(json.dumps(payload, indent=2))
     else:
-        (args.output_dir / "run_summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        (args.output_dir / "run_summary.json").write_text(
+            json.dumps(payload, indent=2), encoding="utf-8"
+        )
 
     threshold = settings.eval_regression_threshold / 100.0
     if any(delta < -threshold for delta in result.deltas.values()):

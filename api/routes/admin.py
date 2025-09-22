@@ -107,7 +107,9 @@ def _render_session_html(entries: list[dict[str, object]]) -> str:
     )
 
 
-@router.get("/sessions", response_model=SessionLogResponse, responses={200: {"content": {"text/html": {}}}})
+@router.get(
+    "/sessions", response_model=SessionLogResponse, responses={200: {"content": {"text/html": {}}}}
+)
 async def get_sessions(
     settings: SettingsDep,
     format: str = Query("json", pattern="^(json|html)$", description="Return JSON or HTML"),
@@ -119,4 +121,3 @@ async def get_sessions(
         return HTMLResponse(html)
     payload = [SessionLogEntry(**entry) for entry in entries]
     return SessionLogResponse(sessions=payload)
-

@@ -15,4 +15,3 @@ def parse_text(path: Path) -> ParsedDocument:
         source_type="text",
         sections=[section],
     )
-

@@ -29,11 +29,17 @@ class EmbeddingClient:
             try:
                 openai_module = importlib.import_module("openai")
                 openai_class = cast(Any, openai_module).OpenAI
-                self._client = openai_class()
+                # Pass the key explicitly so we don't rely on process env
+                self._client = openai_class(api_key=api_key)
             except Exception as exc:  # pragma: no cover - network path
-                self.logger.warning("OpenAI client initialization failed; using fallback embeddings", extra={"extra_payload": {"error": str(exc)}})
+                self.logger.warning(
+                    "OpenAI client initialization failed; using fallback embeddings",
+                    extra={"extra_payload": {"error": str(exc)}},
+                )
         else:
-            self.logger.info("Using deterministic embeddings because no OpenAI API key was provided")
+            self.logger.info(
+                "Using deterministic embeddings because no OpenAI API key was provided"
+            )
 
     def embed_texts(self, texts: Iterable[str]) -> list[list[float]]:
         payload = list(texts)
@@ -64,4 +70,3 @@ class EmbeddingClient:
         if norm:
             vector /= norm
         return vector.astype(np.float32).tolist()
-

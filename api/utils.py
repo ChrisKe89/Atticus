@@ -73,4 +73,3 @@ def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:
                 break
     sessions.reverse()
     return sessions
-

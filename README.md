@@ -46,7 +46,7 @@ pip install -r requirements.txt
 Then build the index and run a smoke eval:
 
 ```bash
-python scripts/ingest.py
+python scripts/ingest_cli.py
 python scripts/eval_run.py --json
 ```
 
@@ -87,7 +87,7 @@ Helpful development shortcuts (if GNU Make is available):
 2. Run the ingestion pipeline:
 
    ```bash
-   make ingest  # or: python scripts/ingest.py --paths <optional subset>
+   make ingest  # or: python scripts/ingest_cli.py --paths <optional subset>
    ```
 
    The CLI reads the same `config.yaml` defaults and supports `--full-refresh`, `--paths`, and `--output` arguments for automation.
@@ -160,6 +160,6 @@ If either command is missing, relaunch the terminal as an administrator and re-c
 
 ## Release Notes (This Version)
 
-- Baseline corpus ingested via `scripts/ingest.py`; 4 chunks reused and manifest/index snapshot stored (see `logs/ingest_summary.json`).
+- Baseline corpus ingested via `scripts/ingest_cli.py`; 4 chunks reused and manifest/index snapshot stored (see `logs/ingest_summary.json`).
 - Added CODEX operator prompt, API schema generator (`scripts/generate_api_docs.py` with `docs/api/openapi.json`), and `dev.http` request samples alongside Windows Ghostscript/Tesseract guidance.
 - Evaluation run (2025-09-21) achieved **nDCG@10 = 0.55**, **Recall@50 = 0.60**, **MRR = 0.5333** with artifacts under `eval/runs/20250921/`.

@@ -65,7 +65,9 @@ def chunk_document(document: ParsedDocument, settings: AppSettings) -> list[Chun
                 prev.text = f"{prev.text}\n{last_chunk.text}".strip()
                 prev.end_token = last_chunk.end_token
                 prev.extra.update(last_chunk.extra)
-                prev.breadcrumbs.extend(x for x in last_chunk.breadcrumbs if x not in prev.breadcrumbs)
+                prev.breadcrumbs.extend(
+                    x for x in last_chunk.breadcrumbs if x not in prev.breadcrumbs
+                )
                 chunks.pop()
     return chunks
 
@@ -75,4 +77,3 @@ def chunk_documents(documents: Iterable[ParsedDocument], settings: AppSettings) 
     for document in documents:
         all_chunks.extend(chunk_document(document, settings))
     return all_chunks
-

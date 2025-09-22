@@ -1,0 +1,119 @@
+question,top_document,confidence,f1,cosine
+What is the maximum print resolution of the Apeos C7070 series?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.3871,0.5939
+What is the maximum scanning resolution?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.3073
+What is the minimum AMPV for the C3070?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0054,0.3135
+What is the maximum AMPV for the C4570?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0,0.318
+What is the duty cycle for the C2570?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.2114
+What is the machine life for the C6570?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0211,0.278
+What is the rated print speed of the C7070?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0,0.4091
+What is the touch panel size?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0107,0.2494
+What is the standard system memory?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.005,0.1733
+What is the standard SSD capacity?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.1715
+What type of encryption is standard?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.1533
+Which kit enables data overwrite security?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1013,0.6923
+What is the warm-up time with plug-ins enabled?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0054,0.1281
+What is the recovery time from sleep for the C7070?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0,0.1363
+What is the first copy output time for the C2570 (colour)?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0102,0.1862
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.3537
+What is the maximum supported paper size in trays?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.3166
+What is the maximum bypass tray size?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0851,0.5089
+What is the minimum bypass tray size?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0342,0.388
+What is the maximum supported paper weight in trays?,content\model\AC7070\ac7070_qna.xlsx,0.44,0.0,0.2743
+What is the continuous copy limit per job?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2041
+What is the reduction/enlargement range?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.4286,0.4873
+What is the maximum print size using the bypass tray?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0952,0.4505
+What is the minimum print size supported?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0455,0.3832
+What PDLs are standard and optional?,content\model\AC7070\ac7070_qna.xlsx,0.44,0.0054,0.3602
+Which interfaces are standard?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0533,0.4229
+Which wireless standards are supported by the wireless kit?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.1228,0.4415
+What file systems are supported for USB printing?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0421,0.4817
+What operating systems are supported for PCL printing?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.021,0.2014
+What operating systems are supported for Adobe PostScript 3?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.5217,0.5057
+How many fonts are included with PCL?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.1937
+How many fonts are included with PostScript?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.1857
+What is the scanning speed of the C7070 with DADF C2-PC?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.1159,0.4832
+What is the scanning speed of the C2570 with DADF B2-PC?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.2857
+What scanning resolutions are supported?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0,0.3689
+What file formats are supported for colour scans?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.005,0.2929
+What additional formats require the Advanced Scan Kit?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1379,0.3917
+What fax transmission time is specified per A4 page?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0759,0.3626
+What maximum fax resolution is supported?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0,0.3348
+What coding methods are supported for fax?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0597,0.6555
+What fax transmission speeds are supported?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1237,0.6553
+How many fax ports are supported with expansion?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.005,0.2285
+What is the maximum duplex feeder capacity on C2-PC?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0137,0.4284
+What is the maximum duplex feeder capacity on B2-PC?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2654
+Which models come standard with C2-PC?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0896,0.5071
+What is the standard side tray capacity?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.278
+Which finisher is not supported on C7070/C6570?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.1026,0.5309
+What is the maximum staple capacity of the B5-Finisher?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.2105,0.4827
+What is the maximum staple-free capacity of the B5-Finisher?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0054,0.3016
+What is the booklet capacity of the B4/B5 Finisher?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0286,0.5897
+What is the booklet capacity of the C4/C5 Finisher?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0,0.2736
+What is the maximum staple capacity of the C4/C5 Finisher?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.22,0.2,0.6112
+What is the maximum half-fold capacity on C4/C5 Finisher?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0217,0.4143
+What folding unit is available?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0698,0.4902
+What fold types does Folder Unit CD3 support?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1429,0.6853
+What is the capacity of Folder Unit CD3?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.1,0.5
+What is the maximum output tray capacity of the centre tray?,content\model\AC7070\ac7070_qna.xlsx,0.44,0.0,0.3245
+What is the maximum input tray capacity?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.3006
+What is the tandem tray capacity?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.25,0.7207
+What is the bypass tray capacity?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0741,0.3024
+What is the capacity of HCF-B1?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.3855
+What is the capacity of HCF-B2?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.1111,0.5001
+What is the capacity of the envelope tray?,content\model\AC7070\ac7070_qna.xlsx,0.44,0.0054,0.307
+Which tray supports banner paper?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0741,0.5913
+What is the toner yield for black toner?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0051,0.1986
+What is the toner yield for cyan toner?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0,0.1977
+What is the toner yield for magenta toner?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0,0.202
+What is the toner yield for yellow toner?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0,0.1985
+What is the drum yield for C7070 mono?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.2126
+What is the drum yield for C3070 colour?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.129,0.3915
+What is the waste toner bottle yield for C6570?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.1946
+Which consumables are considered excess?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.4,0.0134,0.2574
+What consumables are not covered as standard?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.3144
+What is the staple cartridge life for 50-sheet stapling?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0165,0.5044
+What is the staple cartridge life for booklet stapling?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0177,0.4513
+What is the staple cartridge life for 65-sheet stapling?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.0241,0.4925
+What is the EPSV kit used for?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2204
+Which kit enables searchable PDF output?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1395,0.6175
+Which kit enables secure watermarking?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0385,0.6004
+Which kit enables image logging?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0769,0.618
+Which kit enables IP Fax (SIP)?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.062,0.6659
+What is the maximum banner print size?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.1143,0.4844
+What drivers are supported for banner printing?,content\model\AC7070\ac7070_qna.xlsx,0.44,0.0,0.3382
+What is the billing meter for colour impressions?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.2446
+What is the billing meter for black impressions?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.3955
+What is the billing meter for colour large impressions?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.3883
+What is the billing meter for total impressions?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.2514
+What are recommended paper storage conditions?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.2531
+Is carbonless stock supported?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.026,0.1581
+Are envelopes guaranteed for print quality?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0305,0.2545
+Is coated stock performance guaranteed?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2126
+Are labels reusable in the device?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.22,0.0893,0.5838
+What is the maximum humidity for operation?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.4254
+What is the minimum operating temperature?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.005,0.1748
+What is the maximum operating temperature?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2805
+What is the maximum power consumption?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.4063
+What is the TEC of the C2570?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2128
+What is the TEC of the C7070?,content\model\AC7070\ac7070_qna.xlsx,0.43,0.0,0.2278
+What is the noise emission of the C7070 in operation?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0896,0.5074
+What is the heat emission of the C7070 when running?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0049,0.1837
+What is the machine weight of the C3070?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.1,0.3854
+What is the weight of HCF-B1?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.3247
+What is the weight of HCF-B2?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0,0.2696
+What is the weight of the C4/C5 Finisher with Booklet Maker?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.45,0.0,0.2632
+What is the weight of Folder Unit CD3?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.125,0.4111
+What are the electrical requirements?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.0054,0.286
+What is the recommended clearance behind the C7070 for service?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0506,0.3713
+What is the recommended clearance on the left side of C3070 for service?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0556,0.3756
+What is the recommended minimum overhead clearance for all models?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.087,0.4038
+Is duplex supported for banner printing?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0923,0.2792
+What are typical image-to-paper alignment tolerances?,content\model\AC7070\ac7070_qna.xlsx,0.42,0.2683,0.428
+Does duplex speed reduce when outputting to the centre tray with a finisher?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.42,0.0513,0.4749
+Are authenticated prints supported via AirPrint?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.43,0.05,0.4529
+What file systems are supported for USB storage?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0198,0.4249
+What is the USB storage capacity limit?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0,0.383
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,content\model\AC7070\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.41,0.0548,0.4414
+How many devices can connect via Wi‑Fi Direct concurrently?,content\model\AC7070\ac7070_qna.xlsx,0.41,0.3077,0.569
+AVERAGE,,0.4182,0.0528,0.3692

@@ -38,4 +38,3 @@ def split_tokens(tokens: Sequence[int], window: int, overlap: int) -> Iterable[t
         yield start, end
         if end == total:
             break
-

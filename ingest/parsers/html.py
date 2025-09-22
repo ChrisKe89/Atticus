@@ -31,7 +31,9 @@ def parse_html(path: Path) -> ParsedDocument:
         texts.append(("", body_text))
 
     sections = [
-        ParsedSection(text=content, heading=heading or None, breadcrumbs=[heading] if heading else [])
+        ParsedSection(
+            text=content, heading=heading or None, breadcrumbs=[heading] if heading else []
+        )
         for heading, content in texts
         if content
     ]
@@ -40,4 +42,3 @@ def parse_html(path: Path) -> ParsedDocument:
         source_type="html",
         sections=sections,
     )
-

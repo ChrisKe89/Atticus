@@ -56,8 +56,15 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
             )
 
         metrics = getattr(request.app.state, "metrics", None)
-        if metrics is not None and request.url.path == "/ask" and hasattr(request.state, "confidence"):
-            metrics.record(float(request.state.confidence), elapsed_ms, bool(getattr(request.state, "escalate", False)))
+        if (
+            metrics is not None
+            and request.url.path == "/ask"
+            and hasattr(request.state, "confidence")
+        ):
+            metrics.record(
+                float(request.state.confidence),
+                elapsed_ms,
+                bool(getattr(request.state, "escalate", False)),
+            )
 
         return response
-

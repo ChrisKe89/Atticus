@@ -47,4 +47,3 @@ def parse_docx(path: Path) -> ParsedDocument:
         source_type="docx",
         sections=sections,
     )
-
