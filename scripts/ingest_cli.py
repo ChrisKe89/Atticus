@@ -6,12 +6,18 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 from collections.abc import Sequence
 from dataclasses import asdict
 from pathlib import Path
 
-from atticus.config import load_settings
-from ingest.pipeline import IngestionOptions, ingest_corpus
+# Ensure repository root on import path when running as a script
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from atticus.config import load_settings  # noqa: E402
+from ingest.pipeline import IngestionOptions, ingest_corpus  # noqa: E402
 
 
 def _paths(value: Sequence[str] | None) -> list[Path] | None:
