@@ -173,6 +173,8 @@ python-dotenv==1.1.1
     #   pydantic-settings
 pytz==2025.2
     # via pandas
+pyyaml==6.0.2
+    # via -r requirements.in
 rapidfuzz==3.14.1
     # via -r requirements.in
 regex==2025.9.18
