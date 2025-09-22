@@ -1,0 +1,84 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    // --- Python & venv ---
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.envFile": "${workspaceFolder}\\.env",
+
+    // Pylance: keep editor helpful; mypy is your strict gate
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+
+    // --- Tabs/spaces & EOLs ---
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+
+    // --- Ruff as formatter & linter ---
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": true,
+      "source.fixAll.ruff": true
+    },
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "ruff.enable": true,
+    "ruff.lint.run": "onSave",
+    "ruff.organizeImports": true,
+    "ruff.fixAll": true,
+
+    // --- Testing (pytest) ---
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+      "eval/harness"
+    ],
+    "python.testing.cwd": "${workspaceFolder}",
+
+    // --- Markdown (align with repo rule) ---
+    "markdownlint.configFile": ".markdownlint-cli2.yaml",
+    "[markdown]": {
+      "editor.wordWrap": "bounded",
+      "editor.wordWrapColumn": 120
+    },
+
+    // --- UI niceties ---
+    "editor.rulers": [100, 120],
+    "editor.renderWhitespace": "selection",
+    "problems.autoReveal": false,
+
+    // --- Hide generated/large dirs ---
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.ruff_cache": true,
+      "**/.mypy_cache": true,
+      "dist": true,
+      "build": true,
+      "eval/runs": true,
+      "logs": true
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.ruff_cache": true,
+      "**/.mypy_cache": true,
+      "dist": true,
+      "build": true,
+      "eval/runs": true,
+      "logs": true
+    },
+
+    // --- Terminal ---
+    "terminal.integrated.cwd": "${workspaceFolder}"
+  }
+}

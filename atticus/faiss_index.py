@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-import faiss  # type: ignore[import-untyped]
+import faiss
 import numpy as np
 
 
@@ -30,7 +30,9 @@ class StoredChunk:
         return asdict(self)
 
 
-def build_faiss_index(chunks: Iterable[StoredChunk], dimension: int) -> tuple[faiss.IndexFlatIP, np.ndarray]:
+def build_faiss_index(
+    chunks: Iterable[StoredChunk], dimension: int
+) -> tuple[faiss.IndexFlatIP, np.ndarray]:
     vectors = np.array([chunk.embedding for chunk in chunks], dtype=np.float32)
     if vectors.size == 0:
         index = faiss.IndexFlatIP(dimension)
@@ -81,4 +83,3 @@ def load_faiss_index(path: Path, dimension: int) -> faiss.IndexFlatIP:
         return faiss.IndexFlatIP(dimension)
     index = faiss.read_index(str(path))
     return index
-

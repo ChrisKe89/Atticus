@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from openpyxl import load_workbook  # type: ignore[import-untyped]
+from openpyxl import load_workbook
 
 from ..models import ParsedDocument, ParsedSection
 
@@ -57,4 +57,3 @@ def parse_xlsx(path: Path) -> ParsedDocument:
         source_type="xlsx",
         sections=sections,
     )
-
