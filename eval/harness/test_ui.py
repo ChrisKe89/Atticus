@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-HTTP_OK = 200
-
 from api.main import app
+
+HTTP_OK = 200
 
 
 def test_ui_served() -> None:

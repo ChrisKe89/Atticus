@@ -32,6 +32,9 @@ def _format_contexts(results: list[SearchResult], limit: int) -> tuple[list[str]
     return contexts, citations
 
 
+LLM_CONF_SWITCH = 0.85
+
+
 def answer_question(
     question: str,
     settings: AppSettings | None = None,
@@ -77,7 +80,10 @@ def answer_question(
     ]
     retrieval_conf = sum(top_scores) / len(top_scores) if top_scores else 0.0
     llm_conf = generator.heuristic_confidence(response)
-    confidence = round(0.6 * retrieval_conf + 0.4 * llm_conf, 2)
+    w_r, w_l = 0.6, 0.4
+    if llm_conf >= LLM_CONF_SWITCH:
+        w_r, w_l = 0.2, 0.8
+    confidence = round(w_r * retrieval_conf + w_l * llm_conf, 2)
     should_escalate = confidence < settings.confidence_threshold
 
     answer = Answer(

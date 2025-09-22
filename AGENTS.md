@@ -1,214 +1,120 @@
-# AGENTS.md
+# Atticus — Agents & System Design (Updated)
 
-## 1. Overview
+> Single‑service RAG stack that ingests FUJIFILM documents, builds a local FAISS index, retrieves, and answers with sources. Defaults to **OpenAI `text-embedding-3-large`** for embeddings and **`gpt-4.1`** for generation. Python 3.12.
 
-**Atticus Agent** is a Retrieval-Augmented Generation (RAG) assistant for
-FUJIFILM Business Innovation Australia. It answers questions about
-multifunction devices (MFD) capabilities and performance, citing sources, and
-escalating low-confidence or ambiguous cases. The agent runs in a Python 3.12 +
-FastAPI stack, packaged with Docker Compose, and indexes content stored in
-OneDrive/Azure storage. It operates to enterprise standards for security,
-evaluation, versioning, and observability.
+## 1) Purpose & Scope
+Atticus is a pragmatic, production‑lean RAG service. It must:
+- Parse & chunk PDFs/Office/HTML/Images and XLSX Q&A sheets
+- Embed + index in FAISS, snapshotting metadata and a manifest
+- Serve an `/ask` API that returns answer, citations, confidence, and a `should_escalate` flag
+- Evaluate retrieval quality (nDCG@10, Recall@50, MRR) on a gold set with regression checks
+- Run without Docker if needed (local venv is fine); Docker/Nginx are provided for deployment
 
----
+## 2) Architecture (High‑level)
+- **Parsers**: `pdf.py`, `docx.py`, `html.py`, `image.py`, `text.py`, `xlsx.py`
+- **Chunking**: `chunker.py` creates token‑bounded overlapping chunks with breadcrumb metadata
+- **Ingestion**: `pipeline.py` discovers new/changed docs, reuses existing chunks by SHA‑256, embeds, builds FAISS, writes metadata, snapshots, and updates a manifest
+- **Vector search**: `vector_store.py` (FAISS), hybrid mode optional
+- **Generation**: `generator.py` builds the answer from top K chunks using OpenAI; a local summarizer acts as a fallback
+- **Service API**: `service.py` / FastAPI app exposes `/ask`, `/ingest`, `/eval/run`, `/health`, plus admin endpoints
+- **Evaluation**: `eval_qa.py` / `runner.py` compute metrics and compare to a JSON baseline
+- **UI**: `index.html`/`styles.css`/`main.js` demo client
 
-## 2. Core Responsibilities
+### Data flow (ingestion)
+1. Parse files → `ParsedDocument` with `ParsedSection`s
+2. Chunk → `Chunk` with token spans, page numbers, breadcrumbs
+3. Embed new chunks; reuse previous chunk embeddings if unchanged
+4. Build FAISS + metadata; write snapshot + manifest; log event
 
-- **Session Handling**
-  - Persist a session ID and anonymized user ID per request.
-  - Maintain short conversational memory for follow-up clarifications within a session; never leak past sessions.
-- **Answering Rules**
-  - Prefer grounded answers with explicit citations (doc + page/section).
-  - If retrieval confidence is low or evidence conflicts, trigger clarification or escalation.
-  - If a feature is unsupported or unknown, say so plainly and suggest next steps.
-- **Escalation Triggers**
-  - Confidence < **70%** (see §5).
-  - Conflicting sources or unresolved ambiguity after **3** clarification turns.
-- **Evaluation**
-  - Run automated retrieval and end-to-end Q/A evaluations on each release (see §4).
-- **Versioning**
-  - Semantic Versioning; block release on evaluation regressions >3% (see §8).
-- **Error Logging**
-  - Log all exceptions with anonymized request IDs, correlation IDs, and minimal redacted context.
+## 3) Config & Environment
+Environment variables (read via settings):
+- `OPENAI_API_KEY` — required for online generation/embeddings
+- `EMBED_MODEL` (default: `text-embedding-3-large`)
+- `EMBED_DIM` (default: 3072)
+- `CHUNK_TARGET_TOKENS` (default from config)
+- `CHUNK_OVERLAP_TOKENS` (default from config)
+- `CONFIDENCE_THRESHOLD` (default: 0.7) — values < threshold set `should_escalate=true`
+- Paths: `CONTENT_DIR`, `INDICES_DIR`, `LOGS_DIR`, `EVAL_DIR` (override as needed)
 
----
+Configuration files:
+- `manifest.json` — corpus hash, counts, model versions, paths
+- `index_metadata.json` — stored chunk metadata
+- `baseline.json` — target retrieval metrics to avoid regressions
 
-## 3. Retrieval & Indexing
+## 4) Fallback & Error Modes
+- If `OPENAI_API_KEY` is **unset** or an API error occurs, Atticus uses a **local summarizer** over retrieved chunks. This is meant for diagnosis only and will usually reduce confidence.
+- When fallback fires, the service sets `should_escalate=true` if `confidence < CONFIDENCE_THRESHOLD` and logs the event with details for triage.
+- The fallback can be disabled at runtime with `--no-fallback` in developer scripts (or a settings flag) if strict failures are preferred.
 
-- **Supported Formats**
-  - PDF (including scanned image PDFs via OCR), DOCX, HTML, and **XLSX Q/A pairs** (Column A = Question, Column B = Answer).
-- **Chunking**
-  - Target chunk size: **~800–1,000 tokens** with **15–20% overlap**.
-  - Respect document structure: headings, tables, captions, and figure references become breadcrumbs.
-  - Extract and store: `content`, `breadcrumbs[]`, `headers[]`, `block_type`, `title`, `source_uri`, `page_span`, and `token_count`.
-- **Tables & Images**
-  - Table cells normalized to row-wise records; preserve header associations.
-  - Figures/images: store nearby caption + alt text; link to page anchor for citation.
-- **Embedding Model**
-  - **text-embedding-3-large** (pinned version) for all embeddings; record **model name + version** with each vector.
-- **Ingestion/Re-indexing Pipeline**
-  1. **Fetch** from OneDrive/Azure structured content folders.
-  2. **Parse** (PDF/DOCX/HTML/XLSX); run OCR where needed.
-  3. **Chunk** with overlap and breadcrumbs.
-  4. **Embed** with pinned model/version.
-  5. **Upsert** into vector store with metadata and checksums.
-  6. **Verify** integrity (document count, checksum delta, sample retrieval spot-checks).
-  7. **Publish** index atomically (blue/green index alias).
+## 5) Ingestion & Chunking (Details)
+- **Chunking**: tokenise section text; split at `CHUNK_TARGET_TOKENS` with `CHUNK_OVERLAP_TOKENS`; ensure small trailing chunks are merged; enrich metadata with breadcrumbs, page numbers, section headings, and source type.
+- **Dedup & reuse**: if a file’s SHA‑256 matches the manifest, reuse existing chunk embeddings (zero‑cost) and skip re‑embedding.
+- **Snapshots**: every ingest creates a time‑stamped snapshot under `indices/snapshots/<timestamp>/` for rollback.
 
----
+## 6) Retrieval & Answering
+- Retrieve top‑K by vector similarity (hybrid retrieval optional if BM25 is configured).
+- Compose an answer with in‑text citations; score confidence from retrieval scores and heuristic signals.
+- If `confidence < CONFIDENCE_THRESHOLD` (default 0.7), mark `should_escalate=true`.
 
-## 4. Evaluation & Monitoring
+## 7) API Endpoints (FastAPI)
+- `POST /ask` → `{ answer, citations[], confidence, should_escalate, request_id }`
+- `POST /ingest` → run ingestion with `{ full_refresh, paths[] }`
+- `POST /eval/run` → compute metrics vs. baseline; emits CSV & JSON summaries
+- `GET /health` → manifest presence, counts, model info
+- `GET /admin/sessions?format=json|html` → recent requests (for ops)
+- `GET /admin/errors?since=<iso>` → error log
 
-- **Gold Q/A Set**
-  - Maintain **50–100** representative Q/A pairs drawn from real staff questions across product lines and document types.
-- **Metrics**
-  - **nDCG@10**, **Recall@50**, **MRR** — tracked per release and over time.
-- **Thresholds**
-  - **CI fails** if any metric regresses by **>3%** relative to previous release.
-- **Outputs**
-  - Write per-run results to CSV (metrics per query and aggregate).
-  - Expose a dashboard (e.g., in Grafana/Metabase) for trends: per-metric time series, failure cohorts, and top error categories.
+## 8) Evaluation & Baselines
+- Gold set CSV columns: `question,relevant_documents,expected_answer,notes` (semicolon‑separated docs).
+- Metrics: **nDCG@10**, **Recall@50**, **MRR**. Results are written to an output folder (dated) as `metrics.csv` and `summary.json` and compared with `baseline.json`.
+- CI can fail if deltas are negative beyond tolerance (e.g., –3% drop).
 
----
+## 9) Deployment
+- **Local**: create venv, install `requirements.txt`, run `uvicorn`.
+- **Docker**: `Dockerfile` builds API; `nginx.conf` reverse‑proxies `/:80 → api:8000` with static UI served by Nginx.
+- **No‑Docker path** is supported for constrained environments; keep `.env`/`config.yaml` consistent in both modes.
 
-## 5. Confidence Thresholds
+## 10) Release, Rollback & Versioning
+- Tag releases after a green eval; commit `indices/manifest.json` and snapshot file.
+- Rollback: deploy prior snapshot; restore `manifest.json` alongside to keep counts in sync.
+- Maintain `CHANGELOG.md`; update `AGENTS.md` any time a new parser, retrieval option, or confidence policy changes.
 
-- **Scoring**
-  - Combine retriever scores (e.g., max top-k similarity) with LLM self-check to produce a normalized **0–100%** confidence.
-- **Actions**
-  - **<70%** → escalate.
-  - **≥70% and <80%** → ask for 1–3 clarifying questions; escalate if unresolved after **3** attempts.
-  - **≥80%** → answer with citations.
-- **Telemetry**
-  - Always log the final confidence score, top-k sources used, and whether escalation occurred.
+## 11) Security Notes
+- Keep model/API keys out of source; use environment variables or secrets management.
+- Never serve raw content outside your allowed directories.
+- Logs may include user questions; rotate and restrict access appropriately.
 
----
-
-## 6. Security & Compliance
-
-- **PII Redaction**
-  - Never store raw user prompts; apply PII redaction to logs and traces (emails, phone numbers, serials if customer-identifiable).
-- **Data Residency**
-  - Content and indices reside in **OneDrive/Azure** storage accounts designated for the project.
-- **Identity & Access (Roadmap)**
-  - Plan for **AD/SSO** integration; current PoC may use basic auth where strictly necessary.
-- **Secrets Handling**
-  - No plaintext secrets in code or config; use **environment variables** and secret stores.
-- **Audit**
-  - Retain audit logs with anonymized IDs and immutable append-only storage for 12+ months.
+## 12) Known Limitations
+- OCR quality depends on Tesseract; image‑heavy PDFs may require GPU OCR in future.
+- Fallback summariser is intentionally conservative; it’s a diagnostic tool, not a product feature.
+- If your gold set uses Windows paths, normalisation to POSIX is required for consistent evals across OSes.
 
 ---
 
-## 7. Runbooks
+### Quick‑Start Commands (Windows‑friendly)
 
-- **Adding New Docs**
-  1. Place files in the appropriate content folder (see §8 folder layout).
-  2. Trigger the ingestion job (CLI or CI task).
-  3. Verify ingestion report (counts, checksums) and run smoke retrieval (5 random queries).
-- **Retraining Embeddings**
-  1. Confirm no embedding model/version change; if changed, **full re-embed**.
-  2. Rebuild index in a **staging** alias; run full evaluation.
-  3. Promote alias if thresholds pass; rollback by flipping alias if not.
-- **Running Evaluations**
-  1. Ensure gold set freshness.
-  2. Execute retrieval and end-to-end Q/A suites.
-  3. Export CSV and publish dashboard snapshot; gate release if >3% regression.
-- **Rolling Back Releases**
-  1. Repoint index alias to previous version.
-  2. Revert Docker image tag to prior **X.Y.Z**.
-  3. Create a **post-mortem** with root cause and fixes before reinstalling head.
+```powershell
+# 1) Setup
+python -m venv .venv
+. .venv\Scripts\Activate.ps1
+pip install -U pip
+pip install -r requirements.txt
 
----
+# 2) Ingest
+$env:OPENAI_API_KEY="<your key>"    # or rely on .env
+python run_ingestion.py
 
-## 8. Versioning & Documentation
+# 3) Smoke eval
+python eval_run.py --json
 
-- **Semantic Versioning**
-  - **X.Y.Z** where X=major, Y=minor, Z=patch. Increment on any evaluation-impacting change.
-- **Release Checklist**
-  - ✅ Ingestion complete
-  - ✅ Evaluations pass (no metric regression >3%)
-  - ✅ README updated with user-facing steps
-  - ✅ CHANGELOG updated with notable changes
-  - ✅ Git tag created and pushed
-- **Automation (Codex)**
-  - On merges affecting pipelines, **auto-update `README.md` and `CHANGELOG.md`** with release notes and version bump.
-  - **To-Do Workflow Rule (NEW):**
-    - When an item in `ToDo.md` is completed, **mark it complete** in place, and **move the completed item** (with completion date and commit hash) into a separate file **`ToDo-Complete.md`**. Keep `ToDo.md` limited to active items only. This operation should be performed automatically by Codex as part of the PR merge tasks.
+# 4) Serve
+uvicorn service:app --host 0.0.0.0 --port 8000
 
----
-
-## 9. Monitoring & Observability
-
-- **Request/Response Logs**
-  - Store anonymized request IDs, latency, token usage, top-k doc IDs, and confidence.
-- **Metrics**
-  - Queries/day, average confidence, clarification rate, escalation rate, answer acceptance rate.
-- **Alerts**
-  - Alert on escalation spikes, confidence drops, ingestion failures, or evaluation regressions.
-
----
-
-## 10. Admin Interface
-
-- **Dictionary Maintenance**
-  - Curate product and feature synonyms; edits propagate to query rewriting.
-- **Session Logs**
-  - Browse anonymized sessions, confidence trajectories, and source usage.
-- **Error Review**
-  - Filter exceptions by type and time; link to traces and failing requests.
-- **Evaluation Dashboard**
-  - Explore metric trends, cohort breakdowns, and worst-performing queries.
-
----
-
-## 11. Flowchart
-
-```mermaid
-flowchart LR
-    A[User Query] --> B[Retriever: Top-k from Vector Store]
-    B --> C[Generator: Grounded Answer + Citations]
-    C --> D{Confidence ≥ 70%?}
-    D -- Yes --> E[Respond with Sources]
-    D -- No --> F{≤ 3 Clarifications Used?}
-    F -- No --> G[Escalate to NTS / Create Ticket]
-    F -- Yes --> H[Ask Clarifying Question]
-    H --> B
-    E --> I[Logging & Metrics]
-    G --> I[Logging & Metrics]
+# 5) UI
+# open http://localhost:8000/ui
 ```
 
----
-
-## 12. To-Do Backlog
-
-The following are active backlog items; move completed entries to **`ToDo-Complete.md`** per §8.
-
-- **OCR Enhancements**
-  - Improve layout-aware OCR for image-heavy PDFs; add table boundary detection.
-- **AD/SSO (Roadmap)**
-  - Integrate with corporate identity; deprecate any PoC basic auth.
-- **Gold Set Expansion**
-  - Grow to 100+ Q/A with model coverage, admin/security topics, and common field queries.
-- **Grafana/Metabase Integration**
-  - Wire evaluation CSVs to a dashboard with alerts on regression.
-- **Rollback Playbooks**
-  - Expand with failure scenarios and “drills” to rehearse recoveries.
-
----
-
-### Appendix: Environment & Folders
-
-- **Environment**
-  - Python **3.12**, FastAPI, Docker Compose.
-  - Vector store of choice with aliasing for blue/green promotion.
-- **Content Folder Layout (examples)**
-  - `content/model/AC7070/`
-  - `content/software/Papercut/`
-  - `content/model/generic/`
-  - `content/service/`
-- **XLSX Q/A Conventions**
-  - `Sheet1`: **A** = Question, **B** = Answer (A2+B2 = first pair). Validate non-empty cells; trim whitespace.
-
----
-
-**Governance Note:** This document is authoritative. Agents and automations act without approval gates, but all actions are observable, reversible, and measured.
+### Notes for Contributors
+- Keep Q&A XLSX columns strictly: `question`, `answer` (plus optional `source`, `page`).
+- Prefer `YYYYMMDD_name_vN.ext` filenames for traceability.
+- Update baseline after a *justified* improvement with a PR that includes methodology and diffs.
