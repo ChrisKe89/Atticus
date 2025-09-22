@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from atticus.logging import log_event
-from ingest import IngestionOptions, ingest_corpus
+from ingest.pipeline import IngestionOptions, ingest_corpus
 
 from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import IngestRequest, IngestResponse

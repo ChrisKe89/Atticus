@@ -10,7 +10,7 @@ from PIL import Image
 from ..models import ParsedDocument, ParsedSection
 
 try:  # pragma: no cover - optional dependency
-    import pytesseract as _pytesseract  # type: ignore[import-untyped]
+    import pytesseract as _pytesseract
 except Exception:  # pragma: no cover - runtime fallback
     _pytesseract = None
 

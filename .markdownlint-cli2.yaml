@@ -1,0 +1,27 @@
+config:
+  MD013:
+    line_length: 120
+    code_block_line_length: 0
+    tables: false
+  MD029:
+    style: "ordered"
+  MD022: true
+  MD032: true
+globs:
+  - "**/*.md"
+ignores:
+  - "CHANGELOG.md"
+  - ".venv/**"
+  - "**/.venv/**"
+  - "node_modules/**"
+  - "README.md"
+  - "AGENTS.md"
+  - "ToDo-Complete.md"
+  - "TODO.md"
+  - "CODEX_PROMPT.md"
+  - "CONTRIBUTING.md"
+  - "docs/README.md"
+  - "REQUIREMENTS.md"
+  - "SECURITY.md"
+  - "content/**"
+  - "scripts/rollback.md"

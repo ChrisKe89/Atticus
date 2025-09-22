@@ -6,6 +6,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 
 from atticus.logging import configure_logging
 from atticus.metrics import MetricsRecorder
@@ -32,7 +33,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.2.1",
+    version="0.2.2",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -43,3 +44,6 @@ app.include_router(ingest.router)
 app.include_router(ask.router)
 app.include_router(admin.router)
 app.include_router(eval_routes.router)
+
+# Minimal UI for interactive queries
+app.mount("/ui", StaticFiles(directory="web", html=True), name="ui")
