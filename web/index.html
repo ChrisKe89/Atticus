@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atticus UI</title>
+    <link rel="stylesheet" href="/ui/styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Atticus</h1>
+      <form id="ask-form">
+        <label for="question">Ask a question</label>
+        <textarea id="question" rows="4" placeholder="Type your question about MFDs..."></textarea>
+        <button type="submit">Ask</button>
+      </form>
+      <section id="result" class="hidden">
+        <h2>Answer</h2>
+        <p id="answer"></p>
+        <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+        <details>
+          <summary>Citations</summary>
+          <ul id="citations"></ul>
+        </details>
+      </section>
+    </main>
+    <script src="/ui/main.js"></script>
+  </body>
+  </html>

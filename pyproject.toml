@@ -1,6 +1,6 @@
 [project]
 name = "atticus"
-version = "0.2.1"
+version = "0.2.2"
 description = "Atticus Retrieval-Augmented Generation service"
 readme = "README.md"
 authors = [{ name = "Atticus Ops", email = "ops@example.com" }]
@@ -8,14 +8,23 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pip-tools"]
+dev = [
+  "pip-tools",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "pytest>=8",
+  "pytest-cov>=5",
+  "pydantic>=2.7",
+  "types-requests",
+  "types-PyYAML"
+]
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["atticus"]
+packages = ["atticus", "api", "ingest", "retriever", "eval"]
 
 [tool.ruff]
 line-length = 100
@@ -35,16 +44,18 @@ line-ending = "lf"
 
 [tool.mypy]
 python_version = "3.12"
+strict = true
+packages = ["atticus", "api", "ingest", "retriever", "eval"]
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
 warn_unused_configs = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 warn_return_any = true
-strict = true
-packages = ["atticus", "api", "ingest", "retriever", "eval"]
-plugins = ["pydantic.mypy"]
+exclude = []
 
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra"
-testpaths = ["tests", "eval/harness"]
+testpaths = ["eval/harness"]
 markers = ["eval: evaluation harness"]

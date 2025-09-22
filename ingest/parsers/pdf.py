@@ -8,7 +8,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, cast
 
-import fitz  # type: ignore[import-untyped]
+import fitz
 from PIL import Image
 
 from ..models import ParsedDocument, ParsedSection
