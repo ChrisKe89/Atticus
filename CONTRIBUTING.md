@@ -12,25 +12,31 @@ Thank you for your interest in improving Atticus. This guide explains how to set
 
 ## Quick Start (Local)
 
-1) Clone and enter the repo
+1. Clone and enter the repo
+
 - `git clone <your-fork-or-repo-url>`
 - `cd Atticus`
 
-2) Create and activate a virtual environment
+2. Create and activate a virtual environment
+
 - Windows PowerShell: `py -3.12 -m venv .venv; .\.venv\Scripts\Activate.ps1`
 - macOS/Linux: `python3.12 -m venv .venv; source .venv/bin/activate`
 
-3) Install dependencies
+3. Install dependencies
+
 - `pip install -r requirements.txt`
 
-4) Build the local index (ingestion)
+4. Build the local index (ingestion)
+
 - `python scripts/ingest.py`
 
-5) Run the API (choose one)
+5. Run the API (choose one)
+
 - `uvicorn api.main:app --host 0.0.0.0 --port 8000`
 - Or Docker: `docker compose up --build`
 
-6) Run tests and quality checks
+6. Run tests and quality checks
+
 - `pytest -q`
 - `ruff check .`
 - `mypy`
@@ -65,4 +71,3 @@ Thank you for your interest in improving Atticus. This guide explains how to set
 ## Reporting Issues
 
 - Provide steps to reproduce, logs (if safe), and environment details (OS, Python version).
-
