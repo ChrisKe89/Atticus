@@ -135,7 +135,9 @@ def load_manifest(path: Path) -> Manifest | None:
 
 
 def write_manifest(path: Path, manifest: Manifest) -> None:
-    path.write_text(json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(manifest.to_dict(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
 
 
 def _load_yaml_config(path: Path) -> dict[str, Any]:
@@ -156,4 +158,3 @@ def load_settings() -> AppSettings:
     merged: dict[str, Any] = base.model_dump()
     merged.update(config_data)
     return AppSettings(**merged)
-

@@ -54,7 +54,9 @@ def answer_question(
             confidence=confidence,
             should_escalate=should_escalate,
         )
-        log_event(logger, "answer_generated", confidence=confidence, citations=0, escalate=should_escalate)
+        log_event(
+            logger, "answer_generated", confidence=confidence, citations=0, escalate=should_escalate
+        )
         return answer
 
     contexts, citations = _format_contexts(results, settings.max_context_chunks)
@@ -70,7 +72,9 @@ def answer_question(
 
     response = generator.generate(question, contexts, citation_texts)
 
-    top_scores = [max(0.0, min(1.0, result.score)) for result in results[: settings.max_context_chunks]]
+    top_scores = [
+        max(0.0, min(1.0, result.score)) for result in results[: settings.max_context_chunks]
+    ]
     retrieval_conf = sum(top_scores) / len(top_scores) if top_scores else 0.0
     llm_conf = generator.heuristic_confidence(response)
     confidence = round(0.6 * retrieval_conf + 0.4 * llm_conf, 2)
@@ -92,4 +96,3 @@ def answer_question(
         escalate=should_escalate,
     )
     return answer
-

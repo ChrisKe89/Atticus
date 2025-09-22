@@ -31,7 +31,7 @@
 - [x] Embed with `text-embedding-3-large` and rich metadata (source, page, section, timestamp, model version) — completed 2025-09-21 (commit 3013a1a).
 - [x] Persist FAISS-flat index on disk — completed 2025-09-21 (commit 3013a1a).
 - [x] Write `indices/manifest.json` with embedding model/version and corpus hash — completed 2025-09-21 (commit 3013a1a).
-- [x] Provide CLI `scripts/ingest.py` for incremental reprocessing — completed 2025-09-21 (commit 3013a1a).
+- [x] Provide CLI `scripts/ingest_cli.py` for incremental reprocessing — completed 2025-09-21 (commit 3013a1a).
 - [x] Vector top-K retrieval with metadata filters — completed 2025-09-21 (commit 3013a1a).
 - [x] Optional hybrid re-rank (BM25-lite) in retriever — completed 2025-09-21 (commit 3013a1a).
 - [x] Return citations (filepath + page) with answers — completed 2025-09-21 (commit 3013a1a).

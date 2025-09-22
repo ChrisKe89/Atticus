@@ -42,4 +42,3 @@ def parse_document(path: Path) -> ParsedDocument:
     if parser is None:
         raise ValueError(f"Unsupported file extension: {path.suffix}")
     return parser(path)
-

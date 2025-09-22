@@ -19,7 +19,9 @@ async def run_eval(settings: SettingsDep, logger: LoggerDep) -> EvalResponse:
     log_event(logger, "eval_api_complete", metrics=result.metrics, deltas=result.deltas)
     threshold = settings.eval_regression_threshold / 100.0
     if any(delta < -threshold for delta in result.deltas.values()):
-        raise HTTPException(status_code=400, detail={"metrics": result.metrics, "deltas": result.deltas})
+        raise HTTPException(
+            status_code=400, detail={"metrics": result.metrics, "deltas": result.deltas}
+        )
     return EvalResponse(
         metrics=result.metrics,
         deltas=result.deltas,

@@ -158,7 +158,9 @@ def extract_sections(document: fitz.Document, heading_threshold: float) -> list[
                 heading=current_heading,
                 text="\n".join(buffer).strip(),
                 pages=pages.copy() or {1},
-                breadcrumbs=[breadcrumb for breadcrumb in ([current_heading] if current_heading else [])],
+                breadcrumbs=[
+                    breadcrumb for breadcrumb in ([current_heading] if current_heading else [])
+                ],
             )
         )
         buffer.clear()
@@ -205,7 +207,9 @@ def extract_tables(path: Path) -> list[Chunk]:  # noqa: PLR0912
                 continue
             header = [str(item).strip() for item in cleaned.iloc[0].tolist()]
             body = cleaned.iloc[1:]
-            rows = [" | ".join(str(cell).strip() for cell in row.tolist()) for _, row in body.iterrows()]
+            rows = [
+                " | ".join(str(cell).strip() for cell in row.tolist()) for _, row in body.iterrows()
+            ]
             text = "\n".join(rows).strip()
             if not text:
                 continue
@@ -298,7 +302,9 @@ def chunk_sections(
                     pages=section.pages.copy() or {1},
                     headings={heading for heading in [section.heading] if heading},
                     breadcrumbs=list(
-                        dict.fromkeys(base_breadcrumbs + (section.breadcrumbs if section.breadcrumbs else []))
+                        dict.fromkeys(
+                            base_breadcrumbs + (section.breadcrumbs if section.breadcrumbs else [])
+                        )
                     ),
                     token_count=len(piece),
                 )

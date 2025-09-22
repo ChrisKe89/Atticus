@@ -27,4 +27,3 @@ def test_evaluate_query_partial_match() -> None:
     assert ndcg < 1.0
     assert recall == 1.0
     assert mrr == EXPECTED_PARTIAL_MRR
-

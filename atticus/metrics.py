@@ -48,10 +48,26 @@ class MetricsRecorder:
         self.store_path.parent.mkdir(parents=True, exist_ok=True)
         write_header = not self.store_path.exists()
         with self.store_path.open("a", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=["timestamp", "queries", "avg_confidence", "escalations", "avg_latency_ms"])
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=[
+                    "timestamp",
+                    "queries",
+                    "avg_confidence",
+                    "escalations",
+                    "avg_latency_ms",
+                ],
+            )
             if write_header:
                 writer.writeheader()
-            writer.writerow({"timestamp": datetime.now(tz=self.settings.tzinfo).isoformat(timespec="seconds"), **snapshot})
+            writer.writerow(
+                {
+                    "timestamp": datetime.now(tz=self.settings.tzinfo).isoformat(
+                        timespec="seconds"
+                    ),
+                    **snapshot,
+                }
+            )
         self.reset()
 
     def reset(self) -> None:
@@ -59,4 +75,3 @@ class MetricsRecorder:
         self.total_confidence = 0.0
         self.escalations = 0
         self.total_latency_ms = 0.0
-

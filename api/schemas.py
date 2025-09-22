@@ -37,7 +37,9 @@ class IngestResponse(BaseModel):
 
 class AskRequest(BaseModel):
     question: str
-    filters: dict[str, str] | None = Field(default=None, description="Metadata filters such as path_prefix or source_type")
+    filters: dict[str, str] | None = Field(
+        default=None, description="Metadata filters such as path_prefix or source_type"
+    )
 
 
 class CitationModel(BaseModel):
@@ -92,4 +94,3 @@ class SessionLogEntry(BaseModel):
 
 class SessionLogResponse(BaseModel):
     sessions: list[SessionLogEntry]
-

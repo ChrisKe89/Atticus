@@ -39,4 +39,3 @@ class Chunk:
     heading: str | None
     extra: dict[str, str]
     breadcrumbs: list[str] = field(default_factory=list)
-

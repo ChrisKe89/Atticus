@@ -23,7 +23,9 @@ async def ask_endpoint(
     logger: LoggerDep,
 ) -> AskResponse:
     start = time.perf_counter()
-    answer = answer_question(payload.question, settings=settings, filters=payload.filters, logger=logger)
+    answer = answer_question(
+        payload.question, settings=settings, filters=payload.filters, logger=logger
+    )
     elapsed_ms = (time.perf_counter() - start) * 1000
 
     request_id = getattr(request.state, "request_id", "unknown")

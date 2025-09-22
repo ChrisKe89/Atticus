@@ -34,7 +34,7 @@ class JsonFormatter(logging.Formatter):
 
 def _build_file_handler(path: Path) -> RotatingFileHandler:
     path.parent.mkdir(parents=True, exist_ok=True)
-    handler = RotatingFileHandler(path, maxBytes=5_000_000, backupCount=5)
+    handler = RotatingFileHandler(path, maxBytes=5_000_000, backupCount=5, encoding="utf-8")
     handler.setFormatter(JsonFormatter())
     return handler
 
@@ -50,6 +50,8 @@ def configure_logging(settings: AppSettings) -> logging.Logger:
         error_handler = _build_file_handler(settings.errors_path)
         error_handler.setLevel(logging.ERROR)
         logger.addHandler(error_handler)
+        # Prevent propagation to root handlers (avoids console encoding issues on Windows)
+        logger.propagate = False
     return logger
 
 
@@ -60,4 +62,3 @@ def log_event(logger: logging.Logger, event: str, **payload: Any) -> None:
 def log_error(logger: logging.Logger, event: str, **payload: Any) -> None:
     payload.setdefault("severity", "ERROR")
     logger.error(event, extra={"extra_payload": payload})
-

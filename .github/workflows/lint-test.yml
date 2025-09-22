@@ -17,12 +17,19 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: requirements.txt
 
-      - name: Install dependencies
+      - name: Install project + dev tools
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
+          # Installs your package and dev extras (ruff, mypy, pytest, pydantic, etc.)
+          python -m pip install -e ".[dev]"
+
+      - name: Show tool versions
+        run: |
+          python --version
+          ruff --version
+          mypy --version
+          pytest --version
 
       - name: Ruff lint
         run: ruff check .
@@ -31,7 +38,11 @@ jobs:
         run: ruff format --check .
 
       - name: Type check
-        run: mypy
+        run: |
+          # Grab stubs for common third-party libs if available (non-fatal)
+          mypy --install-types --non-interactive || true
+          # Match your mypy package set
+          mypy atticus api ingest retriever eval
 
       - name: Pytest
-        run: pytest
+        run: pytest -q
