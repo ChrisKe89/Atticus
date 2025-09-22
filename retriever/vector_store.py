@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import faiss  # type: ignore[import-untyped]
+import faiss
 import numpy as np
 from rapidfuzz import fuzz
 
@@ -59,13 +59,21 @@ class VectorStore:
             return False
         return True
 
-    def search(self, query: str, top_k: int = 10, filters: dict[str, str] | None = None, hybrid: bool = True) -> list[SearchResult]:
+    def search(
+        self,
+        query: str,
+        top_k: int = 10,
+        filters: dict[str, str] | None = None,
+        hybrid: bool = True,
+    ) -> list[SearchResult]:
         if self.index.ntotal == 0:
             return []
 
         embedding = np.array(self.embedding_client.embed_texts([query])[0], dtype=np.float32)
         faiss.normalize_L2(embedding.reshape(1, -1))
-        scores, indices = self.index.search(embedding.reshape(1, -1), min(self.index.ntotal, max(top_k * 2, top_k)))
+        scores, indices = self.index.search(
+            embedding.reshape(1, -1), min(self.index.ntotal, max(top_k * 2, top_k))
+        )
 
         results: list[SearchResult] = []
         for idx, score in zip(indices[0], scores[0], strict=False):
@@ -107,4 +115,3 @@ class VectorStore:
             filters=filters or {},
         )
         return results
-

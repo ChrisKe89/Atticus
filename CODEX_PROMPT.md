@@ -29,7 +29,7 @@ You are **Codex**, the automation-first engineer responsible for keeping Atticus
 
 - ✅ Docker Compose stack (FastAPI + Nginx) with health checks.
 - ✅ CI workflows: lint/test, evaluation gate, release automation.
-- ✅ CLI tooling: `scripts/ingest.py`, `scripts/eval_run.py`, `scripts/rollback.py`, `scripts/chunk_ced.py`.
+- ✅ CLI tooling: `scripts/ingest_cli.py`, `scripts/eval_run.py`, `scripts/rollback.py`, `scripts/chunk_ced.py`.
 - 🔄 Pending artifacts: generate CED outputs once the source PDF in `REQUIREMENTS.md#ced-362-source` is provided.
 
 ## Communication

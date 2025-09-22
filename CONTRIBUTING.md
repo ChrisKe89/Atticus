@@ -1,6 +1,7 @@
 # Contributing to Atticus
 
-Thank you for your interest in improving Atticus. This guide explains how to set up your environment, run checks, propose changes, and open pull requests.
+Thank you for your interest in improving Atticus. This guide explains how to
+set up your environment, run checks, propose changes, and open pull requests.
 
 ## Prerequisites
 
@@ -28,7 +29,7 @@ Thank you for your interest in improving Atticus. This guide explains how to set
 
 4. Build the local index (ingestion)
 
-- `python scripts/ingest.py`
+- `python scripts/ingest_cli.py`
 
 5. Run the API (choose one)
 

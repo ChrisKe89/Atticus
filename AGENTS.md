@@ -2,7 +2,13 @@
 
 ## 1. Overview
 
-**Atticus Agent** is a Retrieval-Augmented Generation (RAG) assistant for FUJIFILM Business Innovation Australia. It answers questions about multifunction devices (MFD) capabilities and performance, citing sources, and escalating low-confidence or ambiguous cases. The agent runs in a Python 3.12 + FastAPI stack, packaged with Docker Compose, and indexes content stored in OneDrive/Azure storage. It operates to enterprise standards for security, evaluation, versioning, and observability.
+**Atticus Agent** is a Retrieval-Augmented Generation (RAG) assistant for
+FUJIFILM Business Innovation Australia. It answers questions about
+multifunction devices (MFD) capabilities and performance, citing sources, and
+escalating low-confidence or ambiguous cases. The agent runs in a Python 3.12 +
+FastAPI stack, packaged with Docker Compose, and indexes content stored in
+OneDrive/Azure storage. It operates to enterprise standards for security,
+evaluation, versioning, and observability.
 
 ---
 

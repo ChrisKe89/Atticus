@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-09-22
+
+### Changed
+
+- Bump patch version to 0.2.2.
+- Align pytest discovery to include `eval/harness` and `scripts` in `pyproject.toml` and VS Code workspace.
+- Remove unused `type: ignore` comments flagged by mypy in parsers and FAISS modules.
+- Applied Ruff auto-fixes to reduce lint noise in scripts.
+
 ## [0.2.1] - 2025-09-21
 
 ### Fixed
@@ -20,7 +29,7 @@
 ### Added
 
 - Introduced `config.yaml`/`.env` harmony via `atticus.config.load_settings()` and new chunking environment controls.
-- Delivered CLI utilities (`scripts/ingest.py`, `scripts/eval_run.py`, enhanced `scripts/rollback.py`) with consistent argparse help.
+- Delivered CLI utilities (`scripts/ingest_cli.py`, `scripts/eval_run.py`, enhanced `scripts/rollback.py`) with consistent argparse help.
 - Expanded ingestion metadata (breadcrumbs, model version, token spans) and added admin session log viewer plus metrics rollups under `logs/metrics/`.
 - Added CED-specific chunking pipeline (`scripts/chunk_ced.py`) and smoke evaluation set (`eval/ced-362-smoke.csv`).
 - Provisioned GitHub Actions workflows for linting/testing, evaluation gating, and tagged releases.
