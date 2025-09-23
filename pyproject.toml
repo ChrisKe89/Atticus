@@ -1,6 +1,6 @@
 [project]
 name = "atticus"
-version = "0.2.3"
+
 description = "Atticus Retrieval-Augmented Generation service"
 readme = "README.md"
 authors = [{ name = "Atticus Ops", email = "ops@example.com" }]

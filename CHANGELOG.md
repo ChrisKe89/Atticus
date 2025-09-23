@@ -13,6 +13,7 @@
 
 - Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
 
+
 ## [0.2.3] - 2025-09-24
 
 ### Fixed
