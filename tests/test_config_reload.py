@@ -24,7 +24,6 @@ def test_load_settings_refreshes_env(tmp_path):
         first = config.load_settings()
         assert first.openai_api_key == "first-key"
 
-
         time.sleep(1.1)
         env_path.write_text("OPENAI_API_KEY=second-key\n", encoding="utf-8")
         os.utime(env_path, None)

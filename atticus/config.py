@@ -194,7 +194,6 @@ def _iter_alias_strings(value: Any) -> list[str]:
 
 
 def _env_variables_fingerprint() -> str:
-
     for name, field in AppSettings.model_fields.items():
         keys.add(name.upper())
         alias = getattr(field, "alias", None)
@@ -216,7 +215,6 @@ def _resolve_env_file() -> Path | None:
     if isinstance(env_file, str):
         return Path(env_file)
     return None
-
 
 
 def reset_settings_cache() -> None:
@@ -248,4 +246,3 @@ def load_settings() -> AppSettings:
         settings = AppSettings(**merged)
     else:
         settings = base
-
