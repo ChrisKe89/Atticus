@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from atticus.logging import log_event
 from retriever import answer_question
@@ -13,6 +13,7 @@ from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import AskRequest, AskResponse, CitationModel
 
 router = APIRouter()
+Q_MIN_LEN = 5
 
 
 @router.post("/ask", response_model=AskResponse)
@@ -23,6 +24,12 @@ async def ask_endpoint(
     logger: LoggerDep,
 ) -> AskResponse:
     start = time.perf_counter()
+    # Guard against placeholder inputs that yield poor retrieval
+    q = payload.question.strip()
+    if len(q) < Q_MIN_LEN or q.lower() in {"string", "test", "example"}:
+        raise HTTPException(
+            status_code=400, detail="Provide a real question (not a placeholder like 'string')"
+        )
     answer = answer_question(
         payload.question, settings=settings, filters=payload.filters, logger=logger
     )

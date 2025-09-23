@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+import math
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -47,6 +49,14 @@ class VectorStore:
         if self.index.ntotal != len(self.chunks):
             raise RuntimeError("FAISS index size does not match metadata entries")
 
+        # Build lightweight lexical structures for BM25-style fallback
+        self._lex_tokens: list[list[str]] = []
+        self._lex_df: dict[str, int] = {}
+        self._lex_len: list[int] = []
+        self._lex_avgdl: float = 0.0
+        self._lex_ready: bool = False
+        self._build_lexical_index()
+
     def _apply_filters(self, chunk: StoredChunk, filters: dict[str, str] | None) -> bool:
         if not filters:
             return True
@@ -59,6 +69,61 @@ class VectorStore:
             return False
         return True
 
+    def _tokenize(self, text: str) -> list[str]:
+        # Lowercase, keep alphanumerics, split on non-word, drop 1-char tokens unless digit
+        text = text.lower()
+        tokens = re.split(r"[^a-z0-9]+", text)
+        return [t for t in tokens if t and (len(t) > 1 or t.isdigit())]
+
+    def _build_lexical_index(self) -> None:
+        tokens_per_doc: list[list[str]] = []
+        df: dict[str, int] = {}
+        lengths: list[int] = []
+        for chunk in self.chunks:
+            toks = self._tokenize(chunk.text)
+            tokens_per_doc.append(toks)
+            lengths.append(len(toks))
+            for tok in set(toks):
+                df[tok] = df.get(tok, 0) + 1
+        self._lex_tokens = tokens_per_doc
+        self._lex_df = df
+        self._lex_len = lengths
+        self._lex_avgdl = (sum(lengths) / len(lengths)) if lengths else 0.0
+        self._lex_ready = True
+
+    def _bm25_scores(self, query: str) -> list[float]:
+        if not self._lex_ready or not self._lex_tokens:
+            return [0.0] * len(self.chunks)
+        q_tokens = self._tokenize(query)
+        if not q_tokens:
+            return [0.0] * len(self.chunks)
+        # BM25 parameters
+        k1 = 1.5
+        b = 0.75
+        N = len(self._lex_tokens)
+        scores = [0.0] * N
+        # Precompute term frequencies per doc for query tokens only for speed
+        for i, doc_tokens in enumerate(self._lex_tokens):
+            if not doc_tokens:
+                continue
+            dl = self._lex_len[i]
+            tf_counts: dict[str, int] = {}
+            for t in doc_tokens:
+                tf_counts[t] = tf_counts.get(t, 0) + 1
+            s = 0.0
+            for qt in q_tokens:
+                df = self._lex_df.get(qt, 0)
+                if df == 0:
+                    continue
+                idf = math.log((N - df + 0.5) / (df + 0.5) + 1.0)
+                tf = tf_counts.get(qt, 0)
+                if tf == 0:
+                    continue
+                denom = tf + k1 * (1 - b + b * (dl / (self._lex_avgdl or 1.0)))
+                s += idf * (tf * (k1 + 1)) / denom
+            scores[i] = s
+        return scores
+
     def search(
         self,
         query: str,
@@ -69,42 +134,81 @@ class VectorStore:
         if self.index.ntotal == 0:
             return []
 
+        # Vector candidate set
         embedding = np.array(self.embedding_client.embed_texts([query])[0], dtype=np.float32)
         faiss.normalize_L2(embedding.reshape(1, -1))
-        scores, indices = self.index.search(
-            embedding.reshape(1, -1), min(self.index.ntotal, max(top_k * 2, top_k))
+        vec_scores, vec_indices = self.index.search(
+            embedding.reshape(1, -1), min(self.index.ntotal, max(top_k * 4, top_k))
         )
 
-        results: list[SearchResult] = []
-        for idx, score in zip(indices[0], scores[0], strict=False):
+        # Lexical scores for all chunks
+        bm25_all = self._bm25_scores(query)
+
+        # Collect candidates from both sources
+        candidates: dict[int, float] = {}
+        for idx, sc in zip(vec_indices[0], vec_scores[0], strict=False):
             if idx < 0:
                 continue
-            chunk = self.chunks[int(idx)]
+            candidates[int(idx)] = max(candidates.get(int(idx), 0.0), float(sc))
+        # Add top lexical candidates as well
+        # Rank by BM25 score and take top set
+        top_lex = sorted(range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True)[
+            : max(top_k * 3, 30)
+        ]
+        for i in top_lex:
+            candidates[i] = max(candidates.get(i, 0.0), 0.0)  # ensure presence
+
+        # Normalize BM25 scores across candidate set for combination
+        bm25_min = min((bm25_all[i] for i in candidates), default=0.0)
+        bm25_max = max((bm25_all[i] for i in candidates), default=0.0)
+
+        def bm25_norm(i: int) -> float:
+            if bm25_max <= bm25_min:
+                return 0.0
+            return (bm25_all[i] - bm25_min) / (bm25_max - bm25_min)
+
+        # Weighting: favor lexical more when running offline embeddings
+        alpha = 0.7 if self.embedding_client._client is not None else 0.35
+
+        results: list[SearchResult] = []
+        for i in candidates.keys():
+            chunk = self.chunks[i]
             if not self._apply_filters(chunk, filters):
                 continue
             manifest_entry = self.manifest.documents.get(chunk.source_path, {})
             metadata: dict[str, str] = {"source_type": str(manifest_entry.get("source_type", ""))}
             metadata.update(chunk.extra)
+            v = 0.0
+            # If vec score available, map IP similarity (~[-1,1]) to [0,1]
+            # vec_scores array not directly accessible per i; compute via inner product
+            # Use stored embedding for a stable similarity
+            v_emb = np.array(chunk.embedding, dtype=np.float32)
+            faiss.normalize_L2(v_emb.reshape(1, -1))
+            v = float(np.dot(embedding, v_emb))
+            # Map cosine/IP similarity from [-1, 1] -> [0, 1] for confidence calibration
+            v = max(0.0, min(1.0, (v + 1.0) / 2.0))
+            # Combine with lexical
+            lex = bm25_norm(i)
+            score = alpha * v + (1 - alpha) * lex
             results.append(
                 SearchResult(
                     chunk_id=chunk.chunk_id,
                     source_path=chunk.source_path,
                     text=chunk.text,
-                    score=float(score),
+                    score=score,
                     page_number=chunk.page_number,
                     heading=chunk.section,
                     metadata=metadata,
                 )
             )
-            if len(results) >= top_k:
-                break
 
+        # Fuzzy text boost and final ranking
         if hybrid and results:
             for item in results:
                 text_score = fuzz.partial_ratio(query, item.text) / 100.0
-                item.score = 0.7 * item.score + 0.3 * text_score
-            results.sort(key=lambda result: result.score, reverse=True)
-            results = results[:top_k]
+                item.score = 0.8 * item.score + 0.2 * text_score
+        results.sort(key=lambda result: result.score, reverse=True)
+        results = results[:top_k]
 
         log_event(
             self.logger,
