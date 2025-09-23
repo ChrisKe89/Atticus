@@ -94,6 +94,46 @@ The project defines the following convenience targets:
   - Sessions view: `GET /admin/sessions?format=html|json`
   - Verbose logs (full Q/A, tokens, trace): set `LOG_VERBOSE=1` and optionally `LOG_TRACE=1` in `.env` and restart the API.
 
+## Docker deployment
+
+The repository ships with a Docker workflow for local or on-premise installs:
+
+1. Ensure `.env` contains production-ready secrets (OpenAI key, SMTP, contact email).
+2. Build the containers:
+
+   ```bash
+   docker compose build
+   ```
+
+3. Start the stack:
+
+   ```bash
+   docker compose up -d
+   ```
+
+   - `atticus-api` listens on `8000` and mounts `./content`, `indices`, and `logs`.
+   - `atticus-nginx` fronts the API on ports `80/443` and runs health checks.
+
+4. Tail logs: `docker compose logs -f api`.
+5. Stop: `docker compose down` (add `-v` to clear named volumes).
+
+To rebuild indices inside the container, exec into `atticus-api` and run the usual `make ingest` / `make eval` commands.
+
+## Nginx reverse proxy
+
+The `nginx/` directory contains a hardened reverse-proxy layer for TLS termination.
+
+- `nginx/nginx.conf` expects the FastAPI service at `atticus-api:8000`.
+- Place certificates in `nginx/certs/` (`fullchain.pem`, `privkey.pem` by default) or update the paths inside the config.
+- Adjust the `server_name` directive to your domain before deploying.
+- Reload configuration without downtime:
+
+  ```bash
+  docker compose exec nginx nginx -s reload
+  ```
+
+For environments where you already have a reverse proxy or load balancer, you can reuse the same configuration blocks.
+
 ## Frontend
 
 - The UI is specified in **FRONTEND.md** and embedded in **TODO.md** with the exact HTML/CSS to materialize.

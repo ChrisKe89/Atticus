@@ -14,7 +14,6 @@ from atticus.logging import configure_logging
 from atticus.metrics import MetricsRecorder
 
 
-@lru_cache(maxsize=1)
 def get_settings() -> AppSettings:
     settings = load_settings()
     settings.ensure_directories()

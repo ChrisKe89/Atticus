@@ -13,6 +13,19 @@
 
 - Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
 
+## [0.2.3] - 2025-09-24
+
+### Fixed
+
+- Regenerate application settings automatically when `.env` or runtime environment variables change, eliminating stale OpenAI API
+  key fingerprints during web sessions.
+
+### Changed
+
+- Rebuilt the web chat surface with a modern layout, collapsible navigation, and refreshed styling to match the new HTML
+  specification.
+- Expanded `README.md` with Docker Compose deployment steps plus nginx reverse-proxy instructions for TLS fronting.
+
 ## [0.2.2] - 2025-09-22
 
 ### Changed
