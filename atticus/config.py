@@ -194,7 +194,7 @@ def _iter_alias_strings(value: Any) -> list[str]:
 
 
 def _env_variables_fingerprint() -> str:
-    keys: set[str] = {"ATTICUS_ENV_PRIORITY"}
+
     for name, field in AppSettings.model_fields.items():
         keys.add(name.upper())
         alias = getattr(field, "alias", None)
@@ -217,63 +217,6 @@ def _resolve_env_file() -> Path | None:
         return Path(env_file)
     return None
 
-
-def _parse_env_file(path: Path) -> dict[str, str]:
-    if not path.exists():
-        return {}
-    values: dict[str, str] = {}
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip()
-        if value and (
-            (value.startswith('"') and value.endswith('"'))
-            or (value.startswith("'") and value.endswith("'"))
-        ):
-            value = value[1:-1]
-        values[key] = value
-    return values
-
-
-def _select_secret(
-    priority: str,
-    env_file_value: str | None,
-    os_environ_value: str | None,
-    config_value: str | None,
-    default_value: str | None,
-) -> tuple[str | None, str]:
-    priority = priority if priority in {"env", "os"} else "env"
-    candidates: list[tuple[str, str | None]]
-    if priority == "env":
-        candidates = [
-            (".env", env_file_value),
-            ("os.environ", os_environ_value),
-            ("config.yaml", config_value),
-            ("defaults", default_value),
-        ]
-    else:
-        candidates = [
-            ("os.environ", os_environ_value),
-            (".env", env_file_value),
-            ("config.yaml", config_value),
-            ("defaults", default_value),
-        ]
-    for source, value in candidates:
-        if value:
-            return value, source
-    return None, "unset"
-
-
-def _normalise_secret(value: str | None) -> str | None:
-    if value is None:
-        return None
-    stripped = value.strip()
-    return stripped or None
 
 
 def reset_settings_cache() -> None:
@@ -306,62 +249,3 @@ def load_settings() -> AppSettings:
     else:
         settings = base
 
-    env_values = _parse_env_file(env_path)
-    env_file_value = _normalise_secret(env_values.get("OPENAI_API_KEY"))
-    os_env_value = _normalise_secret(os.environ.get("OPENAI_API_KEY"))
-    config_value = _normalise_secret(
-        (config_data or {}).get("openai_api_key") or (config_data or {}).get("OPENAI_API_KEY")
-    )
-    priority = _normalise_secret(os.environ.get("ATTICUS_ENV_PRIORITY")) or "env"
-    selected_value, source = _select_secret(
-        priority,
-        env_file_value,
-        os_env_value,
-        config_value,
-        _normalise_secret(settings.openai_api_key),
-    )
-
-    manual_overrides: dict[str, Any] = {}
-    if selected_value != settings.openai_api_key:
-        manual_overrides["openai_api_key"] = selected_value
-
-    conflict = bool(env_file_value and os_env_value and env_file_value != os_env_value)
-    manual_overrides["secrets_report"] = {
-        "OPENAI_API_KEY": {
-            "resolved_source": source,
-            "priority": priority,
-            "resolved_fingerprint": _fingerprint_secret(selected_value),
-            "env_file_fingerprint": _fingerprint_secret(env_file_value),
-            "os_environ_fingerprint": _fingerprint_secret(os_env_value),
-            "config_fingerprint": _fingerprint_secret(config_value),
-            "conflict": conflict,
-            "env_file_path": str(env_path.resolve()),
-        }
-    }
-
-    if manual_overrides:
-        settings = settings.model_copy(update=manual_overrides)
-
-    _SETTINGS_CACHE = (cache_key, settings)
-    return settings
-
-
-def environment_diagnostics() -> dict[str, Any]:
-    settings = load_settings()
-    report = dict(settings.secrets_report)
-    openai_report = report.get("OPENAI_API_KEY", {})
-    return {
-        "env_file": openai_report.get(
-            "env_file_path", str((_resolve_env_file() or Path(".env")).resolve())
-        ),
-        "priority": openai_report.get("priority", os.environ.get("ATTICUS_ENV_PRIORITY", "env")),
-        "openai_api_key": {
-            "present": bool(settings.openai_api_key),
-            "source": openai_report.get("resolved_source", "unset"),
-            "fingerprint": openai_report.get("resolved_fingerprint"),
-            "env_file_fingerprint": openai_report.get("env_file_fingerprint"),
-            "os_environ_fingerprint": openai_report.get("os_environ_fingerprint"),
-            "config_fingerprint": openai_report.get("config_fingerprint"),
-            "conflict": openai_report.get("conflict", False),
-        },
-    }
