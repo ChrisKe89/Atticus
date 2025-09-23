@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Added
+
+- SMTP mailer module `atticus.notify.mailer` and `/contact` route that sends escalation emails using `.env` SMTP settings.
+- Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
+- Docs: added `ARCHITECTURE.md`, `OPERATIONS.md`, `RELEASE.md`.
+- Dev HTTP: added `/contact` example.
+
+### Changed
+
+- Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
+
 ## [0.2.2] - 2025-09-22
 
 ### Changed

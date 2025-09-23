@@ -9,6 +9,7 @@ from pathlib import Path
 
 import faiss
 import numpy as np
+import numpy.typing as npt
 
 
 @dataclass(slots=True)
@@ -32,15 +33,17 @@ class StoredChunk:
 
 def build_faiss_index(
     chunks: Iterable[StoredChunk], dimension: int
-) -> tuple[faiss.IndexFlatIP, np.ndarray]:
-    vectors = np.array([chunk.embedding for chunk in chunks], dtype=np.float32)
+) -> tuple[faiss.IndexFlatIP, npt.NDArray[np.float32]]:
+    vectors: npt.NDArray[np.float32] = np.array(
+        [chunk.embedding for chunk in chunks], dtype=np.float32
+    )
     if vectors.size == 0:
         index = faiss.IndexFlatIP(dimension)
         return index, vectors
 
     index = faiss.IndexFlatIP(dimension)
     faiss.normalize_L2(vectors)
-    index.add(vectors)
+    index.add(x=vectors)  # pyright: ignore[reportCallIssue]
     return index, vectors
 
 

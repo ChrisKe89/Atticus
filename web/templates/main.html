@@ -1,0 +1,40 @@
+<!-- web/templates/main.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atticus</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/theme.css') }}" />
+  <script defer src="{{ url_for('static', path='js/app.js') }}"></script>
+  <style>
+    /* minimal fallback layout to satisfy acceptance (theme.css may override) */
+    .layout { display: flex; min-height: 100vh; margin: 0; }
+    .sidebar { width: 240px; border-right: 1px solid #eee; padding: 12px; }
+    .sidebar--collapsed { width: 56px; }
+    .chat { flex: 1; display: flex; flex-direction: column; }
+    .chat__header { padding: 12px; border-bottom: 1px solid #eee; }
+    .chat__stream { flex: 1; overflow-y: auto; padding: 12px; }
+    .chat__composer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #eee; }
+    .chat__input { flex: 1; padding: 8px; }
+    .chat__send { padding: 8px 12px; }
+    .msg { margin: 6px 0; padding: 8px 10px; border-radius: 6px; }
+    .msg.user { background: #eef2ff; }
+    .msg.agent { background: #f1f5f9; }
+  </style>
+</head>
+<body class="layout">
+  {% include 'side_menu.html' %}
+  <main id="chat" class="chat">
+    <header class="chat__header">
+      <h1 class="chat__title">Atticus</h1>
+    </header>
+    <section id="chat-stream" class="chat__stream" aria-live="polite" aria-atomic="false"></section>
+    <footer class="chat__composer" role="form" aria-label="Chat composer">
+      <input id="chat-input" class="chat__input" type="text" placeholder="Ask Atticus." autocomplete="off" />
+      <button id="chat-send" class="chat__send" type="button">Send</button>
+    </footer>
+  </main>
+</body>
+</html>
+

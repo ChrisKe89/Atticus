@@ -23,6 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           # Installs your package and dev extras (ruff, mypy, pytest, pydantic, etc.)
           python -m pip install -e ".[dev]"
+          python -m pip install pre-commit
 
       - name: Show tool versions
         run: |
@@ -44,5 +45,10 @@ jobs:
           # Match your mypy package set
           mypy atticus api ingest retriever eval
 
-      - name: Pytest
-        run: pytest -q
+      - name: Tests with coverage (>=90%)
+        run: |
+          pytest --maxfail=1 --disable-warnings \
+                 --cov=atticus --cov=api --cov=retriever \
+                 --cov-report=term-missing --cov-fail-under=90 -q
+      - name: Pre-commit (all files)
+        run: pre-commit run --all-files --show-diff-on-failure

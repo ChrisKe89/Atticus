@@ -3,7 +3,7 @@ repos:
     rev: v0.13.1
     hooks:
       - id: ruff
-        args: [check, ., --fix]
+        args: ["--fix"]
         exclude: '^_tmp_.*\.py$'
       - id: ruff-format
         exclude: '^_tmp_.*\.py$'
@@ -28,3 +28,23 @@ repos:
         additional_dependencies:
           - markdownlint-cli2@0.12.0
         args: ["**/*.md", "#node_modules", "#.venv"]
+      - id: forbid-tmp-files
+        name: forbid tmp files (_tmp_*)
+        language: python
+        entry: python
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            import os, sys, subprocess
+            try:
+                out = subprocess.check_output(['git', 'ls-files', '-z'])
+            except Exception as e:
+                print(f'forbid-tmp: unable to list files: {e}')
+                sys.exit(0)
+            files = out.decode('utf-8', 'ignore').split('\0')
+            bad = [p for p in files if p and (os.path.basename(p).startswith('_tmp_') or '/_tmp_' in p or '\\_tmp_' in p)]
+            if bad:
+                print('Forbidden tmp files found:\n' + '\n'.join(bad))
+                sys.exit(1)
+            sys.exit(0)

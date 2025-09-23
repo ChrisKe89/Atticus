@@ -44,12 +44,23 @@ class AppSettings(BaseSettings):
     generation_model: str = Field(default="gpt-4.1", alias="GEN_MODEL")
     confidence_threshold: float = Field(default=0.70, alias="CONFIDENCE_THRESHOLD")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+    verbose_logging: bool = Field(default=False, alias="LOG_VERBOSE")
+    trace_logging: bool = Field(default=False, alias="LOG_TRACE")
     timezone: str = Field(default="UTC", alias="TIMEZONE")
     evaluation_runs_dir: Path = Field(default=Path("eval/runs"))
     baseline_path: Path = Field(default=Path("eval/baseline.json"))
     gold_set_path: Path = Field(default=Path("eval/gold_set.csv"))
     eval_regression_threshold: float = Field(default=3.0, alias="EVAL_REGRESSION_THRESHOLD")
     config_path: Path = Field(default=Path("config.yaml"), alias="CONFIG_PATH")
+
+    # Notification / escalation (from .env)
+    contact_email: str | None = Field(default=None, alias="CONTACT_EMAIL")
+    smtp_host: str | None = Field(default=None, alias="SMTP_HOST")
+    smtp_port: int = Field(default=587, alias="SMTP_PORT")
+    smtp_user: str | None = Field(default=None, alias="SMTP_USER")
+    smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
+    smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
+    smtp_to: str | None = Field(default=None, alias="SMTP_TO")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

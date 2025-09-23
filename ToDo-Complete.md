@@ -74,4 +74,14 @@
 - [x] Generate CED smoke eval CSV (`eval/ced-362-smoke.csv`) — completed 2025-09-21 (commit de2b371).
 - [x] Codex task “Build CED smoke eval CSV (10)” — completed 2025-09-21 (commit de2b371).
 - [x] Pin embedding model `text-embedding-3-large@2025-01-15` — completed 2025-09-21 (commit 3013a1a).
-- [x] Expose env vars `CONFIDENCE_THRESHOLD`, `EMBEDDING_MODEL_VERSION`, `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, `CHUNK_OVERLAP_TOKENS` — completed 2025-09-21 (commit 3013a1a).
+- [x] Expose env vars `CONFIDENCE_THRESHOLD`, `EMBEDDING_MODEL_VERSION`, `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, `CHUNK_OVERLAP_TOKENS` - completed 2025-09-21 (commit 3013a1a).
+
+## 2025-09-23
+
+- [x] Env generator: `scripts/generate_env.py` with defaults and `--force` - completed 2025-09-23.
+- [x] SMTP Mailer: `atticus/notify/mailer.py` exposing `send_escalation` reading `.env` - completed 2025-09-23.
+- [x] API `/contact`: `api/routes/contact.py` POST to trigger escalation email (202 Accepted) - completed 2025-09-23.
+- [x] API `/ask`: implemented in `api/routes/chat.py` returning `{answer, sources, confidence}` - completed 2025-09-23.
+- [x] Serve UI via FastAPI templates and static mount `/static`; `GET /` renders `web/templates/main.html`; alias `/ui` - completed 2025-09-23.
+- [x] Modern UI: created cleaned templates and JS per TODO at paths `web/templates/*.html`, `web/static/js/app.js`, `web/static/css/theme.css` (placeholder) - completed 2025-09-23.
+- [x] Examples: added `examples/dev.http` with `/ask` and `/contact` - completed 2025-09-23.

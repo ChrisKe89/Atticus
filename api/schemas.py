@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
+from pydantic.config import ConfigDict
 
 
 class HealthResponse(BaseModel):
@@ -36,7 +37,9 @@ class IngestResponse(BaseModel):
 
 
 class AskRequest(BaseModel):
-    question: str
+    # Accept both {"question": "..."} and legacy {"query": "..."}
+    model_config = ConfigDict(populate_by_name=True)
+    question: str = Field(validation_alias="query")
     filters: dict[str, str] | None = Field(
         default=None, description="Metadata filters such as path_prefix or source_type"
     )
