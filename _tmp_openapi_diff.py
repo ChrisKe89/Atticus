@@ -1,4 +1,5 @@
-import json, difflib
+import difflib
+import json
 
 old = json.load(open("openapi.json"))
 new = json.load(open("openapi.new.json"))

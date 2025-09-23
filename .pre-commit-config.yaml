@@ -3,7 +3,10 @@ repos:
     rev: v0.13.1
     hooks:
       - id: ruff
+        args: [check, ., --fix]
+        exclude: '^_tmp_.*\.py$'
       - id: ruff-format
+        exclude: '^_tmp_.*\.py$'
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.8.0
     hooks:

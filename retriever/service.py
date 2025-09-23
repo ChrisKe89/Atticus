@@ -32,7 +32,7 @@ def _format_contexts(results: list[SearchResult], limit: int) -> tuple[list[str]
     return contexts, citations
 
 
-LLM_CONF_SWITCH = 0.85
+LLM_CONF_SWITCH = 0.80
 
 
 def answer_question(
@@ -75,9 +75,9 @@ def answer_question(
 
     response = generator.generate(question, contexts, citation_texts)
 
-    top_scores = [
-        max(0.0, min(1.0, result.score)) for result in results[: settings.max_context_chunks]
-    ]
+    # Emphasize the head of the ranking when computing retrieval confidence
+    head = min(5, settings.max_context_chunks)
+    top_scores = [max(0.0, min(1.0, result.score)) for result in results[:head]]
     retrieval_conf = sum(top_scores) / len(top_scores) if top_scores else 0.0
     llm_conf = generator.heuristic_confidence(response)
     w_r, w_l = 0.6, 0.4

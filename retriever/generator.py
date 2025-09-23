@@ -9,6 +9,8 @@ import re
 from collections.abc import Iterable
 from typing import Any, cast
 
+from rapidfuzz import fuzz
+
 from atticus.config import AppSettings
 
 
@@ -34,7 +36,7 @@ class GeneratorClient:
         else:
             self.logger.info("No OpenAI API key detected; using offline summarizer")
 
-    def generate(  # noqa: PLR0912
+    def generate(  # noqa: PLR0912, PLR0915
         self,
         prompt: str,
         contexts: Iterable[str],
@@ -67,6 +69,26 @@ class GeneratorClient:
                     "OpenAI generation failed; using offline summarizer",
                     extra={"extra_payload": {"error": str(exc)}},
                 )
+
+        # Offline: try Q/A matching first, then specialized heuristics, then summary
+        lowered_prompt = prompt.lower()
+        # Q/A pairs like: "Q: ..." followed later by "A: ..."
+        try:
+            QA_MATCH_THRESHOLD = 0.6
+            for block in contexts:
+                lines = block.splitlines()
+                content_lines = lines[1:] if lines and ":" in lines[0] else lines
+                for i, line in enumerate(content_lines):
+                    if line.strip().lower().startswith("q:"):
+                        q_text = line.split(":", 1)[1].strip()
+                        score = fuzz.partial_ratio(lowered_prompt, q_text.lower()) / 100.0
+                        if score >= QA_MATCH_THRESHOLD:
+                            for j in range(i + 1, min(i + 5, len(content_lines))):
+                                nxt = content_lines[j].strip()
+                                if nxt.lower().startswith("a:"):
+                                    return nxt.split(":", 1)[1].strip()
+        except Exception:
+            pass
 
         # Lightweight heuristic for common spec-style questions when offline
         lowered_prompt = prompt.lower()
