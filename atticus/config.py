@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -160,12 +161,83 @@ def _load_yaml_config(path: Path) -> dict[str, Any]:
     raise ValueError(f"Configuration file {path} must contain a mapping")
 
 
-@lru_cache(maxsize=1)
+_SETTINGS_CACHE: tuple[tuple[float, float, str], AppSettings] | None = None
+
+
+def _iter_alias_strings(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    choices = getattr(value, "choices", None)
+    if choices is not None:
+        return [str(item) for item in choices]
+    result: list[str] = []
+    try:
+        for item in value:  # type: ignore[assignment]
+            if isinstance(item, str):
+                result.append(item)
+            else:
+                result.extend(_iter_alias_strings(item))
+    except TypeError:
+        pass
+    return result
+
+
+def _env_variables_fingerprint() -> str:
+    keys: set[str] = set()
+    for name, field in AppSettings.model_fields.items():
+        keys.add(name.upper())
+        alias = getattr(field, "alias", None)
+        if alias:
+            keys.update(_iter_alias_strings(alias))
+        validation_alias = getattr(field, "validation_alias", None)
+        keys.update(_iter_alias_strings(validation_alias))
+    material = "|".join(f"{key}={os.environ.get(key, '')}" for key in sorted(keys))
+    return hashlib.sha256(material.encode("utf-8")).hexdigest()
+
+
+def _resolve_env_file() -> Path | None:
+    env_file = AppSettings.model_config.get("env_file")
+    if isinstance(env_file, (list, tuple)):
+        if not env_file:
+            return None
+        first = env_file[0]
+        return Path(str(first))
+    if isinstance(env_file, str):
+        return Path(env_file)
+    return None
+
+
+def reset_settings_cache() -> None:
+    """Clear the cached settings instance (primarily for tests)."""
+
+    global _SETTINGS_CACHE
+    _SETTINGS_CACHE = None
+
+
 def load_settings() -> AppSettings:
+    env_path = _resolve_env_file() or Path(".env")
+    env_mtime = env_path.stat().st_mtime if env_path.exists() else -1.0
+    env_fingerprint = _env_variables_fingerprint()
+
     base = AppSettings()
-    config_data = _load_yaml_config(base.config_path)
-    if not config_data:
-        return base
-    merged: dict[str, Any] = base.model_dump()
-    merged.update(config_data)
-    return AppSettings(**merged)
+    config_path = base.config_path
+    config_mtime = config_path.stat().st_mtime if config_path.exists() else -1.0
+
+    cache_key = (env_mtime, config_mtime, env_fingerprint)
+
+    global _SETTINGS_CACHE
+    if _SETTINGS_CACHE and _SETTINGS_CACHE[0] == cache_key:
+        return _SETTINGS_CACHE[1]
+
+    config_data = _load_yaml_config(config_path)
+    if config_data:
+        merged: dict[str, Any] = base.model_dump()
+        merged.update(config_data)
+        settings = AppSettings(**merged)
+    else:
+        settings = base
+
+    _SETTINGS_CACHE = (cache_key, settings)
+    return settings
