@@ -15,7 +15,11 @@ def test_chat_route_or_skip():
         return
 
     client = TestClient(app)
-    r = client.post("/ask", json={"query": "ping"})
+    try:
+        r = client.post("/ask", json={"query": "ping"})
+    except FileNotFoundError as exc:
+        pytest.skip(f"index not built: {exc}")
+        return
     assert r.status_code == 200
     data = r.json()
     assert "answer" in data
@@ -39,5 +43,9 @@ def test_chat_route_rejects_placeholder_or_skip():
         return
 
     client = TestClient(app)
-    r = client.post("/ask", json={"query": "string"})
+    try:
+        r = client.post("/ask", json={"query": "string"})
+    except FileNotFoundError as exc:
+        pytest.skip(f"index not built: {exc}")
+        return
     assert r.status_code == 400

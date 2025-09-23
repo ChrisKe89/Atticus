@@ -26,6 +26,8 @@
 python scripts/generate_env.py
 # or overwrite an existing file:
 python scripts/generate_env.py --force
+# ignore host overrides entirely (useful when a stale OPENAI_API_KEY is exported):
+python scripts/generate_env.py --force --ignore-env
 ```
 
 ### Required keys (created for you)
@@ -35,7 +37,33 @@ At minimum set: `CONTACT_EMAIL`, `SMTP_*` if you want escalation email to work.
 
 ### .env keys
 
-The application reads all configuration from `.env`:
+The application reads all configuration from `.env` (host environment variables can override values unless you set `ATTICUS_ENV_PRIORITY=env`, which is the default). Use the diagnostics helper to trace which source won:
+
+```bash
+python scripts/debug_env.py
+```
+
+Sample output:
+
+```json
+{
+  "env_file": "/workspace/Atticus/.env",
+  "openai_api_key": {
+    "conflict": true,
+    "env_file_fingerprint": "2c1f3d8a8b0e",
+    "fingerprint": "2c1f3d8a8b0e",
+    "os_environ_fingerprint": "8a21d55c04bd",
+    "present": true,
+    "source": ".env"
+  },
+  "priority": "env",
+  "repo_root": "/workspace/Atticus"
+}
+```
+
+Set `ATTICUS_ENV_PRIORITY=os` if you explicitly want the live process environment to win over `.env` (e.g. in container orchestrators). Conflicts are recorded in `settings.secrets_report["OPENAI_API_KEY"]` for logging/tests.
+
+The main `.env` keys are:
 
 | Key | Description | Default |
 |---|---|---|
@@ -93,6 +121,46 @@ The project defines the following convenience targets:
   - Logs (JSONL): `logs/app.jsonl` (info), `logs/errors.jsonl` (errors)
   - Sessions view: `GET /admin/sessions?format=html|json`
   - Verbose logs (full Q/A, tokens, trace): set `LOG_VERBOSE=1` and optionally `LOG_TRACE=1` in `.env` and restart the API.
+
+## Docker deployment
+
+The repository ships with a Docker workflow for local or on-premise installs:
+
+1. Ensure `.env` contains production-ready secrets (OpenAI key, SMTP, contact email).
+2. Build the containers:
+
+   ```bash
+   docker compose build
+   ```
+
+3. Start the stack:
+
+   ```bash
+   docker compose up -d
+   ```
+
+   - `atticus-api` listens on `8000` and mounts `./content`, `indices`, and `logs`.
+   - `atticus-nginx` fronts the API on ports `80/443` and runs health checks.
+
+4. Tail logs: `docker compose logs -f api`.
+5. Stop: `docker compose down` (add `-v` to clear named volumes).
+
+To rebuild indices inside the container, exec into `atticus-api` and run the usual `make ingest` / `make eval` commands.
+
+## Nginx reverse proxy
+
+The `nginx/` directory contains a hardened reverse-proxy layer for TLS termination.
+
+- `nginx/nginx.conf` expects the FastAPI service at `atticus-api:8000`.
+- Place certificates in `nginx/certs/` (`fullchain.pem`, `privkey.pem` by default) or update the paths inside the config.
+- Adjust the `server_name` directive to your domain before deploying.
+- Reload configuration without downtime:
+
+  ```bash
+  docker compose exec nginx nginx -s reload
+  ```
+
+For environments where you already have a reverse proxy or load balancer, you can reuse the same configuration blocks.
 
 ## Frontend
 

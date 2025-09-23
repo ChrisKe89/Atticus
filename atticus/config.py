@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -13,6 +14,12 @@ from zoneinfo import ZoneInfo
 import yaml
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _fingerprint_secret(value: str | None) -> str | None:
+    if not value:
+        return None
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
 
 
 class AppSettings(BaseSettings):
@@ -61,6 +68,9 @@ class AppSettings(BaseSettings):
     smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
     smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
     smtp_to: str | None = Field(default=None, alias="SMTP_TO")
+    secrets_report: dict[str, dict[str, Any]] = Field(
+        default_factory=dict, exclude=True, repr=False
+    )
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
@@ -160,12 +170,198 @@ def _load_yaml_config(path: Path) -> dict[str, Any]:
     raise ValueError(f"Configuration file {path} must contain a mapping")
 
 
-@lru_cache(maxsize=1)
+_SETTINGS_CACHE: tuple[tuple[float, float, str], AppSettings] | None = None
+
+
+def _iter_alias_strings(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    choices = getattr(value, "choices", None)
+    if choices is not None:
+        return [str(item) for item in choices]
+    result: list[str] = []
+    try:
+        for item in value:  # type: ignore[assignment]
+            if isinstance(item, str):
+                result.append(item)
+            else:
+                result.extend(_iter_alias_strings(item))
+    except TypeError:
+        pass
+    return result
+
+
+def _env_variables_fingerprint() -> str:
+    keys: set[str] = {"ATTICUS_ENV_PRIORITY"}
+    for name, field in AppSettings.model_fields.items():
+        keys.add(name.upper())
+        alias = getattr(field, "alias", None)
+        if alias:
+            keys.update(_iter_alias_strings(alias))
+        validation_alias = getattr(field, "validation_alias", None)
+        keys.update(_iter_alias_strings(validation_alias))
+    material = "|".join(f"{key}={os.environ.get(key, '')}" for key in sorted(keys))
+    return hashlib.sha256(material.encode("utf-8")).hexdigest()
+
+
+def _resolve_env_file() -> Path | None:
+    env_file = AppSettings.model_config.get("env_file")
+    if isinstance(env_file, (list, tuple)):
+        if not env_file:
+            return None
+        first = env_file[0]
+        return Path(str(first))
+    if isinstance(env_file, str):
+        return Path(env_file)
+    return None
+
+
+def _parse_env_file(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+    values: dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if value and (
+            (value.startswith('"') and value.endswith('"'))
+            or (value.startswith("'") and value.endswith("'"))
+        ):
+            value = value[1:-1]
+        values[key] = value
+    return values
+
+
+def _select_secret(
+    priority: str,
+    env_file_value: str | None,
+    os_environ_value: str | None,
+    config_value: str | None,
+    default_value: str | None,
+) -> tuple[str | None, str]:
+    priority = priority if priority in {"env", "os"} else "env"
+    candidates: list[tuple[str, str | None]]
+    if priority == "env":
+        candidates = [
+            (".env", env_file_value),
+            ("os.environ", os_environ_value),
+            ("config.yaml", config_value),
+            ("defaults", default_value),
+        ]
+    else:
+        candidates = [
+            ("os.environ", os_environ_value),
+            (".env", env_file_value),
+            ("config.yaml", config_value),
+            ("defaults", default_value),
+        ]
+    for source, value in candidates:
+        if value:
+            return value, source
+    return None, "unset"
+
+
+def _normalise_secret(value: str | None) -> str | None:
+    if value is None:
+        return None
+    stripped = value.strip()
+    return stripped or None
+
+
+def reset_settings_cache() -> None:
+    """Clear the cached settings instance (primarily for tests)."""
+
+    global _SETTINGS_CACHE
+    _SETTINGS_CACHE = None
+
+
 def load_settings() -> AppSettings:
+    env_path = _resolve_env_file() or Path(".env")
+    env_mtime = env_path.stat().st_mtime if env_path.exists() else -1.0
+    env_fingerprint = _env_variables_fingerprint()
+
     base = AppSettings()
-    config_data = _load_yaml_config(base.config_path)
-    if not config_data:
-        return base
-    merged: dict[str, Any] = base.model_dump()
-    merged.update(config_data)
-    return AppSettings(**merged)
+    config_path = base.config_path
+    config_mtime = config_path.stat().st_mtime if config_path.exists() else -1.0
+
+    cache_key = (env_mtime, config_mtime, env_fingerprint)
+
+    global _SETTINGS_CACHE
+    if _SETTINGS_CACHE and _SETTINGS_CACHE[0] == cache_key:
+        return _SETTINGS_CACHE[1]
+
+    config_data = _load_yaml_config(config_path)
+    if config_data:
+        merged: dict[str, Any] = base.model_dump()
+        merged.update(config_data)
+        settings = AppSettings(**merged)
+    else:
+        settings = base
+
+    env_values = _parse_env_file(env_path)
+    env_file_value = _normalise_secret(env_values.get("OPENAI_API_KEY"))
+    os_env_value = _normalise_secret(os.environ.get("OPENAI_API_KEY"))
+    config_value = _normalise_secret(
+        (config_data or {}).get("openai_api_key") or (config_data or {}).get("OPENAI_API_KEY")
+    )
+    priority = _normalise_secret(os.environ.get("ATTICUS_ENV_PRIORITY")) or "env"
+    selected_value, source = _select_secret(
+        priority,
+        env_file_value,
+        os_env_value,
+        config_value,
+        _normalise_secret(settings.openai_api_key),
+    )
+
+    manual_overrides: dict[str, Any] = {}
+    if selected_value != settings.openai_api_key:
+        manual_overrides["openai_api_key"] = selected_value
+
+    conflict = bool(env_file_value and os_env_value and env_file_value != os_env_value)
+    manual_overrides["secrets_report"] = {
+        "OPENAI_API_KEY": {
+            "resolved_source": source,
+            "priority": priority,
+            "resolved_fingerprint": _fingerprint_secret(selected_value),
+            "env_file_fingerprint": _fingerprint_secret(env_file_value),
+            "os_environ_fingerprint": _fingerprint_secret(os_env_value),
+            "config_fingerprint": _fingerprint_secret(config_value),
+            "conflict": conflict,
+            "env_file_path": str(env_path.resolve()),
+        }
+    }
+
+    if manual_overrides:
+        settings = settings.model_copy(update=manual_overrides)
+
+    _SETTINGS_CACHE = (cache_key, settings)
+    return settings
+
+
+def environment_diagnostics() -> dict[str, Any]:
+    settings = load_settings()
+    report = dict(settings.secrets_report)
+    openai_report = report.get("OPENAI_API_KEY", {})
+    return {
+        "env_file": openai_report.get(
+            "env_file_path", str((_resolve_env_file() or Path(".env")).resolve())
+        ),
+        "priority": openai_report.get("priority", os.environ.get("ATTICUS_ENV_PRIORITY", "env")),
+        "openai_api_key": {
+            "present": bool(settings.openai_api_key),
+            "source": openai_report.get("resolved_source", "unset"),
+            "fingerprint": openai_report.get("resolved_fingerprint"),
+            "env_file_fingerprint": openai_report.get("env_file_fingerprint"),
+            "os_environ_fingerprint": openai_report.get("os_environ_fingerprint"),
+            "config_fingerprint": openai_report.get("config_fingerprint"),
+            "conflict": openai_report.get("conflict", False),
+        },
+    }
