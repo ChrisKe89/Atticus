@@ -2,7 +2,6 @@ import importlib
 import os
 import sys
 import time
-from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -25,12 +24,14 @@ def test_load_settings_refreshes_env(tmp_path):
         first = config.load_settings()
         assert first.openai_api_key == "first-key"
 
+
         time.sleep(1.1)
         env_path.write_text("OPENAI_API_KEY=second-key\n", encoding="utf-8")
         os.utime(env_path, None)
 
         second = config.load_settings()
         assert second.openai_api_key == "second-key"
+
     finally:
         os.chdir(old_cwd)
         importlib.reload(config_module)

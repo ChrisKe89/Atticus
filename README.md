@@ -26,6 +26,8 @@
 python scripts/generate_env.py
 # or overwrite an existing file:
 python scripts/generate_env.py --force
+# ignore host overrides entirely (useful when a stale OPENAI_API_KEY is exported):
+python scripts/generate_env.py --force --ignore-env
 ```
 
 ### Required keys (created for you)
@@ -35,7 +37,33 @@ At minimum set: `CONTACT_EMAIL`, `SMTP_*` if you want escalation email to work.
 
 ### .env keys
 
-The application reads all configuration from `.env`:
+The application reads all configuration from `.env` (host environment variables can override values unless you set `ATTICUS_ENV_PRIORITY=env`, which is the default). Use the diagnostics helper to trace which source won:
+
+```bash
+python scripts/debug_env.py
+```
+
+Sample output:
+
+```json
+{
+  "env_file": "/workspace/Atticus/.env",
+  "openai_api_key": {
+    "conflict": true,
+    "env_file_fingerprint": "2c1f3d8a8b0e",
+    "fingerprint": "2c1f3d8a8b0e",
+    "os_environ_fingerprint": "8a21d55c04bd",
+    "present": true,
+    "source": ".env"
+  },
+  "priority": "env",
+  "repo_root": "/workspace/Atticus"
+}
+```
+
+Set `ATTICUS_ENV_PRIORITY=os` if you explicitly want the live process environment to win over `.env` (e.g. in container orchestrators). Conflicts are recorded in `settings.secrets_report["OPENAI_API_KEY"]` for logging/tests.
+
+The main `.env` keys are:
 
 | Key | Description | Default |
 |---|---|---|

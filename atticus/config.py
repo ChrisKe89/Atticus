@@ -16,6 +16,12 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+def _fingerprint_secret(value: str | None) -> str | None:
+    if not value:
+        return None
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
+
+
 class AppSettings(BaseSettings):
     """Application configuration sourced from environment variables."""
 
@@ -62,6 +68,9 @@ class AppSettings(BaseSettings):
     smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
     smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
     smtp_to: str | None = Field(default=None, alias="SMTP_TO")
+    secrets_report: dict[str, dict[str, Any]] = Field(
+        default_factory=dict, exclude=True, repr=False
+    )
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
@@ -185,7 +194,7 @@ def _iter_alias_strings(value: Any) -> list[str]:
 
 
 def _env_variables_fingerprint() -> str:
-    keys: set[str] = set()
+
     for name, field in AppSettings.model_fields.items():
         keys.add(name.upper())
         alias = getattr(field, "alias", None)
@@ -207,6 +216,7 @@ def _resolve_env_file() -> Path | None:
     if isinstance(env_file, str):
         return Path(env_file)
     return None
+
 
 
 def reset_settings_cache() -> None:
@@ -239,5 +249,3 @@ def load_settings() -> AppSettings:
     else:
         settings = base
 
-    _SETTINGS_CACHE = (cache_key, settings)
-    return settings
