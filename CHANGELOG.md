@@ -13,6 +13,30 @@
 
 - Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
 
+## [0.2.4] - 2025-09-25
+
+### Added
+
+- `scripts/debug_env.py` helper for printing sanitized diagnostics about where secrets are sourced (environment vs `.env`).
+- Tests covering environment priority selection and conflict reporting for OpenAI API keys.
+
+### Changed
+
+- Prefer `.env` secrets by default while still allowing `ATTICUS_ENV_PRIORITY=os` for container overrides; expose `settings.secrets_report` metadata for logging and troubleshooting.
+- `scripts/generate_env.py` gains `--ignore-env` plus fingerprint logging so stale exported keys are obvious when regenerating `.env`.
+
+## [0.2.3] - 2025-09-24
+
+### Fixed
+
+- Regenerate application settings automatically when `.env` or runtime environment variables change, eliminating stale OpenAI API
+  key fingerprints during web sessions.
+
+### Changed
+
+- Rebuilt the web chat surface with a modern layout, collapsible navigation, and refreshed styling to match the new HTML
+  specification.
+- Expanded `README.md` with Docker Compose deployment steps plus nginx reverse-proxy instructions for TLS fronting.
 
 ## [0.2.3] - 2025-09-24
 
