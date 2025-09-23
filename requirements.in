@@ -9,6 +9,7 @@ pydantic
 pydantic-settings
 httpx
 python-dotenv
+jinja2
 openai
 faiss-cpu
 numpy
@@ -36,6 +37,8 @@ pyyaml
 # Testing
 pytest
 pytest-cov
+pytest-sugar
+pytest-xdist
 
 # Tooling
 ruff

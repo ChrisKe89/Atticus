@@ -35,7 +35,7 @@ def load_error_logs(path: Path, limit: int = 50) -> list[dict[str, object]]:
     return entries
 
 
-def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:
+def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:  # noqa: PLR0912
     if not path.exists():
         return []
     lines = path.read_text(encoding="utf-8").splitlines()
@@ -55,6 +55,13 @@ def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:
                 meta = ask_metadata.setdefault(request_id, {})
                 for key in ("confidence", "escalate", "filters"):
                     if key in payload:
+                        meta[key] = payload[key]
+        if message == "chat_turn":
+            request_id = str(payload.get("request_id", ""))
+            if request_id:
+                meta = ask_metadata.setdefault(request_id, {})
+                for key in ("confidence", "tokens", "trace"):
+                    if key in payload and payload[key] is not None:
                         meta[key] = payload[key]
         if message == "request_complete":
             request_id = str(payload.get("request_id", ""))

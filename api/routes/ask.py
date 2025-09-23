@@ -13,7 +13,7 @@ from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import AskRequest, AskResponse, CitationModel
 
 router = APIRouter()
-Q_MIN_LEN = 5
+Q_MIN_LEN = 4
 
 
 @router.post("/ask", response_model=AskResponse)

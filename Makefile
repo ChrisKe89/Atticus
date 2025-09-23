@@ -1,48 +1,48 @@
-COMPOSE ?= docker compose
+# Makefile — Atticus
+.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality
 
-.PHONY: up down logs ingest eval build install lint format typecheck test check dev precommit compile
+PYTHON ?= python
 
-up:
-	$(COMPOSE) up --build -d
+env:
+	$(PYTHON) scripts/generate_env.py
 
-down:
-	$(COMPOSE) down
+smtp-test:
+	$(PYTHON) -c "import sys;\ntry:\n    from atticus.notify.mailer import send_escalation\nexcept Exception as e:\n    print('TODO: implement atticus/notify/mailer.py'); sys.exit(1)\nelse:\n    send_escalation('Atticus SMTP test','This is a test from make smtp-test'); print('smtp ok')"
 
-logs:
-	$(COMPOSE) logs -f
+api:
+	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
+
+ui:
+	@echo Serving static UI on http://localhost:8081 (expects API on :8000)
+	$(PYTHON) -m http.server 8081 --directory web
 
 ingest:
-	$(COMPOSE) run --rm api python scripts/ingest.py
+	$(PYTHON) scripts/ingest_cli.py
 
 eval:
-	$(COMPOSE) run --rm api python scripts/eval_run.py --json
+	$(PYTHON) scripts/eval_run.py
 
-build:
-	$(COMPOSE) build
+openapi:
+	$(PYTHON) scripts/generate_api_docs.py
 
-install:
-	python -m pip install --upgrade pip
-	python -m pip install -r requirements.txt
+test:
+	pytest -n auto --maxfail=1 --disable-warnings \
+	       --cov=atticus --cov=api --cov=retriever \
+	       --cov-report=term-missing --cov-fail-under=90
 
+e2e: env ingest eval
+	@echo 'E2E stub complete - API/UI checks to be added once implemented.'
+
+# Local quality gates (mirror CI)
 lint:
 	ruff check .
+	ruff format --check .
 
 format:
 	ruff format .
+	ruff check . --fix
 
 typecheck:
-	mypy
+	mypy atticus api ingest retriever eval
 
-test:
-	pytest
-
-check: lint typecheck test
-
-precommit:
-	pre-commit run --all-files --show-diff-on-failure
-
-compile:
-	python -m piptools compile --resolver=backtracking requirements.in
-
-dev:
-	uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+quality: lint typecheck test

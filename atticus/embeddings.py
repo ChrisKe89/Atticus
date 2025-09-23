@@ -23,7 +23,15 @@ class EmbeddingClient:
         self.model_name = settings.embed_model
         self.dimension = settings.embed_dimensions
 
-        api_key = settings.openai_api_key or os.getenv("OPENAI_API_KEY")
+        # Resolve API key and record source for diagnostics
+        source = "none"
+        api_key = None
+        if getattr(settings, "openai_api_key", None):
+            api_key = settings.openai_api_key
+            source = "settings"
+        elif os.getenv("OPENAI_API_KEY"):
+            api_key = os.getenv("OPENAI_API_KEY")
+            source = "os.environ"
         self._client: Any | None = None
         if api_key:  # pragma: no cover - requires network
             try:
@@ -31,6 +39,22 @@ class EmbeddingClient:
                 openai_class = cast(Any, openai_module).OpenAI
                 # Pass the key explicitly so we don't rely on process env
                 self._client = openai_class(api_key=api_key)
+                # Safe fingerprint (sha256 prefix) for troubleshooting without leaking secrets
+                try:
+                    fp = hashlib.sha256(str(api_key).encode("utf-8")).hexdigest()[:12]
+                except Exception:
+                    fp = "unknown"
+                self.logger.info(
+                    "openai_client_initialized",
+                    extra={
+                        "extra_payload": {
+                            "client": "embeddings",
+                            "source": source,
+                            "key_fp": fp,
+                            "model": self.model_name,
+                        }
+                    },
+                )
             except Exception as exc:  # pragma: no cover - network path
                 self.logger.warning(
                     "OpenAI client initialization failed; using fallback embeddings",

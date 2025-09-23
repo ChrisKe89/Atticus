@@ -1,165 +1,140 @@
-# Atticus
+# Atticus Documentation
 
-Atticus is a Retrieval-Augmented Generation (RAG) pipeline focused on FUJIFILM multifunction device knowledge. It applies the
-content taxonomy, ingestion controls, evaluation gates, and observability guidance defined in `AGENTS.md`.
+## Adding New Content
 
-## Platform Summary
+1. Place documents inside the `content/` tree following the taxonomy in
+   `AGENTS.md` §3.1.
+2. Name files using `YYYYMMDD_topic_version.ext` for traceability.
+3. Run `python scripts/ingest_cli.py` (or `make ingest`) to parse, chunk
+   (defaults controlled by `config.yaml` / `.env`), embed, and update the
+   index.
+4. Review the ingestion report in `logs/app.jsonl` and commit the updated index
+   snapshot plus `indices/manifest.json`.
+5. Execute the evaluation harness with
+   `python scripts/eval_run.py --json --output-dir eval/runs/manual` to confirm
+   retrieval quality before tagging a release.
+6. Regenerate API documentation with `python scripts/generate_api_docs.py` so
+   the OpenAPI schema in `docs/api/openapi.json` stays in sync with the
+   deployed code.
 
-- **Runtime:** Python 3.12
-- **LLM:** `gpt-4.1`
-- **Embedding model:** `text-embedding-3-large` (deterministic fallback used when no OpenAI key is present)
-- **Content taxonomy:** see `content/` or `docs/README.md` for placement rules (§3.1)
+## Environment Setup
 
-## Quick Start (Docker Compose)
-
-1. Copy `.env.example` to `.env` and set your OpenAI credentials. The `.env` file now includes chunking controls (`CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, `CHUNK_OVERLAP_TOKENS`) that default to the values defined in `config.yaml`.
-2. Review `config.yaml` for directory locations, model pins, and evaluation thresholds. All services load this file via `atticus.config.load_settings()`.
-3. Build and launch the stack:
-
-   ```bash
-   make up
-   ```
-
-   This runs the FastAPI app on port `8000` behind Nginx (`80/443`).
-4. Tail service logs as needed with `make logs` and stop the stack with `make down`.
-
-The compose file mounts `content/`, `indices/`, and `logs/` so local changes persist across container rebuilds.
-
-## Local Environment Setup (No Make)
-
-Windows PowerShell
-
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-macOS/Linux
+- Ensure Python 3.12 is active.
+- Generate your `.env`:
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python scripts/generate_env.py
+# or overwrite an existing file:
+python scripts/generate_env.py --force
 ```
 
-Then build the index and run a smoke eval:
+### Required keys (created for you)
 
-```bash
-python scripts/ingest_cli.py
-python scripts/eval_run.py --json
-```
+See **AGENTS.md** and comments in `scripts/generate_env.py` for detailed descriptions.
+At minimum set: `CONTACT_EMAIL`, `SMTP_*` if you want escalation email to work.
 
-Start the API locally:
+### .env keys
 
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
+The application reads all configuration from `.env`:
 
-Helpful development shortcuts (if GNU Make is available):
+| Key | Description | Default |
+|---|---|---|
+| `OPENAI_API_KEY` | OpenAI API key for embeddings/generation | (empty) |
+| `OPENAI_MODEL` | Default LLM for agent/function calls | gpt-4.1 |
+| `GEN_MODEL` | Generation model for answers | gpt-4.1 |
+| `EMBED_MODEL` | Embedding model name | text-embedding-3-large |
+| `EMBEDDING_MODEL_VERSION` | Embed model version pin | text-embedding-3-large@2025-01-15 |
+| `CONFIDENCE_THRESHOLD` | Escalate when model confidence below this | 0.70 |
+| `CHUNK_TARGET_TOKENS` | Target tokens per chunk | 512 |
+| `CHUNK_MIN_TOKENS` | Minimum tokens per chunk | 256 |
+| `CHUNK_OVERLAP_TOKENS` | Overlap between neighbor chunks | 100 |
+| `MAX_CONTEXT_CHUNKS` | Chunks to stuff into context | 10 |
+| `LOG_LEVEL` | Logging verbosity | INFO |
+| `LOG_VERBOSE` | Include full chat content, token counts, and decision traces in logs (use with care) | 0 |
+| `LOG_TRACE` | Emit additional step-by-step trace entries (debug) | 0 |
+| `TIMEZONE` | Server/application timezone | UTC |
+| `EVAL_REGRESSION_THRESHOLD` | % allowed regression on metrics | 3.0 |
+| `CONTENT_DIR` | Path to ingestible content | ./content |
+| `CONTACT_EMAIL` | Address exposed in UI "CONTACT" action | (empty) |
+| `SMTP_HOST` | Mail server | (empty) |
+| `SMTP_PORT` | Mail server port | 587 |
+| `SMTP_USER` | SMTP username | (empty) |
+| `SMTP_PASS` | SMTP password | (empty) |
+| `SMTP_FROM` | From address for escalation emails | (empty) |
+| `SMTP_TO` | To address for escalation emails (if different) | (empty) |
 
-- `make dev` - runs `uvicorn` with autoreload.
-- `make lint`, `make typecheck`, `make test`, or `make check` - run the individual or combined quality gates.
-- `make compile` - regenerate `requirements.txt` from `requirements.in` using `pip-compile`.
-- `dev.http` - ready-to-run HTTPie/VS Code REST Client snippets for `/health`, `/ask`, `/ingest`, `/eval/run`, and admin endpoints.
+## Make Targets
 
-## Testing & Quality
+The project defines the following convenience targets:
 
-- Unit tests: `pytest -q`
-- Coverage (target ≥90%): `pytest --cov --cov-report=term-missing`
-- Lint: `ruff check .`
-- Type check: `mypy`
+| Target | Does |
+|---|---|
+| `make env` | Create `.env` from defaults |
+| `make ingest` | Ingest + index content from `CONTENT_DIR` |
+| `make eval` | Run retrieval evaluation; write metrics under `eval/runs/` |
+| `make api` | Start API (FastAPI/uvicorn) |
+| `make ui` | Serve static UI (or API+UI if integrated) |
+| `make smtp-test` | Send a test email using `.env` SMTP settings |
+| `make e2e` | Ingest → Eval → API smoke → UI ping |
+| `make openapi` | Regenerate OpenAPI schema |
+| `make test` | Run unit tests (`pytest -q`) |
+| `make lint` | Ruff lint + format check |
+| `make format` | Apply Ruff formatting and fixes |
+| `make typecheck` | Run `mypy` over core packages |
 
-## API Documentation
+## Live Run
 
-- Generate the OpenAPI schema locally:
+- Start the API locally:
+  - `make api` → http://localhost:8000/
+  - Docs: http://localhost:8000/docs
+- Optional static UI only: `make ui` → http://localhost:8081/
+- Examples: open `examples/dev.http` in your REST client to hit `/ask` and `/contact`.
+- Observability:
+  - Logs (JSONL): `logs/app.jsonl` (info), `logs/errors.jsonl` (errors)
+  - Sessions view: `GET /admin/sessions?format=html|json`
+  - Verbose logs (full Q/A, tokens, trace): set `LOG_VERBOSE=1` and optionally `LOG_TRACE=1` in `.env` and restart the API.
 
-  ```bash
-  python scripts/generate_api_docs.py --output docs/api/openapi.json
-  ```
+## Frontend
 
-- Pass `--format yaml` for a YAML export or adjust `--output` to point at a different file. The command loads `api.main.app` directly; the server does not need to be running.
-- The resulting artifacts live under `docs/api/` alongside usage notes.
+- The UI is specified in **FRONTEND.md** and embedded in **TODO.md** with the exact HTML/CSS to materialize.
+- Left side: collapsible menu with a single item **CONTACT**.
+- Right side: chat panel; message stream scrolls above; input anchored at bottom.
+- Theme pulls from `web/static/css/theme.css` (kept consistent with your provided stylesheet).
+- CONTACT posts to `/contact` which sends an escalation email using `.env` (`CONTACT_EMAIL`, `SMTP_*`).
 
-## Ingestion Workflow (§3)
+## Documentation Map (End-to-End)
 
-1. Place new or updated documents under `content/` following the taxonomy in §3.1.
-2. Run the ingestion pipeline:
+- **AGENTS.md** – architecture, env, escalation, confidence policy
+- **ARCHITECTURE.md** – components and data flow
+- **OPERATIONS.md** – runbooks (ingest, eval, snapshot/rollback, logs)
+- **FRONTEND.md** – UI spec and file placements
+- **SECURITY.md** – secrets handling and redaction policy
+- **TROUBLESHOOTING.md** – Windows/PDF/ingestion pitfalls
+- **RELEASE.md** – release process & gates
+- **CONTRIBUTING.md** / **STYLEGUIDE.md** – contributor rules & style
 
-   ```bash
-   make ingest  # or: python scripts/ingest_cli.py --paths <optional subset>
-   ```
+## Testing & Evaluation
 
-   The CLI reads the same `config.yaml` defaults and supports `--full-refresh`, `--paths`, and `--output` arguments for automation.
-3. Inspect `logs/app.jsonl` for the `ingestion_complete` event. A manifest, FAISS index, and snapshot are written under `indices/`. Reused chunks retain their metadata (model version, breadcrumbs, token spans).
+### Unit tests
+Run with `pytest -q`. Enforce ≥90% coverage across core packages unless an exemption is documented.
+Coverage is enforced in CI and via `make test`.
 
-## Retrieval, Admin, and Observability
+Coverage exemptions (temporary, documented):
+- Integration-heavy modules omitted until full suite lands:
+  - `atticus/embeddings.py`, `atticus/faiss_index.py`, `atticus/metrics.py`, `atticus/tokenization.py`
+  - `retriever/generator.py`, `retriever/vector_store.py`, `retriever/service.py`
+  - `api/routes/admin.py`, `api/routes/eval.py`, `api/routes/ingest.py`, `api/utils.py`, `api/middleware.py`, `api/dependencies.py`
+  - `atticus/config.py`, `atticus/logging.py`, `atticus/notify/mailer.py`
+These are configured under `[tool.coverage.run].omit` in `pyproject.toml` and will be removed as tests are added.
 
-- The vector store implementation lives in `retriever/vector_store.py` and powers `/ask` queries with hybrid re-ranking.
-- Structured JSON logs are emitted to `logs/app.jsonl`. Aggregated rollups are flushed to `logs/metrics/metrics.csv` via `atticus.metrics.MetricsRecorder`.
-- Admin endpoints include `/admin/dictionary`, `/admin/errors`, and `/admin/sessions`. Use `/admin/sessions?format=html` for an HTML dashboard of recent requests (confidence, latency, escalation flag, and filters).
+### Ingestion smoke
+`make ingest` then inspect logs for doc counts, chunk totals, and token range stats.
 
-## Evaluation Runbook (§4)
+### Retrieval evaluation
+- Place gold Q/A under `eval/goldset/*.jsonl`.
+- Run `make eval` — metrics written to `eval/runs/<timestamp>/metrics.json`.
+- Gate: fail CI if any metric regresses > `EVAL_REGRESSION_THRESHOLD` percent vs baseline (configured in `.env`).
 
-1. Ensure the latest index is on disk (run ingestion first if required).
-2. Execute the evaluation harness:
-
-   ```bash
-   make eval  # or: python scripts/eval_run.py --json --output-dir eval/runs/manual
-   ```
-
-   The CLI exits non-zero if any metric regresses beyond the configured threshold (`EVAL_REGRESSION_THRESHOLD`).
-3. Metrics (`metrics.csv`) and per-query summaries (`summary.json`) are stored under `eval/runs/YYYYMMDD/`.
-4. Compare results against `eval/baseline.json`; releases fail if any metric regresses by more than **3%** (enforced in CI).
-
-## Release Checklist (§8)
-
-1. Ingest new content and capture the updated manifest/index snapshot in `indices/snapshots/`.
-2. Run the evaluation harness and confirm metrics stay within the 3% regression guardrail.
-3. Update `CHANGELOG.md` and this `README.md` with notable changes and evaluation deltas.
-4. Tag the repo using Semantic Versioning (e.g., `v0.1.0`) and include evaluation notes in the tag message.
-
-## CED Chunking Pipeline
-
-The dedicated CED workflow converts structured device collateral into JSONL artifacts for downstream indexing. Example:
-
-```bash
-python scripts/chunk_ced.py \
-  --input content/model/AC7070/Apeos_C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf \
-  --output data/index/ced-362.chunks.jsonl \
-  --tables data/index/ced-362.tables.jsonl \
-  --doc-index data/index/ced-362.doc_index.json
-```
-
-The CLI respects the chunking defaults from `config.yaml` and enriches each chunk with metadata such as breadcrumbs, token indices, model coverage, keywords, and SHA-256 hashes. The source PDF is not stored in the repository; see `REQUIREMENTS.md#ced-362-source` for fulfilment details.
-
-## Continuous Integration & Release Automation
-
-- `.github/workflows/lint-test.yml` – runs Ruff, MyPy, and Pytest on pushes and pull requests.
-- `.github/workflows/eval-gate.yml` – runs `scripts/eval_run.py` and uploads `eval/runs/ci/` artifacts; the job fails if metrics regress beyond the 3% guardrail.
-- `.github/workflows/release.yml` – runs the full quality gate on tagged builds and publishes evaluation artifacts to the GitHub Release.
-
-## Rollback Guidance (§7)
-
-Detailed rollback steps (restoring the prior tag, index snapshot, and smoke tests) are documented in `scripts/rollback.md`. The CLI `python scripts/rollback.py --snapshot <dir>` supports optional smoke tests (`--limit`) and alternate config files (`--config`).
-
-## Windows Notes (Ghostscript & Tesseract)
-
-Some ingestion features rely on Ghostscript (for Camelot) and the UB Mannheim Tesseract build. On Windows:
-
-1. Install Ghostscript from <https://ghostscript.com/releases/> and add the install directory (e.g., `C:\Program Files\gs\gs10.03.0\bin`) to the `PATH` environment variable.
-2. Install the UB Mannheim Tesseract build from <https://github.com/UB-Mannheim/tesseract/wiki>. During setup, allow the installer to append its `tesseract.exe` location to `PATH`.
-3. Restart your shell after modifying `PATH`, then verify availability:
-
-   ```powershell
-   tesseract --version
-   gswin64c --version
-   ```
-
-If either command is missing, relaunch the terminal as an administrator and re-check the environment variables. Documented steps apply equally to Git Bash and PowerShell sessions.
-
-## Release Notes (This Version)
-
-- Baseline corpus ingested via `scripts/ingest_cli.py`; 4 chunks reused and manifest/index snapshot stored (see `logs/ingest_summary.json`).
-- Added CODEX operator prompt, API schema generator (`scripts/generate_api_docs.py` with `docs/api/openapi.json`), and `dev.http` request samples alongside Windows Ghostscript/Tesseract guidance.
-- Evaluation run (2025-09-21) achieved **nDCG@10 = 0.55**, **Recall@50 = 0.60**, **MRR = 0.5333** with artifacts under `eval/runs/20250921/`.
+### API contracts
+- Regenerate OpenAPI: `make openapi`.
+- Sample calls: see `examples/dev.http` for `/ask` and `/contact` requests.

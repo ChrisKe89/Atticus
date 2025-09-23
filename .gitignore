@@ -26,6 +26,8 @@ dist/
 .coverage
 htmlcov/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Notebooks
 *.ipynb_checkpoints

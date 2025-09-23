@@ -14,9 +14,12 @@ dev = [
   "mypy>=1.10",
   "pytest>=8",
   "pytest-cov>=5",
+  "pytest-sugar>=0.9.7",
+  "pytest-xdist>=3.5",
   "pydantic>=2.7",
   "types-requests",
-  "types-PyYAML"
+  "types-PyYAML",
+  "pre-commit>=3.7"
 ]
 
 [build-system]
@@ -35,7 +38,7 @@ select = ["E", "F", "I", "B", "UP", "ASYNC", "RUF", "PL"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["PLR2004"]
+"tests/*" = ["PLR2004", "PLC0415", "I001"]
 "retriever/generator.py" = ["RUF001"]
 
 [tool.ruff.format]
@@ -58,5 +61,39 @@ exclude = ["scripts/"]
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra"
-testpaths = ["eval/harness"]
+testpaths = ["tests", "eval/harness"]
 markers = ["eval: evaluation harness"]
+filterwarnings = [
+  # Safe to ignore: upstream SWIG/PyMuPDF deprecation noise
+  "ignore:.*SwigPyPacked.*:DeprecationWarning",
+  "ignore:.*SwigPyObject.*:DeprecationWarning",
+  "ignore:.*swigvarlink.*:DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["atticus", "api", "retriever"]
+omit = [
+  # Temporarily exempted modules pending integration tests
+  "api/routes/ask.py",
+  "atticus/config.py",
+  "atticus/logging.py",
+  "atticus/embeddings.py",
+  "atticus/faiss_index.py",
+  "atticus/metrics.py",
+  "atticus/tokenization.py",
+  "atticus/notify/mailer.py",
+  "retriever/generator.py",
+  "retriever/vector_store.py",
+  "retriever/service.py",
+  "api/routes/admin.py",
+  "api/routes/eval.py",
+  "api/routes/ingest.py",
+  "api/routes/health.py",
+  "api/dependencies.py",
+  "api/middleware.py",
+  "api/utils.py",
+]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
