@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
-"""
-generate_env.py - Create a .env file for Atticus with sensible defaults.
+"""Create or refresh the repository .env file.
 
-Usage:
+Usage examples::
+
     python scripts/generate_env.py            # creates .env if missing
     python scripts/generate_env.py --force    # overwrite existing .env
+    python scripts/generate_env.py --ignore-env   # ignore host env vars when writing
 """
 
+from __future__ import annotations
+
+import argparse
 import os
-import sys
 from pathlib import Path
+
+
+def _fingerprint(value: str | None) -> str | None:
+    if not value:
+        return None
+    import hashlib
+
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
+
 
 DEFAULTS = {
     "OPENAI_MODEL": "gpt-4.1",
@@ -38,20 +50,33 @@ DEFAULTS = {
 }
 
 
-def main():
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Generate a .env file for Atticus")
+    parser.add_argument("--force", action="store_true", help="overwrite an existing .env file")
+    parser.add_argument(
+        "--ignore-env",
+        action="store_true",
+        help="ignore host environment variables when populating values",
+    )
+    args = parser.parse_args()
+
     root = Path(__file__).resolve().parents[1]
     env_path = root / ".env"
-    force = "--force" in sys.argv
 
-    if env_path.exists() and not force:
+    if env_path.exists() and not args.force:
         print(f"[generate_env] .env already exists at {env_path}. Use --force to overwrite.")
         return 0
 
-    # Load existing values from environment to allow CI overrides
+    if args.ignore_env:
+        print("[generate_env] Ignoring host environment variables; writing defaults.")
+
     lines = []
     used_openai_key: str | None = None
     for k, v in DEFAULTS.items():
-        val = os.environ.get(k, v)
+        if args.ignore_env:
+            val = v
+        else:
+            val = os.environ.get(k, v)
         if isinstance(val, str):
             val = val.strip()
         if k == "OPENAI_API_KEY":
@@ -60,11 +85,27 @@ def main():
 
     env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[generate_env] Wrote {env_path}")
-    if not used_openai_key:
+    if used_openai_key:
+        source = (
+            "environment" if not args.ignore_env and "OPENAI_API_KEY" in os.environ else "defaults"
+        )
+        print(
+            "[generate_env] OPENAI_API_KEY resolved from %s (fingerprint=%s)"
+            % (source, _fingerprint(used_openai_key) or "none")
+        )
+    else:
         print(
             "[generate_env] Note: OPENAI_API_KEY is empty. Set it via environment before running, e.g.\n"
             "  PowerShell:  $env:OPENAI_API_KEY='sk-...' ; python scripts/generate_env.py --force\n"
             "  Bash:        OPENAI_API_KEY='sk-...' python scripts/generate_env.py --force"
+        )
+    if (
+        not args.ignore_env
+        and "OPENAI_API_KEY" in os.environ
+        and os.environ.get("OPENAI_API_KEY", "").strip() != (used_openai_key or "")
+    ):
+        print(
+            "[generate_env] Warning: host OPENAI_API_KEY differs from written value. Run with --ignore-env to bypass host overrides."
         )
     return 0
 
