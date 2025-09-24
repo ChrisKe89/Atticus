@@ -90,7 +90,7 @@ Common shortcuts:
 | `make smtp-test` | Send a test SES email |
 | `make e2e` | Ingest → Eval → API smoke → UI ping |
 | `make openapi` | Regenerate OpenAPI schema |
-| `make test` | Run tests with ≥90% coverage |
+| `make test` | Run tests with >=90% coverage |
 | `make lint` / `make format` | Lint and auto-fix with Ruff |
 | `make typecheck` | Run static type checks |
 
@@ -108,7 +108,7 @@ Common shortcuts:
 ## Documentation Map
 
 * [AGENTS.md](AGENTS.md) – architecture, environment settings, error policy
-* [docs/OPERATIONS.md](docs/OPERATIONS.md) – runbooks and evaluation metrics guide
+* [OPERATIONS.md](OPERATIONS.md) – runbooks and evaluation metrics guide
 * [ARCHITECTURE.md](ARCHITECTURE.md) – high-level system diagram
 * [SECURITY.md](SECURITY.md) – secrets handling and SES policies
 * [TROUBLESHOOTING.md](TROUBLESHOOTING.md) – common setup and parsing issues

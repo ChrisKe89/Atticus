@@ -57,7 +57,7 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 
 * **Ruff** for linting and import sorting (`make lint`, `make format`).
 * **mypy** for static type checking (`make typecheck`).
-* **pytest** for testing (`make test`), with a target of ≥90 % coverage.
+* **pytest** for testing (`make test`), with a target of >=90% coverage.
 * Optional: `pytest-xdist` for parallel test runs; if installed, Makefile will automatically add `-n auto`.
 
 ---

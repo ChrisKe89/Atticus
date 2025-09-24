@@ -1,7 +1,7 @@
 # OPERATIONS — Atticus
 
 This document provides **day‑to‑day runbooks** and a detailed guide for interpreting evaluation metrics.
-It complements [README.md](../README.md) for setup and [AGENTS.md](../AGENTS.md) for architecture.
+It complements [README.md](README.md) for setup and [AGENTS.md](AGENTS.md) for architecture.
 
 ---
 
@@ -59,7 +59,7 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
 * Requires valid SES **SMTP credentials** (not IAM keys).
 * Ensure the `CONTACT_EMAIL` and all `SMTP_*` environment variables are correctly set in `.env`.
 * The SES identity for `SMTP_FROM` must be verified; sandbox mode also requires verified recipients.
-* For security, lock down SES with an IAM policy restricting `ses:FromAddress` to approved senders and region (see [SECURITY.md](../SECURITY.md)).
+* For security, lock down SES with an IAM policy restricting `ses:FromAddress` to approved senders and region (see [SECURITY.md](SECURITY.md)).
 
 ---
 
@@ -106,8 +106,8 @@ They measure how well retrieval surfaces the right evidence for answer generatio
 | Metric | What it Measures | Ideal Range | Notes |
 |--------|------------------|------------|-------|
 | **nDCG@K** | Quality of ranking — are the best chunks at the top? | 0.85–1.0 excellent | Higher is better; discounts lower ranks |
-| **Recall@K** | Percentage of questions with at least one correct chunk in top-K | ≥0.9 excellent | Indicates coverage |
-| **MRR@K** | How early the first correct chunk appears | ≥0.7 excellent | Rewards early hits |
+| **Recall@K** | Percentage of questions with at least one correct chunk in top-K | >=0.9 excellent | Indicates coverage |
+| **MRR@K** | How early the first correct chunk appears | >=0.7 excellent | Rewards early hits |
 | **Precision@K** | Fraction of retrieved chunks that are relevant | Context dependent | Useful when keeping context small |
 
 ### Secondary Metrics
@@ -161,7 +161,7 @@ Interpretation: strong ranking and recall, with fast median latency.
 
 ## References
 
-* [README.md](../README.md) — first-time setup and Make targets
-* [AGENTS.md](../AGENTS.md) — architecture and error policy
-* [SECURITY.md](../SECURITY.md) — secrets and IAM policy
-* [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) — quick fixes
+* [README.md](README.md) — first-time setup and Make targets
+* [AGENTS.md](AGENTS.md) — architecture and error policy
+* [SECURITY.md](SECURITY.md) — secrets and IAM policy
+* [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — quick fixes

@@ -30,4 +30,10 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] Integrated modern UI served by FastAPI templates and static mounts — completed 2025-09-23.
 - [x] Added `examples/dev.http` with sample `/ask` and `/contact` requests — completed 2025-09-23.
 
+## 2025-09-25
+
+- [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit be2c309).
+
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
+
+

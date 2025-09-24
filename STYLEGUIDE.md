@@ -47,7 +47,7 @@ Follow these standards for all code and documentation.
 
 ## Documentation
 
-* Keep cross-links between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](docs/OPERATIONS.md) accurate.
+* Keep cross-links between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](OPERATIONS.md) accurate.
 * Ensure examples and instructions match the latest code and Makefile targets.
 * Update [CHANGELOG.md](CHANGELOG.md) when behaviour changes.
 

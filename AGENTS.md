@@ -102,7 +102,7 @@ Guidelines:
 
 * **Unit tests** mock SMTP so CI never sends real email.
 * **Retrieval evaluation** checks against a gold set and fails CI if regression exceeds the threshold.
-* **Coverage target**: ≥90%, with exemptions tracked in `pyproject.toml`.
+* **Coverage target**: >=90%, with exemptions tracked in `pyproject.toml`.
 
 ---
 
@@ -131,8 +131,8 @@ Guidelines:
 * Define a clear escalation vs. refusal policy.
 * Confirm re-ranker strategy and document any env flags.
 * List allowed or blocked content categories for refusal rules.
-* Add SES IAM policy snippet to [SECURITY.md](SECURITY.md).
 
 ---
 
-*For operational runbooks, snapshot/rollback instructions, and OpenAPI regeneration, see [`docs/OPERATIONS.md`](docs/OPERATIONS.md).*
+*For operational runbooks, snapshot/rollback instructions, and OpenAPI regeneration, see [`OPERATIONS.md`](OPERATIONS.md).*
+
