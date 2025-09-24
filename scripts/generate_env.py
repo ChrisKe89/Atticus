@@ -39,13 +39,13 @@ DEFAULTS = {
     "TIMEZONE": "UTC",
     "EVAL_REGRESSION_THRESHOLD": "3.0",
     "CONTENT_DIR": "./content",
-    "CONTACT_EMAIL": "",
-    "SMTP_HOST": "",
+    "CONTACT_EMAIL": "atticus-contact@agentk.fyi",
+    "SMTP_HOST": "email-smtp.ap-southeast-2.amazonaws.com",
     "SMTP_PORT": "587",
-    "SMTP_USER": "",
-    "SMTP_PASS": "",
-    "SMTP_FROM": "",
-    "SMTP_TO": "",
+    "SMTP_USER": "atticus-escalations",
+    "SMTP_PASS": "Pay641-Prove-Possible-stop-Cry",
+    "SMTP_FROM": "atticus-escalations@agentk.fyi",
+    "SMTP_TO": "atticus-technical-support@agentk.fyi",
 }
 
 
