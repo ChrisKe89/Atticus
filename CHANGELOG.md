@@ -14,7 +14,7 @@ The newest entries appear first.
 - Dev HTTP examples updated with `/contact` route.
 
 ### Changed
-- CI enforces ≥90 % coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
+- CI enforces >=90% coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
 - Configuration cache hardened to reflect `.env` updates during reload tests.
 
 ### Fixed

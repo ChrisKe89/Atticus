@@ -28,8 +28,8 @@ make test       # Ensure all tests pass
 ```
 
 Guidelines:
-* Maintain ≥90 % test coverage. Add or update tests for every behaviour change.
-* Keep documentation in sync, especially [README.md](README.md), [OPERATIONS.md](docs/OPERATIONS.md), and [AGENTS.md](AGENTS.md).
+* Maintain >=90% test coverage. Add or update tests for every behaviour change.
+* Keep documentation in sync, especially [README.md](README.md), [OPERATIONS.md](OPERATIONS.md), and [AGENTS.md](AGENTS.md).
 
 ---
 
@@ -54,7 +54,7 @@ This setup eliminates the need for `ruff-lsp` and ensures consistent formatting 
 
 ## Documentation and Cross‑Links
 
-* Keep references between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](docs/OPERATIONS.md) accurate.
+* Keep references between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](OPERATIONS.md) accurate.
 * Update [CHANGELOG.md](CHANGELOG.md) if your changes affect users.
 * Move completed tasks from [TODO.md](TODO.md) to [ToDo-Complete.md](ToDo-Complete.md) with date and commit reference.
 
