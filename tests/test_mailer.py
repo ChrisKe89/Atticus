@@ -1,36 +1,76 @@
-import os
-
 import pytest
 
 
 def test_mailer_import_or_skip():
     try:
-        from atticus.notify.mailer import send_escalation  # noqa
+        from atticus.notify.mailer import send_escalation  # noqa: F401
     except Exception as e:
         pytest.skip(f"mailer not implemented yet: {e}")
 
 
-@pytest.mark.skipif(
-    not os.environ.get("SMTP_HOST"), reason="requires SMTP configuration in environment"
-)
 def test_send_escalation_smoke(monkeypatch):
+    # Arrange: set minimal SMTP env so code paths that read env won't bail
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "1025")
+    monkeypatch.setenv("SMTP_USER", "user")
+    monkeypatch.setenv("SMTP_PASS", "pass")
+    monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+
+    # Import after env is set so your mailer picks it up
     from atticus.notify import mailer
 
     class FakeSMTP:
         def __init__(self, host, port):
+            # Assert the code is wiring host/port correctly
+            assert host == "smtp.test.local"
+            assert str(port) in ("1025", 1025)
+            self.started_tls = False
+            self.logged_in = False
+            self.sent = False
+
+        # If your code uses context manager: with smtplib.SMTP(...) as s:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def ehlo(self):
             pass
 
-        def starttls(self):
-            pass
+        # Real code often passes an ssl context
+        def starttls(self, context=None):
+            self.started_tls = True
 
         def login(self, u, p):
-            pass
+            # Should be called if SMTP_USER is set
+            assert u == "user" and p == "pass"
+            self.logged_in = True
+
+        # Some code uses send_message; some uses sendmail
+        def send_message(self, msg):
+            assert msg["From"]
+            assert msg["To"]
+            assert msg["Subject"] is not None
+            self.sent = True
 
         def sendmail(self, a, b, c):
-            pass
+            # Accept either API
+            self.sent = True
 
         def quit(self):
             pass
 
-    monkeypatch.setattr(mailer, "SMTP", FakeSMTP, raising=False)
-    mailer.send_escalation("Unit Test", "body")
+    # Patch the exact lookup site: atticus.notify.mailer.smtplib.SMTP
+    monkeypatch.setattr("atticus.notify.mailer.smtplib.SMTP", FakeSMTP, raising=True)
+
+    # Act: call your function
+    result = mailer.send_escalation("Unit Test", "body")
+
+    # Assert: whatever your mailer returns; at least it shouldn't raise
+    # If your function returns None, just assert True
+    assert (
+        result is None
+        or result is True
+        or (isinstance(result, dict) and result.get("status") in ("ok", "dry-run"))
+    )
