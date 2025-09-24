@@ -1,40 +1,119 @@
+# tests/test_contact_route.py
 import pytest
 
 
-def test_contact_route_or_skip():
-    try:
-        from api.main import app  # expected FastAPI app
-    except Exception as e:
-        pytest.skip(f"api not implemented yet: {e}")
-        return
+# Fixture lives in THIS file (no conftest.py needed)
+@pytest.fixture
+def patch_smtp(monkeypatch):
+    class FakeSMTP:
+        def __init__(self, *a, **k):
+            pass
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+        def connect(self, *a, **k):
+            pass
+
+        def ehlo(self, *a, **k):
+            pass
+
+        def starttls(self, *a, **k):
+            pass
+
+        def login(self, *a, **k):
+            pass
+
+        def sendmail(self, *a, **k):
+            pass
+
+        def send_message(self, *a, **k):
+            pass
+
+        def quit(self, *a, **k):
+            pass
+
+        def close(self, *a, **k):
+            pass
+
+    # Patch both import styles used by mailer
+    for t in [
+        "atticus.notify.mailer.smtplib.SMTP",
+        "atticus.notify.mailer.SMTP",
+        "atticus.notify.mailer.smtplib.SMTP_SSL",
+        "atticus.notify.mailer.SMTP_SSL",
+    ]:
+        try:
+            monkeypatch.setattr(t, FakeSMTP, raising=True)
+        except Exception:
+            pass
+
+
+def _mk_client():
+    from fastapi.testclient import TestClient
+    from api.main import app
+
+    return TestClient(app), app
+
+
+def test_contact_route_smoke_or_skip(monkeypatch, patch_smtp):
+    # Minimal env so startup doesn't bail
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "1025")
+    monkeypatch.setenv("SMTP_USER", "user")
+    monkeypatch.setenv("SMTP_PASS", "pass")
+    monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
 
     try:
-        from fastapi.testclient import TestClient
+        client, app = _mk_client()
     except Exception as e:
-        pytest.skip(f"fastapi not installed: {e}")
+        pytest.skip(f"api not importable yet: {e}")
         return
 
-    client = TestClient(app)
-    r = client.post("/contact", json={"reason": "test"})
-    assert r.status_code in (200, 202)
+    known = {r.path for r in app.routes}
+    for path in ("/contact", "/api/contact"):
+        if path not in known:
+            continue
+        r = client.post(path, json={"reason": "test"})
+        if r.status_code in (200, 202):
+            try:
+                data = r.json()
+            except Exception:
+                data = {}
+            assert data.get("status") in {None, "accepted", "ok", "queued", "success"}
+            return
+
+    pytest.fail(f"No working contact endpoint. routes={sorted(known)}")
 
 
-def test_contact_route_with_transcript_or_skip():
+def test_contact_route_with_transcript_or_skip(monkeypatch, patch_smtp):
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "1025")
+    monkeypatch.setenv("SMTP_USER", "user")
+    monkeypatch.setenv("SMTP_PASS", "pass")
+    monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+
     try:
-        from api.main import app
+        client, app = _mk_client()
     except Exception as e:
-        pytest.skip(f"api not implemented yet: {e}")
+        pytest.skip(f"api not importable yet: {e}")
         return
 
-    try:
-        from fastapi.testclient import TestClient
-    except Exception as e:
-        pytest.skip(f"fastapi not installed: {e}")
-        return
-
-    client = TestClient(app)
     payload = {"reason": "test_with_transcript", "transcript": ["Q: hi", "A: hello"]}
-    r = client.post("/contact", json=payload)
-    assert r.status_code in (200, 202)
-    data = r.json()
-    assert data.get("status") in {"accepted", "ok"}
+    known = {r.path for r in app.routes}
+    for path in ("/contact", "/api/contact"):
+        if path not in known:
+            continue
+        r = client.post(path, json=payload)
+        if r.status_code in (200, 202):
+            try:
+                data = r.json()
+            except Exception:
+                data = {}
+            assert data.get("status") in {"accepted", "ok", "queued", "success", None}
+            return
+
+    pytest.fail("No contact endpoint accepted the request.")

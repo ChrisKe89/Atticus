@@ -191,7 +191,7 @@ def _iter_alias_strings(value: Any) -> list[str]:
         return [str(item) for item in choices]
     result: list[str] = []
     try:
-        for item in value:  # type: ignore[assignment]
+        for item in value:
             if isinstance(item, str):
                 result.append(item)
             else:

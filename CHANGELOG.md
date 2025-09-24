@@ -1,123 +1,90 @@
-# Changelog
+# CHANGELOG — Atticus
+
+All notable changes to this project are documented here following **Semantic Versioning**.
+The newest entries appear first.
+
+---
 
 ## [Unreleased]
 
 ### Added
-
-- SMTP mailer module `atticus.notify.mailer` and `/contact` route that sends escalation emails using `.env` SMTP settings.
+- New SMTP mailer module `atticus.notify.mailer` and `/contact` route for escalation emails using `.env` SMTP settings.
 - Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
-- Docs: added `ARCHITECTURE.md`, `OPERATIONS.md`, `RELEASE.md`.
-- Dev HTTP: added `/contact` example.
+- Documentation expanded with `ARCHITECTURE.md`, `OPERATIONS.md`, and `RELEASE.md`.
+- Dev HTTP examples updated with `/contact` route.
 
 ### Changed
-
-- Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
+- CI enforces ≥90 % coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
+- Configuration cache hardened to reflect `.env` updates during reload tests.
 
 ### Fixed
+- Corrected settings regeneration when `.env` or environment variables change.
 
-- Hardened configuration cache invalidation to reflect `.env` updates without lint/runtime errors during reload tests.
+---
 
-## [0.2.4] - 2025-09-25
+## [0.2.4] — 2025-09-25
 
 ### Added
-
-- `scripts/debug_env.py` helper for printing sanitized diagnostics about where secrets are sourced (environment vs `.env`).
+- `scripts/debug_env.py` to print sanitized diagnostics for secrets sourcing.
 - Tests covering environment priority selection and conflict reporting for OpenAI API keys.
 
 ### Changed
+- `.env` secrets preferred by default; can be overridden with `ATTICUS_ENV_PRIORITY=os`.
+- Enhanced `scripts/generate_env.py` with `--ignore-env` and fingerprint logging.
 
-- Prefer `.env` secrets by default while still allowing `ATTICUS_ENV_PRIORITY=os` for container overrides; expose `settings.secrets_report` metadata for logging and troubleshooting.
-- `scripts/generate_env.py` gains `--ignore-env` plus fingerprint logging so stale exported keys are obvious when regenerating `.env`.
+---
 
-## [0.2.3] - 2025-09-24
-
-### Fixed
-
-- Regenerate application settings automatically when `.env` or runtime environment variables change, eliminating stale OpenAI API
-  key fingerprints during web sessions.
+## [0.2.3] — 2025-09-24
 
 ### Changed
-
-- Rebuilt the web chat surface with a modern layout, collapsible navigation, and refreshed styling to match the new HTML
-  specification.
-- Expanded `README.md` with Docker Compose deployment steps plus nginx reverse-proxy instructions for TLS fronting.
-
-## [0.2.3] - 2025-09-24
+- Rebuilt web chat surface with modern layout and collapsible navigation.
+- Expanded README with Docker Compose and Nginx reverse-proxy deployment steps.
 
 ### Fixed
+- Automatic settings regeneration to eliminate stale OpenAI API keys during sessions.
 
-- Regenerate application settings automatically when `.env` or runtime environment variables change, eliminating stale OpenAI API
-  key fingerprints during web sessions.
+---
 
-### Changed
-
-- Rebuilt the web chat surface with a modern layout, collapsible navigation, and refreshed styling to match the new HTML
-  specification.
-- Expanded `README.md` with Docker Compose deployment steps plus nginx reverse-proxy instructions for TLS fronting.
-
-## [0.2.2] - 2025-09-22
+## [0.2.2] — 2025-09-22
 
 ### Changed
+- Bumped patch version to 0.2.2.
+- Included `eval/harness` and `scripts` in pytest discovery.
+- Cleaned unused `type: ignore` comments and applied Ruff auto-fixes.
 
-- Bump patch version to 0.2.2.
-- Align pytest discovery to include `eval/harness` and `scripts` in `pyproject.toml` and VS Code workspace.
-- Remove unused `type: ignore` comments flagged by mypy in parsers and FAISS modules.
-- Applied Ruff auto-fixes to reduce lint noise in scripts.
+---
 
-## [0.2.1] - 2025-09-21
+## [0.2.1] — 2025-09-21
 
 ### Fixed
-
-- Windows install failure by replacing `uvicorn[standard]` with `uvicorn` and excluding `uvloop` on Windows; regenerated `requirements.txt` to keep `httptools`, `websockets`, and `watchfiles`.
-- Evaluation harness: lazy-load heavy imports and fix `main()` settings initialization to allow unit tests without FAISS/OpenAI available.
-- OCR resilience: guard Tesseract OCR calls in PDF/image parsers; ingestion no longer fails if Tesseract binary is missing.
-
-### Operations
-
-- Ran full ingestion over `content/` and generated FAISS index and manifest.
-- Executed smoke evaluation; artifacts written under `eval/runs/YYYYMMDD/`.
-
-## [0.2.0] - 2025-09-21
+- Windows install failures caused by `uvloop` dependency.
+- Improved evaluation harness to allow tests without FAISS/OpenAI installed.
 
 ### Added
+- OCR resilience with better Tesseract error handling.
 
-- Introduced `config.yaml`/`.env` harmony via `atticus.config.load_settings()` and new chunking environment controls.
-- Delivered CLI utilities (`scripts/ingest_cli.py`, `scripts/eval_run.py`, enhanced `scripts/rollback.py`) with consistent argparse help.
-- Expanded ingestion metadata (breadcrumbs, model version, token spans) and added admin session log viewer plus metrics rollups under `logs/metrics/`.
-- Added CED-specific chunking pipeline (`scripts/chunk_ced.py`) and smoke evaluation set (`eval/ced-362-smoke.csv`).
-- Provisioned GitHub Actions workflows for linting/testing, evaluation gating, and tagged releases.
-- Added CODEX operator prompt (`CODEX_PROMPT.md`), API schema generator (`scripts/generate_api_docs.py` + `docs/api/openapi.json`), and `dev.http` request collection with Windows installation guidance for Ghostscript/Tesseract.
+---
 
-### Changed
-
-- Updated retrieval fallback responses to include bullet citations and clearer "I don't know" handling.
-- Refreshed documentation (README, docs/README.md) to reflect new commands, CI gates, chunking workflow, and API documentation automation.
-- Hardened ingestion CLI summary serialization and applied Ruff auto-fixes/mypy typing refinements across ingestion and CED tooling.
-
-### Evaluation
-
-- nDCG@10: **0.55** (Δ +0.55)
-- Recall@50: **0.60** (Δ +0.60)
-- MRR: **0.5333** (Δ +0.5333)
-- Artifacts: `eval/runs/20250921/`
-
-## [0.1.0] - 2025-09-20
+## [0.2.0] — 2025-09-21
 
 ### Added
+- Introduced `config.yaml`/`.env` harmony with `atticus.config.load_settings()`.
+- CLI utilities for ingestion, evaluation, and rollback.
+- Rich ingestion metadata (breadcrumbs, model version, token spans).
+- GitHub Actions for linting, testing, evaluation gating, and tagged releases.
 
-- Seeded content taxonomy (`content/model`, `content/software`, `content/service`) with AC7070 collateral.
-- Implemented ingestion pipeline with deterministic embeddings, JSON logging, and index snapshotting.
-- Added retrieval helpers, observability metrics recorder, and ingestion CLI (`scripts/run_ingestion.py`).
-- Delivered pytest evaluation harness with gold set, baseline metrics, and daily run exports.
+### Changed
+- Updated retrieval fallback responses to include bullet citations.
+- Refreshed documentation and chunking workflow.
 
 ### Evaluation
+- Baseline metrics recorded: nDCG@10: **0.55**, Recall@50: **0.60**, MRR: **0.5333**.
 
-- nDCG@10: **1.00** (Δ +0.00)
-- Recall@50: **1.00** (Δ +0.00)
-- MRR: **1.00** (Δ +0.00)
-- Artifacts: `evaluation/runs/20250920/235132/`
+---
 
-### Models
+## [0.1.0] — 2025-09-20
 
-- Embeddings: `text-embedding-3-large`
-- LLM: `gpt-4.1`
+### Added
+- Initial content taxonomy and ingestion pipeline with deterministic embeddings and JSON logging.
+- Retrieval helpers, observability metrics, and ingestion CLI.
+- Seeded evaluation harness with gold set and baseline metrics.

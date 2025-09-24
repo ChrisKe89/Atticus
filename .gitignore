@@ -9,6 +9,7 @@ __pycache__/
 .env.*
 !.env.example
 
+
 # IDE
 .idea/
 
@@ -36,6 +37,7 @@ htmlcov/
 .DS_Store
 Thumbs.db
 *.log
+.archive
 
 # Certificates (kept via .gitkeep)
 nginx/certs/*

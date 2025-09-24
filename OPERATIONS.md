@@ -1,9 +1,167 @@
-# Operations
+# OPERATIONS — Atticus
 
-- Ingestion: `python scripts/ingest_cli.py` (or `make ingest`).
-- Index manifest/snapshots live under `indices/` and `indices/snapshots/`.
-- Rollback: `python scripts/rollback.py` with a chosen snapshot.
-- Evaluation: `python scripts/eval_run.py --json --output-dir eval/runs/<name>`.
-- Escalation email requires `.env` SMTP_* and CONTACT_EMAIL configured.
+This document provides **day‑to‑day runbooks** and a detailed guide for interpreting evaluation metrics.
+It complements [README.md](../README.md) for setup and [AGENTS.md](../AGENTS.md) for architecture.
 
-See `TROUBLESHOOTING.md` for Windows and parsing pitfalls.
+---
+
+## Ingest & Index
+
+1. Add or update source files under `content/` using `YYYYMMDD_topic_version.ext` naming.
+2. Run ingestion:
+
+   ```bash
+   make ingest
+   ```
+
+   This parses, chunks, embeds, and updates the vector index.
+3. Check logs in `logs/app.jsonl` for document counts, chunk totals, and token ranges.
+4. When ready for release, commit the updated `indices/` snapshot and `indices/manifest.json`.
+
+---
+
+## Evaluate Retrieval
+
+1. Ensure gold Q/A sets exist under `eval/goldset/*.jsonl`.
+2. Run evaluation:
+
+   ```bash
+   make eval
+   ```
+
+   Results are written to `eval/runs/<timestamp>/metrics.json`.
+3. Compare against baseline metrics. CI will fail if regression exceeds `EVAL_REGRESSION_THRESHOLD`.
+
+Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) section below to understand the metrics.
+
+---
+
+## API & UI Operations
+
+* Start the API and integrated UI:
+
+  ```bash
+  make api
+  ```
+
+  Available at `http://localhost:8000` (OpenAPI docs at `/docs`).
+* If the UI is ever split out, reintroduce `make ui` and update the port mapping.
+* To run a full smoke test (ingest → eval → API/UI check):
+
+  ```bash
+  make e2e
+  ```
+
+---
+
+## Escalation Email (SES)
+
+* Requires valid SES **SMTP credentials** (not IAM keys).
+* Ensure the `CONTACT_EMAIL` and all `SMTP_*` environment variables are correctly set in `.env`.
+* The SES identity for `SMTP_FROM` must be verified; sandbox mode also requires verified recipients.
+* For security, lock down SES with an IAM policy restricting `ses:FromAddress` to approved senders and region (see [SECURITY.md](../SECURITY.md)).
+
+---
+
+## Snapshot & Rollback
+
+1. Snapshot the `indices/` directory during each release.
+2. To revert to a previous snapshot:
+
+   ```bash
+   python scripts/rollback.py --manifest indices/manifest.json
+   ```
+
+3. After rollback, run a smoke evaluation:
+
+   ```bash
+   make eval
+   ```
+
+   and test a few known gold queries with `/ask`.
+
+---
+
+## Observability & Debugging
+
+* **Logs**
+  * Info: `logs/app.jsonl`
+  * Errors: `logs/errors.jsonl`
+* **Sessions view**
+  * `GET /admin/sessions?format=html|json`
+* **Verbose tracing**
+  * Set `LOG_VERBOSE=1` and `LOG_TRACE=1` in `.env` and restart the service.
+* **Environment diagnostics**
+  * `python scripts/debug_env.py` shows the source and fingerprint of every secret.
+
+---
+
+## Evaluation Metrics Interpretation
+
+When you run `make eval`, metrics appear in `eval/runs/<timestamp>/metrics.json`.
+They measure how well retrieval surfaces the right evidence for answer generation.
+
+### Core Metrics
+
+| Metric | What it Measures | Ideal Range | Notes |
+|--------|------------------|------------|-------|
+| **nDCG@K** | Quality of ranking — are the best chunks at the top? | 0.85–1.0 excellent | Higher is better; discounts lower ranks |
+| **Recall@K** | Percentage of questions with at least one correct chunk in top-K | ≥0.9 excellent | Indicates coverage |
+| **MRR@K** | How early the first correct chunk appears | ≥0.7 excellent | Rewards early hits |
+| **Precision@K** | Fraction of retrieved chunks that are relevant | Context dependent | Useful when keeping context small |
+
+### Secondary Metrics
+
+* **HitRate@K**: simpler recall variant — was *any* relevant item retrieved?
+* **MAP** (Mean Average Precision): averages precision across ranks.
+* **Coverage**: fraction of gold questions for which any relevant doc exists in the corpus.
+* **Latency**: median and 95th percentile retrieval time.
+
+### Typical Thresholds for CI
+
+Fail the evaluation if:
+
+* `nDCG@10` drops more than **3–5%** compared to baseline.
+* `Recall@10` drops more than **5%**.
+* `MRR@10` drops more than **5–10%**.
+
+These can be tuned for production needs (e.g., stricter for tenders).
+
+### Diagnosing Drops
+
+* **Recall drops, nDCG stable** → content drift or chunk sizes need adjustment.
+* **nDCG drops, Recall stable** → ranking issue; consider enabling a reranker.
+* **Both drop** → ingestion or index regression.
+* **Precision drops, Recall stable** → too many loosely relevant chunks; adjust `MAX_CONTEXT_CHUNKS` or hybrid thresholds.
+
+Example metrics block:
+
+```json
+{
+  "metrics": {
+    "ndcg@10": 0.86,
+    "recall@10": 0.92,
+    "mrr@10": 0.74,
+    "precision@5": 0.62,
+    "latency_ms_p50": 62,
+    "latency_ms_p95": 110
+  },
+  "dataset": "eval/goldset/sales_faq.jsonl",
+  "index_fingerprint": "3d7c1b...f12",
+  "model": {
+    "embed": "text-embedding-3-large@2025-01-15",
+    "gen": "gpt-4.1"
+  }
+}
+```
+
+Interpretation: strong ranking and recall, with fast median latency.
+
+---
+
+## References
+
+* [README.md](../README.md) — first-time setup and Make targets
+* [AGENTS.md](../AGENTS.md) — architecture and error policy
+* [SECURITY.md](../SECURITY.md) — secrets and IAM policy
+* [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) — quick fixes
