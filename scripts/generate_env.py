@@ -11,6 +11,7 @@ Usage examples::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 from pathlib import Path
 
@@ -18,8 +19,6 @@ from pathlib import Path
 def _fingerprint(value: str | None) -> str | None:
     if not value:
         return None
-    import hashlib
-
     return hashlib.sha256(value.encode("utf-8")).hexdigest()[:12]
 
 
@@ -89,10 +88,8 @@ def main() -> int:
         source = (
             "environment" if not args.ignore_env and "OPENAI_API_KEY" in os.environ else "defaults"
         )
-        print(
-            "[generate_env] OPENAI_API_KEY resolved from %s (fingerprint=%s)"
-            % (source, _fingerprint(used_openai_key) or "none")
-        )
+        fingerprint = _fingerprint(used_openai_key) or "none"
+        print(f"[generate_env] OPENAI_API_KEY resolved from {source} (fingerprint={fingerprint})")
     else:
         print(
             "[generate_env] Note: OPENAI_API_KEY is empty. Set it via environment before running, e.g.\n"

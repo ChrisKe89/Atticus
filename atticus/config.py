@@ -170,7 +170,15 @@ def _load_yaml_config(path: Path) -> dict[str, Any]:
     raise ValueError(f"Configuration file {path} must contain a mapping")
 
 
-_SETTINGS_CACHE: tuple[tuple[float, float, str], AppSettings] | None = None
+@dataclass(slots=True)
+class _SettingsCache:
+    """Mutable holder for cached settings and their provenance."""
+
+    key: tuple[float, float, str] | None = None
+    settings: AppSettings | None = None
+
+
+_SETTINGS_CACHE = _SettingsCache()
 
 
 def _iter_alias_strings(value: Any) -> list[str]:
@@ -194,6 +202,7 @@ def _iter_alias_strings(value: Any) -> list[str]:
 
 
 def _env_variables_fingerprint() -> str:
+    keys: set[str] = set()
     for name, field in AppSettings.model_fields.items():
         keys.add(name.upper())
         alias = getattr(field, "alias", None)
@@ -220,8 +229,8 @@ def _resolve_env_file() -> Path | None:
 def reset_settings_cache() -> None:
     """Clear the cached settings instance (primarily for tests)."""
 
-    global _SETTINGS_CACHE
-    _SETTINGS_CACHE = None
+    _SETTINGS_CACHE.key = None
+    _SETTINGS_CACHE.settings = None
 
 
 def load_settings() -> AppSettings:
@@ -235,9 +244,8 @@ def load_settings() -> AppSettings:
 
     cache_key = (env_mtime, config_mtime, env_fingerprint)
 
-    global _SETTINGS_CACHE
-    if _SETTINGS_CACHE and _SETTINGS_CACHE[0] == cache_key:
-        return _SETTINGS_CACHE[1]
+    if _SETTINGS_CACHE.key == cache_key and _SETTINGS_CACHE.settings is not None:
+        return _SETTINGS_CACHE.settings
 
     config_data = _load_yaml_config(config_path)
     if config_data:
@@ -246,3 +254,7 @@ def load_settings() -> AppSettings:
         settings = AppSettings(**merged)
     else:
         settings = base
+
+    _SETTINGS_CACHE.key = cache_key
+    _SETTINGS_CACHE.settings = settings
+    return settings

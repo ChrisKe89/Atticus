@@ -13,6 +13,10 @@
 
 - Enforce ≥90% coverage in CI and `make test`; documented temporary coverage exemptions under `[tool.coverage.run].omit`.
 
+### Fixed
+
+- Hardened configuration cache invalidation to reflect `.env` updates without lint/runtime errors during reload tests.
+
 ## [0.2.4] - 2025-09-25
 
 ### Added
