@@ -48,6 +48,13 @@ def send_escalation(subject: str, body: str, to: str | None = None) -> None:
 
     msg = _compose_message(subject=subject, body=body, sender=sender, recipient=recipient)
 
+    if settings.smtp_dry_run:
+        logger.info(
+            "escalation_email_dry_run",
+            extra={"extra_payload": {"to": "(redacted)", "host": host, "port": port}},
+        )
+        return {"status": "dry-run", "host": host, "port": port}
+
     client = smtplib.SMTP(host, port)
     try:
         # STARTTLS as per security guidance

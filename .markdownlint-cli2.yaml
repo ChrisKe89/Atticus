@@ -7,12 +7,12 @@ config:
     style: "ordered"
   MD022: true
   MD024:
-    "siblings_only": true
-    "allow_different_nesting": true
+    siblings_only: true
+    allow_different_nesting: true
   MD032: true
   MD033:
     allowed_elements: ["img", "p", "br", "a", "code", "em", "strong", "details", "summary"]
-    MD041: true
+  MD041: true
 globs:
   - "**/*.md"
 ignores:
@@ -33,3 +33,4 @@ ignores:
   - "scripts/rollback.md"
   - ".archive/**"
   - "tests/**"
+  - "EXAMPLES_ONLY/**"

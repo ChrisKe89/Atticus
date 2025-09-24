@@ -88,3 +88,4 @@ The newest entries appear first.
 - Initial content taxonomy and ingestion pipeline with deterministic embeddings and JSON logging.
 - Retrieval helpers, observability metrics, and ingestion CLI.
 - Seeded evaluation harness with gold set and baseline metrics.
+

@@ -35,7 +35,22 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] Verified README/AGENTS/OPERATIONS cross-links and fixed relative paths - completed 2025-09-25 (commit 2a3b760).
 - [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit 2a3b760).
 
+
+- [x] Reviewed repository documentation set and normalised coverage messaging - completed 2025-09-25 (commit 7b64e3b).
+- [x] Published secure remote access playbook (Tailscale, Cloudflare Tunnel, SSH) - completed 2025-09-25 (commit 7b64e3b).
+- [x] Verified API-served UI via automated tests (pytest) and captured guidance in ATTICUS detailed guide - completed 2025-09-25 (commit 7b64e3b).
+- [x] Enabled optional hybrid reranker with `ENABLE_RERANKER` flag and documented behaviour - completed 2025-09-25 (commit 7b64e3b).
+- [x] Updated README hero copy to spotlight Sales/tender acceleration messaging - completed 2025-09-25 (commit 7b64e3b).
+- [x] Documented `/ask` request/response schema in docs/api/README.md - completed 2025-09-25 (commit 7b64e3b).
+- [x] Added `SMTP_DRY_RUN` mailer branch with tests and surfaced behaviour in docs - completed 2025-09-25 (commit 7b64e3b).
+- [x] Made pytest parallelism conditional on pytest-xdist availability - completed 2025-09-25 (commit 7b64e3b).
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
+
+
+
+
+
+
 
 
 

@@ -2,6 +2,8 @@
 .PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality
 
 PYTHON ?= python
+XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
+PYTEST_PARALLEL := $(if $(filter 1,$(XDIST_AVAILABLE)),-n auto,)
 
 env:
 	$(PYTHON) scripts/generate_env.py
@@ -26,7 +28,7 @@ openapi:
 	$(PYTHON) scripts/generate_api_docs.py
 
 test:
-	pytest -n auto --maxfail=1 --disable-warnings \
+	pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
 	       --cov=atticus --cov=api --cov=retriever \
 	       --cov-report=term-missing --cov-fail-under=90
 
