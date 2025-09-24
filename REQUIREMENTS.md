@@ -48,6 +48,8 @@ Key variables include:
 | `GEN_MODEL` | Generation model (default `gpt-4.1`) |
 | `EMBED_MODEL` | Embedding model (default `text-embedding-3-large`) |
 | `CONTACT_EMAIL`, `SMTP_*` | Escalation email settings |
+| ENABLE_RERANKER | Toggle hybrid reranking (defaults to disabled) |
+| SMTP_DRY_RUN | Log escalation attempts without sending email |
 
 Run `python scripts/debug_env.py` to verify that environment settings are sourced and fingerprinted correctly.
 
@@ -78,3 +80,7 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 * [README.md](README.md) — overall setup and Makefile targets.
 * [AGENTS.md](AGENTS.md) — agent roles and configuration.
 * [SECURITY.md](SECURITY.md) — secrets handling and IAM guidance.
+\r\n---\r\n\r\n## Pending Clarifications\r\n\r\n### Code Review Scope\r\n\r\nA full code audit requires clarity on:\r\n- Target depth (style, correctness, security) and acceptable turnaround time.\r\n- Whether third-party dependencies like FAISS/OpenAI should be reviewed or stubbed.\r\n- Expected deliverables (annotated PR, issue list, refactor plan).\r\n\r\n### Hero Graphic Asset\r\n\r\nReplacing the README hero placeholder needs an approved image or design brief (dimensions, brand constraints, copy). Provide assets or a reference repository before proceeding.\r\n
+
+
+

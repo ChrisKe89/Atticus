@@ -40,6 +40,7 @@ class AppSettings(BaseSettings):
     chunk_min_tokens: int = Field(default=256, alias="CHUNK_MIN_TOKENS")
     chunk_overlap_tokens_setting: int = Field(default=100, alias="CHUNK_OVERLAP_TOKENS")
     max_context_chunks: int = Field(default=10, ge=1)
+    enable_reranker: bool = Field(default=False, alias="ENABLE_RERANKER")
     top_k: int = Field(default=20, ge=1)
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     embed_model: str = Field(default="text-embedding-3-large", alias="EMBED_MODEL")
@@ -68,6 +69,7 @@ class AppSettings(BaseSettings):
     smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
     smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
     smtp_to: str | None = Field(default=None, alias="SMTP_TO")
+    smtp_dry_run: bool = Field(default=False, alias="SMTP_DRY_RUN")
     secrets_report: dict[str, dict[str, Any]] = Field(
         default_factory=dict, exclude=True, repr=False
     )

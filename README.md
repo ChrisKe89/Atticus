@@ -1,4 +1,4 @@
-# Atticus
+# Atticus\r\n\r\n> **Atticus for Sales Enablement** accelerates tender responses, keeps Sales self-sufficient, and frees Service/Marketing from ad-hoc requests.\r\n
 
 ## Purpose
 
@@ -108,6 +108,8 @@ Common shortcuts:
 ## Documentation Map
 
 * [AGENTS.md](AGENTS.md) – architecture, environment settings, error policy
+* [ATTICUS_DETAILED_GUIDE.md](docs/ATTICUS_DETAILED_GUIDE.md) – end-to-end flow, reranker behaviour, and roadmap parity
+* [REMOTE_ACCESS.md](docs/REMOTE_ACCESS.md) – secure ways to reach a local instance from another PC
 * [OPERATIONS.md](OPERATIONS.md) – runbooks and evaluation metrics guide
 * [ARCHITECTURE.md](ARCHITECTURE.md) – high-level system diagram
 * [SECURITY.md](SECURITY.md) – secrets handling and SES policies
@@ -117,9 +119,17 @@ Common shortcuts:
 * [CONTRIBUTING.md](CONTRIBUTING.md) – contributor workflow
 * [STYLEGUIDE.md](STYLEGUIDE.md) – code and writing standards
 * [TODO.md](TODO.md) / [ToDo-Complete.md](ToDo-Complete.md) – live and completed tasks
-
 ---
 
 ## License
 
 See [LICENSE](LICENSE).
+
+
+
+
+
+
+
+
+

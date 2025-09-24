@@ -28,6 +28,10 @@ class SearchResult:
     page_number: int | None
     heading: str | None
     metadata: dict[str, str]
+    chunk_index: int
+    vector_score: float
+    lexical_score: float
+    fuzz_score: float
 
 
 class VectorStore:
@@ -124,6 +128,31 @@ class VectorStore:
             scores[i] = s
         return scores
 
+    def _rerank_results(self, results: list[SearchResult]) -> list[SearchResult]:
+        """Apply lightweight lexical + semantic re-ranking when enabled."""
+
+        if not results:
+            return results
+        vector_weight = 0.55
+        lexical_weight = 0.25
+        fuzz_weight = 0.20
+        reranked = sorted(
+            results,
+            key=lambda item: (
+                vector_weight * item.vector_score
+                + lexical_weight * item.lexical_score
+                + fuzz_weight * item.fuzz_score
+            ),
+            reverse=True,
+        )
+        for item in reranked:
+            item.score = (
+                vector_weight * item.vector_score
+                + lexical_weight * item.lexical_score
+                + fuzz_weight * item.fuzz_score
+            )
+        return reranked
+
     def search(
         self,
         query: str,
@@ -178,18 +207,16 @@ class VectorStore:
             manifest_entry = self.manifest.documents.get(chunk.source_path, {})
             metadata: dict[str, str] = {"source_type": str(manifest_entry.get("source_type", ""))}
             metadata.update(chunk.extra)
-            v = 0.0
-            # If vec score available, map IP similarity (~[-1,1]) to [0,1]
-            # vec_scores array not directly accessible per i; compute via inner product
-            # Use stored embedding for a stable similarity
             v_emb = np.array(chunk.embedding, dtype=np.float32)
             faiss.normalize_L2(v_emb.reshape(1, -1))
-            v = float(np.dot(embedding, v_emb))
-            # Map cosine/IP similarity from [-1, 1] -> [0, 1] for confidence calibration
-            v = max(0.0, min(1.0, (v + 1.0) / 2.0))
-            # Combine with lexical
-            lex = bm25_norm(i)
-            score = alpha * v + (1 - alpha) * lex
+            vector_similarity = float(np.dot(embedding, v_emb))
+            vector_score = max(0.0, min(1.0, (vector_similarity + 1.0) / 2.0))
+            lexical_score = bm25_norm(i)
+            base_score = alpha * vector_score + (1 - alpha) * lexical_score
+            fuzz_score = fuzz.partial_ratio(query, chunk.text) / 100.0
+            score = base_score
+            if hybrid and not self.settings.enable_reranker:
+                score = 0.8 * base_score + 0.2 * fuzz_score
             results.append(
                 SearchResult(
                     chunk_id=chunk.chunk_id,
@@ -199,15 +226,20 @@ class VectorStore:
                     page_number=chunk.page_number,
                     heading=chunk.section,
                     metadata=metadata,
+                    chunk_index=i,
+                    vector_score=vector_score,
+                    lexical_score=lexical_score,
+                    fuzz_score=fuzz_score,
                 )
             )
 
-        # Fuzzy text boost and final ranking
-        if hybrid and results:
-            for item in results:
-                text_score = fuzz.partial_ratio(query, item.text) / 100.0
-                item.score = 0.8 * item.score + 0.2 * text_score
-        results.sort(key=lambda result: result.score, reverse=True)
+        if self.settings.enable_reranker and results:
+            results = self._rerank_results(results)
+        elif hybrid and results:
+            # Non-reranker flow already applied fuzzy weighting during scoring
+            results.sort(key=lambda result: result.score, reverse=True)
+        else:
+            results.sort(key=lambda result: result.score, reverse=True)
         results = results[:top_k]
 
         log_event(

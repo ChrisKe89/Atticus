@@ -38,7 +38,12 @@ htmlcov/
 Thumbs.db
 *.log
 .archive
+.EXAMPLES_ONLY
 
 # Certificates (kept via .gitkeep)
 nginx/certs/*
 !nginx/certs/.gitkeep
+
+EXAMPLES_ONLY/
+
+

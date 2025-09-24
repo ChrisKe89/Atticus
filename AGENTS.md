@@ -129,10 +129,10 @@ Guidelines:
 ## Open Questions / TODOs
 
 * Define a clear escalation vs. refusal policy.
-* Confirm re-ranker strategy and document any env flags.
 * List allowed or blocked content categories for refusal rules.
 
 ---
 
-*For operational runbooks, snapshot/rollback instructions, and OpenAPI regeneration, see [`OPERATIONS.md`](OPERATIONS.md).*
+*For operational runbooks, snapshot/rollback instructions, and OpenAPI regeneration, see [`OPERATIONS.md`](OPERATIONS.md). Additional system walkthroughs live in [`docs/ATTICUS_DETAILED_GUIDE.md`](docs/ATTICUS_DETAILED_GUIDE.md).*
+
 

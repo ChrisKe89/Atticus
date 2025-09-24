@@ -74,3 +74,25 @@ def test_send_escalation_smoke(monkeypatch):
         or result is True
         or (isinstance(result, dict) and result.get("status") in ("ok", "dry-run"))
     )
+
+
+def test_send_escalation_dry_run(monkeypatch):
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "2525")
+    monkeypatch.setenv("SMTP_FROM", "atticus-dry-run@example.com")
+    monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
+    monkeypatch.setenv("SMTP_DRY_RUN", "1")
+
+    from atticus.notify import mailer
+
+    def fail_connect(*_args, **_kwargs):
+        raise AssertionError("SMTP connection should not be attempted in dry-run mode")
+
+    monkeypatch.setattr("atticus.notify.mailer.smtplib.SMTP", fail_connect, raising=True)
+
+    result = mailer.send_escalation("Dry Run", "body")
+
+    assert isinstance(result, dict)
+    assert result.get("status") == "dry-run"
+    assert result.get("host") == "smtp.test.local"
+    assert str(result.get("port")) == "2525"
