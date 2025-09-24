@@ -32,8 +32,10 @@ Each entry includes the completion date and commit reference for traceability.
 
 ## 2025-09-25
 
-- [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit be2c309).
+- [x] Verified README/AGENTS/OPERATIONS cross-links and fixed relative paths - completed 2025-09-25 (commit 2a3b760).
+- [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit 2a3b760).
 
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
+
 
 

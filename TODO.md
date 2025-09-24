@@ -38,7 +38,6 @@ Tasks marked **[Codex]** are ideal for automation.
 ## Error Handling
 
 - [ ] Implement the proposed **JSON error schema** across all routes and add tests to assert shape and required fields (400/401/422/5xx).
-\n
 ## Tooling
 
 - [ ] Adjust `Makefile` to add `-n auto` only if `pytest-xdist` is installed.
@@ -47,10 +46,14 @@ Tasks marked **[Codex]** are ideal for automation.
 ## Documentation
 
 - [ ] Replace README hero image placeholder with a production-ready graphic.
-- [ ] Verify and maintain cross-links between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](OPERATIONS.md).
 
 ---
 
 > Keep this list accurate and up to date. Once a task is finished, move it to [ToDo-Complete.md](ToDo-Complete.md) with the completion date and relevant commit ID.
+
+
+
+
+
 
 
