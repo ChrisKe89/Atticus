@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import importlib
 import os
 import sys
@@ -7,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import atticus.config as config_module
+config_module = importlib.import_module("atticus.config")
 
 
 def test_load_settings_refreshes_env(tmp_path):
