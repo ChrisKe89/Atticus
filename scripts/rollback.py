@@ -20,13 +20,9 @@ SNAPSHOT_METADATA = "index_metadata.json"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Rollback Atticus vector index")
-    parser.add_argument(
-        "--snapshot", type=Path, default=None, help="Specific snapshot directory to restore"
-    )
+    parser.add_argument("--snapshot", type=Path, default=None, help="Specific snapshot directory to restore")
     parser.add_argument("--skip-smoke", action="store_true", help="Skip smoke tests after rollback")
-    parser.add_argument(
-        "--limit", type=int, default=20, help="Number of gold queries for smoke testing"
-    )
+    parser.add_argument("--limit", type=int, default=20, help="Number of gold queries for smoke testing")
     parser.add_argument("--config", type=Path, help="Path to an alternate config.yaml")
     return parser.parse_args()
 

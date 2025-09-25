@@ -32,6 +32,17 @@
             <p class="topbar__subtitle">Grounded answers for FUJIFILM Business Innovation AU</p>
           </div>
         </header>
+        <div
+          id="escalation-banner"
+          class="banner"
+          data-enabled="{{ '1' if banner_enabled else '0' }}"
+          data-timeout="{{ banner_timeout }}"
+          hidden
+          role="status"
+          aria-live="polite"
+        >
+          <span id="escalation-banner-text"></span>
+        </div>
         <main id="main" class="chat" aria-label="Support conversation">
           <section
             id="chat-stream"

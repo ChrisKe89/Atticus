@@ -57,8 +57,8 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 
 ## Development Tooling
 
-* **Ruff** for linting and import sorting (`make lint`, `make format`).
-* **mypy** for static type checking (`make typecheck`).
+* **Ruff** for linting and import sorting (`make lint`, `make fmt`).
+* **mypy** for static type checking (`make type`).
 * **pytest** for testing (`make test`), with a target of >=90% coverage.
 * Optional: `pytest-xdist` for parallel test runs; if installed, Makefile will automatically add `-n auto`.
 
@@ -80,7 +80,20 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 * [README.md](README.md) — overall setup and Makefile targets.
 * [AGENTS.md](AGENTS.md) — agent roles and configuration.
 * [SECURITY.md](SECURITY.md) — secrets handling and IAM guidance.
-\r\n---\r\n\r\n## Pending Clarifications\r\n\r\n### Code Review Scope\r\n\r\nA full code audit requires clarity on:\r\n- Target depth (style, correctness, security) and acceptable turnaround time.\r\n- Whether third-party dependencies like FAISS/OpenAI should be reviewed or stubbed.\r\n- Expected deliverables (annotated PR, issue list, refactor plan).\r\n\r\n### Hero Graphic Asset\r\n\r\nReplacing the README hero placeholder needs an approved image or design brief (dimensions, brand constraints, copy). Provide assets or a reference repository before proceeding.\r\n
+\r\n---\r\n\r\n## Code Review Scope
 
+- Coverage includes style, correctness, security, and observability.
+- Review third-party dependencies (FAISS, OpenAI clients, SMTP libraries) for pinning and CVEs; stub network calls when tests require isolation.
+- Deliverables: annotated PR feedback, prioritized issue list, and remediation/rollback plan delivered within three business days.
 
+## Backlog Sweep Process
 
+- Review README, TODO, and documentation deltas every Friday AEST; triage new items into TODO.md within 24 hours.
+- Close or update backlog entries once merged and log completions with date + commit in ToDo-Complete.md.
+- Surface blockers here in REQUIREMENTS.md so automations can proceed without clarification loops.
+
+## Hero Graphic Asset
+
+- Hero image must be 1600×900 (PNG or SVG) reflecting FUJIFILM branding and the Atticus tagline.
+- Store approved assets under `web/static/img/` and reference them from README.md.
+- Provide light/dark variants and document licensing or attribution in README.md.

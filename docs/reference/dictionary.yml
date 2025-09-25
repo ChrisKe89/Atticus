@@ -1,0 +1,12 @@
+# Glossary — canonical definitions for Atticus terms
+
+- term: confidence_threshold
+  description: Minimum blended retrieval + generation confidence before escalation is triggered.
+- term: escalation
+  description: Workflow that emails Sales Operations when confidence drops below the threshold.
+- term: manifest
+  description: Metadata summary stored in indices/manifest.json capturing document and chunk counts.
+- term: request_id
+  description: Correlation identifier added to every API response and log entry for traceability.
+- term: reranker
+  description: Optional cross-encoder model that reorders candidate chunks after FAISS/BM25 retrieval.

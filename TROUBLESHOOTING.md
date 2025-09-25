@@ -49,7 +49,7 @@ Common ingestion checks:
 ## FastAPI / UI
 
 * If the API fails to start:
-  * Run `make lint` and `make typecheck` to catch syntax or typing errors.
+  * Run `make fmt`, `make lint`, and `make type` to catch formatting or typing errors.
   * Check logs in `logs/errors.jsonl` for stack traces.
 * Confirm the UI is accessible at `http://localhost:8000/`.
   If the UI has been separated, reintroduce `make ui` and update port mapping.

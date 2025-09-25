@@ -30,23 +30,23 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    * Ensure the following pass:
 
      ```bash
+     make fmt
      make lint
-     make typecheck
+     make type
      make test
      make eval
      make e2e
      ```
 
    * CI requires >=90% coverage and enforces evaluation regression thresholds.
-4. **Tag the Release**
-   * Tag using semantic versioning, e.g. `v1.3.0`:
+4. **Cut the Release**
+   * Use Commitizen automation (runs version bump + changelog + git push with tags):
 
      ```bash
-     git tag v1.3.0
-     git push origin v1.3.0
+     make release
      ```
 
-   * Pushing the tag triggers the `Release` GitHub Action.
+   * The pushed tag triggers the `Release` GitHub Action which publishes the GitHub Release.
 
 ---
 

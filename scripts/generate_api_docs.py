@@ -10,8 +10,11 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+SRC = ROOT / "src"
+for candidate in (SRC, ROOT):
+    candidate_str = str(candidate)
+    if candidate_str not in sys.path:
+        sys.path.insert(0, candidate_str)
 
 from api.main import app  # noqa: E402
 
@@ -21,8 +24,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "docs" / "api" / "openapi.json",
-        help="Path to write the OpenAPI document (defaults to docs/api/openapi.json)",
+        default=ROOT / "docs" / "reference" / "api" / "openapi.json",
+        help="Path to write the OpenAPI document (defaults to docs/reference/api/openapi.json)",
     )
     parser.add_argument(
         "--format",

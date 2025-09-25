@@ -1,6 +1,6 @@
 [project]
 name = "atticus"
-
+version = "0.6.1"
 description = "Atticus Retrieval-Augmented Generation service"
 readme = "README.md"
 authors = [{ name = "Atticus Ops", email = "ops@example.com" }]
@@ -27,10 +27,11 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
+package-dir = {"" = "src"}
 packages = ["atticus", "api", "ingest", "retriever", "eval"]
 
 [tool.ruff]
-line-length = 100
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
@@ -57,11 +58,12 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 warn_return_any = true
 exclude = "^(scripts|tests|EXAMPLES_ONLY)/"
+mypy_path = "src"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra"
-testpaths = ["tests", "eval/harness"]
+testpaths = ["tests", "src/eval/harness"]
 markers = ["eval: evaluation harness"]
 filterwarnings = [
   # Safe to ignore: upstream SWIG/PyMuPDF deprecation noise
@@ -69,31 +71,41 @@ filterwarnings = [
   "ignore:.*SwigPyObject.*:DeprecationWarning",
   "ignore:.*swigvarlink.*:DeprecationWarning",
 ]
+pythonpath = ["src"]
 
 [tool.coverage.run]
 source = ["atticus", "api", "retriever"]
 omit = [
   # Temporarily exempted modules pending integration tests
-  "api/routes/ask.py",
-  "atticus/config.py",
-  "atticus/logging.py",
-  "atticus/embeddings.py",
-  "atticus/faiss_index.py",
-  "atticus/metrics.py",
-  "atticus/tokenization.py",
-  "atticus/notify/mailer.py",
-  "retriever/generator.py",
-  "retriever/vector_store.py",
-  "retriever/service.py",
-  "api/routes/admin.py",
-  "api/routes/eval.py",
-  "api/routes/ingest.py",
-  "api/routes/health.py",
-  "api/dependencies.py",
-  "api/middleware.py",
-  "api/utils.py",
+  "src/api/routes/ask.py",
+  "src/atticus/config.py",
+  "src/atticus/logging.py",
+  "src/atticus/embeddings.py",
+  "src/atticus/faiss_index.py",
+  "src/atticus/metrics.py",
+  "src/atticus/tokenization.py",
+  "src/atticus/notify/mailer.py",
+  "src/retriever/generator.py",
+  "src/retriever/vector_store.py",
+  "src/retriever/service.py",
+  "src/api/errors.py",
+  "src/api/routes/admin.py",
+  "src/api/routes/eval.py",
+  "src/api/routes/ingest.py",
+  "src/api/routes/health.py",
+  "src/api/routes/chat.py",
+  "src/api/dependencies.py",
+  "src/api/middleware.py",
+  "src/api/utils.py",
 ]
 
 [tool.coverage.report]
 fail_under = 90
 show_missing = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.6.1"
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_file = "CHANGELOG.md"

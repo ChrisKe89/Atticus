@@ -2,7 +2,9 @@ version: "3.9"
 
 services:
   api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: src/api/Dockerfile
     container_name: atticus-api
     env_file: .env
     volumes:

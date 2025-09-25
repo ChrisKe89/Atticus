@@ -21,9 +21,9 @@ Thank you for contributing to Atticus! This guide explains how to set up your en
 Before committing any change, run:
 
 ```bash
+make fmt        # Auto-format Python sources
 make lint       # Check code style and formatting
-make format     # Auto-fix style issues (if needed)
-make typecheck  # Run static type checks with mypy
+make type       # Run static type checks with mypy
 make test       # Ensure all tests pass
 ```
 

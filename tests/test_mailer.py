@@ -69,11 +69,7 @@ def test_send_escalation_smoke(monkeypatch):
 
     # Assert: whatever your mailer returns; at least it shouldn't raise
     # If your function returns None, just assert True
-    assert (
-        result is None
-        or result is True
-        or (isinstance(result, dict) and result.get("status") in ("ok", "dry-run"))
-    )
+    assert result is None or result is True or (isinstance(result, dict) and result.get("status") in ("ok", "dry-run"))
 
 
 def test_send_escalation_dry_run(monkeypatch):

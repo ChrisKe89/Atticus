@@ -18,6 +18,7 @@ logs/*
 !logs/.gitkeep
 indices/*
 !indices/.gitkeep
+!indices/prompts.json
 indexes/*
 !indexes/.gitkeep
 

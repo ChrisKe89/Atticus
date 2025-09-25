@@ -42,7 +42,7 @@
         "python.testing.pytestEnabled": true,
         "python.testing.pytestArgs": [
             "tests",
-            "eval/harness"
+            "src/eval/harness"
         ],
         "python.testing.cwd": "${workspaceFolder}",
         // --- Markdown (align with repo rule) ---

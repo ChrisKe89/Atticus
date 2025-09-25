@@ -85,8 +85,9 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 * Follow least‑privilege and data‑minimisation principles when accessing data sources.
 * Before submitting code, run:
   ```bash
+  make fmt
   make lint
-  make typecheck
+  make type
   ```
   to ensure nothing leaks into commits.
 

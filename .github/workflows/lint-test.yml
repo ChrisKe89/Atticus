@@ -50,5 +50,7 @@ jobs:
           pytest --maxfail=1 --disable-warnings \
                  --cov=atticus --cov=api --cov=retriever \
                  --cov-report=term-missing --cov-fail-under=90 -q
+      - name: Smoke tests
+        run: make smoke
       - name: Pre-commit (all files)
         run: pre-commit run --all-files --show-diff-on-failure

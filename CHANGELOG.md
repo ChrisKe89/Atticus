@@ -7,18 +7,92 @@ The newest entries appear first.
 
 ## [Unreleased]
 
-### Added
-- New SMTP mailer module `atticus.notify.mailer` and `/contact` route for escalation emails using `.env` SMTP settings.
-- Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
-- Documentation expanded with `ARCHITECTURE.md`, `OPERATIONS.md`, and `RELEASE.md`.
-- Dev HTTP examples updated with `/contact` route.
+- _No changes yet._
+
+---
+
+## [0.6.1] — 2025-09-29
 
 ### Changed
-- CI enforces >=90% coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
-- Configuration cache hardened to reflect `.env` updates during reload tests.
+- Escalation email subjects now append the `request_id` (`Escalation from Atticus: AE<INT> · {request_id}`) and mirror the limit
+  of three citations in the payload.
+- Retrieval logging propagates the `request_id` into `answer_generated` events for trace alignment.
 
 ### Fixed
-- Corrected settings regeneration when `.env` or environment variables change.
+- Chat and `/ask` routes now pass the current `request_id` through the retrieval stack ensuring all downstream logs share the
+  same correlation identifier.
+
+---
+
+## [0.6.0] — 2025-09-28
+
+### Added
+- Clarification workflow on `/ask` that requests more context for ambiguous queries and surfaces it via API/UI.
+- Bullet-aligned answer schema with optional key points, limited citations, and escalation emails capturing structured highlights.
+- Confidence-binned evaluation reporting with HitRate@5, CSV confidence columns, and tests covering metrics helpers.
+- Release automation target (`make release`) plus streamlined GitHub workflow matching AGENTS guidance.
+
+### Changed
+- UI chat bubbles now render summaries, bullet lists, and source metadata for richer responses.
+- Escalation logs/emails include bullet sections while CLI supports passing bullet arguments.
+- README, OPERATIONS, and API docs updated for new response contract, clarification policy, and evaluation reporting.
+
+### Fixed
+- Ensured retrieval confidence estimation is shared across evaluation and runtime for consistent bucket assignment.
+
+---
+
+## [0.5.0] — 2025-09-27
+
+### Added
+- OpenTelemetry integration with request spans, trace-aware logging, and configurable OTLP exports.
+- `adr/0001-record-architecture-decisions.md` plus `infra/` scaffolding for deployment and collector guidance.
+- `scripts/ui_ping.py` and Make targets (`ui-ping`, `next-ae`, `log-escalation`, `e2e`) to exercise ingest → eval → smoke → UI flows.
+- Escalation unit tests covering AE counters, schema logging, and email body content.
+
+### Changed
+- Escalation logs now emit the mandated JSON/CSV schema with AE IDs starting at `AE100` (no zero padding) and persistent CC/to columns.
+- Logging configuration emits human-readable console logs by default with optional JSON/trace enrichment; subjects now follow `Escalation from Atticus: AE<INT>`.
+- README/OPERATIONS updated with telemetry env vars, new directory layout, and governance via Commitizen pre-commit hook.
+
+### Fixed
+- Atomic escalation counter writes prevent duplicate AE IDs across concurrent escalations.
+- Request middleware attaches trace/span attributes to logs, ensuring consistent correlation across metrics and email payloads.
+
+---
+
+## [0.4.0] — 2025-09-26
+
+### Added
+- Automated escalation routing with AE identifiers, JSON/CSV loggers, and SES notifications aligned with confidence policy.
+- PromptService for hot-reloading named prompts plus supporting CLI utilities (`scripts/next_ae_id.py`, `scripts/log_escalation.py`, `scripts/send_email.py`).
+- UI escalation banner surfaced on partial answers with configurable timeout.
+- Smoke test suite covering 200/206 flows and new Gitleaks pre-commit hook.
+
+### Changed
+- `/ask` endpoint now issues 206 responses on low confidence with request/AE IDs, escalated flag, and sources list.
+- README, API docs, and Makefile updated with new smoke/send-email targets and escalation guidance.
+- Sanitised `.env` defaults removing placeholder secrets and expanding routing metadata.
+
+### Fixed
+- Ensured environment diagnostics expose sanitized configuration and PromptService cache invalidates on file changes.
+
+---
+
+## [0.3.0] — 2025-09-25
+
+### Added
+- Shared JSON error schema with request/response correlation tests covering 400/401/422/500.
+- Diátaxis documentation structure with dedicated escalation policy, reranker deployment, and enhancement outlines.
+- `CODEOWNERS`, `API_NAMING_CONVENTIONS.md`, and glossary (`docs/reference/dictionary.yml`) for governance.
+
+### Changed
+- Migrated repository to `src/` layout; updated Makefile, scripts, and tooling to respect new paths.
+- Expanded `.env.example` to mirror agent-specified defaults and routing metadata.
+- Refreshed README, tutorials, and system overview with new commands, diagrams, and references.
+
+### Fixed
+- Ensured API error responses include structured payloads and consistent logging, preventing ad-hoc exception leaks.
 
 ---
 

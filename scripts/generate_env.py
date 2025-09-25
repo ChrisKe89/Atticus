@@ -23,6 +23,7 @@ def _fingerprint(value: str | None) -> str | None:
 
 
 DEFAULTS = {
+    "ATTICUS_ENV_PRIORITY": "env",
     "OPENAI_MODEL": "gpt-4.1",
     "OPENAI_API_KEY": "",
     "EMBED_MODEL": "text-embedding-3-large",
@@ -39,13 +40,32 @@ DEFAULTS = {
     "TIMEZONE": "UTC",
     "EVAL_REGRESSION_THRESHOLD": "3.0",
     "CONTENT_DIR": "./content",
-    "CONTACT_EMAIL": "atticus-contact@agentk.fyi",
+    "CONTACT_EMAIL": "",
+    "TEAM_EMAIL_NTS": "",
+    "TEAM_EMAIL_MARKETING": "",
+    "TEAM_EMAIL_SERVICE": "",
+    "ADMIN_EMAIL": "",
+    "ROUTE_TERMS_TECHNICAL": "spec,dpi,driver,firmware,toner,icc,calibration",
+    "ROUTE_TERMS_MARKETING": "brochure,pricing,campaign,roi,feature,benefit",
+    "ROUTE_TERMS_SERVICE": "service,maintenance,warranty,engineer,onsite",
+    "ESCALATION_LOG_JSON": "logs/escalations.jsonl",
+    "ESCALATION_LOG_CSV": "logs/escalations.csv",
+    "ESCALATION_COUNTER_FILE": "logs/escalations.counter",
     "SMTP_HOST": "email-smtp.ap-southeast-2.amazonaws.com",
     "SMTP_PORT": "587",
-    "SMTP_USER": "atticus-escalations",
-    "SMTP_PASS": "Pay641-Prove-Possible-stop-Cry",
-    "SMTP_FROM": "atticus-escalations@agentk.fyi",
-    "SMTP_TO": "atticus-technical-support@agentk.fyi",
+    "SMTP_USER": "",
+    "SMTP_PASS": "",
+    "SMTP_FROM": "",
+    "SMTP_TO": "",
+    "SMTP_DRY_RUN": "0",
+    "UI_SHOW_ESCALATION_BANNER": "1",
+    "UI_BANNER_DISMISS_TIMEOUT_MS": "12000",
+    "OTEL_ENABLED": "0",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318/v1/traces",
+    "OTEL_EXPORTER_OTLP_HEADERS": "",
+    "OTEL_SERVICE_NAME": "atticus",
+    "OTEL_TRACE_RATIO": "0.1",
+    "OTEL_CONSOLE_EXPORT": "0",
 }
 
 
@@ -85,9 +105,7 @@ def main() -> int:
     env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[generate_env] Wrote {env_path}")
     if used_openai_key:
-        source = (
-            "environment" if not args.ignore_env and "OPENAI_API_KEY" in os.environ else "defaults"
-        )
+        source = "environment" if not args.ignore_env and "OPENAI_API_KEY" in os.environ else "defaults"
         fingerprint = _fingerprint(used_openai_key) or "none"
         print(f"[generate_env] OPENAI_API_KEY resolved from {source} (fingerprint={fingerprint})")
     else:

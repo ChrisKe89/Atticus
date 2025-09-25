@@ -24,8 +24,11 @@ import numpy as np
 
 # Ensure repository root on sys.path for local imports
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+SRC = ROOT / "src"
+for candidate in (SRC, ROOT):
+    candidate_str = str(candidate)
+    if candidate_str not in sys.path:
+        sys.path.insert(0, candidate_str)
 
 from atticus.config import AppSettings, load_settings  # noqa: E402
 from atticus.embeddings import EmbeddingClient  # noqa: E402
@@ -104,9 +107,7 @@ def run_qa_eval(
         )
 
     with csv_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(
-            handle, fieldnames=["question", "top_document", "confidence", "f1", "cosine"]
-        )
+        writer = csv.DictWriter(handle, fieldnames=["question", "top_document", "confidence", "f1", "cosine"])
         writer.writeheader()
         writer.writerows(rows)
         writer.writerow(

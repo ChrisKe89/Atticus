@@ -63,6 +63,16 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
 
 ---
 
+## Escalation Monitoring
+
+* Partial responses return **206** with an `ae_id` and `escalated: true`.
+* Each escalation is logged to `logs/escalations.jsonl` (JSON lines) and `logs/escalations.csv` (reporting).
+* Generate new IDs with `make next-ae`; backfill logs via `make log-escalation AE=AE123 CAT=technical SCORE=0.61 Q="..." A="..." TO="user@example.com" RID=req-123`.
+* `make send-email` (or `python scripts/send_email.py`) exercises the SMTP helper without touching application code.
+* Email subjects follow `Escalation from Atticus: AE<INT> · {request_id}` so any identifier surfaces the correlated logs.
+
+---
+
 ## Snapshot & Rollback
 
 1. Snapshot the `indices/` directory during each release.
@@ -89,8 +99,10 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
   * Errors: `logs/errors.jsonl`
 * **Sessions view**
   * `GET /admin/sessions?format=html|json`
-* **Verbose tracing**
-  * Set `LOG_VERBOSE=1` and `LOG_TRACE=1` in `.env` and restart the service.
+* **Tracing & telemetry**
+  * Set `LOG_VERBOSE=1` for JSON console logs; `LOG_TRACE=1` or `OTEL_ENABLED=1` injects span IDs.
+  * Configure `OTEL_EXPORTER_OTLP_ENDPOINT` (default `http://localhost:4318/v1/traces`) and optional `OTEL_EXPORTER_OTLP_HEADERS` to forward spans.
+  * Tune sampling with `OTEL_TRACE_RATIO` (0–1). Enable `OTEL_CONSOLE_EXPORT=1` for local debugging exports.
 * **Environment diagnostics**
   * `python scripts/debug_env.py` shows the source and fingerprint of every secret.
 
@@ -108,11 +120,12 @@ They measure how well retrieval surfaces the right evidence for answer generatio
 | **nDCG@K** | Quality of ranking — are the best chunks at the top? | 0.85–1.0 excellent | Higher is better; discounts lower ranks |
 | **Recall@K** | Percentage of questions with at least one correct chunk in top-K | >=0.9 excellent | Indicates coverage |
 | **MRR@K** | How early the first correct chunk appears | >=0.7 excellent | Rewards early hits |
+| **HitRate@K** | Was at least one relevant chunk retrieved in the first `K` results? | >=0.9 excellent | Expressed as 0–1 in reports |
 | **Precision@K** | Fraction of retrieved chunks that are relevant | Context dependent | Useful when keeping context small |
 
 ### Secondary Metrics
 
-* **HitRate@K**: simpler recall variant — was *any* relevant item retrieved?
+* **Confidence bins**: metrics are segmented into `>=0.80`, `0.70-0.79`, `0.60-0.69`, `<0.60` buckets to confirm the low-confidence path still behaves.
 * **MAP** (Mean Average Precision): averages precision across ranks.
 * **Coverage**: fraction of gold questions for which any relevant doc exists in the corpus.
 * **Latency**: median and 95th percentile retrieval time.
@@ -139,23 +152,23 @@ Example metrics block:
 ```json
 {
   "metrics": {
-    "ndcg@10": 0.86,
-    "recall@10": 0.92,
-    "mrr@10": 0.74,
-    "precision@5": 0.62,
-    "latency_ms_p50": 62,
-    "latency_ms_p95": 110
-  },
-  "dataset": "eval/goldset/sales_faq.jsonl",
-  "index_fingerprint": "3d7c1b...f12",
-  "model": {
-    "embed": "text-embedding-3-large@2025-01-15",
-    "gen": "gpt-4.1"
+    "overall": {
+      "nDCG@10": 0.86,
+      "Recall@50": 0.92,
+      "MRR": 0.74,
+      "HitRate@5": 0.88
+    },
+    "confidence_bins": {
+      ">=0.80": {"nDCG@10": 0.9, "Recall@50": 0.95, "MRR": 0.81, "HitRate@5": 0.95, "count": 18},
+      "0.70-0.79": {"nDCG@10": 0.82, "Recall@50": 0.9, "MRR": 0.7, "HitRate@5": 0.86, "count": 6},
+      "0.60-0.69": {"nDCG@10": 0.74, "Recall@50": 0.82, "MRR": 0.6, "HitRate@5": 0.78, "count": 3},
+      "<0.60": {"nDCG@10": 0.65, "Recall@50": 0.7, "MRR": 0.45, "HitRate@5": 0.6, "count": 2}
+    }
   }
 }
 ```
 
-Interpretation: strong ranking and recall, with fast median latency.
+Interpretation: strong ranking and recall overall, with slightly weaker performance in the `<0.60` bucket that warrants review.
 
 ---
 

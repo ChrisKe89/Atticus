@@ -44,14 +44,18 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] Documented `/ask` request/response schema in docs/api/README.md - completed 2025-09-25 (commit cd280f8).
 - [x] Added `SMTP_DRY_RUN` mailer branch with tests and surfaced behaviour in docs - completed 2025-09-25 (commit cd280f8).
 - [x] Made pytest parallelism conditional on pytest-xdist availability - completed 2025-09-25 (commit cd280f8).
+- [x] Defined escalation vs. refusal policy and recorded workflow expectations - completed 2025-09-25 (commit 15f7016).
+- [x] Captured re-ranker deployment strategy, metrics, and rollout guardrails - completed 2025-09-25 (commit 15f7016).
+- [x] Implemented shared JSON error schema with request_id correlation tests - completed 2025-09-25 (commit 15f7016).
+- [x] Evaluated Socket.IO progress streaming approach for ingest/eval telemetry - completed 2025-09-25 (commit 15f7016).
+- [x] Outlined knowledge base crawling UI prototype and scheduler integration - completed 2025-09-25 (commit 15f7016).
+- [x] Investigated MCP tool integration strategy for cross-service workflows - completed 2025-09-25 (commit 15f7016).
+- [x] Explored collaborative project room management design and roadmap - completed 2025-09-25 (commit 15f7016).
+- [x] Outlined observability dashboards covering API health, retrieval, and escalations - completed 2025-09-25 (commit 15f7016).
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
+## 2025-09-26
 
-
-
-
-
-
-
-
-
+- [x] Defined code review scope and deliverables in REQUIREMENTS.md — completed 2025-09-26 (commit pending).
+- [x] Documented backlog sweep cadence and closure expectations in REQUIREMENTS.md — completed 2025-09-26 (commit pending).
+- [x] Detailed README hero graphic asset requirements and storage guidance — completed 2025-09-26 (commit pending).
 

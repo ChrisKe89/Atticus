@@ -7,20 +7,20 @@ Tasks marked **[Codex]** are ideal for automation.
 ---
 ## Uncategorized
 
-- [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#code-review-scope) — Define scope, depth, and deliverables for the end-to-end code review.
-- [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#backlog-sweep-process) — Provide expectations for how aggressively to clear README/TODO deltas.
+*(No active items.)*
+
 
 ## Product & Audience
 
-- [ ] Define a precise escalation vs. refusal policy (content categories, thresholds, user messaging).
+*(No active items.)*
 
 ## Retrieval
 
-- [ ] Re-ranker deployment strategy and metrics (when added).
+*(No active items.)*
 
 ## API & UI
 
-- [ ] **[Codex]** Implement the shared JSON error schema across all routes and add tests to assert shape and required fields (400/401/422/5xx).
+*(No active items.)*
 
 ## Tooling
 
@@ -28,15 +28,12 @@ Tasks marked **[Codex]** are ideal for automation.
 
 ## Documentation
 
-- [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#hero-graphic-asset) — Supply the approved README hero graphic assets.
+*(No active items.)*
+
 
 ## Future Enhancements (from EXAMPLES_ONLY)
 
-- [ ] **[Codex]** Evaluate Socket.IO progress streaming so ingestion/eval status updates mirror `EXAMPLES_ONLY/socketio.mdx`.
-- [ ] **[Codex]** Prototype a knowledge base crawling UI and background scheduler akin to `EXAMPLES_ONLY/crawling-configuration.mdx`.
-- [ ] **[Codex]** Investigate MCP tool integration to orchestrate cross-service workflows (see `EXAMPLES_ONLY/mcp-overview.mdx`).
-- [ ] **[Codex]** Explore collaborative project room management patterned on `EXAMPLES_ONLY/projects-overview.mdx`.
-- [ ] **[Codex]** Outline observability dashboards inspired by `EXAMPLES_ONLY/server-monitoring.mdx` (service health, queue depth, alerts).
+*(No active items.)*
 
 ---
 

@@ -1,0 +1,14 @@
+# Default ownership for Atticus repository
+* @atticus/maintainers
+
+# Documentation specialists
+docs/** @atticus/docs
+
+# API and backend packages
+src/api/** @atticus/backend
+src/atticus/** @atticus/backend
+src/retriever/** @atticus/backend
+src/ingest/** @atticus/backend
+
+# Frontend and web assets
+web/** @atticus/frontend

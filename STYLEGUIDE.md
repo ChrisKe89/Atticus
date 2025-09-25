@@ -10,11 +10,11 @@ Follow these standards for all code and documentation.
 * **Formatting**: Use [Ruff](https://docs.astral.sh/ruff/) with Black‑compatible style.
 
   ```bash
+  make fmt     # auto-format
   make lint    # check style
-  make format  # auto-format
   ```
 
-* **Typing**: All public functions must be type‑hinted. Run `make typecheck` to validate.
+* **Typing**: All public functions must be type‑hinted. Run `make type` to validate.
 * **Imports**: Organized automatically by Ruff on save.
 * **Naming**: Use snake_case for functions and variables, PascalCase for classes.
 

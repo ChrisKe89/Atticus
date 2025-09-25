@@ -2,14 +2,91 @@
 (function () {
   function $(id) { return document.getElementById(id); }
 
-  function append(role, text) {
+  const banner = $('escalation-banner');
+  const bannerText = $('escalation-banner-text');
+  let bannerTimer = null;
+
+  function hideBanner() {
+    if (!banner) return;
+    banner.classList.remove('is-visible');
+    banner.hidden = true;
+    if (bannerTimer) {
+      clearTimeout(bannerTimer);
+      bannerTimer = null;
+    }
+  }
+
+  function showBanner(message) {
+    if (!banner || banner.dataset.enabled !== '1') return;
+    if (bannerText) {
+      bannerText.textContent = message;
+    }
+    banner.hidden = false;
+    banner.classList.add('is-visible');
+    const timeout = Number(banner.dataset.timeout || 12000);
+    if (bannerTimer) {
+      clearTimeout(bannerTimer);
+    }
+    bannerTimer = setTimeout(hideBanner, timeout);
+  }
+
+  function appendUserMessage(text) {
     const stream = $('chat-stream');
     if (!stream) return;
     const wrapper = document.createElement('div');
-    wrapper.className = 'msg msg--' + role;
+    wrapper.className = 'msg msg--user';
     const bubble = document.createElement('div');
     bubble.className = 'msg__bubble';
     bubble.textContent = text;
+    wrapper.appendChild(bubble);
+    stream.appendChild(wrapper);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  function appendAgentMessage(payload) {
+    const stream = $('chat-stream');
+    if (!stream) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg msg--agent';
+    const bubble = document.createElement('div');
+    bubble.className = 'msg__bubble';
+
+    const summary = document.createElement('p');
+    summary.className = 'msg__summary';
+    summary.textContent = payload.answer || 'No answer returned.';
+    bubble.appendChild(summary);
+
+    if (Array.isArray(payload.bullets) && payload.bullets.length) {
+      const list = document.createElement('ul');
+      list.className = 'msg__bullets';
+      payload.bullets.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+      bubble.appendChild(list);
+    }
+
+    if (Array.isArray(payload.citations) && payload.citations.length) {
+      const aside = document.createElement('div');
+      aside.className = 'msg__sources';
+      const title = document.createElement('p');
+      title.className = 'msg__sources-title';
+      title.textContent = 'Sources';
+      aside.appendChild(title);
+      const list = document.createElement('ul');
+      payload.citations.forEach((citation) => {
+        const li = document.createElement('li');
+        const path = citation.source_path || 'Unknown source';
+        const page = citation.page_number != null ? ` (p.${citation.page_number})` : '';
+        const heading = citation.heading ? ` — ${citation.heading}` : '';
+        li.textContent = `${path}${page}${heading}`;
+        list.appendChild(li);
+      });
+      aside.appendChild(list);
+      bubble.appendChild(aside);
+    }
+
     wrapper.appendChild(bubble);
     stream.appendChild(wrapper);
     stream.scrollTop = stream.scrollHeight;
@@ -20,7 +97,7 @@
     if (!input) return;
     const text = (input.value || '').trim();
     if (!text) return;
-    append('user', text);
+    appendUserMessage(text);
     input.value = '';
     input.focus();
     try {
@@ -33,9 +110,14 @@
         throw new Error('Request failed');
       }
       const data = await res.json();
-      append('agent', data.answer || 'No answer returned.');
+      appendAgentMessage(data);
+      if (data.escalated && data.ae_id) {
+        showBanner(`Escalated as ${data.ae_id}. We\'ll email you once it\'s resolved.`);
+      } else {
+        hideBanner();
+      }
     } catch (err) {
-      append('agent', 'Sorry, something went wrong. Please try again.');
+      appendAgentMessage({ answer: 'Sorry, something went wrong. Please try again.' });
       console.error(err);
     }
   }
@@ -113,4 +195,3 @@
     });
   });
 })();
-

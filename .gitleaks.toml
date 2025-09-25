@@ -1,0 +1,10 @@
+[extend]
+
+[allowlist]
+regexes = [
+  "^OPENAI_API_KEY=$",
+  "^SMTP_PASS=$",
+]
+paths = [
+  "docs/",
+]
