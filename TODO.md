@@ -12,11 +12,11 @@ Tasks marked **[Codex]** are ideal for automation.
 
 ## Product & Audience
 
-*(No active items.)*
+- [ ] Define a precise escalation vs. refusal policy (content categories, thresholds, user messaging).
 
 ## Retrieval
 
-*(No active items.)*
+- [ ] Re-ranker deployment strategy and metrics (when added).
 
 ## API & UI
 
