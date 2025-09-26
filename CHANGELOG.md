@@ -9,6 +9,7 @@ The newest entries appear first.
 
 ### Added
 - New SMTP mailer module `atticus.notify.mailer` and `/contact` route for escalation emails using `.env` SMTP settings.
+- Static web UI pages under `web/static/` (chat, admin, contact) styled with Tailwind-inspired utilities and wired to the `/ask` and `/contact` APIs.
 - Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
 - Documentation expanded with `ARCHITECTURE.md`, `OPERATIONS.md`, and `RELEASE.md`.
 - Dev HTTP examples updated with `/contact` route.
