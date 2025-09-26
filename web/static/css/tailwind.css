@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom layout helpers */
+.sidebar-collapsed .menu-text {
+    display: none !important;
+}
+
+.sidebar-collapsed .menu-item {
+    justify-content: center;
+}
+
+#chat-output {
+    max-height: calc(100vh - 240px);
+    min-height: 16rem;
+    overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+}
+
+#chat-output::after {
+    content: "";
+    display: block;
+    height: 1.5rem;
+}
+
+/* Scrollbar styling */
+#chat-output::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-output::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+}
