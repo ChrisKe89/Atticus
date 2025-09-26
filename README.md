@@ -103,6 +103,17 @@ Common shortcuts:
 * In sandbox mode, recipients must also be verified.  
 * Lock down SES with an IAM policy restricting `ses:FromAddress` to allowed senders and your region (see [SECURITY.md](SECURITY.md)).
 
+
+## Web UI
+
+The chat experience is served from the static assets under `web/static`.
+
+- `web/static/index.html` hosts the Atticus chat surface that calls the `/ask` API for grounded answers.
+- `web/static/contact.html` provides the escalation form backed by the `/contact` endpoint.
+- `web/static/admin.html` keeps quick navigation shortcuts for operations staff.
+
+Run `make api` and browse to `http://localhost:8000/static/index.html` (or your configured base URL) to load the interface.
+
 ---
 
 ## Documentation Map
