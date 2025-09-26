@@ -29,6 +29,15 @@ pip install -U pip pip-tools
 pip-compile -U requirements.in
 pip-sync requirements.txt
 ```
+### 2a. Frontend assets (Tailwind CSS)
+
+Install Node tooling once to compile the Tailwind-based web UI assets.
+
+```bash
+npm install
+npm run tailwind:build   # one-off build
+npm run tailwind:watch   # optional dev watcher
+```
 
 ### 3. Add content
 
