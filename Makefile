@@ -1,5 +1,5 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality
+.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality tailwind tailwind-watch
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -48,3 +48,9 @@ typecheck:
 	mypy atticus api ingest retriever eval
 
 quality: lint typecheck test
+
+tailwind:
+	npm run tailwind:build
+
+tailwind-watch:
+	npm run tailwind:watch

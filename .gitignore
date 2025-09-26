@@ -47,3 +47,6 @@ nginx/certs/*
 EXAMPLES_ONLY/
 
 
+node_modules/
+web/static/node_modules/
+web/static/package-lock.json
