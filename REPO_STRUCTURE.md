@@ -38,7 +38,7 @@ Key directories and files to keep when migrating the project.
     - `atticus/__init__.py`
     - `atticus/config.py`
     - `atticus/embeddings.py`
-    - `atticus/faiss_index.py`
+    - `atticus/vector_db.py`
     - `atticus/logging.py`
     - `atticus/metrics.py`
     - `atticus/tokenization.py`

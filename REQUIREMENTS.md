@@ -29,7 +29,7 @@ Dependencies are managed with `pip-tools` for deterministic builds.
 Typical core packages include:
 * `fastapi`, `uvicorn`
 * `pydantic`, `python-dotenv`
-* `faiss-cpu`, `numpy`, `scikit-learn`, `rapidfuzz`
+* `pgvector`, `psycopg`, `numpy`, `scikit-learn`, `rapidfuzz`
 * `pymupdf`, `pdfminer.six`, `pytesseract`, `Pillow`
 * `pytest`, `pytest-cov`
 
@@ -80,7 +80,7 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 * [README.md](README.md) — overall setup and Makefile targets.
 * [AGENTS.md](AGENTS.md) — agent roles and configuration.
 * [SECURITY.md](SECURITY.md) — secrets handling and IAM guidance.
-\r\n---\r\n\r\n## Pending Clarifications\r\n\r\n### Code Review Scope\r\n\r\nA full code audit requires clarity on:\r\n- Target depth (style, correctness, security) and acceptable turnaround time.\r\n- Whether third-party dependencies like FAISS/OpenAI should be reviewed or stubbed.\r\n- Expected deliverables (annotated PR, issue list, refactor plan).\r\n\r\n### Hero Graphic Asset\r\n\r\nReplacing the README hero placeholder needs an approved image or design brief (dimensions, brand constraints, copy). Provide assets or a reference repository before proceeding.\r\n
+\r\n---\r\n\r\n## Pending Clarifications\r\n\r\n### Code Review Scope\r\n\r\nA full code audit requires clarity on:\r\n- Target depth (style, correctness, security) and acceptable turnaround time.\r\n- Whether third-party dependencies like pgvector/OpenAI should be reviewed or stubbed.\r\n- Expected deliverables (annotated PR, issue list, refactor plan).\r\n\r\n### Hero Graphic Asset\r\n\r\nReplacing the README hero placeholder needs an approved image or design brief (dimensions, brand constraints, copy). Provide assets or a reference repository before proceeding.\r\n
 
 
 

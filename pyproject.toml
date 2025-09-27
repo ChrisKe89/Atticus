@@ -78,7 +78,7 @@ omit = [
   "atticus/config.py",
   "atticus/logging.py",
   "atticus/embeddings.py",
-  "atticus/faiss_index.py",
+  "atticus/vector_db.py",
   "atticus/metrics.py",
   "atticus/tokenization.py",
   "atticus/notify/mailer.py",

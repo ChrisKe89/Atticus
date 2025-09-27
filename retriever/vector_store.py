@@ -6,17 +6,14 @@ import logging
 import math
 import re
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-import faiss
-import numpy as np
 from rapidfuzz import fuzz
 
 from atticus.config import AppSettings, Manifest, load_manifest
 from atticus.embeddings import EmbeddingClient
-from atticus.faiss_index import StoredChunk, load_faiss_index, load_metadata
 from atticus.logging import log_event
+from atticus.vector_db import PgVectorRepository, StoredChunk
 
 
 @dataclass(slots=True)
@@ -35,25 +32,27 @@ class SearchResult:
 
 
 class VectorStore:
-    """FAISS-backed vector search with optional hybrid re-ranking."""
+    """pgvector-backed vector search with optional hybrid re-ranking."""
 
     def __init__(self, settings: AppSettings, logger: logging.Logger) -> None:
         self.settings = settings
         self.logger = logger
 
+        if not settings.database_url:
+            raise ValueError("DATABASE_URL must be configured before querying the vector store")
+
+        self.repository = PgVectorRepository(settings)
+        self.repository.ensure_schema()
         manifest = load_manifest(settings.manifest_path)
         if manifest is None:
             raise FileNotFoundError("Vector manifest not found. Run ingestion first.")
         self.manifest: Manifest = manifest
 
-        self.chunks: list[StoredChunk] = load_metadata(settings.metadata_path)
-        self.index = load_faiss_index(settings.faiss_index_path, settings.embed_dimensions)
+        self.chunks: list[StoredChunk] = self.repository.load_all_chunk_metadata()
+        self.chunk_index_map: dict[str, int] = {chunk.chunk_id: idx for idx, chunk in enumerate(self.chunks)}
+        self.chunk_lookup: dict[str, StoredChunk] = {chunk.chunk_id: chunk for chunk in self.chunks}
         self.embedding_client = EmbeddingClient(settings, logger=logger)
 
-        if self.index.ntotal != len(self.chunks):
-            raise RuntimeError("FAISS index size does not match metadata entries")
-
-        # Build lightweight lexical structures for BM25-style fallback
         self._lex_tokens: list[list[str]] = []
         self._lex_df: dict[str, int] = {}
         self._lex_len: list[int] = []
@@ -69,12 +68,11 @@ class VectorStore:
         if filters.get("source_type") and filters["source_type"] != source_type:
             return False
         prefix = filters.get("path_prefix")
-        if prefix and not Path(chunk.source_path).as_posix().startswith(prefix):
+        if prefix and not chunk.source_path.startswith(prefix):
             return False
         return True
 
     def _tokenize(self, text: str) -> list[str]:
-        # Lowercase, keep alphanumerics, split on non-word, drop 1-char tokens unless digit
         text = text.lower()
         tokens = re.split(r"[^a-z0-9]+", text)
         return [t for t in tokens if t and (len(t) > 1 or t.isdigit())]
@@ -101,12 +99,10 @@ class VectorStore:
         q_tokens = self._tokenize(query)
         if not q_tokens:
             return [0.0] * len(self.chunks)
-        # BM25 parameters
         k1 = 1.5
         b = 0.75
         N = len(self._lex_tokens)
         scores = [0.0] * N
-        # Precompute term frequencies per doc for query tokens only for speed
         for i, doc_tokens in enumerate(self._lex_tokens):
             if not doc_tokens:
                 continue
@@ -129,8 +125,6 @@ class VectorStore:
         return scores
 
     def _rerank_results(self, results: list[SearchResult]) -> list[SearchResult]:
-        """Apply lightweight lexical + semantic re-ranking when enabled."""
-
         if not results:
             return results
         vector_weight = 0.55
@@ -160,86 +154,105 @@ class VectorStore:
         filters: dict[str, str] | None = None,
         hybrid: bool = True,
     ) -> list[SearchResult]:
-        if self.index.ntotal == 0:
+        if not self.chunks:
             return []
 
-        # Vector candidate set
-        embedding = np.array(self.embedding_client.embed_texts([query])[0], dtype=np.float32)
-        faiss.normalize_L2(embedding.reshape(1, -1))
-        vec_scores, vec_indices = self.index.search(
-            embedding.reshape(1, -1), min(self.index.ntotal, max(top_k * 4, top_k))
+        query_embedding = self.embedding_client.embed_texts([query])
+        if not query_embedding:
+            return []
+        embedding_vector = list(query_embedding[0])
+
+        candidate_limit = max(top_k * 4, top_k)
+        vector_rows = self.repository.query_similar_chunks(
+            embedding_vector,
+            limit=candidate_limit,
+            probes=self.settings.pgvector_probes,
         )
 
-        # Lexical scores for all chunks
         bm25_all = self._bm25_scores(query)
+        candidates: dict[str, dict[str, Any]] = {row["chunk_id"]: row for row in vector_rows}
 
-        # Collect candidates from both sources
-        candidates: dict[int, float] = {}
-        for idx, sc in zip(vec_indices[0], vec_scores[0], strict=False):
-            if idx < 0:
-                continue
-            candidates[int(idx)] = max(candidates.get(int(idx), 0.0), float(sc))
-        # Add top lexical candidates as well
-        # Rank by BM25 score and take top set
-        top_lex = sorted(range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True)[
-            : max(top_k * 3, 30)
+        top_lexical = sorted(
+            range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True
+        )[: max(top_k * 3, 30)]
+        for idx in top_lexical:
+            chunk_id = self.chunks[idx].chunk_id
+            candidates.setdefault(chunk_id, {"chunk_id": chunk_id})
+
+        if not candidates:
+            return []
+
+        candidate_indices = [
+            self.chunk_index_map[c_id]
+            for c_id in candidates
+            if c_id in self.chunk_index_map
         ]
-        for i in top_lex:
-            candidates[i] = max(candidates.get(i, 0.0), 0.0)  # ensure presence
+        bm25_min = min((bm25_all[i] for i in candidate_indices), default=0.0)
+        bm25_max = max((bm25_all[i] for i in candidate_indices), default=0.0)
 
-        # Normalize BM25 scores across candidate set for combination
-        bm25_min = min((bm25_all[i] for i in candidates), default=0.0)
-        bm25_max = max((bm25_all[i] for i in candidates), default=0.0)
-
-        def bm25_norm(i: int) -> float:
+        def bm25_norm(idx: int) -> float:
             if bm25_max <= bm25_min:
                 return 0.0
-            return (bm25_all[i] - bm25_min) / (bm25_max - bm25_min)
+            return (bm25_all[idx] - bm25_min) / (bm25_max - bm25_min)
 
-        # Weighting: favor lexical more when running offline embeddings
+        # Weighting mirrors historical hybrid blend when reranker disabled
         alpha = 0.7 if self.embedding_client._client is not None else 0.35
 
         results: list[SearchResult] = []
-        for i in candidates.keys():
-            chunk = self.chunks[i]
+        for chunk_id, row in candidates.items():
+            chunk = self.chunk_lookup.get(chunk_id)
+            if chunk is None:
+                continue
             if not self._apply_filters(chunk, filters):
                 continue
             manifest_entry = self.manifest.documents.get(chunk.source_path, {})
             metadata: dict[str, str] = {"source_type": str(manifest_entry.get("source_type", ""))}
             metadata.update(chunk.extra)
-            v_emb = np.array(chunk.embedding, dtype=np.float32)
-            faiss.normalize_L2(v_emb.reshape(1, -1))
-            vector_similarity = float(np.dot(embedding, v_emb))
-            vector_score = max(0.0, min(1.0, (vector_similarity + 1.0) / 2.0))
-            lexical_score = bm25_norm(i)
-            base_score = alpha * vector_score + (1 - alpha) * lexical_score
+            if "metadata" in row:
+                metadata.update(row["metadata"])
+
+            idx = self.chunk_index_map.get(chunk_id, 0)
+            lexical_score = bm25_norm(idx)
             fuzz_score = fuzz.partial_ratio(query, chunk.text) / 100.0
-            score = base_score
+
+            distance = row.get("distance")
+            if distance is None:
+                vector_score = 0.0
+            else:
+                vector_score = max(0.0, 1.0 - float(distance))
+
+            base_score = alpha * vector_score + (1 - alpha) * lexical_score
             if hybrid and not self.settings.enable_reranker:
-                score = 0.8 * base_score + 0.2 * fuzz_score
+                combined_score = 0.8 * base_score + 0.2 * fuzz_score
+            else:
+                combined_score = base_score
+
             results.append(
                 SearchResult(
                     chunk_id=chunk.chunk_id,
                     source_path=chunk.source_path,
                     text=chunk.text,
-                    score=score,
+                    score=combined_score,
                     page_number=chunk.page_number,
                     heading=chunk.section,
                     metadata=metadata,
-                    chunk_index=i,
+                    chunk_index=idx,
                     vector_score=vector_score,
                     lexical_score=lexical_score,
                     fuzz_score=fuzz_score,
                 )
             )
 
-        if self.settings.enable_reranker and results:
+        if not results:
+            return []
+
+        if self.settings.enable_reranker:
             results = self._rerank_results(results)
-        elif hybrid and results:
-            # Non-reranker flow already applied fuzzy weighting during scoring
+        elif hybrid:
             results.sort(key=lambda result: result.score, reverse=True)
         else:
-            results.sort(key=lambda result: result.score, reverse=True)
+            results.sort(key=lambda result: result.vector_score, reverse=True)
+
         results = results[:top_k]
 
         log_event(

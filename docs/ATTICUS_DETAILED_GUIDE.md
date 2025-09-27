@@ -12,8 +12,7 @@ setup steps and [OPERATIONS.md](../OPERATIONS.md) for runbooks.
    convention and record metadata in `indices/manifest.json` during ingestion.
 2. **Chunking & Embedding** – `make ingest` honours `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, and
    `CHUNK_OVERLAP_TOKENS` before generating embeddings with the configured `EMBED_MODEL`.
-3. **Index Persistence** – FAISS artefacts plus rich metadata (page number, heading, breadcrumb) live in
-   `indices/`, while `logs/app.jsonl` captures counts, durations, and token stats for every run.
+3. **Index Persistence** – pgvector tables (`atticus_documents`, `atticus_chunks`) record embeddings and metadata, while `indices/index_metadata.json` snapshots chunk payloads and `logs/app.jsonl` captures counts, durations, and token stats for every run.
 4. **Retrieval** – Queries compose dense similarity with BM25 lexical scores. Optional reranking (see
    [ENABLE_RERANKER](#re-ranking-and-hybrid-retrieval)) boosts passages that align semantically, lexically,
    and via fuzzy matching.

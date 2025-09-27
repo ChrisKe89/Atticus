@@ -13,7 +13,7 @@ It ingests content, builds a searchable vector index, retrieves relevant informa
 
 | Component | Responsibility |
 |-----------|----------------|
-| **Ingestion & Indexing** | Parse → chunk → embed → persist index using FAISS with rich metadata. |
+| **Ingestion & Indexing** | Parse → chunk → embed → persist index using Postgres/pgvector with rich metadata. |
 | **Retriever & Ranker** | Vector search with optional hybrid lexical re‑rank (BM25‑lite). |
 | **Generator** | Drafts concise, sourced answers using GPT‑4.1 (or configured `GEN_MODEL`). |
 | **API Layer** | FastAPI app exposing `/health`, `/ingest`, `/ask`, `/eval`, and `/contact` routes. |
@@ -30,7 +30,7 @@ It ingests content, builds a searchable vector index, retrieves relevant informa
    Run `make ingest` to parse and chunk documents, compute embeddings, and update the index stored under `indices/`.
 
 3. **Retrieval**
-   When a user submits a query, the retriever searches the FAISS index and optionally applies a re-ranker to prioritize the most relevant chunks.
+   When a user submits a query, the retriever searches the pgvector index and optionally applies a re-ranker to prioritize the most relevant chunks.
 
 4. **Answer Generation**
    The selected context is passed to the generation model (default `gpt-4.1`) to produce a concise, sourced answer with inline citations.
