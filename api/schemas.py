@@ -68,6 +68,15 @@ class EvalResponse(BaseModel):
     summary_json: str
 
 
+class ErrorResponse(BaseModel):
+    """Standard error payload for API responses."""
+
+    error: str
+    detail: str
+    request_id: str
+    fields: dict[str, str] | None = None
+
+
 class DictionaryEntry(BaseModel):
     term: str
     synonyms: list[str]

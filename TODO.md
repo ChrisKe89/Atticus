@@ -61,7 +61,6 @@ Tasks marked **[Codex]** are ideal for automation.
 
 ## API & UI
 
-* [ ]  Implement the shared JSON error schema across all routes and add tests to assert shape and required fields (400/401/422/5xx).
 
 ## Tooling
 
