@@ -15,7 +15,9 @@ else:
 
 def main() -> None:
     if send_escalation is None:
-        print(f"TODO: implement atticus/notify/mailer.py ({IMPORT_ERROR})")
+        print("SMTP mailer is unavailable: atticus.notify.mailer could not be imported.")
+        if IMPORT_ERROR:
+            print(f"Reason: {IMPORT_ERROR}")
         sys.exit(1)
 
     send_escalation("Atticus SMTP test", "This is a test from make smtp-test")
