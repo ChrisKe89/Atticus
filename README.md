@@ -1,4 +1,4 @@
-# Atticus
+# Atticus\r\n\r\n> **Atticus for Sales Enablement** accelerates tender responses, keeps Sales self-sufficient, and frees Service/Marketing from ad-hoc requests.\r\n
 
 ## Purpose
 
@@ -28,6 +28,15 @@ Minimum settings for escalation email:
 pip install -U pip pip-tools
 pip-compile -U requirements.in
 pip-sync requirements.txt
+```
+### 2a. Frontend assets (Tailwind CSS)
+
+Install Node tooling once to compile the Tailwind-based web UI assets.
+
+```bash
+npm install
+npm run tailwind:build   # one-off build
+npm run tailwind:watch   # optional dev watcher
 ```
 
 ### 3. Add content
@@ -71,10 +80,10 @@ From zero to production:
 7. **Release** – commit the updated `indices/manifest.json` and tag a new version.
 
 Common shortcuts:
-* Fresh machine → `make env → make ingest → make eval → make api`
-* Content changed → `make ingest` (+ `make eval` if regression checks are needed)
-* Code changed → `make test`, `make lint`, `make typecheck`
-* Full smoke test → `make e2e`
+* Fresh machine -> `make env -> make ingest -> make eval -> make api`
+* Content changed -> `make ingest` (+ `make eval` if regression checks are needed)
+* Code changed -> `make test`, `make lint`, `make typecheck`
+* Full smoke test -> `make e2e` (runs ingest, eval, and API/UI smoke checks)
 
 ---
 
@@ -88,9 +97,9 @@ Common shortcuts:
 | `make api` | Start FastAPI and serve UI |
 | `make ui` | Only if UI is split from API |
 | `make smtp-test` | Send a test SES email |
-| `make e2e` | Ingest → Eval → API smoke → UI ping |
+| `make e2e` | Ingest -> Eval -> API/UI smoke (via `scripts/e2e_smoke.py`) |
 | `make openapi` | Regenerate OpenAPI schema |
-| `make test` | Run tests with ≥90% coverage |
+| `make test` | Run tests with >=90% coverage |
 | `make lint` / `make format` | Lint and auto-fix with Ruff |
 | `make typecheck` | Run static type checks |
 
@@ -119,7 +128,9 @@ Run `make api` and browse to `http://localhost:8000/static/index.html` (or your 
 ## Documentation Map
 
 * [AGENTS.md](AGENTS.md) – architecture, environment settings, error policy
-* [docs/OPERATIONS.md](docs/OPERATIONS.md) – runbooks and evaluation metrics guide
+* [ATTICUS_DETAILED_GUIDE.md](docs/ATTICUS_DETAILED_GUIDE.md) – end-to-end flow, reranker behaviour, and roadmap parity
+* [REMOTE_ACCESS.md](docs/REMOTE_ACCESS.md) – secure ways to reach a local instance from another PC
+* [OPERATIONS.md](OPERATIONS.md) – runbooks and evaluation metrics guide
 * [ARCHITECTURE.md](ARCHITECTURE.md) – high-level system diagram
 * [SECURITY.md](SECURITY.md) – secrets handling and SES policies
 * [TROUBLESHOOTING.md](TROUBLESHOOTING.md) – common setup and parsing issues
@@ -128,9 +139,17 @@ Run `make api` and browse to `http://localhost:8000/static/index.html` (or your 
 * [CONTRIBUTING.md](CONTRIBUTING.md) – contributor workflow
 * [STYLEGUIDE.md](STYLEGUIDE.md) – code and writing standards
 * [TODO.md](TODO.md) / [ToDo-Complete.md](ToDo-Complete.md) – live and completed tasks
-
 ---
 
 ## License
 
 See [LICENSE](LICENSE).
+
+
+
+
+
+
+
+
+

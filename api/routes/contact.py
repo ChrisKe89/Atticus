@@ -5,12 +5,12 @@ POST /contact accepts JSON payload and sends an escalation email via SMTP.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
 from atticus.config import load_settings
-from atticus.logging import configure_logging, log_event
-from atticus.notify.mailer import send_escalation
+from atticus.logging import configure_logging, log_error, log_event
+from atticus.notify.mailer import EscalationDeliveryError, send_escalation
 
 router = APIRouter()
 
@@ -40,7 +40,19 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
     body = "\n".join(body_lines)
 
     subject = f"Atticus escalation: {payload.reason}"[:200]
-    send_escalation(subject=subject, body=body)
+    try:
+        send_escalation(subject=subject, body=body)
+    except EscalationDeliveryError as exc:
+        log_error(
+            logger,
+            "contact_escalation_failed",
+            request_id=request_id,
+            reason=exc.reason,
+        )
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Unable to deliver escalation email. Please try again shortly.",
+        ) from exc
 
     log_event(
         logger,

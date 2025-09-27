@@ -56,12 +56,18 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
         "Action": "ses:SendRawEmail",
         "Resource": "*",
         "Condition": {
-          "StringEquals": { "ses:FromAddress": "atticus-escalations@yourdomain" }
+          "StringEquals": {
+            "ses:FromAddress": "atticus-escalations@yourdomain",
+            "aws:RequestedRegion": "ap-southeast-2"
+          }
         }
       }
     ]
   }
   ```
+  ::: tip
+  Update the address and region to match your verified SES identity (e.g. "us-east-1").
+  :::
 
 ---
 
@@ -88,6 +94,6 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 
 ## Cross-References
 
-* [AGENTS.md](../AGENTS.md) — system architecture and escalation policies.
-* [README.md](../README.md) — quick-start and environment setup.
-* [OPERATIONS.md](../OPERATIONS.md) — day-to-day operations and evaluation metrics.
+* [AGENTS.md](AGENTS.md) — system architecture and escalation policies.
+* [README.md](README.md) — quick-start and environment setup.
+* [OPERATIONS.md](OPERATIONS.md) — day-to-day operations and evaluation metrics.

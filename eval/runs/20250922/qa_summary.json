@@ -1,7 +1,0 @@
-{
-  "count": 117,
-  "avg_f1": 0.0528,
-  "avg_cosine": 0.3692,
-  "summary_csv": "eval\\runs\\20250922\\qa_metrics.csv",
-  "summary_json": "eval\\runs\\20250922\\qa_summary.json"
-}

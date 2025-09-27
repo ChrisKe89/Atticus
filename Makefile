@@ -1,13 +1,15 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality
+.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality tailwind tailwind-watch
 
 PYTHON ?= python
+XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
+PYTEST_PARALLEL := $(if $(filter 1,$(XDIST_AVAILABLE)),-n auto,)
 
 env:
 	$(PYTHON) scripts/generate_env.py
 
 smtp-test:
-	$(PYTHON) -c "import sys;\ntry:\n    from atticus.notify.mailer import send_escalation\nexcept Exception as e:\n    print('TODO: implement atticus/notify/mailer.py'); sys.exit(1)\nelse:\n    send_escalation('Atticus SMTP test','This is a test from make smtp-test'); print('smtp ok')"
+	$(PYTHON) scripts/smtp_test.py
 
 api:
 	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
@@ -26,12 +28,12 @@ openapi:
 	$(PYTHON) scripts/generate_api_docs.py
 
 test:
-	pytest -n auto --maxfail=1 --disable-warnings \
+	pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
 	       --cov=atticus --cov=api --cov=retriever \
 	       --cov-report=term-missing --cov-fail-under=90
 
 e2e: env ingest eval
-	@echo 'E2E stub complete - API/UI checks to be added once implemented.'
+	$(PYTHON) scripts/e2e_smoke.py
 
 # Local quality gates (mirror CI)
 lint:
@@ -46,3 +48,9 @@ typecheck:
 	mypy atticus api ingest retriever eval
 
 quality: lint typecheck test
+
+tailwind:
+	npm run tailwind:build
+
+tailwind-watch:
+	npm run tailwind:watch

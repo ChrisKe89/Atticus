@@ -30,3 +30,8 @@ def test_chat_route_rejects_placeholder_or_skip() -> None:
         return
 
     assert r.status_code == 400
+    data = r.json()
+    assert data["error"] == "bad_request"
+    assert "Provide a real question" in data["detail"]
+    assert data["request_id"]
+    assert r.headers.get("X-Request-ID") == data["request_id"]

@@ -58,5 +58,5 @@ It ingests content, builds a searchable vector index, retrieves relevant informa
 ## Cross-References
 
 * [AGENTS.md](AGENTS.md) — Detailed agent responsibilities and error policy.
-* [OPERATIONS.md](docs/OPERATIONS.md) — Runbooks and evaluation metrics.
+* [OPERATIONS.md](OPERATIONS.md) — Runbooks and evaluation metrics.
 * [README.md](README.md) — Setup instructions and Make targets.
