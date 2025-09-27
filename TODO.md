@@ -44,8 +44,6 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
 
 ## Uncategorized
 
-* [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#code-review-scope) — Define scope, depth, and deliverables for the end-to-end code review.
-* [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#backlog-sweep-process) — Provide expectations for how aggressively to clear README/TODO deltas.
 
 ## Product & Audience
 
@@ -65,6 +63,8 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
 ## Documentation
 
 * [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#hero-graphic-asset) — Supply the approved README hero graphic assets.
+* [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#code-review-scope) — Define scope, depth, and deliverables for the end-to-end code review.
+* [ ] Blocked: see [REQUIREMENTS.md](REQUIREMENTS.md#backlog-sweep-process) — Provide expectations for how aggressively to clear README/TODO deltas.
 
 ## Future Enhancements (from EXAMPLES_ONLY) and can be ignored for now
 
