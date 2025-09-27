@@ -26,7 +26,6 @@
     * **Never** add copyright/license headers unless requested.
     * If there’s a `.pre-commit-config.yaml`, run `pre-commit run --files ...`; do not fix pre‑existing errors on untouched lines. If pre‑commit fails repeatedly, note that setup is broken.
     * When finished:
-
       * Check `git status` and revert scratch files.
       * Remove inline comments you added where possible (`git diff`).
       * Ensure no accidental license headers were added.
@@ -71,17 +70,6 @@
 **Verification** — verify as you go; exit long‑running processes; prefer faster paths.
 
 **Efficiency** — plan, execute, verify efficiently. Use Markdown only where semantically correct (inline code, fenced code, lists, tables). Use `\(` and `\)` for inline math and `\[ \]` for block math.
-
----
-
-## Git Workflow
-
-* **Branches**: `feat/<slug>`, `fix/<slug>`, `chore/<slug>`
-* **Commit messages**: `<type>(scope): <summary>` (e.g., `feat(chat): unify /api/ask route`)
-* **Flow**: create branch → commit → push → open PR to `main`; squash & merge when checks pass.
-* **Checks**: `quality`, `test.unit`, `test.api`, `test.eval` (and `test.e2e` nightly).
-* **Protection**: direct pushes to `main` disabled for humans and agents.
-* **Agent behavior**: Agents **may commit and push when instructed**; otherwise follow the PR flow above.
 
 ---
 
