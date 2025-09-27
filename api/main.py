@@ -63,9 +63,9 @@ templates = Jinja2Templates(directory="web/templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "main.html")
+    return templates.TemplateResponse(request, "index.html")
 
 
 @app.get("/ui", response_class=HTMLResponse)
 async def ui_alias(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "main.html")
+    return templates.TemplateResponse(request, "index.html")

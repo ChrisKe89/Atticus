@@ -6,6 +6,11 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant built to **help Sa
 It ingests your content, retrieves the most relevant passages, and produces grounded answers with inline citations. If confidence falls below the set threshold, Atticus provides a cautious partial answer and escalates via email.
 
 ---
+## Operating Tenets
+
+- Ship autonomously: implement backlog items in `TODO.md` top-to-bottom without waiting for approval.
+- Preserve safety: never commit secrets, redact PII from logs, and avoid breaking backward compatibility unless required.
+- Stay deterministic: rerunnable scripts, repeatable builds, and idempotent infrastructure updates are mandatory.
 
 ## Scope and Responsibilities
 

@@ -80,10 +80,10 @@ From zero to production:
 7. **Release** – commit the updated `indices/manifest.json` and tag a new version.
 
 Common shortcuts:
-* Fresh machine → `make env → make ingest → make eval → make api`
-* Content changed → `make ingest` (+ `make eval` if regression checks are needed)
-* Code changed → `make test`, `make lint`, `make typecheck`
-* Full smoke test → `make e2e`
+* Fresh machine -> `make env -> make ingest -> make eval -> make api`
+* Content changed -> `make ingest` (+ `make eval` if regression checks are needed)
+* Code changed -> `make test`, `make lint`, `make typecheck`
+* Full smoke test -> `make e2e` (runs ingest, eval, and API/UI smoke checks)
 
 ---
 
@@ -97,7 +97,7 @@ Common shortcuts:
 | `make api` | Start FastAPI and serve UI |
 | `make ui` | Only if UI is split from API |
 | `make smtp-test` | Send a test SES email |
-| `make e2e` | Ingest → Eval → API smoke → UI ping |
+| `make e2e` | Ingest -> Eval -> API/UI smoke (via `scripts/e2e_smoke.py`) |
 | `make openapi` | Regenerate OpenAPI schema |
 | `make test` | Run tests with >=90% coverage |
 | `make lint` / `make format` | Lint and auto-fix with Ruff |

@@ -9,7 +9,7 @@ env:
 	$(PYTHON) scripts/generate_env.py
 
 smtp-test:
-	$(PYTHON) -c "import sys;\ntry:\n    from atticus.notify.mailer import send_escalation\nexcept Exception as e:\n    print('TODO: implement atticus/notify/mailer.py'); sys.exit(1)\nelse:\n    send_escalation('Atticus SMTP test','This is a test from make smtp-test'); print('smtp ok')"
+	$(PYTHON) scripts/smtp_test.py
 
 api:
 	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
@@ -33,7 +33,7 @@ test:
 	       --cov-report=term-missing --cov-fail-under=90
 
 e2e: env ingest eval
-	@echo 'E2E stub complete - API/UI checks to be added once implemented.'
+	$(PYTHON) scripts/e2e_smoke.py
 
 # Local quality gates (mirror CI)
 lint:

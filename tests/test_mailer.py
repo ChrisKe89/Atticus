@@ -15,18 +15,22 @@ def test_send_escalation_smoke(monkeypatch):
     monkeypatch.setenv("SMTP_USER", "user")
     monkeypatch.setenv("SMTP_PASS", "pass")
     monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+    monkeypatch.setenv("CONTACT_EMAIL", "support@example.com")
 
-    # Import after env is set so your mailer picks it up
-    from atticus.notify import mailer
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+
+    mailer = pytest.importorskip("atticus.notify.mailer")
 
     class FakeSMTP:
-        def __init__(self, host, port):
+        def __init__(self, host, port, timeout=None):
             # Assert the code is wiring host/port correctly
             assert host == "smtp.test.local"
             assert str(port) in ("1025", 1025)
             self.started_tls = False
             self.logged_in = False
             self.sent = False
+            self.timeout = timeout
 
         # If your code uses context manager: with smtplib.SMTP(...) as s:
         def __enter__(self):
@@ -83,7 +87,10 @@ def test_send_escalation_dry_run(monkeypatch):
     monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
     monkeypatch.setenv("SMTP_DRY_RUN", "1")
 
-    from atticus.notify import mailer
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+
+    mailer = pytest.importorskip("atticus.notify.mailer")
 
     def fail_connect(*_args, **_kwargs):
         raise AssertionError("SMTP connection should not be attempted in dry-run mode")
@@ -96,3 +103,26 @@ def test_send_escalation_dry_run(monkeypatch):
     assert result.get("status") == "dry-run"
     assert result.get("host") == "smtp.test.local"
     assert str(result.get("port")) == "2525"
+
+
+def test_send_escalation_raises_on_connection_error(monkeypatch):
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "2525")
+    monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
+    monkeypatch.setenv("SMTP_FROM", "atticus@example.com")
+
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+
+    mailer = pytest.importorskip("atticus.notify.mailer")
+
+    class BrokenSMTP:
+        def __init__(self, *args, **kwargs):
+            raise OSError("connection refused")
+
+    monkeypatch.setattr("atticus.notify.mailer.smtplib.SMTP", BrokenSMTP, raising=True)
+
+    with pytest.raises(mailer.EscalationDeliveryError) as excinfo:
+        mailer.send_escalation("Fail", "body")
+
+    assert excinfo.value.reason == "connection_error"
