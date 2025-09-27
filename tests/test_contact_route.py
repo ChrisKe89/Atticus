@@ -152,4 +152,6 @@ def test_contact_route_handles_mailer_failure(monkeypatch, patch_smtp):
 
     assert response.status_code == 502
     data = response.json()
-    assert data.get("detail")
+    assert data["error"] == "internal_error"
+    assert "Unable to deliver" in data["detail"]
+    assert data["request_id"]
