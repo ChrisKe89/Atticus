@@ -1,0 +1,45 @@
+{
+    "name": "Atticus",
+    "brandIconStroke": 1.5,
+    "nav": [
+        {
+            "href": "/index.html",
+            "label": "Home",
+            "icon": "home"
+        },
+        {
+            "href": "/apps.html",
+            "label": "Apps",
+            "icon": "apps"
+        },
+        {
+            "href": "/b3.html",
+            "label": "Button 3",
+            "icon": "globe"
+        },
+        {
+            "href": "/b4.html",
+            "label": "Button 4",
+            "icon": "spark"
+        }
+    ],
+    "navBottom": [
+        {
+            "href": "/settings.html",
+            "label": "Settings",
+            "icon": "gear"
+        },
+        {
+            "href": "/contact.html",
+            "label": "Contact",
+            "icon": "mail"
+        },
+        {
+            "href": "#dark",
+            "label": "Dark Mode",
+            "icon": "moon",
+            "asButton": true,
+            "id": "darkToggle"
+        }
+    ]
+}
