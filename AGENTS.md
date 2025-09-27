@@ -24,18 +24,6 @@
     * Update documentation as necessary.
     * Keep changes minimal, focused, and consistent with existing style.
     * **Never** add copyright/license headers unless requested.
-    * If there’s a `.pre-commit-config.yaml`, run `pre-commit run --files ...`; do not fix pre‑existing errors on untouched lines. If pre‑commit fails repeatedly, note that setup is broken.
-    * When finished:
-      * Check `git status` and revert scratch files.
-      * Remove inline comments you added where possible (`git diff`).
-      * Ensure no accidental license headers were added.
-      * Try pre‑commit if available.
-      * Summarize changes briefly (small tasks) or provide high‑level notes + bullets (complex tasks).
-* If the task **does not** require modifying files, respond helpfully as a remote teammate; this may include creating issues or PR templates when appropriate.
-* When writing/modifying files:
-
-  * Do **not** tell the user to “save the file” if you already changed it via tooling.
-  * Do **not** dump the full contents of large files you edited unless explicitly asked.
 
 ### Persistence
 
