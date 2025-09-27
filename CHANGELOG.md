@@ -8,6 +8,7 @@ The newest entries appear first.
 ## [Unreleased]
 
 ### Added
+- E2E smoke target now verifies API and UI make commands via `scripts/e2e_smoke.py`.
 - New SMTP mailer module `atticus.notify.mailer` and `/contact` route for escalation emails using `.env` SMTP settings.
 - Static web UI pages under `web/static/` (chat, admin, contact) styled with Tailwind-inspired utilities and wired to the `/ask` and `/contact` APIs.
 - Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
@@ -15,11 +16,18 @@ The newest entries appear first.
 - Dev HTTP examples updated with `/contact` route.
 
 ### Changed
-- CI enforces ≥90 % coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
+- CI enforces >=90% coverage in `make test`; coverage exemptions documented in `pyproject.toml`.
 - Configuration cache hardened to reflect `.env` updates during reload tests.
 
 ### Fixed
 - Corrected settings regeneration when `.env` or environment variables change.
+
+---
+
+## [0.3.0] — 2025-09-27
+
+### Changed
+- Standardized API error responses on the shared JSON schema with request ID propagation and regression tests for 400/401/422/5xx cases.
 
 ---
 
@@ -89,3 +97,4 @@ The newest entries appear first.
 - Initial content taxonomy and ingestion pipeline with deterministic embeddings and JSON logging.
 - Retrieval helpers, observability metrics, and ingestion CLI.
 - Seeded evaluation harness with gold set and baseline metrics.
+

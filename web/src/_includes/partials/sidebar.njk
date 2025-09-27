@@ -1,0 +1,64 @@
+<aside id="leftNav" class="bg-slate-900 text-white dark:bg-slate-950 transition-all duration-300 nav-expanded">
+  <div class="h-full flex flex-col justify-between">
+    <!-- Top -->
+    <div class="py-3">
+      <button id="collapseBtn" class="w-full flex items-center justify-between px-3 py-2 hover:bg-slate-800/70">
+        <div class="flex items-center gap-3">
+          <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          <span class="nav-label text-sm font-medium">Collapse</span>
+        </div>
+        <span id="collapseArrow" class="text-xs text-slate-300 pr-1">⟵</span>
+      </button>
+
+      <nav class="mt-2 space-y-1 text-sm">
+        {% for item in site.nav %}
+          {% set isActive = (page.url == item.href) or (item.href == "/index.html" and page.url == "/") %}
+          <a href="{{ item.href }}" class="nav-link group flex items-center gap-3 px-3 py-2 hover:bg-slate-800/70{% if isActive %} bg-slate-800/70{% endif %}">
+            {% if item.icon == "home" %}
+              <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 3l9 6.75V20"/></svg>
+            {% elif item.icon == "apps" %}
+              <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8.25h6V3H3M15 8.25h6V3h-6"/></svg>
+            {% elif item.icon == "globe" %}
+              <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511a8.25 8.25 0 11-16.5 0"/></svg>
+            {% elif item.icon == "spark" %}
+              <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3l-2 2-2-2"/></svg>
+            {% endif %}
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        {% endfor %}
+
+        <!-- Admin link (shown by JS only if admin session) -->
+        <a href="/admin.html" id="adminLink" class="hidden nav-link group flex items-center gap-3 px-3 py-2 hover:bg-slate-800/70">
+          <svg class="h-5 w-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75A3.75 3.75 0 1 0 12 2.25"/></svg>
+          <span class="nav-label">Admin</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Bottom -->
+    <div class="pb-4">
+      <nav class="space-y-1 text-sm">
+        {% for item in site.navBottom %}
+          {% if item.asButton %}
+            <button id="{{ item.id }}" class="w-full nav-link group flex items-center gap-3 px-3 py-2 hover:bg-slate-800/70">
+              <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13A9 9 0 1111 2.36"/></svg>
+              <span class="nav-label">{{ item.label }}</span>
+            </button>
+          {% else %}
+            {% set isActive = (page.url == item.href) or (item.href == "/index.html" and page.url == "/") %}
+            <a href="{{ item.href }}" class="nav-link group flex items-center gap-3 px-3 py-2 hover:bg-slate-800/70{% if isActive %} bg-slate-800/70{% endif %}">
+              {% if item.icon == "gear" %}
+                <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.948"/></svg>
+              {% elif item.icon == "mail" %}
+                <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75"/></svg>
+              {% elif item.icon == "moon" %}
+                <svg class="h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M21.64 13"/></svg>
+              {% endif %}
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </nav>
+    </div>
+  </div>
+</aside>

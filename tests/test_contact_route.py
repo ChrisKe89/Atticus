@@ -53,19 +53,22 @@ def patch_smtp(monkeypatch):
 
 
 def _mk_client():
-    from fastapi.testclient import TestClient
-    from api.main import app
-
-    return TestClient(app), app
+    api_main = pytest.importorskip("api.main")
+    TestClient = pytest.importorskip("fastapi.testclient").TestClient
+    return TestClient(api_main.app), api_main.app
 
 
 def test_contact_route_smoke_or_skip(monkeypatch, patch_smtp):
+    client = app = None
     # Minimal env so startup doesn't bail
     monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
     monkeypatch.setenv("SMTP_PORT", "1025")
     monkeypatch.setenv("SMTP_USER", "user")
     monkeypatch.setenv("SMTP_PASS", "pass")
     monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
 
     try:
         client, app = _mk_client()
@@ -90,11 +93,15 @@ def test_contact_route_smoke_or_skip(monkeypatch, patch_smtp):
 
 
 def test_contact_route_with_transcript_or_skip(monkeypatch, patch_smtp):
+    client = app = None
     monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
     monkeypatch.setenv("SMTP_PORT", "1025")
     monkeypatch.setenv("SMTP_USER", "user")
     monkeypatch.setenv("SMTP_PASS", "pass")
     monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
 
     try:
         client, app = _mk_client()
@@ -117,3 +124,34 @@ def test_contact_route_with_transcript_or_skip(monkeypatch, patch_smtp):
             return
 
     pytest.fail("No contact endpoint accepted the request.")
+
+
+def test_contact_route_handles_mailer_failure(monkeypatch, patch_smtp):
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "1025")
+    monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
+    monkeypatch.setenv("CONTACT_EMAIL", "support@example.com")
+
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+
+    try:
+        client, _app = _mk_client()
+    except Exception as e:
+        pytest.skip(f"api not importable yet: {e}")
+        return
+
+    notify_module = pytest.importorskip("atticus.notify")
+
+    def boom(*_args, **_kwargs):
+        raise notify_module.EscalationDeliveryError("boom", reason="connection_error")
+
+    monkeypatch.setattr("api.routes.contact.send_escalation", boom, raising=True)
+
+    response = client.post("/contact", json={"reason": "failing"})
+
+    assert response.status_code == 502
+    data = response.json()
+    assert data["error"] == "internal_error"
+    assert "Unable to deliver" in data["detail"]
+    assert data["request_id"]

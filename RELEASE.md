@@ -37,7 +37,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
      make e2e
      ```
 
-   * CI requires ≥90 % coverage and enforces evaluation regression thresholds.
+   * CI requires >=90% coverage and enforces evaluation regression thresholds.
 4. **Tag the Release**
    * Tag using semantic versioning, e.g. `v1.3.0`:
 
@@ -60,5 +60,5 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 ## References
 
 * [CHANGELOG.md](CHANGELOG.md) — full version history.
-* [OPERATIONS.md](docs/OPERATIONS.md) — runbooks and evaluation metrics.
+* [OPERATIONS.md](OPERATIONS.md) — runbooks and evaluation metrics.
 * [SECURITY.md](SECURITY.md) — secrets management and IAM policy examples.
