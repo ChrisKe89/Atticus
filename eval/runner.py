@@ -1,7 +1,7 @@
 """Evaluation harness computing nDCG@10, Recall@50, and MRR.
 
 This module lazily imports heavy runtime dependencies so its pure functions
-can be unit tested without requiring optional system packages (e.g. FAISS).
+can be unit tested without requiring optional system packages (e.g. pgvector server extension).
 """
 
 from __future__ import annotations

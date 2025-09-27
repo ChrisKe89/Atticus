@@ -6,9 +6,11 @@ logs_path: logs/app.jsonl
 errors_path: logs/errors.jsonl
 manifest_path: indices/manifest.json
 metadata_path: indices/index_metadata.json
-faiss_index_path: indices/index.faiss
 snapshots_dir: indices/snapshots
 dictionary_path: indices/dictionary.json
+database_url: postgresql://postgres:postgres@localhost:5432/atticus
+pgvector_lists: 100
+pgvector_probes: 4
 chunk_size: 512
 chunk_overlap_ratio: 0.2
 chunk_target_tokens: 512

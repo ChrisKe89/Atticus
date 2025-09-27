@@ -49,7 +49,7 @@ Follow the taxonomy in [AGENTS.md](AGENTS.md#filefolder-glossary).
 ```bash
 make ingest
 ```
-Parses, chunks, embeds, and updates the vector index.
+Parses, chunks, embeds, and updates the pgvector-backed index and metadata snapshot.
 
 ### 5. Evaluate retrieval
 
@@ -96,7 +96,7 @@ Common shortcuts:
 | Target | Description |
 |--------|------------|
 | `make env` | Create `.env` from defaults |
-| `make ingest` | Parse, chunk, embed, and update index |
+| `make ingest` | Parse, chunk, embed, and update pgvector index |
 | `make eval` | Run retrieval evaluation and write metrics |
 | `make api` | Start FastAPI backend |
 | `make ui` | Run Next.js dev server (port 3000) |

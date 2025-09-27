@@ -3,19 +3,18 @@
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import shutil
 from pathlib import Path
 
-from atticus.config import AppSettings, Manifest, load_manifest, load_settings, write_manifest
+from atticus.config import AppSettings, load_manifest, load_settings, write_manifest
 from atticus.logging import configure_logging, log_event
-from atticus.utils import sha256_text
+from atticus.vector_db import PgVectorRepository, load_metadata
 from eval.runner import load_gold_set
 from retriever.vector_store import VectorStore
 
-SNAPSHOT_INDEX = "index.faiss"
 SNAPSHOT_METADATA = "index_metadata.json"
+SNAPSHOT_MANIFEST = "manifest.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -38,13 +37,6 @@ def _latest_snapshot_dir(directory: Path) -> Path:
     return candidates[-1]
 
 
-def _load_metadata_count(path: Path) -> int:
-    if not path.exists():
-        return 0
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    return len(payload)
-
-
 def _run_smoke_tests(settings: AppSettings, logger, limit: int) -> list[str]:
     store = VectorStore(settings, logger)
     gold_examples = load_gold_set(settings.gold_set_path)[:limit]
@@ -63,41 +55,62 @@ def main() -> None:
     settings = load_settings()
     logger = configure_logging(settings)
 
+    if not settings.database_url:
+        raise ValueError("DATABASE_URL must be configured before running rollback")
+
     snapshot_dir = args.snapshot or _latest_snapshot_dir(settings.snapshots_dir)
-    index_path = snapshot_dir / SNAPSHOT_INDEX
     metadata_path = snapshot_dir / SNAPSHOT_METADATA
-    if not index_path.exists() or not metadata_path.exists():
-        raise FileNotFoundError(f"Snapshot {snapshot_dir} is missing required files")
+    manifest_path = snapshot_dir / SNAPSHOT_MANIFEST
+    if not metadata_path.exists() or not manifest_path.exists():
+        raise FileNotFoundError(
+            f"Snapshot {snapshot_dir} is missing {SNAPSHOT_METADATA} or {SNAPSHOT_MANIFEST}"
+        )
 
-    shutil.copy2(index_path, settings.faiss_index_path)
+    snapshot_manifest = load_manifest(manifest_path)
+    if snapshot_manifest is None:
+        raise FileNotFoundError(f"Snapshot manifest {manifest_path} is invalid or missing")
+
+    chunks = load_metadata(metadata_path)
+    repository = PgVectorRepository(settings)
+    repository.ensure_schema()
+    repository.truncate()
+
+    documents = snapshot_manifest.documents
+    ingest_time = snapshot_manifest.created_at
+
+    chunks_by_document: dict[str, list] = {}
+    for chunk in chunks:
+        entry = chunks_by_document.setdefault(chunk.document_id, [])
+        entry.append(chunk)
+
+    for document_id, doc_chunks in chunks_by_document.items():
+        if not doc_chunks:
+            continue
+        source_path = doc_chunks[0].source_path
+        metadata = documents.get(source_path, {})
+        repository.replace_document(
+            document_id=document_id,
+            source_path=source_path,
+            sha256=str(metadata.get("sha256", "")),
+            source_type=metadata.get("source_type"),
+            chunks=doc_chunks,
+            ingest_time=ingest_time,
+        )
+
     shutil.copy2(metadata_path, settings.metadata_path)
+    shutil.copy2(manifest_path, settings.manifest_path)
 
-    manifest = load_manifest(settings.manifest_path)
-    documents = manifest.documents if manifest else {}
-    chunk_count = _load_metadata_count(settings.metadata_path)
-    updated_manifest = Manifest(
-        embedding_model=settings.embed_model,
-        embedding_model_version=settings.embedding_model_version,
-        embedding_dimensions=settings.embed_dimensions,
-        chunk_size=settings.chunk_size,
-        chunk_overlap_ratio=settings.chunk_overlap_ratio,
-        corpus_hash=sha256_text(f"rollback:{snapshot_dir.name}"),
-        document_count=len(documents),
-        chunk_count=chunk_count,
-        created_at=settings.timestamp(),
-        metadata_path=settings.metadata_path,
-        index_path=settings.faiss_index_path,
-        snapshot_path=index_path,
-        documents=documents,
-    )
-    write_manifest(settings.manifest_path, updated_manifest)
+    restored_manifest = load_manifest(settings.manifest_path)
+    if restored_manifest is None:
+        write_manifest(settings.manifest_path, snapshot_manifest)
+        restored_manifest = snapshot_manifest
 
     log_event(
         logger,
         "rollback_restored",
         snapshot=str(snapshot_dir),
-        chunk_count=chunk_count,
-        document_count=len(documents),
+        chunk_count=len(chunks),
+        document_count=len(restored_manifest.documents),
     )
 
     if args.skip_smoke:

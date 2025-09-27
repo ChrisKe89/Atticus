@@ -3,14 +3,51 @@
 This file is the **single source of truth** for active tasks.
 Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
 
+## Phased Approach
+
+Phased Plan (Single Branch) which summarises the ToDo items below.
+
+### Phase 1 – Storage Foundation ✅
+
+- [x] Replace FAISS with pgvector (schema/migrations, ingestion & retrieval rewrite, dependency cleanup).
+- [x] Update atticus/config.py, remove atticus/faiss_index.py, adjust ingest/pipeline.py, retriever/vector_store.py, requirements.in.
+- [ ] Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock.
+### Phase 2 – API Contract Alignment
+
+- Merge /api/ask and /api/chat; remove FastAPI UI remnants in api/main.py; update Makefile targets.
+- Ensure response contract with request_id/should_escalate, refresh tests/fixtures, sync docs (README/ARCHITECTURE).
+- Verify via API unit tests + smoke run.
+
+### Phase 3 – Auth & RBAC Layer
+
+- Integrate Auth.js (Next.js routes, email magic link), define roles, add Postgres RLS, secure admin endpoints.
+- Implement glossary DB storage and admin gating.
+- Add RBAC tests (unit + Playwright), document new workflow.
+### Phase 4 – Ingestion & Escalation Enhancements
+
+- Implement CED chunkers with SHA-256 dedupe; extend escalation emails with allow-list and trace payload.
+- Adjust ingestion reuse logic, update mailer tests/docs, expand logging to include trace IDs/metrics.
+- Run ingestion regression + mailer unit tests.
+### Phase 5 – Observability & Guardrails
+
+- Add rate limiting middleware, structured metrics dashboards, admin counter surfacing.
+- Finish documentation sweep (Operations, Troubleshooting, Requirements, CI expectations).
+- Update workflows to enforce quality gates, confirm coverage ≥90%.
+
+### Phase 6 – Seeds, Reports, and Spec Work
+
+- Build sample seed dataset + make seed, add evaluation reports/CI artifacts, finalize glossary spec documentation.
+- Address blocked documentation items once requirements clarified.
+
 **A. Code changes required to align with this AGENTS spec**
 
-1. **Replace FAISS with Postgres/pgvector** — remove `atticus/faiss_index.py` and file-index configs; add DB + vector index config; write to `documents/chunks` with `embedding VECTOR(D)`; create `pgvector` extension and **IVFFlat** index; set `probes`.
-   - [ ] Inventory FAISS usage across code, scripts, and configs to scope the migration surface.
-   - [ ] Design `documents`/`chunks` schema with pgvector columns and generate Prisma/SQL migrations.
-   - [ ] Update ingestion pipeline to persist embeddings into Postgres and snapshot metadata in the new format.
-   - [ ] Implement pgvector-backed retrieval DAO and remove FAISS loading/saving paths.
-   - [ ] Drop FAISS dependencies/configuration (code, requirements, docs) and backfill unit/integration tests.
+1. ✅ **Replace FAISS with Postgres/pgvector** – remove `atticus/faiss_index.py` and file-index configs; add DB + vector index config; write to `documents/chunks` with `embedding VECTOR(D)`; create `pgvector` extension and **IVFFlat** index; set `probes`.
+   - [x] Inventory FAISS usage across code, scripts, and configs to scope the migration surface.
+   - [x] Design `documents`/`chunks` schema with pgvector columns and generate DDL in the repository.
+   - [x] Update ingestion pipeline to persist embeddings into Postgres and snapshot metadata in the new format.
+   - [x] Implement pgvector-backed retrieval DAO and remove FAISS loading/saving paths.
+   - [x] Drop FAISS dependencies and configuration (code, requirements, docs).
+   - [ ] Add pgvector ingestion/retrieval regression coverage.
 2. **Unify `/api/ask` route & response** — keep one route returning `{answer,sources,confidence,request_id,should_escalate}`; remove duplicate module; fix `api/main.py` mounts; ensure `request_id` present.
    - [ ] Audit callers (frontend, tests, SDKs) relying on `chat.py` vs `ask.py` implementations.
    - [ ] Consolidate logic into a single handler that always emits the canonical contract.
@@ -94,14 +131,14 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
 
 **E. File-specific TODOs from audit**
 
-1. `atticus/config.py` — remove `faiss_index_path`/file-index fields; add `DATABASE_URL`, `EMBEDDING_DIM`, vector tunables (lists/probes).
-   - [ ] Delete FAISS-specific fields and defaults.
-   - [ ] Introduce Postgres/vector configuration with validation and docs.
-   - [ ] Update tests/utilities relying on old settings.
-2. `atticus/faiss_index.py` — delete; replace with pgvector DAO (CRUD for `documents/chunks`, cosine search).
-   - [ ] Port shared dataclasses/helpers needed by new DAO.
-   - [ ] Implement pgvector repository with cosine similarity queries.
-   - [ ] Remove FAISS module references throughout repo.
+1. ✅ `atticus/config.py` — remove `faiss_index_path`/file-index fields; add `DATABASE_URL`, `EMBEDDING_DIM`, vector tunables (lists/probes).
+    - [x] Delete FAISS-specific fields and defaults.
+    - [x] Introduce Postgres/vector configuration with validation and docs.
+    - [ ] Update tests/utilities relying on old settings.
+2. ✅ `atticus/faiss_index.py` — delete; replace with pgvector DAO (`atticus/vector_db.py`) for `documents/chunks` cosine search.
+    - [x] Port shared dataclasses/helpers needed by new DAO.
+    - [x] Implement pgvector repository with cosine similarity queries.
+    - [x] Remove FAISS module references throughout repo.
 3. `api/main.py` — drop Jinja2 templates/static mounts; stop serving `/` HTML; keep JSON APIs; Next.js owns UI.
    - [ ] Remove template/static configuration and unused imports.
    - [ ] Confirm API router mounts only expose JSON endpoints.

@@ -9,8 +9,9 @@ pydantic
 pydantic-settings
 httpx
 python-dotenv
+psycopg[binary]
+pgvector
 openai
-faiss-cpu
 numpy
 scikit-learn
 rapidfuzz
