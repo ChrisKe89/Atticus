@@ -34,6 +34,7 @@ Each entry includes the completion date and commit reference for traceability.
 
 - [x] Verified README/AGENTS/OPERATIONS cross-links and fixed relative paths - completed 2025-09-25 (commit 2a3b760).
 - [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit 2a3b760).
+- [x] TODO "SECURITY.md — env-only secrets; SMTP `From` allow-list; RLS examples." - completed 2025-09-25 (commit 2a3b760).
 
 
 - [x] Reviewed repository documentation set and normalised coverage messaging - completed 2025-09-25 (commit cd280f8).
@@ -42,6 +43,7 @@ Each entry includes the completion date and commit reference for traceability.
 ## 2025-09-27
 
 - [x] Implemented shared JSON error schema for API responses with request ID propagation tests — completed 2025-09-27 (commit 6dbf0b8).
+- [x] TODO "Error JSON contract" - completed 2025-09-27 (commit 6dbf0b8).
 - [x] Verified API-served UI via automated tests (pytest) and captured guidance in ATTICUS detailed guide - completed 2025-09-25 (commit cd280f8).
 - [x] Enabled optional hybrid reranker with `ENABLE_RERANKER` flag and documented behaviour - completed 2025-09-25 (commit cd280f8).
 - [x] Updated README hero copy to spotlight Sales/tender acceleration messaging - completed 2025-09-25 (commit cd280f8).

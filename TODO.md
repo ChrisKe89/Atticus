@@ -2,7 +2,6 @@
 
 This file is the **single source of truth** for active tasks.
 Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
-Tasks marked **[Codex]** are ideal for automation.
 
 **A. Code changes required to align with this AGENTS spec**
 
@@ -21,13 +20,11 @@ Tasks marked **[Codex]** are ideal for automation.
 3. **OPERATIONS.md** — DB backup/restore; RLS policy examples; pgvector DDL and `probes` docs.
 4. **TROUBLESHOOTING.md** — Auth.js email flow; pgvector extension issues; Prisma migration conflicts; SSE timeouts.
 5. **REQUIREMENTS.md** — add Postgres + Prisma; deprecate FAISS/Jinja2; keep Windows notes.
-6. **SECURITY.md** — env‑only secrets; SMTP `From` allow‑list; RLS examples.
 
 **C. Items to carry into AGENTS (non‑conflicting)**
 
 1. **CI gates** — keep lint/test/eval/release; adjust for TS/Next.js later; preserve eval gate.
-2. **Error JSON contract** — standardize across the API.
-3. **Dictionary/glossary admin** — keep concept; migrate storage to DB; surface in Admin.
+2. **Dictionary/glossary admin** — keep concept; migrate storage to DB; surface in Admin.
 
 **D. Documentation depth improvements**
 
