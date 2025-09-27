@@ -8,12 +8,11 @@ Tasks marked **[Codex]** are ideal for automation.
 
 1. **Replace FAISS with Postgres/pgvector** — remove `atticus/faiss_index.py` and file‑index configs; add DB + vector index config; write to `documents/chunks` with `embedding VECTOR(D)`; create `pgvector` extension and **IVFFlat** index; set `probes`.
 2. **Unify `/api/ask` route & response** — keep one route returning `{answer,sources,confidence,request_id,should_escalate}`; remove duplicate module; fix `api/main.py` mounts; ensure `request_id` present.
-3. **Retire Jinja/Nunjucks UI** — delete Jinja2/Eleventy sources and static server target; create **Next.js** app with routes: `/`, `/admin`, `/settings`, `/contact`, `/apps`.
-4. **Auth.js + RBAC** — introduce email magic link; gate `/admin` & sensitive APIs by role; add RLS keyed by `org_id`; replace ad‑hoc dictionary endpoints with role‑checked admin APIs.
-5. **Ingestion — CED chunkers** — implement prose/table/footnote chunkers; serialize table rows; stamp rich metadata; compute `sha256` for de‑dup.
-6. **Email escalation** — keep SMTP, load sender/region from env; add `SMTP_FROM` allow‑list; include trace payload (user/chat/message ids, top‑k docs & scores, question).
-7. **Structured logs + metrics** — keep `logs/app.jsonl` & `logs/errors.jsonl`; add per‑turn trace IDs; redact PII; expand metrics (retrieval/latency histograms).
-8. **Rate limiting** — per user/IP limiter with tests; expose counters in admin.
+3. **Auth.js + RBAC** — introduce email magic link; gate `/admin` & sensitive APIs by role; add RLS keyed by `org_id`; replace ad‑hoc dictionary endpoints with role‑checked admin APIs.
+4. **Ingestion — CED chunkers** — implement prose/table/footnote chunkers; serialize table rows; stamp rich metadata; compute `sha256` for de‑dup.
+5. **Email escalation** — keep SMTP, load sender/region from env; add `SMTP_FROM` allow‑list; include trace payload (user/chat/message ids, top‑k docs & scores, question).
+6. **Structured logs + metrics** — keep `logs/app.jsonl` & `logs/errors.jsonl`; add per‑turn trace IDs; redact PII; expand metrics (retrieval/latency histograms).
+7. **Rate limiting** — per user/IP limiter with tests; expose counters in admin.
 
 **B. Existing markdown/docs to update**
 

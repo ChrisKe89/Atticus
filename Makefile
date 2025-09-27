@@ -1,5 +1,5 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality tailwind tailwind-watch
+.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality web-build web-start web-lint web-typecheck
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -15,8 +15,8 @@ api:
 	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
 
 ui:
-	@echo Serving static UI on http://localhost:8081 (expects API on :8000)
-	$(PYTHON) -m http.server 8081 --directory web
+	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
+	npm run dev
 
 ingest:
 	$(PYTHON) scripts/ingest_cli.py
@@ -49,8 +49,14 @@ typecheck:
 
 quality: lint typecheck test
 
-tailwind:
-	npm run tailwind:build
+web-build:
+	npm run build
 
-tailwind-watch:
-	npm run tailwind:watch
+web-start:
+	npm run start
+
+web-lint:
+	npm run lint
+
+web-typecheck:
+	npm run typecheck
