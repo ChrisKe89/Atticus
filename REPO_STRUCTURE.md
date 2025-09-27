@@ -91,14 +91,27 @@ Key directories and files to keep when migrating the project.
     - `tests/test_mailer.py`
     - `tests/test_ui_route.py`
   - `web/`
-    - `web/static/`
-      - `web/static/css/`
-      - `web/static/img/`
-      - `web/static/js/`
-    - `web/templates/`
-      - `web/templates/admin.html`
-      - `web/templates/contact.html`
-      - `web/templates/index.html`
+    - `web/_site/`
+      - `web/_site/assets/`
+      - `web/_site/admin.html`
+      - `web/_site/apps.html`
+      - `web/_site/b3.html`
+      - `web/_site/b4.html`
+      - `web/_site/contact.html`
+      - `web/_site/index.html`
+      - `web/_site/settings.html`
+    - `web/src/`
+      - `web/src/_data/`
+      - `web/src/_includes/`
+      - `web/src/assets/`
+      - `web/src/admin.njk`
+      - `web/src/apps.njk`
+      - `web/src/b3.njk`
+      - `web/src/b4.njk`
+      - `web/src/contact.njk`
+      - `web/src/index.njk`
+      - `web/src/settings.njk`
+  - `.coverage`
   - `.editorconfig`
   - `.env`
   - `.env.example`
