@@ -5,11 +5,9 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from starlette.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from atticus.logging import configure_logging
@@ -50,7 +48,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.3.0",
+    version="0.4.0",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -66,16 +64,12 @@ app.include_router(admin.router)
 app.include_router(eval_routes.router)
 app.include_router(contact_routes.router)
 
-# Static and templates per acceptance
-app.mount("/static", StaticFiles(directory="web/static"), name="static")
-templates = Jinja2Templates(directory="web/templates")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "index.html")
-
-
-@app.get("/ui", response_class=HTMLResponse)
-async def ui_alias(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "index.html")
+@app.get("/", include_in_schema=False)
+async def ui_placeholder() -> JSONResponse:
+    """Inform callers that the UI is served by the Next.js frontend."""
+    return JSONResponse(
+        {"status": "ui_moved", "detail": "Next.js serves the UI on port 3000."},
+        status_code=200,
+    )

@@ -29,14 +29,14 @@ pip install -U pip pip-tools
 pip-compile -U requirements.in
 pip-sync requirements.txt
 ```
-### 2a. Frontend assets (Tailwind CSS)
+### 2a. Frontend (Next.js)
 
-Install Node tooling once to compile the Tailwind-based web UI assets.
+Install Node dependencies once to run the Next.js workspace.
 
 ```bash
 npm install
-npm run tailwind:build   # one-off build
-npm run tailwind:watch   # optional dev watcher
+make ui            # start the Next.js dev server (http://localhost:3000)
+npm run build      # optional production build
 ```
 
 ### 3. Add content
@@ -60,10 +60,14 @@ Checks retrieval quality against the gold set and writes metrics to `eval/runs/<
 
 ### 6. Run the service
 
+Start the FastAPI backend and the Next.js UI in separate terminals.
+
 ```bash
-make api
+make api   # http://localhost:8000
+make ui    # http://localhost:3000
 ```
-Serves the API and UI at `http://localhost:8000` (docs at `/docs`).
+
+Docs remain at `http://localhost:8000/docs`; the web workspace runs on port 3000.
 
 ---
 
@@ -75,12 +79,12 @@ From zero to production:
 2. **Content** – add or update files under `content/`.
 3. **Ingest** – `make ingest` to rebuild the index.
 4. **Evaluate** – `make eval` and review metrics.
-5. **Run** – `make api` to expose `/ask` and integrated UI.
+5. **Run** – `make api` for the backend and `make ui` for the Next.js workspace.
 6. **Observe** – check `logs/app.jsonl` and `logs/errors.jsonl` or browse `/admin/sessions`.
 7. **Release** – commit the updated `indices/manifest.json` and tag a new version.
 
 Common shortcuts:
-* Fresh machine -> `make env -> make ingest -> make eval -> make api`
+* Fresh machine -> `make env -> make ingest -> make eval -> make api -> make ui`
 * Content changed -> `make ingest` (+ `make eval` if regression checks are needed)
 * Code changed -> `make test`, `make lint`, `make typecheck`
 * Full smoke test -> `make e2e` (runs ingest, eval, and API/UI smoke checks)
@@ -94,8 +98,12 @@ Common shortcuts:
 | `make env` | Create `.env` from defaults |
 | `make ingest` | Parse, chunk, embed, and update index |
 | `make eval` | Run retrieval evaluation and write metrics |
-| `make api` | Start FastAPI and serve UI |
-| `make ui` | Only if UI is split from API |
+| `make api` | Start FastAPI backend |
+| `make ui` | Run Next.js dev server (port 3000) |
+| `make web-build` | Build the production Next.js bundle |
+| `make web-start` | Start the built Next.js app |
+| `make web-lint` | Run Next.js lint checks |
+| `make web-typecheck` | Type-check the UI with TypeScript |
 | `make smtp-test` | Send a test SES email |
 | `make e2e` | Ingest -> Eval -> API/UI smoke (via `scripts/e2e_smoke.py`) |
 | `make openapi` | Regenerate OpenAPI schema |
