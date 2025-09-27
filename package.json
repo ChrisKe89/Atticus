@@ -1,18 +1,31 @@
 {
-  "name": "atticus-web",
-  "version": "0.1.0",
+  "name": "atticus",
+  "version": "0.4.0",
   "private": true,
-  "description": "Frontend tooling for the Atticus UI (TailwindCSS build pipeline).",
+  "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {
-    "tailwind:build": "tailwindcss -c tailwind.config.js -i web/static/css/tailwind.css -o web/static/css/style.css",
-    "tailwind:watch": "npm run tailwind:build -- --watch"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.40",
-    "tailwindcss": "^3.4.10"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "jsdom": "^27.0.0"
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.452.0",
+    "next": "14.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.9",
+    "@types/react": "18.3.5",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.20",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "postcss": "8.4.40",
+    "tailwindcss": "3.4.10",
+    "typescript": "5.4.5"
   }
 }

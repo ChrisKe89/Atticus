@@ -17,4 +17,5 @@ def test_ui_route_or_skip():
     client = TestClient(app)
     r = client.get("/")
     assert r.status_code == 200
-    assert "chat-stream" in r.text
+    payload = r.json()
+    assert payload['status'] == 'ui_moved'
