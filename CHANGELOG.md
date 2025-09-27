@@ -8,6 +8,7 @@ The newest entries appear first.
 ## [Unreleased]
 
 ### Added
+- E2E smoke target now verifies API and UI make commands via `scripts/e2e_smoke.py`.
 - New SMTP mailer module `atticus.notify.mailer` and `/contact` route for escalation emails using `.env` SMTP settings.
 - Ask schema now accepts `{ "query": "..." }` as an alias for `question`.
 - Documentation expanded with `ARCHITECTURE.md`, `OPERATIONS.md`, and `RELEASE.md`.

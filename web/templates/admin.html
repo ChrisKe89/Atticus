@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Atticus</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-hidden">
+  <!-- Global Header -->
+  <header class="w-full bg-gray-900/95 dark:bg-gray-800 text-white px-6 py-3 border-b border-gray-700 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-blue-300">auto_stories</span>
+      <h1 class="text-xl font-bold tracking-wide uppercase">Atticus</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <button type="button" class="rounded px-2 py-2 hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+              aria-label="Toggle sidebar" data-sidebar-toggle>
+        <span class="material-icons">menu</span>
+      </button>
+      <button id="dark-toggle" class="rounded px-2 py-2 hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+              aria-label="Toggle dark mode">
+        <span class="material-icons">dark_mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 bg-gray-900 dark:bg-gray-800 text-white flex flex-col transition-all duration-300 overflow-hidden">
+      <nav class="flex-1 flex flex-col space-y-1 py-2">
+        <a href="index.html" class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700">
+          <div class="icon-col"><span class="material-icons">home</span></div>
+          <span class="menu-text">Home</span>
+        </a>
+        <a href="admin.html" class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700">
+          <div class="icon-col"><span class="material-icons">admin_panel_settings</span></div>
+          <span class="menu-text">Admin</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col">
+      <!-- Admin top menu (kept) -->
+      <nav class="border-b border-gray-300 dark:border-gray-700 flex justify-center space-x-6 py-3 bg-transparent text-gray-700 dark:text-gray-300 font-medium">
+        <a href="#" class="hover:text-blue-600">Documentation</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="hover:text-blue-600">Chat Logs</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="hover:text-blue-600">Error Logs</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="hover:text-blue-600">Dictionary</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="hover:text-blue-600">Evaluation</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="hover:text-blue-600">Tests</a>
+      </nav>
+
+      <div class="flex-1 p-6">
+        <h2 class="text-2xl font-bold mb-4">Admin Dashboard</h2>
+        <p class="text-gray-600 dark:text-gray-300">Select a section from the menu above to get started.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

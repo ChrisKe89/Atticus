@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atticus AI Chat</title>
+  <link href="css/style.css" rel="stylesheet" onerror="if(!this.dataset.alt){this.dataset.alt=1;this.href='/static/css/style.css';}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+
+<body data-api-base="" class="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <!-- Global Header -->
+  <header class="w-full border-b border-gray-200 bg-white/70 px-6 py-3 dark:border-gray-700 dark:bg-gray-900/60 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-icons text-blue-300">auto_stories</span>
+      <h1 class="text-xl font-bold tracking-wide uppercase">Atticus</h1>
+    </div>
+    <div class="flex items-center gap-3">
+      <button type="button" class="rounded px-2 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+              aria-label="Toggle sidebar" data-sidebar-toggle>
+        <span class="material-icons">menu</span>
+      </button>
+      <button id="dark-toggle" class="rounded px-2 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+              aria-label="Toggle dark mode">
+        <span class="material-icons">dark_mode</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 bg-gray-900 dark:bg-gray-800 text-white flex flex-col transition-all duration-300 shadow-xl">
+      <nav class="flex-1 flex flex-col space-y-1 py-2">
+        <a class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+           href="index.html">
+          <div class="icon-col"><span class="material-icons">home</span></div>
+          <span class="menu-text">Home</span>
+        </a>
+        <button class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+                data-view="apps" type="button">
+          <div class="icon-col"><span class="material-icons">apps</span></div>
+          <span class="menu-text">Apps</span>
+        </button>
+        <button class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+                data-view="favorites" type="button">
+          <div class="icon-col"><span class="material-icons">star</span></div>
+          <span class="menu-text">Favorites</span>
+        </button>
+        <button class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+                data-view="chat" type="button">
+          <div class="icon-col"><span class="material-icons">chat</span></div>
+          <span class="menu-text">Chat</span>
+        </button>
+        <button class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+                data-view="settings" type="button">
+          <div class="icon-col"><span class="material-icons">settings</span></div>
+          <span class="menu-text">Settings</span>
+        </button>
+      </nav>
+
+      <div class="mt-auto flex flex-col space-y-1 py-2">
+        <a href="admin.html" class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
+          <div class="icon-col"><span class="material-icons">admin_panel_settings</span></div>
+          <span class="menu-text">Admin</span>
+        </a>
+        <a href="contact.html" class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
+          <div class="icon-col"><span class="material-icons">mail</span></div>
+          <span class="menu-text">Contact</span>
+        </a>
+        <button id="clear-chat" class="menu-item grid grid-cols-[80px,1fr] items-center gap-2 px-0 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" type="button">
+          <div class="icon-col"><span class="material-icons">delete</span></div>
+          <span class="menu-text">Clear Chat</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 flex flex-col h-full">
+      <header class="flex items-center justify-between border-b border-gray-200 bg-white/70 px-6 py-4 dark:border-gray-700 dark:bg-gray-900/60">
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Ask Atticus</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Grounded responses with inline citations. When confidence is low, the request escalates automatically.</p>
+        </div>
+      </header>
+
+      <section class="relative flex-1 flex flex-col bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-950">
+        <div id="chat-stream" class="chat-panel flex-1 overflow-y-auto px-6 pt-6 pb-8 space-y-4 text-sm text-gray-900 dark:text-gray-50"></div>
+
+        <div id="typing-indicator" class="hidden px-6 pb-2 text-sm text-gray-500 dark:text-gray-400 italic">
+          <span class="flex items-center gap-2"><span class="material-icons animate-pulse text-base">pending</span>Atticus is typing…</span>
+        </div>
+
+        <div class="chat-input-container fixed bottom-6 left-0 w-full px-4 z-50">
+          <form id="chat-form" class="mx-auto flex w-full max-w-4xl flex-col gap-3">
+            <div class="flex w-full items-end gap-2 sm:flex-row">
+              <!-- Paperclip left -->
+              <div class="flex items-center">
+                <label for="file-upload" class="cursor-pointer rounded-lg border border-gray-200 bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                  <span class="material-icons align-middle text-base">attach_file</span>
+                </label>
+                <input type="file" id="file-upload" class="hidden" />
+              </div>
+
+              <!-- Textarea center -->
+              <textarea id="chat-input" name="chat-input" rows="1" placeholder="Type your question and press Enter…"
+                        class="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner transition focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"></textarea>
+
+              <!-- Send right -->
+              <button type="submit" class="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-300 disabled:cursor-not-allowed disabled:bg-blue-400">
+                Send
+              </button>
+            </div>
+            <div class="min-h-[1.5rem] text-xs text-gray-500 dark:text-gray-400" id="file-name"></div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script defer src="js/script.js" onerror="this.onerror=null;this.src='/static/js/script.js';"></script>
+</body>
+</html>
