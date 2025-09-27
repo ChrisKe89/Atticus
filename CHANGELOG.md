@@ -23,6 +23,21 @@ The newest entries appear first.
 
 ---
 
+## [0.4.0] — 2025-09-27
+
+### Added
+- Next.js workspace with routes for chat, admin, settings, contact, and apps plus Tailwind styling.
+- Shared layout with responsive navigation, hero components, and contextual admin tiles.
+
+### Changed
+- Makefile commands now proxy Next.js workflows (`make ui`, `make web-build`, `make web-start`).
+- Project version bumped to 0.4.0 across the API and frontend manifest.
+
+### Removed
+- Legacy Jinja2/Eleventy templates and static Tailwind build scripts.
+
+---
+
 ## [0.3.0] — 2025-09-27
 
 ### Changed

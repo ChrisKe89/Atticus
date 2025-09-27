@@ -9,7 +9,6 @@ pydantic
 pydantic-settings
 httpx
 python-dotenv
-jinja2
 openai
 faiss-cpu
 numpy
