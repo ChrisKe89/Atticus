@@ -14,9 +14,9 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
 - [ ] Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock.
 ### Phase 2 – API Contract Alignment
 
-- Merge /api/ask and /api/chat; remove FastAPI UI remnants in api/main.py; update Makefile targets.
-- Ensure response contract with request_id/should_escalate, refresh tests/fixtures, sync docs (README/ARCHITECTURE).
-- Verify via API unit tests + smoke run.
+- [x] Merge /api/ask and /api/chat; remove FastAPI UI remnants in api/main.py; update Makefile targets.
+- [x] Ensure response contract with request_id/should_escalate, refresh tests/fixtures, sync docs (README/ARCHITECTURE).
+- [x] Verify via API unit tests + smoke run.
 
 ### Phase 3 – Auth & RBAC Layer
 
@@ -49,10 +49,10 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
    - [x] Drop FAISS dependencies and configuration (code, requirements, docs).
    - [ ] Add pgvector ingestion/retrieval regression coverage.
 2. **Unify `/api/ask` route & response** — keep one route returning `{answer,sources,confidence,request_id,should_escalate}`; remove duplicate module; fix `api/main.py` mounts; ensure `request_id` present.
-   - [ ] Audit callers (frontend, tests, SDKs) relying on `chat.py` vs `ask.py` implementations.
-   - [ ] Consolidate logic into a single handler that always emits the canonical contract.
-   - [ ] Remove redundant modules/imports and adjust router wiring plus schema exports.
-   - [ ] Update client code, fixtures, and tests to match the unified endpoint.
+   - [x] Audit callers (frontend, tests, SDKs) relying on `chat.py` vs `ask.py` implementations.
+   - [x] Consolidate logic into a single handler that always emits the canonical contract.
+   - [x] Remove redundant modules/imports and adjust router wiring plus schema exports.
+   - [x] Update client code, fixtures, and tests to match the unified endpoint.
 3. **Auth.js + RBAC** — introduce email magic link; gate `/admin` & sensitive APIs by role; add RLS keyed by `org_id`; replace ad-hoc dictionary endpoints with role-checked admin APIs.
    - [ ] Integrate Auth.js into the Next.js app (dependencies, `/api/auth` routes, session provider).
    - [ ] Implement email magic-link provider and persistence for sessions/users.

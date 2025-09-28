@@ -1,95 +1,126 @@
-"""Chat route: POST /ask returning {answer, sources, confidence}.
-
-This adapts the existing retriever pipeline but trims the response shape
-to the acceptance contract.
-"""
+"""Unified chat route returning the canonical ask response contract."""
 
 from __future__ import annotations
 
-from typing import Any
+import time
+from typing import Iterable
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel, Field
 
-from atticus.config import load_settings
-from atticus.logging import configure_logging, log_event
+from atticus.logging import log_event
 from atticus.tokenization import count_tokens
 from retriever import answer_question
 
+from ..dependencies import LoggerDep, SettingsDep
+from ..schemas import AskRequest, AskResponse, CitationModel
+
 router = APIRouter()
+_Q_PLACEHOLDERS = {"string", "test", "example"}
+_Q_MIN_LEN = 4
 
 
-class AskPayload(BaseModel):
-    # Accept either {query} or {question}
-    query: str | None = Field(default=None)
-    question: str | None = Field(default=None)
-
-
-@router.post("/ask")
-async def ask(payload: AskPayload, request: Request) -> dict[str, Any]:
-    q = (payload.query or payload.question or "").strip()
-    if not q:
-        raise HTTPException(status_code=400, detail="Missing 'query' or 'question'")
-    if q.lower() in {"string", "test", "example"}:
-        raise HTTPException(status_code=400, detail="Provide a real question (not 'string')")
-
-    settings = load_settings()
-    logger = configure_logging(settings)
-
-    result = answer_question(q, settings=settings, logger=logger)
-    # Convert citations to simpler "sources" list (paths only)
-    sources = []
-    for c in result.citations:
-        desc = c.source_path
-        if c.page_number is not None:
-            desc += f" (page {c.page_number})"
-        if c.heading:
-            desc += f" - {c.heading}"
+def _format_sources(citations: Iterable[CitationModel]) -> list[str]:
+    sources: list[str] = []
+    for citation in citations:
+        desc = citation.source_path
+        if citation.page_number is not None:
+            desc += f" (page {citation.page_number})"
+        if citation.heading:
+            desc += f" - {citation.heading}"
         sources.append(desc)
+    return sources
 
-    response_payload = {
-        "answer": result.response,
-        "sources": sources,
-        "confidence": float(result.confidence),
-    }
 
-    # Verbose/trace logging (opt-in via .env)
+@router.post("/ask", response_model=AskResponse)
+async def ask_endpoint(
+    payload: AskRequest,
+    request: Request,
+    settings: SettingsDep,
+    logger: LoggerDep,
+) -> AskResponse:
+    start = time.perf_counter()
+    question = payload.question.strip()
+    if len(question) < _Q_MIN_LEN or question.lower() in _Q_PLACEHOLDERS:
+        raise HTTPException(
+            status_code=400,
+            detail="Provide a real question (not a placeholder like 'string')",
+        )
+
+    answer = answer_question(
+        question,
+        settings=settings,
+        filters=payload.filters,
+        logger=logger,
+    )
+
+    request_id = getattr(request.state, "request_id", "unknown")
+    request.state.confidence = answer.confidence
+    request.state.escalate = answer.should_escalate
+    elapsed_ms = (time.perf_counter() - start) * 1000
+
+    citations = [
+        CitationModel(
+            chunk_id=item.chunk_id,
+            source_path=item.source_path,
+            page_number=item.page_number,
+            heading=item.heading,
+            score=item.score,
+        )
+        for item in answer.citations
+    ]
+
+    response = AskResponse(
+        answer=answer.response,
+        confidence=answer.confidence,
+        should_escalate=answer.should_escalate,
+        citations=citations,
+        request_id=request_id,
+    )
+
+    log_event(
+        logger,
+        "ask_endpoint_complete",
+        request_id=request_id,
+        confidence=answer.confidence,
+        escalate=answer.should_escalate,
+        latency_ms=round(elapsed_ms, 2),
+        filters=payload.filters or {},
+    )
+
     if getattr(settings, "verbose_logging", False):
         try:
-            user_tokens = count_tokens(q)
-        except Exception:
+            user_tokens = count_tokens(question)
+        except Exception:  # pragma: no cover - diagnostics only
             user_tokens = None
         try:
-            answer_tokens = count_tokens(result.response or "")
-        except Exception:
+            answer_tokens = count_tokens(answer.response or "")
+        except Exception:  # pragma: no cover - diagnostics only
             answer_tokens = None
-        decision_trace: list[str] = []
+
+        trace: list[str] | None = None
         if getattr(settings, "trace_logging", False):
-            decision_trace.append("received_question")
-            decision_trace.append(
-                f"retrieved_citations={len(getattr(result, 'citations', []) or [])}"
-            )
-            decision_trace.append(f"confidence={float(result.confidence):.3f}")
-            if getattr(result, "should_escalate", False):
-                decision_trace.append("escalate=true")
-            else:
-                decision_trace.append("escalate=false")
-        request_id = getattr(request.state, "request_id", "unknown")
+            trace = [
+                "received_question",
+                f"retrieved_citations={len(answer.citations)}",
+                f"confidence={float(answer.confidence):.3f}",
+                "escalate=true" if answer.should_escalate else "escalate=false",
+            ]
+
         log_event(
             logger,
             "chat_turn",
             request_id=request_id,
-            question=q,
-            answer=result.response,
-            sources=sources,
-            confidence=float(result.confidence),
+            question=question,
+            answer=answer.response,
+            sources=_format_sources(citations),
+            confidence=float(answer.confidence),
             tokens={
                 "question": user_tokens,
                 "answer": answer_tokens,
                 "total": (user_tokens or 0) + (answer_tokens or 0),
             },
             openai_key_present=bool(getattr(settings, "openai_api_key", None)),
-            trace=decision_trace or None,
+            trace=trace,
         )
 
-    return response_payload
+    return response

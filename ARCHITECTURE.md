@@ -16,7 +16,7 @@ It ingests content, builds a searchable vector index, retrieves relevant informa
 | **Ingestion & Indexing** | Parse → chunk → embed → persist index using Postgres/pgvector with rich metadata. |
 | **Retriever & Ranker** | Vector search with optional hybrid lexical re‑rank (BM25‑lite). |
 | **Generator** | Drafts concise, sourced answers using GPT‑4.1 (or configured `GEN_MODEL`). |
-| **API Layer** | FastAPI app exposing `/health`, `/ingest`, `/ask`, `/eval`, and `/contact` routes. |
+| **API Layer** | FastAPI app exposing `/health`, `/ingest`, `/ask`, `/eval`, and `/contact` routes with `/ask` returning `{answer, citations, confidence, should_escalate, request_id}`. |
 | **Web UI** | Integrated front end served from `/`, providing a chat interface and escalation actions. |
 
 ---

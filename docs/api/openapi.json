@@ -18,13 +18,13 @@
             "description": "Metadata filters such as path_prefix or source_type",
             "title": "Filters"
           },
-          "question": {
-            "title": "Question",
+          "query": {
+            "title": "Query",
             "type": "string"
           }
         },
         "required": [
-          "question"
+          "query"
         ],
         "title": "AskRequest",
         "type": "object"
@@ -108,6 +108,38 @@
           "score"
         ],
         "title": "CitationModel",
+        "type": "object"
+      },
+      "ContactRequest": {
+        "properties": {
+          "reason": {
+            "description": "Reason for contacting support/escalation",
+            "title": "Reason",
+            "type": "string"
+          },
+          "transcript": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional chat transcript (list of lines) or a single string",
+            "title": "Transcript"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "ContactRequest",
         "type": "object"
       },
       "DictionaryEntry": {
@@ -508,7 +540,7 @@
   },
   "info": {
     "title": "Atticus RAG API",
-    "version": "0.2.1"
+    "version": "0.4.1"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -710,6 +742,48 @@
           }
         },
         "summary": "Ask Endpoint"
+      }
+    },
+    "/contact": {
+      "post": {
+        "operationId": "contact_contact_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Contact Contact Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Contact"
       }
     },
     "/eval/run": {
