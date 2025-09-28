@@ -5,6 +5,8 @@ POST /contact accepts JSON payload and sends an escalation email via SMTP.
 
 from __future__ import annotations
 
+import json
+
 from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
@@ -15,11 +17,36 @@ from atticus.notify.mailer import EscalationDeliveryError, send_escalation
 router = APIRouter()
 
 
+class TraceDocument(BaseModel):
+    chunk_id: str
+    score: float
+    source_path: str | None = None
+    page_number: int | None = None
+    heading: str | None = None
+
+
+class EscalationTrace(BaseModel):
+    user_id: str | None = None
+    chat_id: str | None = None
+    message_id: str | None = None
+    request_id: str | None = None
+    question: str | None = None
+    documents: list[TraceDocument] = Field(
+        default_factory=list,
+        alias="top_documents",
+        description="Top retrieved documents and scores",
+    )
+
+
 class ContactRequest(BaseModel):
     reason: str = Field(description="Reason for contacting support/escalation")
     transcript: list[str] | str | None = Field(
         default=None,
         description="Optional chat transcript (list of lines) or a single string",
+    )
+    trace: EscalationTrace | None = Field(
+        default=None,
+        description="Optional trace payload including user/chat/document context",
     )
 
 
@@ -37,11 +64,17 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
             body_lines.extend(str(x) for x in payload.transcript)
         else:
             body_lines.append(str(payload.transcript))
+    trace_payload: dict[str, object] | None = None
+    if payload.trace:
+        trace_payload = payload.trace.model_dump(by_alias=True, exclude_none=True)
+        body_lines.append("")
+        body_lines.append("Trace Payload:")
+        body_lines.append(json.dumps(trace_payload, indent=2, ensure_ascii=False))
     body = "\n".join(body_lines)
 
     subject = f"Atticus escalation: {payload.reason}"[:200]
     try:
-        send_escalation(subject=subject, body=body)
+        send_escalation(subject=subject, body=body, trace=trace_payload)
     except EscalationDeliveryError as exc:
         log_error(
             logger,
@@ -54,10 +87,15 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
             detail="Unable to deliver escalation email. Please try again shortly.",
         ) from exc
 
+    trace_id = None
+    if trace_payload:
+        trace_id = str(trace_payload.get("request_id") or request_id)
+
     log_event(
         logger,
         "contact_escalation_sent",
         request_id=request_id,
         has_transcript=bool(payload.transcript),
+        trace_id=trace_id or request_id,
     )
     return {"status": "accepted"}

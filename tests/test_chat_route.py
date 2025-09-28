@@ -50,3 +50,33 @@ def test_chat_route_rejects_placeholder_or_skip() -> None:
     assert "Provide a real question" in data["detail"]
     assert data["request_id"]
     assert r.headers.get("X-Request-ID") == data["request_id"]
+
+
+def test_chat_route_rate_limit(monkeypatch) -> None:
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+    monkeypatch.setenv("RATE_LIMIT_REQUESTS", "1")
+    monkeypatch.setenv("RATE_LIMIT_WINDOW_SECONDS", "60")
+
+    api_main = pytest.importorskip("api.main")
+    TestClient = pytest.importorskip("fastapi.testclient").TestClient
+
+    client = TestClient(api_main.app)
+    try:
+        first = client.post("/ask", json={"query": "ping"})
+    except FileNotFoundError as exc:
+        pytest.skip(f"index not built: {exc}")
+        return
+    except ValueError as exc:
+        pytest.skip(f"vector store unavailable: {exc}")
+        return
+
+    if first.status_code != 200:
+        pytest.skip("first request did not succeed; skipping rate limit assertion")
+        return
+
+    second = client.post("/ask", json={"query": "another"})
+    assert second.status_code == 429
+    data = second.json()
+    assert data["error"] == "rate_limited"
+    assert "request_id" in data

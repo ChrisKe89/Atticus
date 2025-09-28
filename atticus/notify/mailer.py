@@ -8,9 +8,10 @@ Exports:
 
 from __future__ import annotations
 
+import json
 import smtplib
 from email.message import EmailMessage
-from typing import Literal, TypedDict
+from typing import Any, Iterable, Literal, TypedDict
 
 from atticus.config import load_settings
 from atticus.logging import configure_logging, log_error
@@ -30,11 +31,46 @@ class _DryRunResult(TypedDict):
     port: int
 
 
-def _compose_message(subject: str, body: str, sender: str, recipient: str) -> EmailMessage:
+def _normalise_allow_list(values: Iterable[str]) -> list[str]:
+    result: list[str] = []
+    for value in values:
+        if not value:
+            continue
+        cleaned = value.strip().lower()
+        if cleaned:
+            result.append(cleaned)
+    return result
+
+
+def _address_allowed(address: str, allow_list: Iterable[str]) -> bool:
+    normalised = _normalise_allow_list(allow_list)
+    if not normalised:
+        return True
+    candidate = address.strip().lower()
+    if candidate in normalised:
+        return True
+    if "@" in candidate:
+        _, _, domain = candidate.partition("@")
+        patterns = {domain, f"@{domain}", f"*@{domain}"}
+        if any(pattern in normalised for pattern in patterns):
+            return True
+    return False
+
+
+def _compose_message(
+    subject: str,
+    body: str,
+    sender: str,
+    recipient: str,
+    trace: dict[str, Any] | None = None,
+) -> EmailMessage:
     msg = EmailMessage()
     msg["Subject"] = subject
     msg["From"] = sender
     msg["To"] = recipient
+    if trace:
+        trace_dump = json.dumps(trace, indent=2, ensure_ascii=False)
+        body = f"{body}\n\nTrace Payload\n--------------\n{trace_dump}"
     msg.set_content(body)
     return msg
 
@@ -50,7 +86,37 @@ def _log_failure(logger, *, reason: str, host: str, port: int, exc: Exception) -
     )
 
 
-def send_escalation(subject: str, body: str, to: str | None = None) -> _DryRunResult | None:
+def _summarize_trace(trace: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not trace:
+        return None
+    summary: dict[str, Any] = {}
+    for key in ("user_id", "chat_id", "message_id", "request_id"):
+        if trace.get(key):
+            summary[key] = trace[key]
+    question = trace.get("question")
+    if isinstance(question, str) and question.strip():
+        summary["question_preview"] = question.strip()[:120]
+    documents = trace.get("documents") or trace.get("top_documents")
+    if isinstance(documents, list) and documents:
+        summary["documents"] = [
+            {
+                "chunk_id": item.get("chunk_id"),
+                "score": item.get("score"),
+                "source_path": item.get("source_path"),
+            }
+            for item in documents[:5]
+            if isinstance(item, dict)
+        ]
+    return summary or None
+
+
+def send_escalation(
+    subject: str,
+    body: str,
+    to: str | None = None,
+    *,
+    trace: dict[str, Any] | None = None,
+) -> _DryRunResult | None:
     """Send an escalation email via SMTP.
 
     Recipient resolution order: explicit `to` -> `SMTP_TO` -> `CONTACT_EMAIL`.
@@ -72,12 +138,39 @@ def send_escalation(subject: str, body: str, to: str | None = None) -> _DryRunRe
     port = int(settings.smtp_port or 587)
     sender = settings.smtp_from or settings.smtp_user or f"no-reply@{host}"
 
-    msg = _compose_message(subject=subject, body=body, sender=sender, recipient=recipient)
+    allow_list = settings.smtp_allow_list
+    if not _address_allowed(recipient, allow_list):
+        raise EscalationDeliveryError(
+            "Recipient not approved for escalation email.",
+            reason="recipient_not_allowed",
+        )
+    if sender and not _address_allowed(sender, allow_list):
+        raise EscalationDeliveryError(
+            "SMTP_FROM address not present in allow list.",
+            reason="sender_not_allowed",
+        )
+
+    msg = _compose_message(
+        subject=subject,
+        body=body,
+        sender=sender,
+        recipient=recipient,
+        trace=trace,
+    )
+
+    trace_summary = _summarize_trace(trace)
 
     if settings.smtp_dry_run:
         logger.info(
             "escalation_email_dry_run",
-            extra={"extra_payload": {"to": "(redacted)", "host": host, "port": port}},
+            extra={
+                "extra_payload": {
+                    "to": "(redacted)",
+                    "host": host,
+                    "port": port,
+                    "trace": trace_summary,
+                }
+            },
         )
         return {"status": "dry-run", "host": host, "port": int(port)}
 
@@ -108,6 +201,7 @@ def send_escalation(subject: str, body: str, to: str | None = None) -> _DryRunRe
                         "to": "(redacted)",
                         "host": host,
                         "port": port,
+                        "trace": trace_summary,
                     }
                 },
             )

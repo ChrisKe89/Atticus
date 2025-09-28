@@ -21,6 +21,7 @@ python scripts/debug_env.py   # confirm which source wins
 Minimum settings for escalation email:
 * `CONTACT_EMAIL` – escalation recipient
 * `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials (not IAM keys)
+* `SMTP_ALLOW_LIST` – comma-separated allow list of approved sender/recipient emails or domains
 
 ### 2. Install dependencies
 
@@ -65,12 +66,21 @@ make ingest
 ```
 Parses, chunks, embeds, and updates the pgvector-backed index and metadata snapshot.
 
+Generate a deterministic seed manifest for CI smoke tests:
+
+```bash
+make seed
+```
+
+The manifest (`seeds/seed_manifest.json`) captures CED chunk metadata (including SHA-256 hashes) without requiring embeddings.
+
 ### 5. Evaluate retrieval
 
 ```bash
 make eval
 ```
-Checks retrieval quality against the gold set and writes metrics to `eval/runs/<timestamp>/metrics.json`.
+Checks retrieval quality against the gold set and writes `metrics.csv`, `summary.json`,
+and `metrics.html` into `eval/runs/<timestamp>/` for review and CI gating.
 
 ### 6. Run the service
 
@@ -115,6 +125,7 @@ Common shortcuts:
 |--------|------------|
 | `make env` | Create `.env` from defaults |
 | `make ingest` | Parse, chunk, embed, and update pgvector index |
+| `make seed` | Generate deduplicated seed manifest (`seeds/seed_manifest.json`) |
 | `make eval` | Run retrieval evaluation and write metrics |
 | `make api` | Start FastAPI backend |
 | `make ui` | Run Next.js dev server (port 3000) |
@@ -130,7 +141,7 @@ Common shortcuts:
 | `make web-e2e` | Run Playwright RBAC/authentication smoke tests |
 | `make smtp-test` | Send a test SES email |
 | `make smoke` | Run a lightweight FastAPI health probe |
-| `make test.unit` | Execute focused unit tests (hashing, config reload, mailer) |
+| `make test.unit` | Execute focused unit tests (hashing, config reload, mailer, seed manifest, eval outputs) |
 | `make test.api` | Execute API contract tests (ask/contact/error schema/UI) |
 | `make e2e` | Ingest -> Eval -> API/UI smoke (via `scripts/e2e_smoke.py`) |
 | `make openapi` | Regenerate OpenAPI schema |
@@ -142,10 +153,20 @@ Common shortcuts:
 
 ## SMTP / SES Notes
 
-* Use **SES SMTP credentials**. Do **not** use IAM access keys.  
-* Region host must match the verified SES identity (e.g. `email-smtp.ap-southeast-2.amazonaws.com`).  
-* In sandbox mode, recipients must also be verified.  
+* Use **SES SMTP credentials**. Do **not** use IAM access keys.
+* Region host must match the verified SES identity (e.g. `email-smtp.ap-southeast-2.amazonaws.com`).
+* In sandbox mode, recipients must also be verified.
 * Lock down SES with an IAM policy restricting `ses:FromAddress` to allowed senders and your region (see [SECURITY.md](SECURITY.md)).
+* Populate `SMTP_ALLOW_LIST` with explicit recipients or domains to ensure escalations only reach approved addresses.
+
+## Observability & Guardrails
+
+* Every request receives a `trace_id` (mirrors `request_id`) propagated through logs, metrics, and escalation emails.
+* The API enforces rate limiting (`RATE_LIMIT_REQUESTS` per `RATE_LIMIT_WINDOW_SECONDS`) using hashed identifiers; excess calls
+  return a structured `429 rate_limited` payload.
+* Metrics (queries, escalations, average and P95 latency) are persisted via `atticus.metrics.MetricsRecorder` and surfaced at
+  `/admin/metrics` alongside latency histograms.
+* Evaluation artifacts should be stored under `reports/` (see `reports/README.md` and the bundled `sample-eval.csv`).
 
 
 ## Web UI

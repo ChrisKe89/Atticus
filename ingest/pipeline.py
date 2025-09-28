@@ -89,6 +89,7 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
                     chunk.extra["embedding_model"] = settings.embed_model
                     chunk.extra["embedding_model_version"] = settings.embedding_model_version
                     chunk.extra["ingested_at"] = ingest_time
+                    chunk.extra.setdefault("chunk_sha", chunk.sha256)
                 reused_chunks.extend(existing_chunks)
                 first = existing_chunks[0]
                 reused_documents[first.document_id] = {
@@ -122,6 +123,7 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         zip(new_parsed_chunks, embeddings, strict=False), start=len(stored_chunks)
     ):
         metadata = {key: str(value) for key, value in parsed_chunk.extra.items()}
+        metadata.setdefault("chunk_sha", parsed_chunk.sha256)
         if parsed_chunk.breadcrumbs:
             metadata.setdefault("breadcrumbs", " > ".join(parsed_chunk.breadcrumbs))
         metadata.setdefault("source_path", parsed_chunk.source_path)
@@ -147,6 +149,7 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
             end_token=parsed_chunk.end_token,
             page_number=parsed_chunk.page_number,
             section=parsed_chunk.heading,
+            sha256=parsed_chunk.sha256,
             embedding=list(embedding),
             extra=metadata,
         )

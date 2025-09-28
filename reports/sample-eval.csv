@@ -1,0 +1,5 @@
+run_id,metric,value
+sample-run,recall_at_5,0.82
+sample-run,mrr_at_5,0.77
+sample-run,latency_ms_avg,425.0
+sample-run,escalations,1

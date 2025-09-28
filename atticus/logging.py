@@ -56,9 +56,13 @@ def configure_logging(settings: AppSettings) -> logging.Logger:
 
 
 def log_event(logger: logging.Logger, event: str, **payload: Any) -> None:
+    if "trace_id" not in payload and "request_id" in payload:
+        payload["trace_id"] = payload["request_id"]
     logger.info(event, extra={"extra_payload": payload})
 
 
 def log_error(logger: logging.Logger, event: str, **payload: Any) -> None:
     payload.setdefault("severity", "ERROR")
+    if "trace_id" not in payload and "request_id" in payload:
+        payload["trace_id"] = payload["request_id"]
     logger.error(event, extra={"extra_payload": payload})

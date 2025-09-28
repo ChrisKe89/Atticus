@@ -20,6 +20,7 @@ from .errors import (
 )
 from .middleware import RequestContextMiddleware
 from .routes import admin, chat, contact, eval, health, ingest
+from .rate_limit import RateLimiter
 
 
 @asynccontextmanager
@@ -30,6 +31,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.logger = logger
     app.state.metrics = metrics
+    app.state.rate_limiter = RateLimiter(
+        limit=settings.rate_limit_requests,
+        window_seconds=settings.rate_limit_window_seconds,
+    )
     # Warn when critical secrets are missing (non-fatal in dev/test)
     if not (settings.openai_api_key or "").strip():
         logger.warning(
@@ -44,7 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.4.1",
+    version="0.6.1",
     docs_url=None,
     redoc_url=None,
     lifespan=lifespan,

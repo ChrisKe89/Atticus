@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Atticus Evaluation Summary (Sample)</title>
+    <style>
+      body {
+        font-family: Inter, Arial, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        margin: 0;
+        padding: 2rem;
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 1.75rem;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 1.5rem;
+        background: #1e293b;
+        border-radius: 0.5rem;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      }
+      th {
+        width: 18rem;
+        font-weight: 600;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      section + section {
+        margin-top: 2rem;
+      }
+      caption {
+        caption-side: top;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Atticus Evaluation Summary</h1>
+    <p>
+      Generated at <strong>2025-09-01T18:30:00Z</strong>. Metrics compare retrieval output
+      against the configured CED gold set.
+    </p>
+    <section>
+      <table>
+        <caption>Aggregate Metrics</caption>
+        <tbody>
+          <tr>
+            <th scope="row">nDCG@10</th>
+            <td>0.7825</td>
+          </tr>
+          <tr>
+            <th scope="row">Recall@50</th>
+            <td>0.9021</td>
+          </tr>
+          <tr>
+            <th scope="row">MRR</th>
+            <td>0.6432</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <table>
+        <caption>Per-query Breakdown</caption>
+        <thead>
+          <tr>
+            <th>Query</th>
+            <th>nDCG@10</th>
+            <th>Recall@50</th>
+            <th>MRR</th>
+            <th>Top Document</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>What is the toner yield for AC7070?</td>
+            <td>0.9123</td>
+            <td>1.0000</td>
+            <td>1.0000</td>
+            <td>content/model/AC7070/Apeos_C7070.pdf</td>
+          </tr>
+          <tr>
+            <td>Does the device support tabloid duplex scanning?</td>
+            <td>0.7011</td>
+            <td>0.8333</td>
+            <td>0.5000</td>
+            <td>content/model/AC7070/Apeos_C7070.pdf</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</html>
