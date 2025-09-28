@@ -21,6 +21,41 @@ It complements [README.md](README.md) for setup and [AGENTS.md](AGENTS.md) for a
 
 ---
 
+## Database Health (pgvector)
+
+Run these checks after applying Prisma migrations or when diagnosing ingestion anomalies.
+
+1. Ensure Docker Compose Postgres is running (`make db.up`).
+2. Validate the schema, pgvector extension, and IVFFlat index configuration:
+
+   ```bash
+   make db.verify
+   ```
+
+   ```powershell
+   make db.verify
+   ```
+
+   The target wraps `psql "$DATABASE_URL" -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} -f scripts/verify_pgvector.sql`.
+   Override the defaults by exporting `PGVECTOR_DIMENSION` / `PGVECTOR_LISTS` before invoking the command.
+3. For ad-hoc checks, run the SQL script directly:
+
+   ```bash
+   psql "$DATABASE_URL" -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} -f scripts/verify_pgvector.sql
+   ```
+
+   ```powershell
+   if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
+   if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+   psql "$env:DATABASE_URL" -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION -v expected_pgvector_lists=$env:PGVECTOR_LISTS -f scripts/verify_pgvector.sql
+   ```
+
+   The script fails fast if the extension is missing, the embedding dimension drifts, or the IVFFlat index loses its cosine lists configuration.
+
+   > Requires the `psql` client (`postgresql-client` on Debian/Ubuntu).
+
+---
+
 ## Evaluate Retrieval
 
 1. Ensure gold Q/A sets exist under `eval/goldset/*.jsonl`.

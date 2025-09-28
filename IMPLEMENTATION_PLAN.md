@@ -1,5 +1,16 @@
 # Implementation Plan — Atticus RAG Consistency Cleanup
 
+| Phase | Status | Notes |
+| --- | --- | --- |
+| Phase 0 | ✅ | [6e50c78](commit/6e50c78) – audit tooling dependencies installed |
+| Phase 1 | ✅ | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired |
+| Phase 2 | ✅ | [HEAD](commit/HEAD) – `/api/ask` contract unified with SSE client + tests |
+| Phase 3 | ✅ | [HEAD](commit/HEAD) – Glossary workflow hardened with review metadata and RBAC docs |
+| Phase 4 | ⚠️ | Not started |
+| Phase 5 | ⚠️ | Not started |
+| Phase 6 | ⚠️ | Not started |
+| Phase 7 | ⚠️ | Not started |
+
 This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges active TODOs. Each phase lists required commits, commands (POSIX + PowerShell where relevant), acceptance criteria, and cross-references to TODO items.
 
 ## Phase 0 – Safety, Branching, and Baseline Artifacts
@@ -156,3 +167,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 - **Versioning**: Adopt single `VERSION` file updated in Phase 7; reference from Python/Node builds.
 - **Risk Mitigation**: For destructive deletions (e.g., `web/static`), move to `archive/legacy-ui/` first, update documentation, and remove once parity confirmed.
 
+
+## Notes
+- Phase 2 introduced the shared Ask DTOs (`lib/ask-contract.ts`), streaming proxy (`app/api/ask/route.ts`), and Vitest coverage for SSE parsing.
+- Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.

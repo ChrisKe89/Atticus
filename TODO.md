@@ -19,7 +19,7 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
    - [ ] Reconcile CLI commands/make targets with new workflow.
 4. **TROUBLESHOOTING.md** — Auth.js email flow; pgvector extension issues; Prisma migration conflicts; SSE timeouts.
    - [ ] Capture Auth.js email magic link failure scenarios and fixes.
-   - [ ] Add pgvector + Prisma troubleshooting (extension enablement, migration drift).
+   - [x] Add pgvector + Prisma troubleshooting (extension enablement, migration drift).
    - [ ] Note SSE timeout/root-cause patterns and mitigation steps.
 5. **REQUIREMENTS.md** — add Postgres + Prisma; deprecate FAISS/Jinja2; keep Windows notes.
    - [ ] Update functional/non-functional requirements to highlight new stack.
@@ -33,8 +33,8 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
    - [ ] Verify local `make quality` mirrors CI steps and coverage thresholds.
    - [ ] Document PR gating expectations inside AGENTS and CONTRIBUTING.
 2. **Dictionary/glossary admin** — keep concept; migrate storage to DB; surface in Admin.
-   - [ ] Design Prisma schema/API contracts for glossary records with approval workflow.
-   - [ ] Implement admin UI for propose/review/approve flows with RBAC checks.
+   - [x] Design Prisma schema/API contracts for glossary records with approval workflow.
+   - [x] Implement admin UI for propose/review/approve flows with RBAC checks.
    - [ ] Seed baseline glossary entries and add documentation/tests.
 
 **C. Documentation depth improvements**
@@ -51,9 +51,9 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
    - [ ] Confirm API router mounts only expose JSON endpoints.
    - [ ] Update deployment docs referencing FastAPI-served UI.
 2. `api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure `request_id` & `should_escalate`; remove unused import in `api/routes/__init__.py`.
-   - [ ] Merge route handlers and delete deprecated module.
-   - [ ] Guarantee response includes `request_id`/`should_escalate` and shared error handling.
-   - [ ] Clean up router exports/imports and associated tests.
+   - [x] Merge route handlers and delete deprecated module.
+   - [x] Guarantee response includes `request_id`/`should_escalate` and shared error handling.
+   - [x] Clean up router exports/imports and associated tests.
 3. `Makefile` — remove `ui` target (`http.server`); add Next.js scripts (`dev`, `build`, `start`); keep `api` until migration complete.
    - [ ] Drop legacy `ui` implementation and confirm new targets wrap Next.js commands.
    - [ ] Ensure CI/README references use updated make targets.

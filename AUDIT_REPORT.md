@@ -3,11 +3,11 @@
 ## Status Summary
 - ⚠️ FND-001 — Documentation still describes legacy FastAPI UI workflow.
 - ⚠️ FND-002 — Dual UI surfaces (`web/static` vs Next.js app) create conflicting entry points.
-- ⚠️ FND-003 — No unified `/api/ask` contract across Next.js and FastAPI.
+- ✅ FND-003 — `/api/ask` contract unified via Next.js proxy + shared DTOs.
 - ⚠️ FND-004 — Versioning drifts between frontend (`0.5.1`) and backend (`0.6.2`).
 - ⚠️ FND-005 — Environment template omits Auth.js, SMTP, and Prisma variables required by the Next.js stack.
 - ⚠️ FND-006 — Prisma schema lacks pgvector tables/index definitions; Python service owns vector schema separately.
-- ⚠️ FND-007 — Frontend lacks telemetry/logging hooks to propagate `request_id` from backend.
+- ✅ FND-007 — Frontend propagates `request_id` via streaming ask client and logs.
 - ⚠️ FND-008 — Audit automation (knip/vulture/route checks/pgvector verification) absent prior to this pass.
 
 ## Dependency & Usage Overview

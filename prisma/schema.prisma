@@ -46,6 +46,7 @@ model User {
   sessions      Session[]
   glossaryAuthored GlossaryEntry[] @relation("GlossaryAuthor")
   glossaryUpdated GlossaryEntry[] @relation("GlossaryUpdatedBy")
+  glossaryReviewed GlossaryEntry[] @relation("GlossaryReviewer")
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -92,6 +93,7 @@ model GlossaryEntry {
   id           String          @id @default(cuid())
   term         String
   definition   String          @db.Text
+  synonyms     String[]        @default([]) @db.Text
   status       GlossaryStatus  @default(PENDING)
   orgId        String
   org          Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
@@ -99,9 +101,52 @@ model GlossaryEntry {
   author       User            @relation("GlossaryAuthor", fields: [authorId], references: [id])
   updatedById  String?
   updatedBy    User?           @relation("GlossaryUpdatedBy", fields: [updatedById], references: [id])
+  reviewerId   String?
+  reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
+  reviewNotes  String?         @db.Text
+  reviewedAt   DateTime?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
   @@unique([orgId, term])
   @@index([orgId, status])
+  @@index([status, reviewedAt])
+}
+
+model AtticusDocument {
+  id          String          @id @map("document_id")
+  sourcePath  String          @unique @map("source_path")
+  sha256      String
+  sourceType  String?         @map("source_type")
+  metadata    Json            @map("metadata") @db.JsonB
+  chunkCount  Int             @default(0) @map("chunk_count")
+  ingestedAt  DateTime        @default(now()) @map("ingested_at") @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  chunks      AtticusChunk[]
+
+  @@map("atticus_documents")
+}
+
+model AtticusChunk {
+  id          String          @id @map("chunk_id")
+  documentId  String          @map("document_id")
+  document    AtticusDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  sourcePath  String          @map("source_path")
+  position    Int
+  text        String
+  section     String?
+  pageNumber  Int?            @map("page_number")
+  tokenCount  Int?            @map("token_count")
+  startToken  Int?            @map("start_token")
+  endToken    Int?            @map("end_token")
+  sha256      String
+  metadata    Json            @db.JsonB
+  embedding   Unsupported("vector")
+  ingestedAt  DateTime        @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  @@index([documentId], map: "idx_atticus_chunks_document")
+  @@index([sourcePath], map: "idx_atticus_chunks_source_path")
+  @@unique([documentId, sha256], map: "idx_atticus_chunks_doc_sha")
+  @@map("atticus_chunks")
 }

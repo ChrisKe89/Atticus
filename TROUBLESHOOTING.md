@@ -19,6 +19,23 @@ This guide covers common setup issues, ingestion problems, and quick diagnostics
 
     to rebuild compatible wheels.
 
+* **Magic link smoke-test (PowerShell)**
+  * Start the services:
+
+    ```powershell
+    npm run dev
+    make api
+    ```
+
+  * Request a magic link and inspect the debug inbox:
+
+    ```powershell
+    Start-Process "http://localhost:3000/signin"
+    Get-Content -Path "$env:AUTH_DEBUG_MAILBOX_DIR/*.eml"
+    ```
+
+  * If the link fails, confirm `NEXTAUTH_URL` and `AUTH_SECRET` are present in `.env` and restart both processes.
+
 ---
 
 ## PDF Parsing & Ingestion
@@ -32,6 +49,24 @@ Common ingestion checks:
 
 * `.env` missing → run `python scripts/generate_env.py`.
 * Unexpectedly small chunk counts → confirm `CHUNK_*` settings in `.env`.
+
+---
+
+## pgvector & Prisma
+
+* **`pgvector extension not installed`** — run `make db.up` to ensure Postgres is online, then:
+
+  ```bash
+  make db.verify
+  ```
+
+  ```powershell
+  make db.verify
+  ```
+
+  The script enables the extension when migrations run; if verification still fails, connect with psql and execute `CREATE EXTENSION IF NOT EXISTS vector;` manually before retrying `npx prisma migrate deploy`.
+* **Embedding dimension mismatch** — export `PGVECTOR_DIMENSION` to the value used by the ingestion pipeline (default `3072`) and re-run `make db.verify`. Update `atticus/config.py` if the embeddings service changes dimension.
+* **IVFFlat index missing or stale** — rerun migrations (`npx prisma migrate deploy`) and then `make db.verify`. The migration recreates `idx_atticus_chunks_embedding` with the configured `PGVECTOR_LISTS` default (`100`).
 
 ---
 
@@ -56,6 +91,27 @@ Common ingestion checks:
   * Check logs in `logs/errors.jsonl` for stack traces.
 * Confirm the UI is accessible at `http://localhost:8000/`.
   If the UI has been separated, reintroduce `make ui` and update port mapping.
+
+## Streaming `/api/ask` Issues
+
+* **No stream events received**
+  * Ensure the UI or client sends `Accept: text/event-stream`. The shared helper in `lib/ask-client.ts` enforces the header.
+  * Verify `RAG_SERVICE_URL` points to the FastAPI service. On Windows PowerShell:
+
+    ```powershell
+    Invoke-WebRequest -UseBasicParsing -Method Post `
+      -Uri "$env:RAG_SERVICE_URL/ask" `
+      -Body '{"question":"ping"}' `
+      -ContentType 'application/json'
+    ```
+
+* **502 or `upstream_unreachable` errors**
+  * Confirm `make api` is running and reachable at the configured port.
+  * Inspect the FastAPI logs for request IDs logged via `ask_endpoint_complete`.
+
+* **SSE connection closes immediately**
+  * Disable corporate proxies that buffer responses; SSE requires a raw streaming connection.
+  * Set `NODE_OPTIONS=--enable-source-maps` when debugging to surface the originating stack trace inside the Next route handler.
 
 ---
 
