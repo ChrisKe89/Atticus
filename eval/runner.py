@@ -11,7 +11,8 @@ import json
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
+from html import escape
 from pathlib import Path
 from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable
 
@@ -38,6 +39,7 @@ class EvaluationResult:
     deltas: dict[str, float]
     summary_csv: Path
     summary_json: Path
+    summary_html: Path
 
 
 def load_gold_set(path: Path) -> list[GoldExample]:
@@ -149,12 +151,20 @@ def _compute_metrics(
     }
 
 
+def _format_float(value: object) -> str:
+    try:
+        return f"{float(value):.4f}"
+    except (TypeError, ValueError):
+        return ""
+
+
 def _write_outputs(
     output_dir: Path, rows: Sequence[dict[str, object]], metrics: dict[str, float]
-) -> tuple[Path, Path]:
+) -> tuple[Path, Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     summary_csv = output_dir / "metrics.csv"
     summary_json = output_dir / "summary.json"
+    summary_html = output_dir / "metrics.html"
 
     with summary_csv.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(
@@ -165,7 +175,63 @@ def _write_outputs(
         writer.writerow({"query": "AVERAGE", **metrics})
 
     summary_json.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
-    return summary_csv, summary_json
+
+    generated_at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%SZ")
+    metrics_rows = "".join(
+        f"<tr><th scope=\"row\">{escape(name)}</th><td>{_format_float(value)}</td></tr>"
+        for name, value in metrics.items()
+    )
+    query_rows = "".join(
+        "<tr>"
+        f"<td>{escape(str(row.get('query', '')))}</td>"
+        f"<td>{_format_float(row.get('nDCG@10'))}</td>"
+        f"<td>{_format_float(row.get('Recall@50'))}</td>"
+        f"<td>{_format_float(row.get('MRR'))}</td>"
+        f"<td>{escape(str(row.get('top_document') or ''))}</td>"
+        "</tr>"
+        for row in rows
+    )
+
+    html_report = (
+        "<!DOCTYPE html>"
+        "<html lang=\"en\">"
+        "<head>"
+        "<meta charset=\"utf-8\">"
+        "<title>Atticus Evaluation Summary</title>"
+        "<style>"
+        "body{font-family:Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:2rem;}"
+        "h1{margin-top:0;font-size:1.75rem;}"
+        "table{border-collapse:collapse;width:100%;margin-top:1.5rem;background:#1e293b;border-radius:0.5rem;overflow:hidden;}"
+        "th,td{padding:0.75rem 1rem;text-align:left;border-bottom:1px solid rgba(148,163,184,0.25);}"
+        "th{width:18rem;font-weight:600;}"
+        "tbody tr:last-child td{border-bottom:none;}"
+        "section + section{margin-top:2rem;}"
+        "caption{caption-side:top;font-weight:600;font-size:1.1rem;margin-bottom:0.5rem;color:#f8fafc;}"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<h1>Atticus Evaluation Summary</h1>"
+        f"<p>Generated at <strong>{escape(generated_at)}</strong>. Metrics compare retrieval output against the configured gold set.</p>"
+        "<section>"
+        "<table>"
+        "<caption>Aggregate Metrics</caption>"
+        "<tbody>"
+        f"{metrics_rows}"
+        "</tbody>"
+        "</table>"
+        "</section>"
+        "<section>"
+        "<table>"
+        "<caption>Per-query Breakdown</caption>"
+        "<thead><tr><th>Query</th><th>nDCG@10</th><th>Recall@50</th><th>MRR</th><th>Top Document</th></tr></thead>"
+        f"<tbody>{query_rows}</tbody>"
+        "</table>"
+        "</section>"
+        "</body></html>"
+    )
+
+    summary_html.write_text(html_report, encoding="utf-8")
+    return summary_csv, summary_json, summary_html
 
 
 def _load_baseline(path: Path) -> dict[str, float]:
@@ -219,7 +285,9 @@ def run_evaluation(
         )
 
     metrics = _compute_metrics(ndcg_scores, recall_scores, mrr_scores)
-    summary_csv, summary_json = _write_outputs(output_dir, per_query_rows, metrics)
+    summary_csv, summary_json, summary_html = _write_outputs(
+        output_dir, per_query_rows, metrics
+    )
 
     baseline_metrics = _load_baseline(baseline_path)
 
@@ -235,7 +303,11 @@ def run_evaluation(
     )
 
     return EvaluationResult(
-        metrics=metrics, deltas=deltas, summary_csv=summary_csv, summary_json=summary_json
+        metrics=metrics,
+        deltas=deltas,
+        summary_csv=summary_csv,
+        summary_json=summary_json,
+        summary_html=summary_html,
     )
 
 

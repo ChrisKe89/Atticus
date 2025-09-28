@@ -29,6 +29,8 @@ class ParsedDocument:
 
 @dataclass(slots=True)
 class Chunk:
+    """Chunk produced by the ingestion pipeline."""
+
     chunk_id: str
     document_id: str
     source_path: str
@@ -37,5 +39,6 @@ class Chunk:
     end_token: int
     page_number: int | None
     heading: str | None
+    sha256: str
     extra: dict[str, str]
     breadcrumbs: list[str] = field(default_factory=list)

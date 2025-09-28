@@ -72,6 +72,9 @@ class AppSettings(BaseSettings):
     smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
     smtp_to: str | None = Field(default=None, alias="SMTP_TO")
     smtp_dry_run: bool = Field(default=False, alias="SMTP_DRY_RUN")
+    smtp_allow_list_raw: str | list[str] | None = Field(default=None, alias="SMTP_ALLOW_LIST")
+    rate_limit_requests: int = Field(default=5, alias="RATE_LIMIT_REQUESTS", ge=1)
+    rate_limit_window_seconds: int = Field(default=60, alias="RATE_LIMIT_WINDOW_SECONDS", ge=1)
     secrets_report: dict[str, dict[str, Any]] = Field(
         default_factory=dict, exclude=True, repr=False
     )
@@ -100,6 +103,18 @@ class AppSettings(BaseSettings):
 
     def timestamp(self) -> str:
         return datetime.now(tz=self.tzinfo).isoformat(timespec="seconds")
+
+    def smtp_allowlist(self) -> set[str]:
+        return {value.lower() for value in self.smtp_allow_list if value}
+
+    @property
+    def smtp_allow_list(self) -> list[str]:
+        raw = self.smtp_allow_list_raw
+        if raw is None:
+            return []
+        if isinstance(raw, str):
+            return [item.strip() for item in raw.split(",") if item.strip()]
+        return [str(item).strip() for item in raw if str(item).strip()]
 
 
 @dataclass(slots=True)

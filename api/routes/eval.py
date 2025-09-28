@@ -27,4 +27,5 @@ async def run_eval(settings: SettingsDep, logger: LoggerDep) -> EvalResponse:
         deltas=result.deltas,
         summary_csv=str(result.summary_csv),
         summary_json=str(result.summary_json),
+        summary_html=str(result.summary_html),
     )

@@ -1,79 +1,242 @@
-"""Chunking utilities for parsed documents."""
+"""Chunking utilities implementing the CED policy."""
 
 from __future__ import annotations
 
+import json
 from collections.abc import Iterable
+from dataclasses import dataclass
+from typing import Callable
 
 from atticus.config import AppSettings
 from atticus.tokenization import decode, encode, split_tokens
+from atticus.utils import sha256_text
 
-from .models import Chunk, ParsedDocument
+from .models import Chunk, ParsedDocument, ParsedSection
 
 MIN_CHUNK_MERGE_COUNT = 2
+TABLE_SPLIT_DELIMITER = "|"
 
 
-def chunk_document(document: ParsedDocument, settings: AppSettings) -> list[Chunk]:
-    chunks: list[Chunk] = []
-    chunk_counter = 0
-    document_trail = [document.source_path.name]
-    target_tokens = settings.chunk_target_tokens or settings.chunk_size
-    overlap_tokens = settings.chunk_overlap_tokens
-    min_tokens = settings.chunk_min_tokens
-    for section in document.sections:
-        tokens = encode(section.text)
-        if not tokens:
+def _normalise_metadata(metadata: dict[str, str | int | float | bool | None]) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for key, value in metadata.items():
+        if value is None:
             continue
-        breadcrumbs = document_trail + list(section.breadcrumbs)
-        if section.heading and (not breadcrumbs or breadcrumbs[-1] != section.heading):
-            breadcrumbs.append(section.heading)
-        metadata = section.extra.copy()
-        metadata.setdefault("source_type", document.source_type)
+        if isinstance(value, bool):
+            result[str(key)] = "true" if value else "false"
+        else:
+            result[str(key)] = str(value)
+    return result
+
+
+def _hash_chunk_payload(text: str, metadata: dict[str, str]) -> str:
+    material = json.dumps({"text": text.strip(), "meta": metadata}, sort_keys=True)
+    return sha256_text(material)
+
+
+@dataclass(slots=True)
+class _ChunkBuilder:
+    settings: AppSettings
+    document: ParsedDocument
+    chunk_counter: int = 0
+
+    def next_id(self) -> str:
+        ident = f"{self.document.document_id}::chunk_{self.chunk_counter}".replace("//", "/")
+        self.chunk_counter += 1
+        return ident
+
+    def build_chunk(
+        self,
+        *,
+        section: ParsedSection,
+        breadcrumbs: list[str],
+        text: str,
+        start: int,
+        end: int,
+        chunking: str,
+        extra: dict[str, str | int | float | bool | None],
+    ) -> Chunk:
+        metadata = {
+            "chunking": chunking,
+            "source_type": self.document.source_type,
+            **section.extra,
+            **extra,
+        }
         if section.heading:
             metadata.setdefault("section_heading", section.heading)
         if section.page_number is not None:
-            metadata.setdefault("page_number", str(section.page_number))
-        breadcrumb_label = " > ".join(breadcrumbs)
-        if breadcrumb_label:
-            metadata.setdefault("breadcrumbs", breadcrumb_label)
-        splits = list(split_tokens(tokens, target_tokens, overlap_tokens))
-        for start, end in splits:
+            metadata.setdefault("page_number", section.page_number)
+        if breadcrumbs:
+            metadata.setdefault("breadcrumbs", " > ".join(breadcrumbs))
+        metadata = _normalise_metadata(metadata)
+        chunk_hash = _hash_chunk_payload(text, metadata)
+        metadata.setdefault("chunk_sha", chunk_hash)
+
+        return Chunk(
+            chunk_id=self.next_id(),
+            document_id=self.document.document_id,
+            source_path=str(self.document.source_path),
+            text=text,
+            start_token=start,
+            end_token=end,
+            page_number=section.page_number,
+            heading=section.heading,
+            sha256=chunk_hash,
+            extra=metadata,
+            breadcrumbs=list(breadcrumbs),
+        )
+
+
+class CEDChunker:
+    """Implements the CED chunking strategy (prose, table, footnote)."""
+
+    def __init__(self, settings: AppSettings) -> None:
+        self.settings = settings
+
+    def chunk_document(self, document: ParsedDocument) -> list[Chunk]:
+        builder = _ChunkBuilder(settings=self.settings, document=document)
+        chunks: list[Chunk] = []
+        dedupe: set[str] = set()
+        breadcrumbs_root = [document.source_path.name]
+
+        for section in document.sections:
+            breadcrumbs = breadcrumbs_root + list(section.breadcrumbs)
+            if section.heading and (not breadcrumbs or breadcrumbs[-1] != section.heading):
+                breadcrumbs.append(section.heading)
+
+            if section.extra.get("is_table") == "true":
+                factory: Callable[[], Iterable[Chunk]] = lambda: self._chunk_table(
+                    builder, section, breadcrumbs
+                )
+            elif self._is_footnote(section):
+                factory = lambda: self._chunk_footnote(builder, section, breadcrumbs)
+            else:
+                factory = lambda: self._chunk_prose(builder, section, breadcrumbs)
+
+            for chunk in factory():
+                if chunk.sha256 in dedupe:
+                    continue
+                dedupe.add(chunk.sha256)
+                chunks.append(chunk)
+
+        return chunks
+
+    def _chunk_prose(
+        self,
+        builder: _ChunkBuilder,
+        section: ParsedSection,
+        breadcrumbs: list[str],
+    ) -> Iterable[Chunk]:
+        tokens = encode(section.text)
+        if not tokens:
+            return []
+        target_tokens = self.settings.chunk_target_tokens or self.settings.chunk_size
+        overlap = self.settings.chunk_overlap_tokens
+        splits = list(split_tokens(tokens, target_tokens, overlap))
+        result: list[Chunk] = []
+        for index, (start, end) in enumerate(splits, start=1):
             text = decode(tokens[start:end])
-            chunk_id = f"{document.document_id}::chunk_{chunk_counter}"
-            chunks.append(
-                Chunk(
-                    chunk_id=chunk_id,
-                    document_id=document.document_id,
-                    source_path=str(document.source_path),
-                    text=text,
-                    start_token=start,
-                    end_token=end,
-                    page_number=section.page_number,
-                    heading=section.heading,
-                    extra=metadata.copy(),
-                    breadcrumbs=breadcrumbs,
-                )
+            chunk = builder.build_chunk(
+                section=section,
+                breadcrumbs=breadcrumbs,
+                text=text,
+                start=start,
+                end=end,
+                chunking="prose",
+                extra={
+                    "chunk_index": index,
+                    "token_count": max(0, end - start),
+                },
             )
-            chunk_counter += 1
-        if min_tokens > 0 and chunks:
-            # merge small trailing chunk if needed
-            last_chunk = chunks[-1]
-            if (
-                last_chunk.end_token - last_chunk.start_token < min_tokens
-                and len(chunks) >= MIN_CHUNK_MERGE_COUNT
-            ):
-                prev = chunks[-2]
-                prev.text = f"{prev.text}\n{last_chunk.text}".strip()
-                prev.end_token = last_chunk.end_token
-                prev.extra.update(last_chunk.extra)
-                prev.breadcrumbs.extend(
-                    x for x in last_chunk.breadcrumbs if x not in prev.breadcrumbs
-                )
-                chunks.pop()
-    return chunks
+            result.append(chunk)
+
+        if (
+            self.settings.chunk_min_tokens > 0
+            and len(result) >= MIN_CHUNK_MERGE_COUNT
+            and result[-1].end_token - result[-1].start_token < self.settings.chunk_min_tokens
+        ):
+            tail = result.pop()
+            prev = result[-1]
+            merged_text = f"{prev.text}\n{tail.text}".strip()
+            prev.text = merged_text
+            prev.end_token = tail.end_token
+            prev.extra.update({"merged": "true"})
+            prev.extra.update({k: v for k, v in tail.extra.items() if k not in {"chunk_sha", "chunking"}})
+            new_hash = _hash_chunk_payload(merged_text, prev.extra)
+            prev.sha256 = new_hash
+            prev.extra["chunk_sha"] = new_hash
+
+        return result
+
+    def _chunk_table(
+        self,
+        builder: _ChunkBuilder,
+        section: ParsedSection,
+        breadcrumbs: list[str],
+    ) -> Iterable[Chunk]:
+        lines = [line.strip() for line in section.text.splitlines() if line.strip()]
+        if not lines:
+            return []
+        headers = section.extra.get("table_headers") or ""
+        result: list[Chunk] = []
+        for index, line in enumerate(lines, start=1):
+            cells = [cell.strip() for cell in line.split(TABLE_SPLIT_DELIMITER)]
+            cell_payload = {f"col_{idx}": value for idx, value in enumerate(cells, start=1)}
+            formatted_cells = " | ".join(cells)
+            text = formatted_cells
+            if headers:
+                text = f"{headers}\n{formatted_cells}".strip()
+            chunk = builder.build_chunk(
+                section=section,
+                breadcrumbs=breadcrumbs,
+                text=text,
+                start=0,
+                end=len(encode(text)),
+                chunking="table_row",
+                extra={
+                    "table_headers": headers,
+                    "table_row_index": index,
+                    "table_cells": json.dumps(cell_payload, ensure_ascii=False),
+                },
+            )
+            result.append(chunk)
+        return result
+
+    def _chunk_footnote(
+        self,
+        builder: _ChunkBuilder,
+        section: ParsedSection,
+        breadcrumbs: list[str],
+    ) -> Iterable[Chunk]:
+        text = section.text.strip()
+        if not text:
+            return []
+        chunk = builder.build_chunk(
+            section=section,
+            breadcrumbs=breadcrumbs,
+            text=text,
+            start=0,
+            end=len(encode(text)),
+            chunking="footnote",
+            extra={"token_count": len(encode(text))},
+        )
+        return [chunk]
+
+    @staticmethod
+    def _is_footnote(section: ParsedSection) -> bool:
+        heading = (section.heading or "").lower()
+        if "footnote" in heading:
+            return True
+        return str(section.extra.get("footnote", "")).lower() == "true"
+
+
+def chunk_document(document: ParsedDocument, settings: AppSettings) -> list[Chunk]:
+    return CEDChunker(settings).chunk_document(document)
 
 
 def chunk_documents(documents: Iterable[ParsedDocument], settings: AppSettings) -> list[Chunk]:
+    chunker = CEDChunker(settings)
     all_chunks: list[Chunk] = []
     for document in documents:
-        all_chunks.extend(chunk_document(document, settings))
+        all_chunks.extend(chunker.chunk_document(document))
     return all_chunks

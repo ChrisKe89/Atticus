@@ -51,6 +51,12 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] Added `SMTP_DRY_RUN` mailer branch with tests and surfaced behaviour in docs - completed 2025-09-25 (commit cd280f8).
 - [x] Made pytest parallelism conditional on pytest-xdist availability - completed 2025-09-25 (commit cd280f8).
 - [x] Retired the legacy Jinja2/Eleventy UI in favour of a Tailwind-powered Next.js app covering chat, admin, settings, contact, and apps — completed 2025-09-27.
+
+## 2025-09-28
+
+- [x] TODO "Sample Seed corpus — Add verification tests and contributor docs." — completed 2025-09-28 (commit 19bdc5d).
+- [x] TODO "reports/ — Update evaluation pipeline to emit CSV/HTML artifacts." — completed 2025-09-28 (commit 19bdc5d).
+- [x] TODO "reports/ — Configure CI to upload artifacts and document consumption workflow." — completed 2025-09-28 (commit 19bdc5d).
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
 
 

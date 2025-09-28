@@ -1,4 +1,5 @@
 import pytest
+import pytest
 
 
 def test_mailer_import_or_skip():
@@ -16,11 +17,14 @@ def test_send_escalation_smoke(monkeypatch):
     monkeypatch.setenv("SMTP_PASS", "pass")
     monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
     monkeypatch.setenv("CONTACT_EMAIL", "support@example.com")
+    monkeypatch.setenv("SMTP_ALLOW_LIST", "support@example.com,atticus-escalations@agentk.fyi")
 
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()
 
     mailer = pytest.importorskip("atticus.notify.mailer")
+
+    created: list["FakeSMTP"] = []
 
     class FakeSMTP:
         def __init__(self, host, port, timeout=None):
@@ -31,6 +35,8 @@ def test_send_escalation_smoke(monkeypatch):
             self.logged_in = False
             self.sent = False
             self.timeout = timeout
+            self.message = None
+            created.append(self)
 
         # If your code uses context manager: with smtplib.SMTP(...) as s:
         def __enter__(self):
@@ -57,6 +63,7 @@ def test_send_escalation_smoke(monkeypatch):
             assert msg["To"]
             assert msg["Subject"] is not None
             self.sent = True
+            self.message = msg.get_content()
 
         def sendmail(self, a, b, c):
             # Accept either API
@@ -69,7 +76,15 @@ def test_send_escalation_smoke(monkeypatch):
     monkeypatch.setattr("atticus.notify.mailer.smtplib.SMTP", FakeSMTP, raising=True)
 
     # Act: call your function
-    result = mailer.send_escalation("Unit Test", "body")
+    trace = {
+        "user_id": "user-123",
+        "request_id": "req-abc",
+        "top_documents": [
+            {"chunk_id": "chunk-1", "score": 0.8, "source_path": "doc.pdf"}
+        ],
+        "question": "Explain toner yield",
+    }
+    result = mailer.send_escalation("Unit Test", "body", trace=trace)
 
     # Assert: whatever your mailer returns; at least it shouldn't raise
     # If your function returns None, just assert True
@@ -78,6 +93,12 @@ def test_send_escalation_smoke(monkeypatch):
         or result is True
         or (isinstance(result, dict) and result.get("status") in ("ok", "dry-run"))
     )
+    assert created, "SMTP client should be instantiated"
+    sent_client = created[-1]
+    assert sent_client.sent
+    assert sent_client.message is not None
+    assert "Trace Payload" in sent_client.message
+    assert "chunk-1" in sent_client.message
 
 
 def test_send_escalation_dry_run(monkeypatch):
@@ -86,6 +107,7 @@ def test_send_escalation_dry_run(monkeypatch):
     monkeypatch.setenv("SMTP_FROM", "atticus-dry-run@example.com")
     monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
     monkeypatch.setenv("SMTP_DRY_RUN", "1")
+    monkeypatch.setenv("SMTP_ALLOW_LIST", "sales@example.com,atticus-dry-run@example.com")
 
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()
@@ -97,7 +119,7 @@ def test_send_escalation_dry_run(monkeypatch):
 
     monkeypatch.setattr("atticus.notify.mailer.smtplib.SMTP", fail_connect, raising=True)
 
-    result = mailer.send_escalation("Dry Run", "body")
+    result = mailer.send_escalation("Dry Run", "body", trace={"request_id": "req-1"})
 
     assert isinstance(result, dict)
     assert result.get("status") == "dry-run"
@@ -110,6 +132,7 @@ def test_send_escalation_raises_on_connection_error(monkeypatch):
     monkeypatch.setenv("SMTP_PORT", "2525")
     monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
     monkeypatch.setenv("SMTP_FROM", "atticus@example.com")
+    monkeypatch.setenv("SMTP_ALLOW_LIST", "sales@example.com,atticus@example.com")
 
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()
@@ -126,3 +149,21 @@ def test_send_escalation_raises_on_connection_error(monkeypatch):
         mailer.send_escalation("Fail", "body")
 
     assert excinfo.value.reason == "connection_error"
+
+
+def test_send_escalation_rejects_recipient(monkeypatch):
+    monkeypatch.setenv("SMTP_HOST", "smtp.test.local")
+    monkeypatch.setenv("SMTP_PORT", "2525")
+    monkeypatch.setenv("CONTACT_EMAIL", "blocked@example.com")
+    monkeypatch.setenv("SMTP_FROM", "atticus@example.com")
+    monkeypatch.setenv("SMTP_ALLOW_LIST", "atticus@example.com")
+
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+
+    mailer = pytest.importorskip("atticus.notify.mailer")
+
+    with pytest.raises(mailer.EscalationDeliveryError) as excinfo:
+        mailer.send_escalation("Blocked", "body")
+
+    assert excinfo.value.reason == "recipient_not_allowed"

@@ -14,9 +14,10 @@ It complements [README.md](README.md) for setup and [AGENTS.md](AGENTS.md) for a
    make ingest
    ```
 
-   This parses, chunks, embeds, and updates the vector index.
+   This parses, chunks (CED policy with SHA-256 dedupe), embeds, and updates the vector index.
 3. Check logs in `logs/app.jsonl` for document counts, chunk totals, and token ranges.
 4. When ready for release, commit the updated `indices/` snapshot and `indices/manifest.json`.
+5. Generate a deterministic seed manifest (for CI smoke tests) via `make seed` and archive `seeds/seed_manifest.json` as needed.
 
 ---
 
@@ -29,7 +30,7 @@ It complements [README.md](README.md) for setup and [AGENTS.md](AGENTS.md) for a
    make eval
    ```
 
-   Results are written to `eval/runs/<timestamp>/metrics.json`.
+   Results are written to `eval/runs/<timestamp>/metrics.json` and mirrored under `reports/` for CI artifacts.
 3. Compare against baseline metrics. CI will fail if regression exceeds `EVAL_REGRESSION_THRESHOLD`.
 
 Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) section below to understand the metrics.
@@ -58,8 +59,10 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
 
 * Requires valid SES **SMTP credentials** (not IAM keys).
 * Ensure the `CONTACT_EMAIL` and all `SMTP_*` environment variables are correctly set in `.env`.
+* Maintain `SMTP_ALLOW_LIST` so only vetted recipients/senders receive escalations; mismatches raise actionable errors.
 * The SES identity for `SMTP_FROM` must be verified; sandbox mode also requires verified recipients.
 * For security, lock down SES with an IAM policy restricting `ses:FromAddress` to approved senders and region (see [SECURITY.md](SECURITY.md)).
+* Escalation emails append structured trace payloads (user/chat/message IDs, top documents) and include the `trace_id` for log correlation.
 
 ---
 
@@ -89,6 +92,10 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
   * Errors: `logs/errors.jsonl`
 * **Sessions view**
   * `GET /admin/sessions?format=html|json`
+* **Metrics dashboard**
+  * `GET /admin/metrics` exposes query/escalation counters, latency histograms, and rate-limit stats.
+* **Rate limiting**
+  * Defaults to `RATE_LIMIT_REQUESTS=5` per `RATE_LIMIT_WINDOW_SECONDS=60`; violations emit hashed identifiers in `logs/app.jsonl`.
 * **Verbose tracing**
   * Set `LOG_VERBOSE=1` and `LOG_TRACE=1` in `.env` and restart the service.
 * **Environment diagnostics**
