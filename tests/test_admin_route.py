@@ -19,8 +19,12 @@ def test_admin_dictionary_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyP
     TestClient = pytest.importorskip("fastapi.testclient").TestClient
 
     with TestClient(api_main.app) as client:
-        payload = {"entries": [{"term": "Managed print", "synonyms": ["MPS", "Print-as-a-service"]}]}
-        response = client.post("/admin/dictionary", json=payload, headers={"X-Admin-Token": "test-admin-token"})
+        payload = {
+            "entries": [{"term": "Managed print", "synonyms": ["MPS", "Print-as-a-service"]}]
+        }
+        response = client.post(
+            "/admin/dictionary", json=payload, headers={"X-Admin-Token": "test-admin-token"}
+        )
         assert response.status_code == 200
         assert response.json()["entries"][0]["term"] == "Managed print"
 
