@@ -8,11 +8,14 @@ from atticus.config import AppSettings
 psycopg_stub = types.ModuleType("psycopg")
 psycopg_stub.rows = types.SimpleNamespace(dict_row=None)
 psycopg_stub.types = types.SimpleNamespace(json=types.SimpleNamespace(Json=lambda value: value))
-psycopg_stub.connect = lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("psycopg stubbed"))
+psycopg_stub.connect = lambda *args, **kwargs: (_ for _ in ()).throw(
+    RuntimeError("psycopg stubbed")
+)
 sys.modules.setdefault("psycopg", psycopg_stub)
 
 pgvector_stub = types.ModuleType("pgvector")
 pgvector_psycopg_stub = types.ModuleType("pgvector.psycopg")
+
 
 class _Vector(list):
     def __init__(self, values):

@@ -178,7 +178,7 @@ def _write_outputs(
 
     generated_at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%SZ")
     metrics_rows = "".join(
-        f"<tr><th scope=\"row\">{escape(name)}</th><td>{_format_float(value)}</td></tr>"
+        f'<tr><th scope="row">{escape(name)}</th><td>{_format_float(value)}</td></tr>'
         for name, value in metrics.items()
     )
     query_rows = "".join(
@@ -194,9 +194,9 @@ def _write_outputs(
 
     html_report = (
         "<!DOCTYPE html>"
-        "<html lang=\"en\">"
+        '<html lang="en">'
         "<head>"
-        "<meta charset=\"utf-8\">"
+        '<meta charset="utf-8">'
         "<title>Atticus Evaluation Summary</title>"
         "<style>"
         "body{font-family:Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:2rem;}"
@@ -285,9 +285,7 @@ def run_evaluation(
         )
 
     metrics = _compute_metrics(ndcg_scores, recall_scores, mrr_scores)
-    summary_csv, summary_json, summary_html = _write_outputs(
-        output_dir, per_query_rows, metrics
-    )
+    summary_csv, summary_json, summary_html = _write_outputs(output_dir, per_query_rows, metrics)
 
     baseline_metrics = _load_baseline(baseline_path)
 

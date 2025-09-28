@@ -1,26 +1,33 @@
-import { describe, expect, it } from 'vitest';
-import type { Session } from 'next-auth';
-import { Role } from '@prisma/client';
-import { canEditGlossary, canReviewGlossary, ensureRole, requireSession, ForbiddenError, UnauthorizedError } from '@/lib/rbac';
+import { describe, expect, it } from "vitest";
+import type { Session } from "next-auth";
+import { Role } from "@prisma/client";
+import {
+  canEditGlossary,
+  canReviewGlossary,
+  ensureRole,
+  requireSession,
+  ForbiddenError,
+  UnauthorizedError,
+} from "@/lib/rbac";
 
 const baseSession: Session = {
   user: {
-    id: 'user-1',
+    id: "user-1",
     role: Role.ADMIN,
-    orgId: 'org-1',
-    email: 'admin@example.com',
-    name: 'Admin',
+    orgId: "org-1",
+    email: "admin@example.com",
+    name: "Admin",
   },
   expires: new Date(Date.now() + 60_000).toISOString(),
 };
 
-describe('RBAC helpers', () => {
-  it('requires a session', () => {
+describe("RBAC helpers", () => {
+  it("requires a session", () => {
     expect(() => requireSession(null)).toThrow(UnauthorizedError);
     expect(requireSession(baseSession)).toBe(baseSession);
   });
 
-  it('checks allowed roles', () => {
+  it("checks allowed roles", () => {
     expect(ensureRole(baseSession, [Role.ADMIN, Role.REVIEWER])).toBe(baseSession);
     const userSession: Session = {
       ...baseSession,
@@ -29,7 +36,7 @@ describe('RBAC helpers', () => {
     expect(() => ensureRole(userSession, [Role.ADMIN])).toThrow(ForbiddenError);
   });
 
-  it('allows reviewers to view glossary but not edit', () => {
+  it("allows reviewers to view glossary but not edit", () => {
     const reviewerSession: Session = {
       ...baseSession,
       user: { ...baseSession.user, role: Role.REVIEWER },
@@ -38,7 +45,7 @@ describe('RBAC helpers', () => {
     expect(() => canEditGlossary(reviewerSession)).toThrow(ForbiddenError);
   });
 
-  it('allows admins to edit glossary', () => {
+  it("allows admins to edit glossary", () => {
     expect(canEditGlossary(baseSession)).toBe(baseSession);
   });
 });

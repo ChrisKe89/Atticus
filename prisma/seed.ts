@@ -1,12 +1,12 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const defaultOrgId = process.env.DEFAULT_ORG_ID ?? 'org-atticus';
-  const defaultOrgName = process.env.DEFAULT_ORG_NAME ?? 'Atticus Default';
+  const defaultOrgId = process.env.DEFAULT_ORG_ID ?? "org-atticus";
+  const defaultOrgName = process.env.DEFAULT_ORG_NAME ?? "Atticus Default";
   const adminEmail = process.env.ADMIN_EMAIL;
-  const adminName = process.env.ADMIN_NAME ?? 'Atticus Admin';
+  const adminName = process.env.ADMIN_NAME ?? "Atticus Admin";
 
   const organization = await prisma.organization.upsert({
     where: { id: defaultOrgId },
@@ -39,7 +39,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    console.error('Seeding failed', error);
+    console.error("Seeding failed", error);
     await prisma.$disconnect();
     process.exit(1);
   });

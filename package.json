@@ -1,9 +1,6 @@
 {
   "name": "atticus",
-
-  "version": "0.5.3",
-
-
+  "version": "0.7.0",
   "private": true,
   "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {
@@ -11,9 +8,11 @@
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "audit:ts": "knip --strict",
-    "audit:icons": "knip --production --config knip.icons.json",
+    "audit:icons": "node scripts/icon-audit.mjs",
     "audit:routes": "node scripts/route-audit.mjs",
     "audit:py": "python scripts/audit_unused.py --json",
     "prisma:generate": "prisma generate",
@@ -44,9 +43,13 @@
     "autoprefixer": "10.4.20",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-tailwindcss": "^3.13.0",
     "knip": "^5.64.1",
     "postcss": "8.4.40",
     "prisma": "^5.18.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "3.4.10",
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",

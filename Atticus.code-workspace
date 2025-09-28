@@ -1,83 +1,74 @@
 {
-    "folders": [
-        {
-            "path": "."
-        }
-    ],
-    "settings": {
-        // --- Python & venv ---
-        "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
-        "python.terminal.activateEnvironment": true,
-        "python.envFile": "${workspaceFolder}\\.env",
-        // Pylance: keep editor helpful; mypy is your strict gate
-        "python.analysis.typeCheckingMode": "basic",
-        // Avoid noisy diagnostics from virtualenv site-packages
-        "python.analysis.exclude": [
-            "**/.venv/**",
-            "**/site-packages/**"
-        ],
-        // Suppress specific library-only warnings seen in Starlette's Jinja integration
-        "python.analysis.diagnosticSeverityOverrides": {
-            "reportInvalidTypeForm": "none",
-            "reportOptionalMemberAccess": "none"
-        },
-        // --- Tabs/spaces & EOLs ---
-        "editor.insertSpaces": true,
-        "editor.detectIndentation": false,
-        "editor.tabSize": 4,
-        "files.eol": "\n",
-        "files.insertFinalNewline": true,
-        "files.trimTrailingWhitespace": true,
-        // Ruff: formatter + linter
-        "ruff.nativeServer": "on",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.fixAll.ruff": "always",
-            "source.organizeImports.ruff": "always"
-        },
-        "[python]": {
-            "editor.defaultFormatter": "charliermarsh.ruff"
-        },
-        // --- Testing (pytest) ---
-        "python.testing.pytestEnabled": true,
-        "python.testing.pytestArgs": [
-            "tests",
-            "eval/harness"
-        ],
-        "python.testing.cwd": "${workspaceFolder}",
-        // --- Markdown (align with repo rule) ---
-        "markdownlint.configFile": ".markdownlint-cli2.yaml",
-        "[markdown]": {
-            "editor.wordWrap": "bounded",
-            "editor.wordWrapColumn": 120
-        },
-        // --- UI niceties ---
-        "editor.rulers": [
-            100,
-            120
-        ],
-        "editor.renderWhitespace": "all",
-        "problems.autoReveal": false,
-        // --- Hide generated/large dirs ---
-        "files.exclude": {
-            "**/__pycache__": true,
-            "**/.pytest_cache": true,
-            "**/.ruff_cache": true,
-            "**/.mypy_cache": true,
-            "dist": true,
-            "build": true,
-            "eval/runs": true
-        },
-        "search.exclude": {
-            "**/__pycache__": true,
-            "**/.pytest_cache": true,
-            "**/.ruff_cache": true,
-            "**/.mypy_cache": true,
-            "dist": true,
-            "build": true,
-            "eval/runs": true
-        },
-        // --- Terminal ---
-        "terminal.integrated.cwd": "${workspaceFolder}"
-    }
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {
+    // --- Python & venv ---
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.envFile": "${workspaceFolder}\\.env",
+    // Pylance: keep editor helpful; mypy is your strict gate
+    "python.analysis.typeCheckingMode": "basic",
+    // Avoid noisy diagnostics from virtualenv site-packages
+    "python.analysis.exclude": ["**/.venv/**", "**/site-packages/**"],
+    // Suppress specific library-only warnings seen in Starlette's Jinja integration
+    "python.analysis.diagnosticSeverityOverrides": {
+      "reportInvalidTypeForm": "none",
+      "reportOptionalMemberAccess": "none",
+    },
+    // --- Tabs/spaces & EOLs ---
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    // Ruff: formatter + linter
+    "ruff.nativeServer": "on",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "always",
+      "source.organizeImports.ruff": "always",
+    },
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff",
+    },
+    // --- Testing (pytest) ---
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests", "eval/harness"],
+    "python.testing.cwd": "${workspaceFolder}",
+    // --- Markdown (align with repo rule) ---
+    "markdownlint.configFile": ".markdownlint-cli2.yaml",
+    "[markdown]": {
+      "editor.wordWrap": "bounded",
+      "editor.wordWrapColumn": 120,
+    },
+    // --- UI niceties ---
+    "editor.rulers": [100, 120],
+    "editor.renderWhitespace": "all",
+    "problems.autoReveal": false,
+    // --- Hide generated/large dirs ---
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.ruff_cache": true,
+      "**/.mypy_cache": true,
+      "dist": true,
+      "build": true,
+      "eval/runs": true,
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/.ruff_cache": true,
+      "**/.mypy_cache": true,
+      "dist": true,
+      "build": true,
+      "eval/runs": true,
+    },
+    // --- Terminal ---
+    "terminal.integrated.cwd": "${workspaceFolder}",
+  },
 }

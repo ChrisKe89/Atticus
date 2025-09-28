@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Check your inbox · Atticus',
+  title: "Check your inbox · Atticus",
 };
 
 export default function VerifyRequestPage() {

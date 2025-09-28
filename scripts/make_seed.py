@@ -11,15 +11,17 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 try:  # pragma: no cover - optional dependency
-    import psycopg  # type: ignore
     import pgvector.psycopg  # type: ignore
+    import psycopg  # type: ignore
 except ModuleNotFoundError:  # pragma: no cover - lightweight fallback for seed generation
     import types
 
     psycopg = types.ModuleType("psycopg")
     psycopg.rows = types.SimpleNamespace(dict_row=None)
     psycopg.types = types.SimpleNamespace(json=types.SimpleNamespace(Json=lambda value: value))
-    psycopg.connect = lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("psycopg unavailable"))
+    psycopg.connect = lambda *args, **kwargs: (_ for _ in ()).throw(
+        RuntimeError("psycopg unavailable")
+    )
     sys.modules.setdefault("psycopg", psycopg)
 
     pgvector = types.ModuleType("pgvector")

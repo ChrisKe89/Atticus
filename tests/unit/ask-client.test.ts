@@ -1,10 +1,10 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { askRequestSchema, askResponseSchema } from '@/lib/ask-contract';
-import { streamAsk } from '@/lib/ask-client';
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { askRequestSchema, askResponseSchema } from "@/lib/ask-contract";
+import { streamAsk } from "@/lib/ask-client";
 
 const encoder = new TextEncoder();
 
-function createSseResponse(payload: unknown, requestId = 'req-123') {
+function createSseResponse(payload: unknown, requestId = "req-123") {
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       controller.enqueue(encoder.encode(`event: start\ndata: {"request_id":"${requestId}"}\n\n`));
@@ -15,7 +15,7 @@ function createSseResponse(payload: unknown, requestId = 'req-123') {
   });
   return new Response(stream, {
     status: 200,
-    headers: { 'Content-Type': 'text/event-stream' },
+    headers: { "Content-Type": "text/event-stream" },
   });
 }
 
@@ -23,36 +23,41 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('askRequestSchema', () => {
-  it('normalises optional fields', () => {
+describe("askRequestSchema", () => {
+  it("normalises optional fields", () => {
     const parsed = askRequestSchema.parse({
-      question: '  hello  ',
+      question: "  hello  ",
       filters: null,
-      contextHints: ['  product A  '],
+      contextHints: ["  product A  "],
       topK: null,
     });
-    expect(parsed.question).toBe('hello');
+    expect(parsed.question).toBe("hello");
     expect(parsed.filters).toBeUndefined();
-    expect(parsed.contextHints).toEqual(['  product A  ']);
+    expect(parsed.contextHints).toEqual(["  product A  "]);
     expect(parsed.topK).toBeUndefined();
   });
 });
 
-describe('streamAsk', () => {
-  it('parses SSE payloads and resolves with AskResponse', async () => {
+describe("streamAsk", () => {
+  it("parses SSE payloads and resolves with AskResponse", async () => {
     const payload = askResponseSchema.parse({
-      answer: 'Yes, the pilot is four weeks.',
+      answer: "Yes, the pilot is four weeks.",
       confidence: 0.82,
       should_escalate: false,
-      request_id: 'req-123',
+      request_id: "req-123",
       sources: [
-        { path: 'content/pilot.pdf', page: 3, heading: 'Implementation timeline', chunkId: 'chunk-1' },
+        {
+          path: "content/pilot.pdf",
+          page: 3,
+          heading: "Implementation timeline",
+          chunkId: "chunk-1",
+        },
       ],
     });
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(createSseResponse(payload));
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(createSseResponse(payload));
 
     const response = await streamAsk({
-      question: 'timeline?',
+      question: "timeline?",
       filters: undefined,
       contextHints: undefined,
       topK: undefined,
@@ -60,23 +65,23 @@ describe('streamAsk', () => {
     expect(response).toEqual(payload);
   });
 
-  it('falls back to JSON responses when streaming is unavailable', async () => {
+  it("falls back to JSON responses when streaming is unavailable", async () => {
     const payload = {
-      answer: 'Fallback response',
+      answer: "Fallback response",
       confidence: 0.66,
       should_escalate: true,
-      request_id: 'req-456',
+      request_id: "req-456",
       sources: [],
     };
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify(payload), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       })
     );
 
     const response = await streamAsk({
-      question: 'fallback?',
+      question: "fallback?",
       filters: undefined,
       contextHints: undefined,
       topK: undefined,

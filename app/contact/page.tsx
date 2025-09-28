@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
-import { MailCheck, PhoneCall } from 'lucide-react';
-import { PageHeader } from '@/components/page-header';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import type { Metadata } from "next";
+import { MailCheck, PhoneCall } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export const metadata: Metadata = {
-  title: 'Contact · Atticus',
+  title: "Contact · Atticus",
 };
 
 export default function ContactPage() {
@@ -57,9 +57,12 @@ export default function ContactPage() {
 
       <section className="grid gap-6 md:grid-cols-2">
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <h3 className="text-base font-semibold text-slate-900 dark:text-white">Preferred escalation window</h3>
+          <h3 className="text-base font-semibold text-slate-900 dark:text-white">
+            Preferred escalation window
+          </h3>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Monday–Friday, 08:00–18:00 local time. After hours requests receive an automated acknowledgement with the request ID.
+            Monday–Friday, 08:00–18:00 local time. After hours requests receive an automated
+            acknowledgement with the request ID.
           </p>
         </article>
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -68,7 +71,8 @@ export default function ContactPage() {
           </div>
           <h3 className="text-base font-semibold text-slate-900 dark:text-white">Urgent support</h3>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Call +1 (555) 010-8890 and quote the request ID returned in your escalation receipt. PII is redacted in all logs.
+            Call +1 (555) 010-8890 and quote the request ID returned in your escalation receipt. PII
+            is redacted in all logs.
           </p>
         </article>
       </section>

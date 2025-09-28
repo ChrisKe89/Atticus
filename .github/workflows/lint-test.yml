@@ -6,6 +6,85 @@ on:
   pull_request:
 
 jobs:
+  frontend-quality:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: ankane/pgvector:0.5.1
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: atticus
+        options: >-
+          --health-cmd "pg_isready -U postgres -d atticus"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      matrix:
+        node-version: ["20"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up Python for audits
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python audit tooling
+        run: python -m pip install --upgrade pip vulture
+
+      - name: Next.js lint
+        run: npm run lint
+
+      - name: Next.js typecheck
+        run: npm run typecheck
+
+      - name: Next.js build
+        run: npm run build
+
+      - name: Prepare audit report directory
+        run: mkdir -p reports/ci
+
+      - name: Audit TypeScript usage graph
+        run: |
+          set -o pipefail
+          npm run audit:ts -- --reporter json | tee reports/ci/knip-strict.json
+
+      - name: Audit icon usage
+        run: |
+          set -o pipefail
+          npm run audit:icons | tee reports/ci/icon-audit.log
+
+      - name: Audit Next.js routes
+        run: |
+          set -o pipefail
+          npm run audit:routes | tee reports/ci/routes.json
+
+      - name: Audit Python unused code
+        run: |
+          set -o pipefail
+          npm run audit:py | tee reports/ci/python-unused.json
+
+      - name: Upload audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-audit-reports
+          path: reports/ci
+
   lint-test:
     runs-on: ubuntu-latest
     steps:

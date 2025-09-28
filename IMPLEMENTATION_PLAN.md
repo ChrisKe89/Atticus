@@ -1,19 +1,20 @@
 # Implementation Plan — Atticus RAG Consistency Cleanup
 
-| Phase | Status | Notes |
-| --- | --- | --- |
-| Phase 0 | ✅ | [6e50c78](commit/6e50c78) – audit tooling dependencies installed |
-| Phase 1 | ✅ | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired |
-| Phase 2 | ✅ | [HEAD](commit/HEAD) – `/api/ask` contract unified with SSE client + tests |
-| Phase 3 | ✅ | [HEAD](commit/HEAD) – Glossary workflow hardened with review metadata and RBAC docs |
-| Phase 4 | ✅ | [HEAD](commit/HEAD) – Frontend hygiene complete |
-| Phase 5 | ✅ | [HEAD](commit/HEAD) – Legacy UI archived & structure updated |
-| Phase 6 | ⚠️ | Not started |
-| Phase 7 | ⚠️ | Not started |
+| Phase   | Status | Notes                                                                               |
+| ------- | ------ | ----------------------------------------------------------------------------------- |
+| Phase 0 | ✅     | [6e50c78](commit/6e50c78) – audit tooling dependencies installed                    |
+| Phase 1 | ✅     | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired            |
+| Phase 2 | ✅     | [HEAD](commit/HEAD) – `/api/ask` contract unified with SSE client + tests           |
+| Phase 3 | ✅     | [HEAD](commit/HEAD) – Glossary workflow hardened with review metadata and RBAC docs |
+| Phase 4 | ✅     | [HEAD](commit/HEAD) – Frontend hygiene complete                                     |
+| Phase 5 | ✅     | [HEAD](commit/HEAD) – Legacy UI archived & structure updated                        |
+| Phase 6 | ✅     | [HEAD](commit/HEAD) – Developer tooling + CI harmonized                             |
+| Phase 7 | ✅     | [HEAD](commit/HEAD) – Documentation + release sync complete                         |
 
 This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges active TODOs. Each phase lists required commits, commands (POSIX + PowerShell where relevant), acceptance criteria, and cross-references to TODO items.
 
 ## Phase 0 – Safety, Branching, and Baseline Artifacts
+
 - **Objectives**
   - Create working branch `audit/rag-consistency-cleanup`.
   - Ensure `.env.example` covers all required settings before touching secrets (extends TODO §A.1).
@@ -32,6 +33,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Audit scripts executable (`npm run audit:ts`, `python scripts/audit_unused.py`).
 
 ## Phase 1 – Data Layer First (TODO §A.3, §A.4, §D.4)
+
 - **Objectives**
   - Model pgvector schema via Prisma; align Python + Prisma migrations.
   - Add `scripts/verify_pgvector.sql` checks to CI + docs.
@@ -51,6 +53,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - `scripts/verify_pgvector.sql` returns success; Make/CI step added.
 
 ## Phase 2 – RAG Contract Unification (TODO §D.2)
+
 - **Objectives**
   - Provide single `/api/ask` endpoint returning `{answer, sources, confidence, request_id, should_escalate}`.
   - Introduce shared DTOs for TypeScript + Python, with typed fetch layer.
@@ -70,6 +73,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Chat UI renders streaming responses with sources + error handling.
 
 ## Phase 3 – Auth & RBAC Hardening (TODO §B.2, §C.1)
+
 - **Objectives**
   - Finalize Prisma schema for glossary workflow, enforce RBAC across server actions.
   - Document provisioning, tests, and rollback steps.
@@ -88,6 +92,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Docs include Windows-friendly auth smoke steps.
 
 ## Phase 4 – Frontend Hygiene (TODO §A.1, FND-001/002/007)
+
 - **Objectives**
   - Align Tailwind content paths, remove unused animations, integrate Framer Motion intentionally or remove.
   - Normalize shadcn/ui component usage, ensure Lucide imports tree-shaken.
@@ -107,6 +112,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Tailwind build has no purge misses; UI uses consistent design tokens.
 
 ## Phase 5 – Orphans & Structure Cleanup (TODO §D.1, §D.3)
+
 - **Objectives**
   - Remove FastAPI UI vestiges, restructure repo to separate frontend/back-end clearly.
 - **Commits**
@@ -124,6 +130,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Repo tree matches updated `REPO_STRUCTURE.md`.
 
 ## Phase 6 – Developer Experience & CI (TODO §B.1)
+
 - **Objectives**
   - Harmonize linting/formatting (ESLint, Prettier, Ruff, Black, mypy) and ensure CI runs frontend + backend gates.
 - **Commits**
@@ -142,6 +149,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - Pre-commit hooks cover Ruff, mypy, ESLint, Prettier.
 
 ## Phase 7 – Documentation Sync & Release (TODO §A.1–§A.5, §B.1)
+
 - **Objectives**
   - Rewrite README/ARCHITECTURE/OPERATIONS/TROUBLESHOOTING/REQUIREMENTS to match final stack.
   - Update AGENTS.md with resolved conflicts, escalate instructions, and CI gates.
@@ -162,11 +170,11 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - README accurately describes Next.js + FastAPI hybrid deployment.
 
 ## Cross-Phase Considerations
+
 - **Observability**: Introduce metrics dashboards/log shipping in Phases 2–3 when RAG contract and auth are stable.
 - **Testing**: Maintain ≥90% backend coverage and add Vitest/Playwright coverage >80% for UI flows.
 - **Versioning**: Adopt single `VERSION` file updated in Phase 7; reference from Python/Node builds.
 - **Risk Mitigation**: For destructive deletions (e.g., `web/static`), move to `archive/legacy-ui/` first, update documentation, and remove once parity confirmed.
-
 
 ## Notes
 
@@ -174,4 +182,3 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 - Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.
 
 - Unable to progress beyond Phase 0 within current session; remaining phases marked ⚠️ for follow-up.
-

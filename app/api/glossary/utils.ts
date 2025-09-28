@@ -1,17 +1,17 @@
-import { NextResponse } from 'next/server';
-import { GlossaryStatus, Prisma } from '@prisma/client';
-import { ForbiddenError, UnauthorizedError } from '@/lib/rbac';
+import { NextResponse } from "next/server";
+import { GlossaryStatus, Prisma } from "@prisma/client";
+import { ForbiddenError, UnauthorizedError } from "@/lib/rbac";
 
 export function parseStatus(value: unknown): GlossaryStatus {
-  if (value === undefined || value === null || value === '') {
+  if (value === undefined || value === null || value === "") {
     return GlossaryStatus.PENDING;
   }
-  if (typeof value !== 'string') {
-    throw new Error('Invalid status type');
+  if (typeof value !== "string") {
+    throw new Error("Invalid status type");
   }
   const upper = value.toUpperCase();
   if (!(upper in GlossaryStatus)) {
-    throw new Error('Unknown glossary status');
+    throw new Error("Unknown glossary status");
   }
   return GlossaryStatus[upper as keyof typeof GlossaryStatus];
 }
@@ -22,16 +22,16 @@ export function parseSynonyms(value: unknown): string[] {
   }
   if (Array.isArray(value)) {
     return value
-      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .map((item) => (typeof item === "string" ? item.trim() : ""))
       .filter((item) => item.length > 0);
   }
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value
-      .split(',')
+      .split(",")
       .map((item) => item.trim())
       .filter((item) => item.length > 0);
   }
-  throw new Error('Invalid synonyms payload');
+  throw new Error("Invalid synonyms payload");
 }
 
 export function serializeEntry(entry: any) {
@@ -71,19 +71,22 @@ export function serializeEntry(entry: any) {
 
 export function handleGlossaryError(error: unknown) {
   if (error instanceof UnauthorizedError) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   if (error instanceof ForbiddenError) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-    return NextResponse.json({ error: 'conflict', detail: 'Term already exists for this organization.' }, { status: 409 });
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    return NextResponse.json(
+      { error: "conflict", detail: "Term already exists for this organization." },
+      { status: 409 }
+    );
   }
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-    return NextResponse.json({ error: 'not_found' }, { status: 404 });
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
   }
-  if (error instanceof Error && error.message?.toLowerCase().includes('status')) {
-    return NextResponse.json({ error: 'invalid_request', detail: error.message }, { status: 400 });
+  if (error instanceof Error && error.message?.toLowerCase().includes("status")) {
+    return NextResponse.json({ error: "invalid_request", detail: error.message }, { status: 400 });
   }
-  return NextResponse.json({ error: 'internal_error' }, { status: 500 });
+  return NextResponse.json({ error: "internal_error" }, { status: 500 });
 }

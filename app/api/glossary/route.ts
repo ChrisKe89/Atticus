@@ -1,15 +1,20 @@
-import { NextResponse } from 'next/server';
-import { getServerAuthSession } from '@/lib/auth';
-import { withRlsContext } from '@/lib/rls';
-import { canEditGlossary, canReviewGlossary } from '@/lib/rbac';
-import { handleGlossaryError, parseStatus, parseSynonyms, serializeEntry } from '@/app/api/glossary/utils';
+import { NextResponse } from "next/server";
+import { getServerAuthSession } from "@/lib/auth";
+import { withRlsContext } from "@/lib/rls";
+import { canEditGlossary, canReviewGlossary } from "@/lib/rbac";
+import {
+  handleGlossaryError,
+  parseStatus,
+  parseSynonyms,
+  serializeEntry,
+} from "@/app/api/glossary/utils";
 
 export async function GET() {
   try {
     const session = canReviewGlossary(await getServerAuthSession());
     const entries = (await withRlsContext(session, (tx) =>
       tx.glossaryEntry.findMany({
-        orderBy: { term: 'asc' },
+        orderBy: { term: "asc" },
         include: {
           author: { select: { id: true, email: true, name: true } },
           updatedBy: { select: { id: true, email: true, name: true } },
@@ -27,12 +32,12 @@ export async function POST(request: Request) {
   try {
     const session = canEditGlossary(await getServerAuthSession());
     const payload = await request.json();
-    const term = typeof payload.term === 'string' ? payload.term.trim() : '';
-    const definition = typeof payload.definition === 'string' ? payload.definition.trim() : '';
+    const term = typeof payload.term === "string" ? payload.term.trim() : "";
+    const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
     const synonyms = parseSynonyms(payload.synonyms);
     if (!term || !definition) {
       return NextResponse.json(
-        { error: 'invalid_request', detail: 'Both term and definition are required.' },
+        { error: "invalid_request", detail: "Both term and definition are required." },
         { status: 400 }
       );
     }
