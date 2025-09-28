@@ -7,7 +7,13 @@ The newest entries appear first.
 
 ## [Unreleased]
 
-_No changes yet._
+### Added
+- `AUDIT_REPORT.md` capturing findings FND-001–FND-008 with evidence and remediation guidance.
+- `IMPLEMENTATION_PLAN.md` outlining phases 0–7 and consolidating TODO.md.
+- Automation scripts: `npm run audit:*`, `scripts/audit_unused.py`, `scripts/route-audit.mjs`, and `scripts/verify_pgvector.sql`.
+
+### Changed
+- README and AGENTS reference the new audit workflow and Windows-friendly commands.
 
 ---
 

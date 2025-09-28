@@ -4,6 +4,13 @@
 
 ---
 
+## Current Audit Status
+
+- Refer to [AUDIT_REPORT.md](AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
+- Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to TODO.md.
+- Run `npm run audit:ts`, `npm run audit:icons`, `npm run audit:routes`, and `npm run audit:py` before opening a PR.
+
+
 ## Execution Criteria — **Must‑Follow for Repo Work**
 
 > Treat these as hard requirements for anyone (or any agent) touching the repo.
