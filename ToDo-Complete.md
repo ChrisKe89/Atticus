@@ -67,6 +67,7 @@ Each entry includes the completion date and commit reference for traceability.
 
 - [x] TODO "TROUBLESHOOTING.md — Add pgvector + Prisma troubleshooting (extension enablement, migration drift)." — completed 2025-09-30 (commit HEAD).
 
+
 ## 2025-10-04
 
 - [x] TODO "`api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure request_id & should_escalate; remove unused import in api/routes/__init__.py." — completed 2025-10-04 (commit HEAD).

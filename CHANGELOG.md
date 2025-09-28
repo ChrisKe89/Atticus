@@ -17,6 +17,7 @@ The newest entries appear first.
 
 ---
 
+
 ## [0.5.3] — 2025-10-04
 
 ### Added
@@ -33,6 +34,7 @@ The newest entries appear first.
 - `npm run test:unit`
 - `pytest tests/test_chat_route.py`
 - `pytest tests/test_admin_route.py`
+
 
 ## [0.5.2] — 2025-09-30
 
