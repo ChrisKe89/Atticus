@@ -1,5 +1,6 @@
 [project]
 name = "atticus"
+dynamic = ["version"]
 
 description = "Atticus Retrieval-Augmented Generation service"
 readme = "README.md"
@@ -31,6 +32,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["atticus", "api", "ingest", "retriever", "eval"]
+
+[tool.setuptools.dynamic]
+version = { file = "VERSION" }
 
 [tool.ruff]
 line-length = 100
