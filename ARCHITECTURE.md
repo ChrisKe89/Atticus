@@ -8,6 +8,7 @@ This document provides a **high‑level view of the Atticus system**, showing ho
 
 Atticus is a **Retrieval‑Augmented Generation (RAG)** platform.
 It ingests content, builds a searchable vector index, retrieves relevant information on demand, and generates grounded answers.
+The Next.js application is the canonical UI; historical static assets live under `archive/legacy-ui/` for reference only.
 
 ### Core Components
 
@@ -17,7 +18,7 @@ It ingests content, builds a searchable vector index, retrieves relevant informa
 | **Retriever & Ranker** | Vector search with optional hybrid lexical re‑rank (BM25‑lite). |
 | **Generator** | Drafts concise, sourced answers using GPT‑4.1 (or configured `GEN_MODEL`). |
 | **API Layer** | FastAPI app exposing `/health`, `/ingest`, `/ask`, `/eval`, and `/contact` routes with `/ask` returning `{answer, citations, confidence, should_escalate, request_id}`. |
-| **Web UI** | Integrated front end served from `/`, providing a chat interface and escalation actions. |
+| **Web UI** | Next.js app router served from `/`, providing chat, admin, settings, contact, and apps routes with shadcn-style components. |
 
 ---
 

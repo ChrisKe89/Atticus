@@ -1,6 +1,6 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api ui e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck \
-	db.up db.down db.migrate db.seed db.verify seed web-test web-e2e
+.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev help \
+        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -16,10 +16,15 @@ env:
 smtp-test:
 	$(PYTHON) scripts/smtp_test.py
 
-api:
-	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
+help:
+	@echo "Available targets:"
+	@python scripts/list_make_targets.py $(MAKEFILE_LIST)
 
-ui:
+api:
+        $(PYTHON) -m uvicorn api.main:app --reload --port 8000
+
+
+web-dev:
 	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
 	npm run dev
 

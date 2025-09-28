@@ -7,7 +7,7 @@ import { handleGlossaryError, parseStatus, parseSynonyms, serializeEntry } from 
 export async function GET() {
   try {
     const session = canReviewGlossary(await getServerAuthSession());
-    const entries = await withRlsContext(session, (tx) =>
+    const entries = (await withRlsContext(session, (tx) =>
       tx.glossaryEntry.findMany({
         orderBy: { term: 'asc' },
         include: {
@@ -15,8 +15,8 @@ export async function GET() {
           updatedBy: { select: { id: true, email: true, name: true } },
           reviewer: { select: { id: true, email: true, name: true } },
         },
-      })
-    );
+      } as any)
+    )) as unknown[];
     return NextResponse.json(entries.map(serializeEntry));
   } catch (error) {
     return handleGlossaryError(error);
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
           updatedBy: { select: { id: true, email: true, name: true } },
           reviewer: { select: { id: true, email: true, name: true } },
         },
-      })
+      } as any)
     );
 
     return NextResponse.json(serializeEntry(entry), { status: 201 });

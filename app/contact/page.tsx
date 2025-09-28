@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { MailCheck, PhoneCall } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export const metadata: Metadata = {
   title: 'Contact · Atticus',
@@ -17,54 +21,38 @@ export default function ContactPage() {
 
       <form className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="grid gap-6 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm text-slate-700 dark:text-slate-200">
-            <span className="font-semibold">Name</span>
-            <input
-              type="text"
-              name="name"
-              placeholder="Alex Finnegan"
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm text-slate-700 dark:text-slate-200">
-            <span className="font-semibold">Work email</span>
-            <input
-              type="email"
-              name="email"
-              placeholder="alex@contoso.com"
-              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
-              required
-            />
-          </label>
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" name="name" placeholder="Alex Finnegan" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Work email</Label>
+            <Input id="email" name="email" type="email" placeholder="alex@contoso.com" required />
+          </div>
         </div>
-        <label className="flex flex-col gap-2 text-sm text-slate-700 dark:text-slate-200">
-          <span className="font-semibold">Issue summary</span>
-          <input
-            type="text"
+        <div className="space-y-2">
+          <Label htmlFor="summary">Issue summary</Label>
+          <Input
+            id="summary"
             name="summary"
             placeholder="Low confidence response for Managed Print RFP"
-            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
             required
           />
-        </label>
-        <label className="flex flex-col gap-2 text-sm text-slate-700 dark:text-slate-200">
-          <span className="font-semibold">Details</span>
-          <textarea
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="details">Details</Label>
+          <Textarea
+            id="details"
             name="details"
             rows={5}
             placeholder="Share the question, customer, and any attachments that should be included in the follow-up."
-            className="rounded-2xl border border-slate-300 bg-white px-3 py-3 text-sm leading-6 text-slate-900 shadow-sm transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-indigo-500 dark:focus:ring-indigo-500"
             required
           />
-        </label>
-        <button
-          type="submit"
-          className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
-        >
+        </div>
+        <Button type="submit" className="inline-flex items-center gap-2 rounded-full px-5 py-2.5">
           Submit escalation
           <MailCheck className="h-4 w-4" aria-hidden="true" />
-        </button>
+        </Button>
       </form>
 
       <section className="grid gap-6 md:grid-cols-2">

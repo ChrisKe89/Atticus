@@ -51,7 +51,12 @@ describe('streamAsk', () => {
     });
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(createSseResponse(payload));
 
-    const response = await streamAsk({ question: 'timeline?' });
+    const response = await streamAsk({
+      question: 'timeline?',
+      filters: undefined,
+      contextHints: undefined,
+      topK: undefined,
+    });
     expect(response).toEqual(payload);
   });
 
@@ -70,7 +75,12 @@ describe('streamAsk', () => {
       })
     );
 
-    const response = await streamAsk({ question: 'fallback?' });
+    const response = await streamAsk({
+      question: 'fallback?',
+      filters: undefined,
+      contextHints: undefined,
+      topK: undefined,
+    });
     expect(response).toEqual(askResponseSchema.parse(payload));
   });
 });

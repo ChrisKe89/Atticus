@@ -1,0 +1,35 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "app/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "lib/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,tsx,js,mjs}",
+    "tests/**/*.{ts,tsx}",
+    "middleware.ts"
+  ],
+  "project": [
+    "app/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "lib/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,tsx,js,mjs}",
+    "tests/**/*.{ts,tsx}",
+    "prisma/**/*.ts"
+  ],
+  "paths": {
+    "@": ["."],
+    "@/components": ["components"],
+    "@/app": ["app"],
+    "@/lib": ["lib"]
+  },
+  "ignoreDependencies": [
+    "@auth/prisma-adapter",
+    "clsx",
+    "zod"
+  ],
+  "ignore": [
+    "archive/legacy-ui/**",
+    "prisma/seed.ts",
+    "scripts/route-audit.mjs"
+  ]
+}

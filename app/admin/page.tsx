@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Activity, Database, Folder, Users } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Role } from '@prisma/client';
+import { GlossaryStatus, Role } from '@prisma/client';
 import { PageHeader } from '@/components/page-header';
 import { getServerAuthSession } from '@/lib/auth';
 import { withRlsContext } from '@/lib/rls';
@@ -48,6 +48,21 @@ export const metadata: Metadata = {
   title: 'Admin · Atticus',
 };
 
+type GlossaryEntryRecord = {
+  id: string;
+  term: string;
+  definition: string;
+  synonyms: string[];
+  status: GlossaryStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  reviewedAt: Date | null;
+  reviewNotes: string | null;
+  author: { id: string; email: string | null; name: string | null } | null;
+  updatedBy: { id: string; email: string | null; name: string | null } | null;
+  reviewer: { id: string; email: string | null; name: string | null } | null;
+};
+
 export default async function AdminPage() {
   const session = await getServerAuthSession();
   if (!session) {
@@ -57,7 +72,7 @@ export default async function AdminPage() {
     redirect('/');
   }
 
-  const entries = await withRlsContext(session, (tx) =>
+  const rawEntries = await withRlsContext(session, (tx) =>
     tx.glossaryEntry.findMany({
       orderBy: { term: 'asc' },
       include: {
@@ -65,8 +80,9 @@ export default async function AdminPage() {
         updatedBy: { select: { id: true, email: true, name: true } },
         reviewer: { select: { id: true, email: true, name: true } },
       },
-    })
+    } as any)
   );
+  const entries = rawEntries as unknown as GlossaryEntryRecord[];
 
   const glossaryEntries: GlossaryEntryDto[] = entries.map((entry) => ({
     id: entry.id,

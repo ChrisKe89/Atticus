@@ -6,8 +6,8 @@
 | Phase 1 | ✅ | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired |
 | Phase 2 | ✅ | [HEAD](commit/HEAD) – `/api/ask` contract unified with SSE client + tests |
 | Phase 3 | ✅ | [HEAD](commit/HEAD) – Glossary workflow hardened with review metadata and RBAC docs |
-| Phase 4 | ⚠️ | Not started |
-| Phase 5 | ⚠️ | Not started |
+| Phase 4 | ✅ | [HEAD](commit/HEAD) – Frontend hygiene complete |
+| Phase 5 | ✅ | [HEAD](commit/HEAD) – Legacy UI archived & structure updated |
 | Phase 6 | ⚠️ | Not started |
 | Phase 7 | ⚠️ | Not started |
 
