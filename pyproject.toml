@@ -19,6 +19,7 @@ dev = [
   "pydantic>=2.7",
   "types-requests",
   "types-PyYAML",
+  "vulture>=2.11",
   "pre-commit>=3.7"
 ]
 
