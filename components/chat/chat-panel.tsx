@@ -88,7 +88,7 @@ export function ChatPanel() {
 
     try {
       await streamAsk(
-        { question: trimmed },
+        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined },
         {
           onEvent: (event: AskStreamEvent) => {
             if (event.type === 'answer') {

@@ -52,7 +52,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
           updatedBy: { select: { id: true, email: true, name: true } },
           reviewer: { select: { id: true, email: true, name: true } },
         },
-      })
+      } as any)
     );
 
     return NextResponse.json(serializeEntry(entry));

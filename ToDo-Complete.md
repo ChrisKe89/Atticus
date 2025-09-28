@@ -69,6 +69,7 @@ Each entry includes the completion date and commit reference for traceability.
 
 
 ## 2025-10-04
+- [x] TODO "`Makefile` — remove `ui` target (`http.server`); add Next.js scripts (`dev`, `build`, `start`); keep `api` until migration complete." — completed 2025-10-04 (commit HEAD).
 
 - [x] TODO "`api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure request_id & should_escalate; remove unused import in api/routes/__init__.py." — completed 2025-10-04 (commit HEAD).
 - [x] TODO "Dictionary/glossary admin — Design Prisma schema/API contracts for glossary records with approval workflow." — completed 2025-10-04 (commit HEAD).

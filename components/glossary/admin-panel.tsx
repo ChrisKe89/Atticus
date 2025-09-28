@@ -2,6 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { GlossaryStatus } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 
 export interface GlossaryEntryDto {
   id: string;
@@ -110,88 +116,73 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
           Approved terms appear instantly in chat responses. Pending entries stay private until promoted.
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="space-y-2 text-sm">
-            <span className="font-medium text-slate-700 dark:text-slate-200">Term</span>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="term">Term</Label>
+            <Input
+              id="term"
               value={term}
               onChange={(event) => setTerm(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               placeholder="Consumables"
             />
-          </label>
-          <label className="space-y-2 text-sm">
-            <span className="font-medium text-slate-700 dark:text-slate-200">Status</span>
-            <select
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              id="status"
               value={status}
               onChange={(event) => setStatus(event.target.value as GlossaryStatus)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             >
               {statusOptions.map((option) => (
                 <option key={option} value={option}>
                   {option.toLowerCase()}
                 </option>
               ))}
-            </select>
-          </label>
+            </Select>
+          </div>
         </div>
-        <label className="space-y-2 text-sm">
-          <span className="font-medium text-slate-700 dark:text-slate-200">Synonyms</span>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="synonyms">Synonyms</Label>
+          <Input
+            id="synonyms"
             value={synonyms}
             onChange={(event) => setSynonyms(event.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Comma-separated list"
           />
-        </label>
-        <label className="mt-4 block space-y-2 text-sm">
-          <span className="font-medium text-slate-700 dark:text-slate-200">Definition</span>
-          <textarea
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="definition">Definition</Label>
+          <Textarea
+            id="definition"
             value={definition}
             onChange={(event) => setDefinition(event.target.value)}
             rows={4}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             placeholder="How the team uses this term..."
           />
-        </label>
-        <div className="mt-4 flex items-center justify-between">
-          <button
-            type="button"
-            disabled={isPending || !term || !definition}
-            onClick={createEntry}
-            className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-400"
-          >
+        </div>
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <Button type="button" disabled={isPending || !term || !definition} onClick={createEntry}>
             {isPending ? 'Saving…' : 'Save entry'}
-          </button>
+          </Button>
           {feedback ? <p className="text-xs text-slate-500 dark:text-slate-400">{feedback}</p> : null}
         </div>
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-800">
-          <thead className="bg-slate-50 dark:bg-slate-900/60">
-            <tr>
-              <th scope="col" className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
-                Term
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
-                Definition
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
-                Status
-              </th>
-              <th scope="col" className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
-                Updated
-              </th>
-              <th scope="col" className="px-4 py-3 text-right font-semibold text-slate-700 dark:text-slate-200">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Term</TableHead>
+              <TableHead>Definition</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {entries.map((entry) => (
-              <tr key={entry.id} className="align-top">
-                <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{entry.term}</td>
-                <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
+              <TableRow key={entry.id}>
+                <TableCell className="font-medium text-slate-900 dark:text-white">{entry.term}</TableCell>
+                <TableCell>
                   <p>{entry.definition}</p>
                   {entry.synonyms.length ? (
                     <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
@@ -201,9 +192,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     Added by {entry.author?.name ?? entry.author?.email ?? 'unknown'}
                   </p>
-                </td>
-                <td className="px-4 py-3 capitalize text-slate-600 dark:text-slate-300">{entry.status.toLowerCase()}</td>
-                <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
+                </TableCell>
+                <TableCell className="capitalize">{entry.status.toLowerCase()}</TableCell>
+                <TableCell>
                   <p>{new Date(entry.updatedAt).toLocaleString()}</p>
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     By {entry.updatedBy?.name ?? entry.updatedBy?.email ?? 'system'}
@@ -216,45 +207,43 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                   {entry.reviewNotes ? (
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Notes: {entry.reviewNotes}</p>
                   ) : null}
-                </td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     {statusOptions.map((option) => (
-                      <button
+                      <Button
                         key={option}
                         type="button"
-                        className={
-                          option === entry.status
-                            ? 'rounded-full border border-indigo-200 bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700'
-                            : 'rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
-                        }
+                        size="sm"
+                        variant={option === entry.status ? 'secondary' : 'outline'}
                         disabled={option === entry.status || isPending}
                         onClick={() => updateStatus(entry, option)}
                       >
                         {option.toLowerCase()}
-                      </button>
+                      </Button>
                     ))}
-                    <button
+                    <Button
                       type="button"
-                      className="rounded-full border border-rose-200 px-3 py-1 text-xs text-rose-600 hover:bg-rose-50"
+                      size="sm"
+                      variant="destructive"
                       onClick={() => deleteEntry(entry.id)}
                       disabled={isPending}
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
             {entries.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <TableRow>
+                <TableCell colSpan={5} className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                   No glossary entries yet. Create one above to seed the knowledge base.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : null}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </section>
   );

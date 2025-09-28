@@ -89,8 +89,8 @@ Common ingestion checks:
 * If the API fails to start:
   * Run `make lint` and `make typecheck` to catch syntax or typing errors.
   * Check logs in `logs/errors.jsonl` for stack traces.
-* Confirm the UI is accessible at `http://localhost:8000/`.
-  If the UI has been separated, reintroduce `make ui` and update port mapping.
+* Confirm the UI is accessible at `http://localhost:3000/` via `make web-dev`.
+  If the UI has been separated again, reintroduce a dedicated make target and update port mapping.
 
 ## Streaming `/api/ask` Issues
 

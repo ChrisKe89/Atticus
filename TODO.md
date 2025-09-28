@@ -54,10 +54,6 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
    - [x] Merge route handlers and delete deprecated module.
    - [x] Guarantee response includes `request_id`/`should_escalate` and shared error handling.
    - [x] Clean up router exports/imports and associated tests.
-3. `Makefile` — remove `ui` target (`http.server`); add Next.js scripts (`dev`, `build`, `start`); keep `api` until migration complete.
-   - [ ] Drop legacy `ui` implementation and confirm new targets wrap Next.js commands.
-   - [ ] Ensure CI/README references use updated make targets.
-   - [ ] Re-run `make help`/docs to validate instructions.
 4. `requirements.in` — remove `faiss-cpu`, `jinja2`; add `psycopg[binary]` for local Python dev until TS/Next.js replaces Python API.
    - [ ] Prune deprecated dependencies and add Postgres driver entry.
    - [ ] Regenerate `requirements.txt`/lockfiles and verify tests pass.
