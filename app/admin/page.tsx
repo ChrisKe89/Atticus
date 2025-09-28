@@ -63,6 +63,7 @@ export default async function AdminPage() {
       include: {
         author: { select: { id: true, email: true, name: true } },
         updatedBy: { select: { id: true, email: true, name: true } },
+        reviewer: { select: { id: true, email: true, name: true } },
       },
     })
   );
@@ -71,11 +72,15 @@ export default async function AdminPage() {
     id: entry.id,
     term: entry.term,
     definition: entry.definition,
+    synonyms: entry.synonyms,
     status: entry.status,
     createdAt: entry.createdAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
+    reviewedAt: entry.reviewedAt ? entry.reviewedAt.toISOString() : null,
     author: entry.author,
     updatedBy: entry.updatedBy,
+    reviewer: entry.reviewer,
+    reviewNotes: entry.reviewNotes ?? null,
   }));
 
   return (

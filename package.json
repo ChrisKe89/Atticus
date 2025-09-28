@@ -1,6 +1,6 @@
 {
   "name": "atticus",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "private": true,
   "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {
@@ -29,7 +29,8 @@
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.14",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.2",

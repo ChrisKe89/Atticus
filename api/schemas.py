@@ -37,28 +37,47 @@ class IngestResponse(BaseModel):
 
 
 class AskRequest(BaseModel):
-    # Accept both {"question": "..."} and legacy {"query": "..."}
+    """Canonical ask request contract shared across services."""
+
     model_config = ConfigDict(populate_by_name=True)
+
+    # Accept both {"question": "..."} and legacy {"query": "..."}
     question: str = Field(validation_alias="query")
     filters: dict[str, str] | None = Field(
         default=None, description="Metadata filters such as path_prefix or source_type"
     )
+    context_hints: list[str] | None = Field(
+        default=None,
+        alias="contextHints",
+        description="Optional hints supplied by the UI to bias retrieval",
+    )
+    top_k: int | None = Field(
+        default=None,
+        ge=1,
+        le=32,
+        alias="topK",
+        description="Override for the retrieval top-k window",
+    )
 
 
-class CitationModel(BaseModel):
-    chunk_id: str
-    source_path: str
-    page_number: int | None = None
+class AskSource(BaseModel):
+    """Structured citation returned to the UI."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    path: str
+    page: int | None = None
     heading: str | None = None
-    score: float
+    chunkId: str | None = None
+    score: float | None = None
 
 
 class AskResponse(BaseModel):
     answer: str
     confidence: float
     should_escalate: bool
-    citations: list[CitationModel]
     request_id: str
+    sources: list[AskSource]
 
 
 class EvalResponse(BaseModel):

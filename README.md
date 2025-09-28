@@ -25,6 +25,7 @@ Minimum settings for escalation email:
 * `CONTACT_EMAIL` – escalation recipient
 * `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials (not IAM keys)
 * `SMTP_ALLOW_LIST` – comma-separated allow list of approved sender/recipient emails or domains
+* `RAG_SERVICE_URL` – base URL for the FastAPI retrieval service (`http://localhost:8000` in local dev)
 
 ### 2. Install dependencies
 
@@ -56,11 +57,40 @@ Launch Postgres, apply migrations, and seed the default organization/admin speci
 ```bash
 make db.up
 make db.migrate
+make db.verify   # ensure pgvector extension + indexes match expectations
+npm run prisma:generate
+make db.seed
+```
+
+```powershell
+make db.up
+make db.migrate
+make db.verify   # ensures pgvector extension + indexes match expectations
 npm run prisma:generate
 make db.seed
 ```
 
 > The seed promotes `ADMIN_EMAIL` to the `ADMIN` role. Update `.env` before running in shared environments.
+
+Run the pgvector verification script directly when debugging:
+
+```bash
+psql "$DATABASE_URL" \
+  -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
+  -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+  -f scripts/verify_pgvector.sql
+```
+
+```powershell
+if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
+if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+psql "$env:DATABASE_URL" `
+  -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
+  -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
+  -f scripts/verify_pgvector.sql
+```
+
+> Requires the `psql` client (`postgresql-client` on Debian/Ubuntu).
 
 
 ### 3. Add content
@@ -111,6 +141,34 @@ Docs remain at `http://localhost:8000/docs`; the web workspace runs on port 3000
 
 Visit `http://localhost:3000/signin` and request a magic link for your provisioned email. Open the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in and reach `/admin`.
 
+### 8. Ask API contract
+
+The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service via server-side streaming (SSE).
+
+**Request**
+
+```json
+{
+  "question": "What is the pilot timeline?",
+  "contextHints": ["Managed print"],
+  "topK": 8
+}
+```
+
+**Response**
+
+```json
+{
+  "answer": "...",
+  "sources": [{"path": "content/pilot.pdf", "page": 3}],
+  "confidence": 0.82,
+  "request_id": "abc123",
+  "should_escalate": false
+}
+```
+
+Clients should send `Accept: text/event-stream` to receive incremental events; the helper in `lib/ask-client.ts` handles both SSE and JSON fallbacks and logs the propagated `request_id` for observability.
+
 ---
 
 ## Order of Operations
@@ -146,6 +204,7 @@ Common shortcuts:
 | `make db.up` | Start Postgres (Docker) |
 | `make db.down` | Stop Postgres (Docker) |
 | `make db.migrate` | Run Prisma migrations |
+| `make db.verify` | Run pgvector health checks (extension, dimensions, IVFFlat) |
 | `make db.seed` | Seed default organization/admin |
 | `make web-build` | Build the production Next.js bundle |
 | `make web-start` | Start the built Next.js app |
@@ -196,7 +255,7 @@ Common shortcuts:
 
 The chat experience is served from the static assets under `web/static` while the production UI lives in the Next.js app.
 
-- `web/static/index.html` hosts a lightweight chat surface that calls the unified `/ask` API returning `{answer, citations, confidence, should_escalate, request_id}`.
+- `app/page.tsx` hosts the streaming chat surface and calls the unified `/api/ask` contract returning `{answer, sources, confidence, should_escalate, request_id}`.
 - `web/static/contact.html` provides the escalation form backed by the `/contact` endpoint.
 - `web/static/admin.html` keeps quick navigation shortcuts for operations staff.
 

@@ -8,7 +8,7 @@ def test_chat_route_or_skip() -> None:
 
     client = TestClient(api_main.app)
     try:
-        r = client.post("/ask", json={"query": "ping"})
+        r = client.post("/ask", json={"question": "ping"})
     except FileNotFoundError as exc:
         pytest.skip(f"index not built: {exc}")
         return
@@ -21,11 +21,12 @@ def test_chat_route_or_skip() -> None:
     assert data["request_id"]
     assert r.headers.get("X-Request-ID") == data["request_id"]
     assert "answer" in data
-    assert "citations" in data
-    assert isinstance(data["citations"], list)
-    if data["citations"]:
-        first = data["citations"][0]
-        assert {"chunk_id", "source_path", "score"}.issubset(first)
+    assert "sources" in data
+    assert isinstance(data["sources"], list)
+    if data["sources"]:
+        first = data["sources"][0]
+        assert {"path"}.issubset(first)
+        assert "chunkId" in first
     assert isinstance(data["confidence"], (float, int))
     assert isinstance(data["should_escalate"], bool)
 
@@ -36,7 +37,7 @@ def test_chat_route_rejects_placeholder_or_skip() -> None:
 
     client = TestClient(api_main.app)
     try:
-        r = client.post("/ask", json={"query": "string"})
+        r = client.post("/ask", json={"question": "string"})
     except FileNotFoundError as exc:
         pytest.skip(f"index not built: {exc}")
         return
@@ -63,7 +64,7 @@ def test_chat_route_rate_limit(monkeypatch) -> None:
 
     client = TestClient(api_main.app)
     try:
-        first = client.post("/ask", json={"query": "ping"})
+        first = client.post("/ask", json={"question": "ping"})
     except FileNotFoundError as exc:
         pytest.skip(f"index not built: {exc}")
         return
@@ -75,7 +76,7 @@ def test_chat_route_rate_limit(monkeypatch) -> None:
         pytest.skip("first request did not succeed; skipping rate limit assertion")
         return
 
-    second = client.post("/ask", json={"query": "another"})
+    second = client.post("/ask", json={"question": "another"})
     assert second.status_code == 429
     data = second.json()
     assert data["error"] == "rate_limited"

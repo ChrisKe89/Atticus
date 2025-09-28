@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import { GlossaryStatus } from '@prisma/client';
 import { getServerAuthSession } from '@/lib/auth';
 import { withRlsContext } from '@/lib/rls';
 import { canEditGlossary } from '@/lib/rbac';
-import { parseStatus, serializeEntry, handleGlossaryError } from '@/app/api/glossary/utils';
+import { parseStatus, parseSynonyms, serializeEntry, handleGlossaryError } from '@/app/api/glossary/utils';
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
@@ -12,8 +13,27 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     if (typeof payload.definition === 'string' && payload.definition.trim()) {
       updates.definition = payload.definition.trim();
     }
+    if (payload.synonyms !== undefined) {
+      updates.synonyms = parseSynonyms(payload.synonyms);
+    }
+    if (payload.reviewNotes !== undefined) {
+      if (typeof payload.reviewNotes === 'string') {
+        const note = payload.reviewNotes.trim();
+        updates.reviewNotes = note ? note : null;
+      } else if (payload.reviewNotes === null) {
+        updates.reviewNotes = null;
+      }
+    }
     if (payload.status) {
-      updates.status = parseStatus(payload.status);
+      const status = parseStatus(payload.status);
+      updates.status = status;
+      if (status === GlossaryStatus.PENDING) {
+        updates.reviewedAt = null;
+        updates.reviewerId = null;
+      } else {
+        updates.reviewedAt = new Date();
+        updates.reviewerId = session.user.id;
+      }
     }
 
     if (Object.keys(updates).length === 0) {
@@ -30,6 +50,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         include: {
           author: { select: { id: true, email: true, name: true } },
           updatedBy: { select: { id: true, email: true, name: true } },
+          reviewer: { select: { id: true, email: true, name: true } },
         },
       })
     );

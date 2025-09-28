@@ -7,11 +7,15 @@ export interface GlossaryEntryDto {
   id: string;
   term: string;
   definition: string;
+  synonyms: string[];
   status: GlossaryStatus;
   createdAt: string;
   updatedAt: string;
+  reviewedAt: string | null;
   author: { id: string; email: string | null; name: string | null } | null;
   updatedBy: { id: string; email: string | null; name: string | null } | null;
+  reviewer: { id: string; email: string | null; name: string | null } | null;
+  reviewNotes: string | null;
 }
 
 interface GlossaryAdminPanelProps {
@@ -28,9 +32,17 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   const [entries, setEntries] = useState(initialEntries);
   const [term, setTerm] = useState('');
   const [definition, setDefinition] = useState('');
+  const [synonyms, setSynonyms] = useState('');
   const [status, setStatus] = useState<GlossaryStatus>(GlossaryStatus.PENDING);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function parseSynonyms(value: string): string[] {
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+  }
 
   async function createEntry() {
     setFeedback(null);
@@ -38,7 +50,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
       const response = await fetch('/api/glossary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ term, definition, status }),
+        body: JSON.stringify({ term, definition, status, synonyms: parseSynonyms(synonyms) }),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -49,17 +61,22 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
       setEntries((prev) => [...prev, created].sort((a, b) => a.term.localeCompare(b.term)));
       setTerm('');
       setDefinition('');
+      setSynonyms('');
       setStatus(GlossaryStatus.PENDING);
       setFeedback('Entry created successfully.');
     });
   }
 
-  async function updateStatus(entryId: string, nextStatus: GlossaryStatus) {
+  async function updateStatus(entry: GlossaryEntryDto, nextStatus: GlossaryStatus) {
     startTransition(async () => {
-      const response = await fetch(`/api/glossary/${entryId}`, {
+      let reviewNotes: string | null | undefined;
+      if (nextStatus !== GlossaryStatus.PENDING) {
+        reviewNotes = window.prompt('Add review notes (optional)', entry.reviewNotes ?? '') ?? undefined;
+      }
+      const response = await fetch(`/api/glossary/${entry.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus }),
+        body: JSON.stringify({ status: nextStatus, reviewNotes }),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -67,7 +84,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
         return;
       }
       const updated: GlossaryEntryDto = await response.json();
-      setEntries((prev) => prev.map((item) => (item.id === entryId ? updated : item)));
+      setEntries((prev) => prev.map((item) => (item.id === entry.id ? updated : item)));
       setFeedback(`Status updated to ${nextStatus.toLowerCase()}.`);
     });
   }
@@ -117,6 +134,15 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
             </select>
           </label>
         </div>
+        <label className="space-y-2 text-sm">
+          <span className="font-medium text-slate-700 dark:text-slate-200">Synonyms</span>
+          <input
+            value={synonyms}
+            onChange={(event) => setSynonyms(event.target.value)}
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            placeholder="Comma-separated list"
+          />
+        </label>
         <label className="mt-4 block space-y-2 text-sm">
           <span className="font-medium text-slate-700 dark:text-slate-200">Definition</span>
           <textarea
@@ -167,6 +193,11 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                 <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{entry.term}</td>
                 <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
                   <p>{entry.definition}</p>
+                  {entry.synonyms.length ? (
+                    <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                      Synonyms: {entry.synonyms.join(', ')}
+                    </p>
+                  ) : null}
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     Added by {entry.author?.name ?? entry.author?.email ?? 'unknown'}
                   </p>
@@ -177,6 +208,14 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     By {entry.updatedBy?.name ?? entry.updatedBy?.email ?? 'system'}
                   </p>
+                  {entry.reviewedAt ? (
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                      Reviewed {new Date(entry.reviewedAt).toLocaleString()} by {entry.reviewer?.name ?? entry.reviewer?.email ?? 'admin'}
+                    </p>
+                  ) : null}
+                  {entry.reviewNotes ? (
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Notes: {entry.reviewNotes}</p>
+                  ) : null}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
@@ -190,7 +229,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                             : 'rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
                         }
                         disabled={option === entry.status || isPending}
-                        onClick={() => updateStatus(entry.id, option)}
+                        onClick={() => updateStatus(entry, option)}
                       >
                         {option.toLowerCase()}
                       </button>
