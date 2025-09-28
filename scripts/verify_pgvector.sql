@@ -1,5 +1,15 @@
--- Verifies pgvector extension, atticus chunk schema, and IVFFlat index health.
+-- Accept overrides via `psql -v expected_pgvector_dimension=1536 -v expected_pgvector_lists=50 ...`
 \set ON_ERROR_STOP on
+
+\if :{?expected_pgvector_dimension}
+\else
+  \set expected_pgvector_dimension 3072
+\endif
+
+\if :{?expected_pgvector_lists}
+\else
+  \set expected_pgvector_lists 100
+\endif
 
 DO $$
 BEGIN
@@ -8,9 +18,12 @@ BEGIN
   END IF;
 END$$;
 
--- Ensure atticus_chunks table exists
 DO $$
 BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'atticus_documents') THEN
+    RAISE EXCEPTION 'atticus_documents table missing';
+  END IF;
+
   IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'atticus_chunks') THEN
     RAISE EXCEPTION 'atticus_chunks table missing';
   END IF;
@@ -20,6 +33,7 @@ END$$;
 DO $$
 DECLARE
   dimension integer;
+  expected integer := :expected_pgvector_dimension;
 BEGIN
   SELECT atttypmod - 4 INTO dimension
   FROM pg_attribute
@@ -31,21 +45,51 @@ BEGIN
     RAISE EXCEPTION 'atticus_chunks.embedding column missing';
   END IF;
 
-  IF dimension <> 3072 THEN
-    RAISE NOTICE 'atticus_chunks.embedding dimension is %, expected 3072', dimension;
+  IF dimension <> expected THEN
+    RAISE EXCEPTION 'atticus_chunks.embedding dimension is %, expected %', dimension, expected;
   END IF;
 END$$;
 
 -- Confirm IVFFlat index exists for cosine search.
 DO $$
+DECLARE
+  idx_record TEXT;
+  expected_lists INTEGER := :expected_pgvector_lists;
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_indexes
-    WHERE tablename = 'atticus_chunks'
-      AND indexdef ILIKE '%ivfflat%'
-  ) THEN
+  SELECT indexdef INTO idx_record
+  FROM pg_indexes
+  WHERE tablename = 'atticus_chunks'
+    AND indexname = 'idx_atticus_chunks_embedding';
+
+  IF idx_record IS NULL THEN
     RAISE EXCEPTION 'IVFFlat index missing on atticus_chunks';
+  END IF;
+
+  IF position(lower(format('lists = %s', expected_lists)) IN lower(idx_record)) = 0 THEN
+    RAISE EXCEPTION 'idx_atticus_chunks_embedding lists mismatch. Expected lists=% with index definition: %', expected_lists, idx_record;
+  END IF;
+END$$;
+
+-- Confirm metadata defaults are applied so ingestion can omit the column explicitly.
+DO $$
+DECLARE
+  doc_default TEXT;
+  chunk_default TEXT;
+BEGIN
+  SELECT column_default INTO doc_default
+  FROM information_schema.columns
+  WHERE table_name = 'atticus_documents' AND column_name = 'metadata';
+
+  IF doc_default IS DISTINCT FROM '\''{}\''::jsonb' THEN
+    RAISE NOTICE 'atticus_documents.metadata default is %, expected {}::jsonb', doc_default;
+  END IF;
+
+  SELECT column_default INTO chunk_default
+  FROM information_schema.columns
+  WHERE table_name = 'atticus_chunks' AND column_name = 'metadata';
+
+  IF chunk_default IS DISTINCT FROM '\''{}\''::jsonb' THEN
+    RAISE NOTICE 'atticus_chunks.metadata default is %, expected {}::jsonb', chunk_default;
   END IF;
 END$$;
 

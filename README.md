@@ -56,11 +56,40 @@ Launch Postgres, apply migrations, and seed the default organization/admin speci
 ```bash
 make db.up
 make db.migrate
+make db.verify   # ensure pgvector extension + indexes match expectations
+npm run prisma:generate
+make db.seed
+```
+
+```powershell
+make db.up
+make db.migrate
+make db.verify   # ensures pgvector extension + indexes match expectations
 npm run prisma:generate
 make db.seed
 ```
 
 > The seed promotes `ADMIN_EMAIL` to the `ADMIN` role. Update `.env` before running in shared environments.
+
+Run the pgvector verification script directly when debugging:
+
+```bash
+psql "$DATABASE_URL" \
+  -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
+  -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+  -f scripts/verify_pgvector.sql
+```
+
+```powershell
+if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
+if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+psql "$env:DATABASE_URL" `
+  -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
+  -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
+  -f scripts/verify_pgvector.sql
+```
+
+> Requires the `psql` client (`postgresql-client` on Debian/Ubuntu).
 
 
 ### 3. Add content
@@ -146,6 +175,7 @@ Common shortcuts:
 | `make db.up` | Start Postgres (Docker) |
 | `make db.down` | Stop Postgres (Docker) |
 | `make db.migrate` | Run Prisma migrations |
+| `make db.verify` | Run pgvector health checks (extension, dimensions, IVFFlat) |
 | `make db.seed` | Seed default organization/admin |
 | `make web-build` | Build the production Next.js bundle |
 | `make web-start` | Start the built Next.js app |
