@@ -6,11 +6,11 @@ Next.js admin UI and Prisma models.
 
 ## Roles
 
-| Role      | Permissions |
-|-----------|-------------|
-| `user`    | Read-only access to approved glossary entries. |
-| `reviewer`| Submit new terms and propose edits. |
-| `admin`   | Approve/reject proposals, manage history, export glossary. |
+| Role       | Permissions                                                |
+| ---------- | ---------------------------------------------------------- |
+| `user`     | Read-only access to approved glossary entries.             |
+| `reviewer` | Submit new terms and propose edits.                        |
+| `admin`    | Approve/reject proposals, manage history, export glossary. |
 
 ## Data Model
 
@@ -35,8 +35,8 @@ the request/trace ID, and the state transition.
 
 ## API Contracts
 
-* `GET /api/glossary` – returns `DictionaryPayload` containing approved entries.
-* `POST /api/glossary` – admin-only endpoint accepting `DictionaryPayload`; persists
+- `GET /api/glossary` – returns `DictionaryPayload` containing approved entries.
+- `POST /api/glossary` – admin-only endpoint accepting `DictionaryPayload`; persists
   changes and records the actor/trace metadata.
 
 ## UI Flow
@@ -47,6 +47,6 @@ the request/trace ID, and the state transition.
 
 ## CI Expectations
 
-* `make test.api` exercises glossary endpoints under auth.
-* `make quality` enforces type checks on the Prisma client and Next.js components.
-* Seed data for glossary lives alongside the CED seed manifest (`make seed`).
+- `make test.api` exercises glossary endpoints under auth.
+- `make quality` enforces type checks on the Prisma client and Next.js components.
+- Seed data for glossary lives alongside the CED seed manifest (`make seed`).

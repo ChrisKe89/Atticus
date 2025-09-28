@@ -1,6 +1,15 @@
 {
-  "extends": ["next/core-web-vitals"],
+  "root": true,
+  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended", "prettier"],
+  "plugins": ["tailwindcss"],
+  "settings": {
+    "tailwindcss": {
+      "callees": ["cn", "clsx", "cva"],
+      "classRegex": ["cva\\(([^)]*)\\)", "cn\\(([^)]*)\\)", "clsx\\(([^)]*)\\)"]
+    }
+  },
   "rules": {
-    "@next/next/no-html-link-for-pages": "off"
+    "@next/next/no-html-link-for-pages": "off",
+    "tailwindcss/classnames-order": "off"
   }
 }

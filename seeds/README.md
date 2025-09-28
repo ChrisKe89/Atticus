@@ -20,10 +20,10 @@ deployment pipelines or smoke tests that need deterministic seed data.
 
 ## Contributor checklist
 
-* Run `pytest tests/test_seed_manifest.py` to confirm the manifest structure and
+- Run `pytest tests/test_seed_manifest.py` to confirm the manifest structure and
   chunk metadata remain deterministic for CI.
-* Execute `make seed` before opening a PR whenever documents inside `content/`
+- Execute `make seed` before opening a PR whenever documents inside `content/`
   change; commit the refreshed `seeds/seed_manifest.json` if the diff is
   intentional.
-* Document any new optional dependencies required for seeding inside this file
+- Document any new optional dependencies required for seeding inside this file
   and `REQUIREMENTS.md` to keep onboarding clear.

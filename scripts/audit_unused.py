@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
 DEFAULT_PATHS: list[str] = [
     "atticus",
     "api",
@@ -45,7 +46,9 @@ def run_vulture(paths: list[str], min_confidence: int) -> dict[str, object]:
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Audit unused Python code via vulture")
     parser.add_argument("paths", nargs="*", default=DEFAULT_PATHS, help="Paths to inspect")
-    parser.add_argument("--min-confidence", type=int, default=80, help="Minimum confidence threshold for vulture")
+    parser.add_argument(
+        "--min-confidence", type=int, default=80, help="Minimum confidence threshold for vulture"
+    )
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON output")
     args = parser.parse_args(argv)
 

@@ -1,17 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import type { ReactNode } from 'react';
-import './globals.css';
-import { SiteHeader } from '@/components/site-header';
-import { SiteFooter } from '@/components/site-footer';
-import { Providers } from '@/app/providers';
-import { getServerAuthSession } from '@/lib/auth';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import type { ReactNode } from "react";
+import "./globals.css";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { Providers } from "@/app/providers";
+import { getServerAuthSession } from "@/lib/auth";
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: 'Atticus',
-  description: 'Grounded AI assistance for Sales teams with enterprise guardrails.',
+  title: "Atticus",
+  description: "Grounded AI assistance for Sales teams with enterprise guardrails.",
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

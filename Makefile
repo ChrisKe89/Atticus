@@ -1,6 +1,6 @@
 # Makefile — Atticus
 .PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev help \
-        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e
+        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -80,9 +80,9 @@ test.api:
 	       tests/test_ui_route.py
 
 test:
-	pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-	       --cov=atticus --cov=api --cov=retriever \
-	       --cov-report=term-missing --cov-fail-under=90
+        PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+               --cov=atticus --cov=api --cov=retriever \
+               --cov-report=term-missing --cov-fail-under=90
 
 web-test:
 	npm run test:unit
@@ -105,7 +105,7 @@ format:
 typecheck:
 	mypy atticus api ingest retriever eval
 
-quality: lint typecheck test
+quality: lint typecheck test web-lint web-typecheck web-build web-audit
 
 web-build:
 	npm run build
@@ -118,3 +118,9 @@ web-lint:
 
 web-typecheck:
 	npm run typecheck
+
+web-audit:
+	npm run audit:ts
+	npm run audit:icons
+	npm run audit:routes
+	npm run audit:py

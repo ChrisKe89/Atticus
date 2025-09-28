@@ -41,4 +41,3 @@ jobs:
         with:
           commit_message: "chore: apply ruff auto-fixes"
           branch: ${{ github.head_ref }}
-

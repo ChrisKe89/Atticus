@@ -20,6 +20,7 @@ indices/*
 !indices/.gitkeep
 indexes/*
 !indexes/.gitkeep
+reports/ci/
 
 # Build
 .next/

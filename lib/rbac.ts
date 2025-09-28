@@ -1,17 +1,17 @@
-import { Role } from '@prisma/client';
-import type { Session } from 'next-auth';
+import { Role } from "@prisma/client";
+import type { Session } from "next-auth";
 
 export class ForbiddenError extends Error {
-  constructor(message = 'Forbidden') {
+  constructor(message = "Forbidden") {
     super(message);
-    this.name = 'ForbiddenError';
+    this.name = "ForbiddenError";
   }
 }
 
 export class UnauthorizedError extends Error {
-  constructor(message = 'Unauthorized') {
+  constructor(message = "Unauthorized") {
     super(message);
-    this.name = 'UnauthorizedError';
+    this.name = "UnauthorizedError";
   }
 }
 
@@ -25,7 +25,7 @@ export function requireSession(session: Session | null): Session {
 export function ensureRole(session: Session | null, allowed: Role[]): Session {
   const activeSession = requireSession(session);
   if (!allowed.includes(activeSession.user.role)) {
-    throw new ForbiddenError('Insufficient role');
+    throw new ForbiddenError("Insufficient role");
   }
   return activeSession;
 }

@@ -36,7 +36,6 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] Added SES IAM policy region lock guidance to SECURITY.md and reinforced README cross-link - completed 2025-09-25 (commit 2a3b760).
 - [x] TODO "SECURITY.md — env-only secrets; SMTP `From` allow-list; RLS examples." - completed 2025-09-25 (commit 2a3b760).
 
-
 - [x] Reviewed repository documentation set and normalised coverage messaging - completed 2025-09-25 (commit cd280f8).
 - [x] Published secure remote access playbook (Tailscale, Cloudflare Tunnel, SSH) - completed 2025-09-25 (commit cd280f8).
 
@@ -57,7 +56,13 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] TODO "Sample Seed corpus — Add verification tests and contributor docs." — completed 2025-09-28 (commit 19bdc5d).
 - [x] TODO "reports/ — Update evaluation pipeline to emit CSV/HTML artifacts." — completed 2025-09-28 (commit 19bdc5d).
 - [x] TODO "reports/ — Configure CI to upload artifacts and document consumption workflow." — completed 2025-09-28 (commit 19bdc5d).
-> Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
+- [x] TODO "README.md — rewrite for Next.js/pgvector stack with Windows guidance and quick start." — completed 2025-09-28 (commit pending).
+- [x] TODO "ARCHITECTURE.md — update diagrams/narrative for Next.js + SSE flow." — completed 2025-09-28 (commit pending).
+- [x] TODO "OPERATIONS.md — document pgvector maintenance, CI parity, and dependency risk handling." — completed 2025-09-28 (commit pending).
+- [x] TODO "TROUBLESHOOTING.md — capture Auth.js email flow, SSE mitigation, lint/format guidance." — completed 2025-09-28 (commit pending).
+- [x] TODO "REQUIREMENTS.md — align runtime/tooling requirements with Next.js + Prisma stack." — completed 2025-09-28 (commit pending).
+- [x] TODO "CI gates — align GitHub Actions + local make quality" — completed 2025-09-28 (commit pending).
+  > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
 
 ## 2025-09-29
 
@@ -67,20 +72,10 @@ Each entry includes the completion date and commit reference for traceability.
 
 - [x] TODO "TROUBLESHOOTING.md — Add pgvector + Prisma troubleshooting (extension enablement, migration drift)." — completed 2025-09-30 (commit HEAD).
 
-
 ## 2025-10-04
+
 - [x] TODO "`Makefile` — remove `ui` target (`http.server`); add Next.js scripts (`dev`, `build`, `start`); keep `api` until migration complete." — completed 2025-10-04 (commit HEAD).
 
-- [x] TODO "`api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure request_id & should_escalate; remove unused import in api/routes/__init__.py." — completed 2025-10-04 (commit HEAD).
+- [x] TODO "`api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure request_id & should_escalate; remove unused import in api/routes/**init**.py." — completed 2025-10-04 (commit HEAD).
 - [x] TODO "Dictionary/glossary admin — Design Prisma schema/API contracts for glossary records with approval workflow." — completed 2025-10-04 (commit HEAD).
 - [x] TODO "Dictionary/glossary admin — Implement admin UI for propose/review/approve flows with RBAC checks." — completed 2025-10-04 (commit HEAD).
-
-
-
-
-
-
-
-
-
-

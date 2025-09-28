@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const askSourceSchema = z.object({
   path: z.string(),
@@ -17,12 +17,15 @@ export const askResponseSchema = z.object({
 });
 
 export const askRequestSchema = z.object({
-  question: z.string().trim().min(1, 'question is required'),
+  question: z.string().trim().min(1, "question is required"),
   filters: z
     .record(z.string(), z.unknown())
     .nullish()
     .transform((value) => (value ? Object.fromEntries(Object.entries(value)) : undefined)),
-  contextHints: z.array(z.string().min(1)).nullish().transform((value) => value ?? undefined),
+  contextHints: z
+    .array(z.string().min(1))
+    .nullish()
+    .transform((value) => value ?? undefined),
   topK: z
     .number()
     .int()
