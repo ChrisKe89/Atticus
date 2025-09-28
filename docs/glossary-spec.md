@@ -16,28 +16,43 @@ Next.js admin UI and Prisma models.
 
 ```prisma
 model GlossaryEntry {
-  id           String   @id @default(cuid())
+  id           String          @id @default(cuid())
   term         String
-  definition   String
-  synonyms     String[]
-  status       String   @default("pending") // pending | approved | rejected
-  submittedBy  String
-  approvedBy   String?
-  reviewNotes  String?
+  definition   String          @db.Text
+  synonyms     String[]        @default([])
+  status       GlossaryStatus  @default(PENDING)
+  orgId        String
+  org          Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  authorId     String
+  author       User            @relation("GlossaryAuthor", fields: [authorId], references: [id])
+  updatedById  String?
+  updatedBy    User?           @relation("GlossaryUpdatedBy", fields: [updatedById], references: [id])
+  reviewerId   String?
+  reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
+  reviewNotes  String?         @db.Text
   reviewedAt   DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@unique([orgId, term])
+  @@index([orgId, status])
 }
 ```
 
 All mutations emit structured audit logs (see `logs/app.jsonl`) including the acting user,
-the request/trace ID, and the state transition.
+the request/trace ID, and the state transition. Row-level security is enforced through
+Prisma queries executed inside `withRlsContext` and mirrored on the FastAPI admin APIs via
+the `X-Admin-Token` header.
 
 ## API Contracts
 
-- `GET /api/glossary` – returns `DictionaryPayload` containing approved entries.
-- `POST /api/glossary` – admin-only endpoint accepting `DictionaryPayload`; persists
-  changes and records the actor/trace metadata.
+- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
+  author/reviewer metadata.
+- `POST /api/glossary` – admin session required; accepts term, definition, synonyms, and
+  status updates, recording author/reviewer metadata and request IDs.
+- FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and
+  require a matching `X-Admin-Token` header; failures emit contract-compliant error
+  payloads with `request_id` for observability.
 
 ## UI Flow
 

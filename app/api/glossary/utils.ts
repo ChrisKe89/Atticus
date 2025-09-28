@@ -1,6 +1,27 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
 import { ForbiddenError, UnauthorizedError } from "@/lib/rbac";
+
+function buildError(
+  status: number,
+  error: string,
+  detail: string,
+  fields?: Record<string, string>
+) {
+  const requestId = randomUUID();
+  const payload: Record<string, unknown> = {
+    error,
+    detail,
+    request_id: requestId,
+  };
+  if (fields) {
+    payload.fields = fields;
+  }
+  const response = NextResponse.json(payload, { status });
+  response.headers.set("X-Request-ID", requestId);
+  return response;
+}
 
 export function parseStatus(value: unknown): GlossaryStatus {
   if (value === undefined || value === null || value === "") {
@@ -71,22 +92,19 @@ export function serializeEntry(entry: any) {
 
 export function handleGlossaryError(error: unknown) {
   if (error instanceof UnauthorizedError) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return buildError(401, "unauthorized", error.message || "Authentication required.");
   }
   if (error instanceof ForbiddenError) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    return buildError(403, "forbidden", error.message || "Forbidden");
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-    return NextResponse.json(
-      { error: "conflict", detail: "Term already exists for this organization." },
-      { status: 409 }
-    );
+    return buildError(409, "conflict", "Term already exists for this organization.");
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return buildError(404, "not_found", "Glossary entry not found.");
   }
   if (error instanceof Error && error.message?.toLowerCase().includes("status")) {
-    return NextResponse.json({ error: "invalid_request", detail: error.message }, { status: 400 });
+    return buildError(400, "invalid_request", error.message);
   }
-  return NextResponse.json({ error: "internal_error" }, { status: 500 });
+  return buildError(500, "internal_error", "An internal error occurred.");
 }

@@ -1,5 +1,5 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev help \
+.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
         db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit
 
 PYTHON ?= python
@@ -25,8 +25,12 @@ api:
 
 
 web-dev:
-	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
-	npm run dev
+        @echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
+        npm run dev
+
+app-dev:
+        @echo "Alias for web-dev; launching Next.js UI"
+        $(MAKE) web-dev
 
 db.up:
 	docker compose up -d $(DB_SERVICE)

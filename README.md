@@ -163,7 +163,7 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 4. **Quality** – run `make quality` locally before every PR. Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
 5. **Run** – `make api` and `make web-dev` for local development.
 6. **Observe** – watch `logs/app.jsonl`, `logs/errors.jsonl`, and the `/admin/metrics` dashboard.
-7. **Release** – follow [RELEASE.md](RELEASE.md) for tagging and upgrade/rollback steps.
+7. **Release** – follow [RELEASE.md](RELEASE.md) for tagging and upgrade/rollback steps, confirming `VERSION` matches `package.json` before tagging.
 
 Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene. Use `pre-commit run --all-files` to verify manually.
 
@@ -192,6 +192,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 | `make eval`                 | Run retrieval evaluation and write metrics under `eval/runs/`       |
 | `make api`                  | Start FastAPI backend                                               |
 | `make web-dev`              | Run Next.js dev server (port 3000)                                  |
+| `make app-dev`              | Alias for `make web-dev`                                            |
 | `make db.up`                | Start Postgres (Docker)                                             |
 | `make db.down`              | Stop Postgres (Docker)                                              |
 | `make db.migrate`           | Run Prisma migrations                                               |

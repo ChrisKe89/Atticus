@@ -12,7 +12,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import yaml
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,14 +25,16 @@ def _fingerprint_secret(value: str | None) -> str | None:
 class AppSettings(BaseSettings):
     """Application configuration sourced from environment variables."""
 
-    content_dir: Path = Field(default=Path("content"), validation_alias="CONTENT_ROOT")
+    content_dir: Path = Field(
+        default=Path("content"), validation_alias=AliasChoices("CONTENT_ROOT", "CONTENT_DIR")
+    )
     indices_dir: Path = Field(default=Path("indices"), validation_alias="INDICES_DIR")
     logs_path: Path = Field(default=Path("logs/app.jsonl"), validation_alias="LOG_PATH")
     errors_path: Path = Field(default=Path("logs/errors.jsonl"), validation_alias="ERROR_LOG_PATH")
     manifest_path: Path = Field(default=Path("indices/manifest.json"))
     metadata_path: Path = Field(default=Path("indices/index_metadata.json"))
     snapshots_dir: Path = Field(default=Path("indices/snapshots"))
-    dictionary_path: Path = Field(default=Path("indices/dictionary.json"))
+    dictionary_path: Path = Field(default=Path("indices/dictionary.json"), alias="DICTIONARY_PATH")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     pgvector_lists: int = Field(default=100, alias="PGVECTOR_LISTS")
     pgvector_probes: int = Field(default=4, alias="PGVECTOR_PROBES")
@@ -54,6 +56,7 @@ class AppSettings(BaseSettings):
     generation_model: str = Field(default="gpt-4.1", alias="GEN_MODEL")
     confidence_threshold: float = Field(default=0.70, alias="CONFIDENCE_THRESHOLD")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+    log_format: str = Field(default="json", alias="LOG_FORMAT")
     verbose_logging: bool = Field(default=False, alias="LOG_VERBOSE")
     trace_logging: bool = Field(default=False, alias="LOG_TRACE")
     timezone: str = Field(default="UTC", alias="TIMEZONE")
@@ -71,10 +74,13 @@ class AppSettings(BaseSettings):
     smtp_pass: str | None = Field(default=None, alias="SMTP_PASS")
     smtp_from: str | None = Field(default=None, alias="SMTP_FROM")
     smtp_to: str | None = Field(default=None, alias="SMTP_TO")
-    smtp_dry_run: bool = Field(default=False, alias="SMTP_DRY_RUN")
+    smtp_dry_run: bool = Field(
+        default=False, validation_alias=AliasChoices("SMTP_DRY_RUN", "EMAIL_SANDBOX")
+    )
     smtp_allow_list_raw: str | list[str] | None = Field(default=None, alias="SMTP_ALLOW_LIST")
     rate_limit_requests: int = Field(default=5, alias="RATE_LIMIT_REQUESTS", ge=1)
     rate_limit_window_seconds: int = Field(default=60, alias="RATE_LIMIT_WINDOW_SECONDS", ge=1)
+    admin_api_token: str | None = Field(default=None, alias="ADMIN_API_TOKEN")
     secrets_report: dict[str, dict[str, Any]] = Field(
         default_factory=dict, exclude=True, repr=False
     )

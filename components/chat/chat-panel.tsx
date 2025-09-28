@@ -186,8 +186,8 @@ export function ChatPanel() {
                           />
                           <span>
                             {source.path}
-                            {typeof source.page === "number" ? ` · page ${source.page}` : ""}
-                            {source.heading ? ` · ${source.heading}` : ""}
+                            {typeof source.page === "number" ? ` - page ${source.page}` : ""}
+                            {source.heading ? ` - ${source.heading}` : ""}
                           </span>
                         </li>
                       ))}
