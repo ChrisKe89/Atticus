@@ -419,6 +419,7 @@ python scripts/debug_env.py
 ## Notes on Conflicts (resolved)
 
 * Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in TODOs.
+* Static HTML prototypes now live under `archive/legacy-ui/`; ship only the Next.js application under `app/`.
 
 ---
 
