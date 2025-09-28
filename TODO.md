@@ -18,11 +18,11 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
 - Ensure response contract with request_id/should_escalate, refresh tests/fixtures, sync docs (README/ARCHITECTURE).
 - Verify via API unit tests + smoke run.
 
-### Phase 3 – Auth & RBAC Layer
+### Phase 3 – Auth & RBAC Layer ✅
 
-- Integrate Auth.js (Next.js routes, email magic link), define roles, add Postgres RLS, secure admin endpoints.
-- Implement glossary DB storage and admin gating.
-- Add RBAC tests (unit + Playwright), document new workflow.
+- [x] Integrate Auth.js (Next.js routes, email magic link), define roles, add Postgres RLS, secure admin endpoints.
+- [x] Implement glossary DB storage and admin gating.
+- [x] Add RBAC tests (unit + Playwright), document new workflow.
 ### Phase 4 – Ingestion & Escalation Enhancements
 
 - Implement CED chunkers with SHA-256 dedupe; extend escalation emails with allow-list and trace payload.
@@ -54,11 +54,11 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
    - [ ] Remove redundant modules/imports and adjust router wiring plus schema exports.
    - [ ] Update client code, fixtures, and tests to match the unified endpoint.
 3. **Auth.js + RBAC** — introduce email magic link; gate `/admin` & sensitive APIs by role; add RLS keyed by `org_id`; replace ad-hoc dictionary endpoints with role-checked admin APIs.
-   - [ ] Integrate Auth.js into the Next.js app (dependencies, `/api/auth` routes, session provider).
-   - [ ] Implement email magic-link provider and persistence for sessions/users.
-   - [ ] Define role model (`user`, `reviewer`, `admin`) and apply row-level security policies in Postgres/Prisma.
-   - [ ] Update API route guards and admin UI components to enforce role checks.
-   - [ ] Add auth/RBAC unit, integration, and Playwright coverage.
+   - [x] Integrate Auth.js into the Next.js app (dependencies, `/api/auth` routes, session provider).
+   - [x] Implement email magic-link provider and persistence for sessions/users.
+   - [x] Define role model (`user`, `reviewer`, `admin`) and apply row-level security policies in Postgres/Prisma.
+   - [x] Update API route guards and admin UI components to enforce role checks.
+   - [x] Add auth/RBAC unit, integration, and Playwright coverage.
 4. **Ingestion — CED chunkers** — implement prose/table/footnote chunkers; serialize table rows; stamp rich metadata; compute `sha256` for de-dup.
    - [ ] Capture detailed chunking rules + examples from CED policy.
    - [ ] Implement prose/table/footnote chunker utilities with metadata enrichment and SHA-256 hashing.

@@ -46,6 +46,21 @@ DEFAULTS = {
     "SMTP_PASS": "Pay641-Prove-Possible-stop-Cry",
     "SMTP_FROM": "atticus-escalations@agentk.fyi",
     "SMTP_TO": "atticus-technical-support@agentk.fyi",
+    "EMAIL_SERVER_HOST": "localhost",
+    "EMAIL_SERVER_PORT": "1025",
+    "EMAIL_SERVER_USER": "",
+    "EMAIL_SERVER_PASSWORD": "",
+    "EMAIL_FROM": "no-reply@atticus.local",
+    "DATABASE_URL": "postgresql://atticus:atticus@localhost:5432/atticus",
+    "POSTGRES_DB": "atticus",
+    "POSTGRES_USER": "atticus",
+    "POSTGRES_PASSWORD": "atticus",
+    "AUTH_SECRET": "change-me-super-secret",
+    "DEFAULT_ORG_ID": "org-atticus",
+    "DEFAULT_ORG_NAME": "Atticus Default",
+    "ADMIN_EMAIL": "admin@atticus.local",
+    "ADMIN_NAME": "Atticus Admin",
+    "AUTH_DEBUG_MAILBOX_DIR": "./logs/mailbox",
 }
 
 
