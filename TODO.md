@@ -25,19 +25,20 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
 - [x] Add RBAC tests (unit + Playwright), document new workflow.
 ### Phase 4 – Ingestion & Escalation Enhancements
 
-- Implement CED chunkers with SHA-256 dedupe; extend escalation emails with allow-list and trace payload.
-- Adjust ingestion reuse logic, update mailer tests/docs, expand logging to include trace IDs/metrics.
-- Run ingestion regression + mailer unit tests.
+- [x] Implement CED chunkers with SHA-256 dedupe; extend escalation emails with allow-list and trace payload.
+- [x] Adjust ingestion reuse logic, update mailer tests/docs, expand logging to include trace IDs/metrics.
+- [x] Run ingestion regression + mailer unit tests.
+
 ### Phase 5 – Observability & Guardrails
 
-- Add rate limiting middleware, structured metrics dashboards, admin counter surfacing.
-- Finish documentation sweep (Operations, Troubleshooting, Requirements, CI expectations).
-- Update workflows to enforce quality gates, confirm coverage ≥90%.
+- [x] Add rate limiting middleware, structured metrics dashboards, admin counter surfacing.
+- [x] Finish documentation sweep (Operations, Troubleshooting, Requirements, CI expectations).
+- [x] Update workflows to enforce quality gates, confirm coverage ≥90%.
 
 ### Phase 6 – Seeds, Reports, and Spec Work
 
-- Build sample seed dataset + make seed, add evaluation reports/CI artifacts, finalize glossary spec documentation.
-- Address blocked documentation items once requirements clarified.
+- [x] Build sample seed dataset + make seed, add evaluation reports/CI artifacts, finalize glossary spec documentation.
+- [x] Address blocked documentation items once requirements clarified.
 
 **A. Code changes required to align with this AGENTS spec**
 
@@ -60,25 +61,25 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
    - [x] Update API route guards and admin UI components to enforce role checks.
    - [x] Add auth/RBAC unit, integration, and Playwright coverage.
 4. **Ingestion — CED chunkers** — implement prose/table/footnote chunkers; serialize table rows; stamp rich metadata; compute `sha256` for de-dup.
-   - [ ] Capture detailed chunking rules + examples from CED policy.
-   - [ ] Implement prose/table/footnote chunker utilities with metadata enrichment and SHA-256 hashing.
-   - [ ] Adapt pipeline reuse/backfill logic to respect hashed content and new metadata fields.
-   - [ ] Add fixtures/tests covering chunk shapes, metadata, and dedupe behaviour.
+   - [x] Capture detailed chunking rules + examples from CED policy.
+   - [x] Implement prose/table/footnote chunker utilities with metadata enrichment and SHA-256 hashing.
+   - [x] Adapt pipeline reuse/backfill logic to respect hashed content and new metadata fields.
+   - [x] Add fixtures/tests covering chunk shapes, metadata, and dedupe behaviour.
 5. **Email escalation** — keep SMTP, load sender/region from env; add `SMTP_FROM` allow-list; include trace payload (user/chat/message ids, top-k docs & scores, question).
-   - [ ] Document required env vars and build allow-list configuration.
-   - [ ] Enforce sender/region validation and return actionable errors when misconfigured.
-   - [ ] Extend escalation payload with trace data and ensure redaction where needed.
-   - [ ] Update docs/tests to cover dry-run, failure, and success paths.
+   - [x] Document required env vars and build allow-list configuration.
+   - [x] Enforce sender/region validation and return actionable errors when misconfigured.
+   - [x] Extend escalation payload with trace data and ensure redaction where needed.
+   - [x] Update docs/tests to cover dry-run, failure, and success paths.
 6. **Structured logs + metrics** — keep `logs/app.jsonl` & `logs/errors.jsonl`; add per-turn trace IDs; redact PII; expand metrics (retrieval/latency histograms).
-   - [ ] Extend logging helpers to inject request IDs, latency, and contextual metadata.
-   - [ ] Introduce metrics emission (histograms/counters) for retrieval, latency, and token usage.
-   - [ ] Sweep codebase to ensure sensitive fields are redacted before logging.
-   - [ ] Update documentation and tests to validate logging/metrics expectations.
+   - [x] Extend logging helpers to inject request IDs, latency, and contextual metadata.
+   - [x] Introduce metrics emission (histograms/counters) for retrieval, latency, and token usage.
+   - [x] Sweep codebase to ensure sensitive fields are redacted before logging.
+   - [x] Update documentation and tests to validate logging/metrics expectations.
 7. **Rate limiting** — per user/IP limiter with tests; expose counters in admin.
-   - [ ] Choose limiter strategy (middleware + store) and define configurable thresholds.
-   - [ ] Implement limiter enforcement and structured 429 responses with request IDs.
-   - [ ] Surface aggregate counters in admin dashboards/telemetry.
-   - [ ] Add unit/integration tests and operator documentation.
+   - [x] Choose limiter strategy (middleware + store) and define configurable thresholds.
+   - [x] Implement limiter enforcement and structured 429 responses with request IDs.
+   - [x] Surface aggregate counters in admin dashboards/telemetry.
+   - [x] Add unit/integration tests and operator documentation.
 
 **B. Existing markdown/docs to update**
 
@@ -121,13 +122,13 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
    - [ ] Share spec for review and iterate with stakeholders.
    - [ ] Convert approved spec into implementation tickets/tasks.
 2. **Sample Seed** corpus (CED) + `make seed` target.
-   - [ ] Curate minimal CED documents and sanitize for distribution.
-   - [ ] Build automated seeding script/Make target populating DB + storage.
-   - [ ] Add verification tests and contributor docs.
+   - [x] Curate minimal CED documents and sanitize for distribution.
+   - [x] Build automated seeding script/Make target populating DB + storage.
+   - [x] Add verification tests and contributor docs.
 3. **reports/** with retrieval eval CSV + small HTML summary; publish in CI.
-   - [ ] Define report schema (metrics, charts) for evaluation runs.
-   - [ ] Update evaluation pipeline to emit CSV/HTML artifacts.
-   - [ ] Configure CI to upload artifacts and document consumption workflow.
+   - [x] Define report schema (metrics, charts) for evaluation runs.
+   - [x] Update evaluation pipeline to emit CSV/HTML artifacts.
+   - [x] Configure CI to upload artifacts and document consumption workflow.
 
 **E. File-specific TODOs from audit**
 
