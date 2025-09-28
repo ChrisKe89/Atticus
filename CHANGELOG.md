@@ -26,6 +26,20 @@ The newest entries appear first.
 
 ---
 
+## [0.7.1] — 2025-10-05
+
+### Added
+
+- Web and database security assessment recorded at `reports/security/2025-10-05-web-db-assessment.md`, detailing dependency vulnerabilities, configuration hardening, and pgvector prerequisites.
+
+### Changed
+
+- Bumped repository version to 0.7.1 to publish the audit findings and align `package.json`/`VERSION` metadata.
+
+### Security
+
+- Flagged critical Next.js 14.2.5 advisories (cache poisoning, image optimisation DoS/injection) and outlined mitigation steps, including immediate upgrade guidance for `next`, `next-auth`, and supporting tooling.
+
 ## [0.7.0] — 2025-09-28
 
 ### Added
