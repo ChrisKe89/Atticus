@@ -1,11 +1,11 @@
 config:
   MD013:
     line_length: 180
-    headiung_line_length: 0
+    heading_line_length: 0
     tables: false
     strict: false
-    innerr_sentence: true
-    code_block_line_length: 0
+    inner_sentence: true
+    code_blocks: false
   MD029:
     style: "one_or_ordered"
   MD022: true

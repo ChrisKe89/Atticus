@@ -1,8 +1,8 @@
 {
     "folders": [
         {
-            "path": ".",
-        },
+            "path": "."
+        }
     ],
     "settings": {
         // --- Python & venv ---
@@ -19,7 +19,7 @@
         // Suppress specific library-only warnings seen in Starlette's Jinja integration
         "python.analysis.diagnosticSeverityOverrides": {
             "reportInvalidTypeForm": "none",
-            "reportOptionalMemberAccess": "none",
+            "reportOptionalMemberAccess": "none"
         },
         // --- Tabs/spaces & EOLs ---
         "editor.insertSpaces": true,
@@ -37,7 +37,7 @@
             "source.fixAll.markdownlint": "always"
         },
         "[python]": {
-            "editor.defaultFormatter": "charliermarsh.ruff",
+            "editor.defaultFormatter": "charliermarsh.ruff"
         },
         // --- Testing (pytest) ---
         "python.testing.pytestEnabled": true,
@@ -50,7 +50,7 @@
         "markdownlint.configFile": ".markdownlint-cli2.yaml",
         "[markdown]": {
             "editor.wordWrap": "bounded",
-            "editor.wordWrapColumn": 120,
+            "editor.wordWrapColumn": 120
         },
         // --- UI niceties ---
         "editor.rulers": [
@@ -67,7 +67,7 @@
             "**/.mypy_cache": true,
             "dist": true,
             "build": true,
-            "eval/runs": true,
+            "eval/runs": true
         },
         "search.exclude": {
             "**/__pycache__": true,
@@ -76,9 +76,9 @@
             "**/.mypy_cache": true,
             "dist": true,
             "build": true,
-            "eval/runs": true,
+            "eval/runs": true
         },
         // --- Terminal ---
-        "terminal.integrated.cwd": "${workspaceFolder}",
-    },
+        "terminal.integrated.cwd": "${workspaceFolder}"
+    }
 }
