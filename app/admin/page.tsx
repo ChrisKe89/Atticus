@@ -1,8 +1,19 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { Activity, Database, Folder, Users } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Role } from '@prisma/client';
 import { PageHeader } from '@/components/page-header';
+import { getServerAuthSession } from '@/lib/auth';
+import { withRlsContext } from '@/lib/rls';
+import { GlossaryAdminPanel, GlossaryEntryDto } from '@/components/glossary/admin-panel';
 
-const panels = [
+const panels: Array<{
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  items: string[];
+}> = [
   {
     title: 'System activity',
     description: 'Live logs from ingestion, retrieval, and escalation workers.',
@@ -37,7 +48,36 @@ export const metadata: Metadata = {
   title: 'Admin · Atticus',
 };
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const session = await getServerAuthSession();
+  if (!session) {
+    redirect('/signin?from=/admin');
+  }
+  if (session.user.role !== Role.ADMIN) {
+    redirect('/');
+  }
+
+  const entries = await withRlsContext(session, (tx) =>
+    tx.glossaryEntry.findMany({
+      orderBy: { term: 'asc' },
+      include: {
+        author: { select: { id: true, email: true, name: true } },
+        updatedBy: { select: { id: true, email: true, name: true } },
+      },
+    })
+  );
+
+  const glossaryEntries: GlossaryEntryDto[] = entries.map((entry) => ({
+    id: entry.id,
+    term: entry.term,
+    definition: entry.definition,
+    status: entry.status,
+    createdAt: entry.createdAt.toISOString(),
+    updatedAt: entry.updatedAt.toISOString(),
+    author: entry.author,
+    updatedBy: entry.updatedBy,
+  }));
+
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
       <PageHeader
@@ -47,24 +87,29 @@ export default function AdminPage() {
       />
 
       <section className="grid gap-6 md:grid-cols-2">
-        {panels.map((panel) => (
-          <article key={panel.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
-              <panel.icon className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{panel.title}</h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{panel.description}</p>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-              {panel.items.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
+        {panels.map((panel) => {
+          const IconComponent = panel.icon;
+          return (
+            <article key={panel.title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
+                <IconComponent className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{panel.title}</h2>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{panel.description}</p>
+              <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                {panel.items.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
       </section>
+
+      <GlossaryAdminPanel initialEntries={glossaryEntries} />
     </div>
   );
 }

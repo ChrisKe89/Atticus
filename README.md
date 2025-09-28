@@ -39,6 +39,20 @@ make ui            # start the Next.js dev server (http://localhost:3000)
 npm run build      # optional production build
 ```
 
+### 2b. Database & Prisma
+
+Launch Postgres, apply migrations, and seed the default organization/admin specified in `.env`.
+
+```bash
+make db.up
+make db.migrate
+npm run prisma:generate
+make db.seed
+```
+
+> The seed promotes `ADMIN_EMAIL` to the `ADMIN` role. Update `.env` before running in shared environments.
+
+
 ### 3. Add content
 
 Drop documents into `content/`, naming them `YYYYMMDD_topic_version.ext` for easy traceability.  
@@ -68,6 +82,10 @@ make ui    # http://localhost:3000
 ```
 
 Docs remain at `http://localhost:8000/docs`; the web workspace runs on port 3000.
+
+### 7. Authenticate with magic link
+
+Visit `http://localhost:3000/signin` and request a magic link for your provisioned email. Open the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in and reach `/admin`.
 
 ---
 
@@ -100,10 +118,16 @@ Common shortcuts:
 | `make eval` | Run retrieval evaluation and write metrics |
 | `make api` | Start FastAPI backend |
 | `make ui` | Run Next.js dev server (port 3000) |
+| `make db.up` | Start Postgres (Docker) |
+| `make db.down` | Stop Postgres (Docker) |
+| `make db.migrate` | Run Prisma migrations |
+| `make db.seed` | Seed default organization/admin |
 | `make web-build` | Build the production Next.js bundle |
 | `make web-start` | Start the built Next.js app |
 | `make web-lint` | Run Next.js lint checks |
 | `make web-typecheck` | Type-check the UI with TypeScript |
+| `make web-test` | Run Vitest unit tests for RBAC helpers |
+| `make web-e2e` | Run Playwright RBAC/authentication smoke tests |
 | `make smtp-test` | Send a test SES email |
 | `make smoke` | Run a lightweight FastAPI health probe |
 | `make test.unit` | Execute focused unit tests (hashing, config reload, mailer) |
@@ -133,6 +157,19 @@ The chat experience is served from the static assets under `web/static` while th
 - `web/static/admin.html` keeps quick navigation shortcuts for operations staff.
 
 Run `make api` and browse to `http://localhost:8000/static/index.html` (or your configured base URL) to load the legacy interface.
+
+---
+
+## Auth & RBAC
+
+Phase 3 introduces Auth.js + Prisma authentication:
+
+- Email magic links deliver secure sign-in using the SMTP settings from `.env`.
+- Admins (`ADMIN_EMAIL`) can manage glossary terms at `/admin`; non-admins are redirected to `/`.
+- Postgres Row Level Security (RLS) gates glossary CRUD, user/session tables, and admin APIs by `org_id` + role.
+- Use `withRlsContext(session, fn)` for Prisma calls that should inherit user context.
+
+See [docs/runbooks/auth-rbac.md](docs/runbooks/auth-rbac.md) for provisioning, testing, and rollback procedures.
 
 ---
 
