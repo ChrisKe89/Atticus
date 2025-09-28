@@ -1,12 +1,47 @@
 # Audit Summary
 
-- High risk gaps remain across Phases 0–3: env scaffolding is incomplete, Prisma migrations fail on updated-at triggers, SSE work is simulated rather than streamed, and FastAPI admin endpoints still bypass RBAC.
-- Several deliverables (docs, UI polish) lag behind the implemented schema/UX requirements and include obvious defects (e.g., mojibake characters, outdated glossary spec).
-- Immediate remediation is required before treating Phases 0–3 as complete or moving on to later phases.
+Update — Phases 6 & 7 were implemented. Tooling, CI, and documentation have materially improved and align with the plan.
+Critical items in Phases 0–3 remain and still block functional completeness, but DX/CI and docs are now in a much better state.
+
+Summary of current state:
+
+- Phases 6–7: Largely compliant (details below). Minor follow‑ups remain (release CI parity, TODO logs hygiene, vulnerability posture notes).
+- Phases 0–3: High‑risk gaps persist (env, migrations, streaming, RBAC) and still require remediation before declaring these phases done.
+
+## Phase 6 — Developer Experience & CI (Audit)
+
+Pass
+
+- Prettier + Tailwind sorting configured and enforced via `.prettierrc.json` and pre‑commit; ESLint Tailwind plugin enabled (`.eslintrc.json`).
+- Makefile `quality` target chains Python + Next gates and audits: `lint`, `typecheck`, `test`, `web-lint`, `web-typecheck`, `web-build`, `web-audit`.
+- GitHub Actions adds a dedicated frontend job running `npm run lint`, `typecheck`, `build` on Node 20 with a Postgres/pgvector service; uploads audit artifacts (knip, icon audit, route inventory, Python vulture) under `reports/ci/`.
+- Pre‑commit runs Ruff, mypy, ESLint, Prettier, markdownlint; Windows‑friendly set‑up documented.
+- Node and Python toolchains pinned (Node 20, Python 3.12); caches used.
+
+Gaps / Suggestions
+
+- Release workflow parity: `release.yml` lacks a Next.js lint/typecheck/build step. Add `npm ci && npm run lint && npm run typecheck && npm run build` to align with Phase 6 gates before publishing artifacts.
+- Formatter choice: Plan mentioned Black, but the repo uses Ruff formatter (Black‑compatible). This is fine; update any lingering “Black” references to avoid confusion.
+- Optional: Add `npm audit --omit=dev` as non‑blocking step to surface runtime dependency risk in CI, with a waiver policy captured in TROUBLESHOOTING/OPERATIONS.
+
+## Phase 7 — Documentation & Release (Audit)
+
+Pass
+
+- Documentation updated across README/ARCHITECTURE/OPERATIONS/TROUBLESHOOTING/REQUIREMENTS to the Next.js + pgvector + Prisma + Auth.js stack with Windows instructions and CI parity notes.
+- CHANGELOG includes 0.7.0 with clear highlights (DX, CI, audits, docs). `VERSION` file introduced and synced with `package.json` (0.7.0).
+- Release process captured in `RELEASE.md` (quality gates, tagging, upgrade/rollback playbook). README links back to AGENTS and release docs as required.
+- Editor and project hygiene: `.editorconfig`, `.vscode/extensions.json`, `LICENSE` (SPDX), and language‑appropriate `.gitignore` present.
+
+Gaps / Suggestions
+
+- Replace “commit pending” placeholders in `ToDo-Complete.md` entries with actual SHAs once merged/tagged to keep the audit trail authoritative.
+- Ensure `README.md` and `RELEASE.md` instruct checking that `VERSION` and `package.json` remain in lockstep (already implied—consider a tiny CI check to assert equality).
+- Optional: Add a docs checklist to PR template confirming README/CHANGELOG were updated when code changes require documentation edits.
 
 ## Phase 0
 
-- High – .env.example omits required secrets (Auth.js, email, rate limiting, logging flag, Azure toggle) so new contributors cannot satisfy the AGENTS baseline (.env.example:4-19; compare against expected inputs in atticus/config.py:72-143).
+- High - .env.example omits required secrets (Auth.js, email, rate limiting, logging flag, Azure toggle) so new contributors cannot satisfy the AGENTS baseline (.env.example:4-19; compare against expected inputs in atticus/config.py:72-143).
 - High – scripts/generate_env.py writes live-looking SMTP credentials into .env by default (scripts/generate_env.py:42-53), creating a leakage risk; defaults must be placeholders.
 - Medium – The generator emits CONTENT_DIR, but the settings loader only honors CONTENT_ROOT, leaving the app to fall back to defaults unexpectedly (scripts/generate_env.py:41 vs atticus/config.py:75-84).
 - Medium – Neither .env.example nor the generator includes RATE_LIMIT_REQUESTS, RATE_LIMIT_WINDOW_SECONDS, LOG_FORMAT, EMAIL_SANDBOX, etc., so make quality/API rate limiting will diverge from documented guardrails (scripts/generate_env.py:25-63, .env.example:4-19).
@@ -39,7 +74,9 @@
 
 1. Should the ask proxy stream upstream SSE events instead of buffering JSON? If upstream cannot stream yet, do we document an exemption?
 1. What is the intended secret management policy for SMTP credentials now that generate_env embeds values?
-1. How will RBAC be enforced on the FastAPI side—middleware injection, dependency-based gating, or eventual deprecation of those endpoints?
+1. How will RBAC be enforced on the FastAPI side-middleware injection, dependency-based gating, or eventual deprecation of those endpoints?
+1. Should `release.yml` include the Next.js lint/typecheck/build stage to fully mirror quality gates on tags?
+1. Do we want CI to enforce `VERSION == package.json.version` explicitly?
 
 ## Suggested Next Steps
 
