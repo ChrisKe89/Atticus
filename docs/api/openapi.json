@@ -18,13 +18,42 @@
             "description": "Metadata filters such as path_prefix or source_type",
             "title": "Filters"
           },
-          "query": {
-            "title": "Query",
+          "contextHints": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional hints supplied by the UI to bias retrieval",
+            "title": "ContextHints"
+          },
+          "topK": {
+            "anyOf": [
+              {
+                "maximum": 32,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Override for the retrieval top-k window",
+            "title": "TopK"
+          },
+          "question": {
+            "title": "Question",
             "type": "string"
           }
         },
         "required": [
-          "query"
+          "question"
         ],
         "title": "AskRequest",
         "type": "object"
@@ -35,11 +64,11 @@
             "title": "Answer",
             "type": "string"
           },
-          "citations": {
+          "sources": {
             "items": {
-              "$ref": "#/components/schemas/CitationModel"
+              "$ref": "#/components/schemas/AskSource"
             },
-            "title": "Citations",
+            "title": "Sources",
             "type": "array"
           },
           "confidence": {
@@ -59,18 +88,14 @@
           "answer",
           "confidence",
           "should_escalate",
-          "citations",
-          "request_id"
+          "request_id",
+          "sources"
         ],
         "title": "AskResponse",
         "type": "object"
       },
-      "CitationModel": {
+      "AskSource": {
         "properties": {
-          "chunk_id": {
-            "title": "Chunk Id",
-            "type": "string"
-          },
           "heading": {
             "anyOf": [
               {
@@ -82,7 +107,7 @@
             ],
             "title": "Heading"
           },
-          "page_number": {
+          "page": {
             "anyOf": [
               {
                 "type": "integer"
@@ -91,23 +116,32 @@
                 "type": "null"
               }
             ],
-            "title": "Page Number"
+            "title": "Page"
+          },
+          "chunkId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunkid"
           },
           "score": {
             "title": "Score",
             "type": "number"
           },
-          "source_path": {
-            "title": "Source Path",
+          "path": {
+            "title": "Path",
             "type": "string"
           }
         },
         "required": [
-          "chunk_id",
-          "source_path",
-          "score"
+          "path"
         ],
-        "title": "CitationModel",
+        "title": "AskSource",
         "type": "object"
       },
       "ContactRequest": {

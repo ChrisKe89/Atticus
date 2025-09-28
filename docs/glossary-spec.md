@@ -23,6 +23,8 @@ model GlossaryEntry {
   status       String   @default("pending") // pending | approved | rejected
   submittedBy  String
   approvedBy   String?
+  reviewNotes  String?
+  reviewedAt   DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

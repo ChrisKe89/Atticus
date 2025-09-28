@@ -4,8 +4,8 @@
 | --- | --- | --- |
 | Phase 0 | ✅ | [6e50c78](commit/6e50c78) – audit tooling dependencies installed |
 | Phase 1 | ✅ | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired |
-| Phase 2 | ⚠️ | Not started |
-| Phase 3 | ⚠️ | Not started |
+| Phase 2 | ✅ | [HEAD](commit/HEAD) – `/api/ask` contract unified with SSE client + tests |
+| Phase 3 | ✅ | [HEAD](commit/HEAD) – Glossary workflow hardened with review metadata and RBAC docs |
 | Phase 4 | ⚠️ | Not started |
 | Phase 5 | ⚠️ | Not started |
 | Phase 6 | ⚠️ | Not started |
@@ -169,4 +169,9 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 
 
 ## Notes
+
+- Phase 2 introduced the shared Ask DTOs (`lib/ask-contract.ts`), streaming proxy (`app/api/ask/route.ts`), and Vitest coverage for SSE parsing.
+- Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.
+
 - Unable to progress beyond Phase 0 within current session; remaining phases marked ⚠️ for follow-up.
+

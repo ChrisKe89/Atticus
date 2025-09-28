@@ -16,14 +16,34 @@ export function parseStatus(value: unknown): GlossaryStatus {
   return GlossaryStatus[upper as keyof typeof GlossaryStatus];
 }
 
+export function parseSynonyms(value: unknown): string[] {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter((item) => item.length > 0);
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+  }
+  throw new Error('Invalid synonyms payload');
+}
+
 export function serializeEntry(entry: any) {
   return {
     id: entry.id,
     term: entry.term,
     definition: entry.definition,
+    synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
     status: entry.status,
     createdAt: entry.createdAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
+    reviewedAt: entry.reviewedAt ? entry.reviewedAt.toISOString() : null,
     author: entry.author
       ? {
           id: entry.author.id,
@@ -38,6 +58,14 @@ export function serializeEntry(entry: any) {
           name: entry.updatedBy.name,
         }
       : null,
+    reviewer: entry.reviewer
+      ? {
+          id: entry.reviewer.id,
+          email: entry.reviewer.email,
+          name: entry.reviewer.name,
+        }
+      : null,
+    reviewNotes: entry.reviewNotes ?? null,
   };
 }
 

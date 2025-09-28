@@ -12,19 +12,19 @@ from atticus.tokenization import count_tokens
 from retriever import answer_question
 
 from ..dependencies import LoggerDep, SettingsDep
-from ..schemas import AskRequest, AskResponse, CitationModel
+from ..schemas import AskRequest, AskResponse, AskSource
 
 router = APIRouter()
 _Q_PLACEHOLDERS = {"string", "test", "example"}
 _Q_MIN_LEN = 4
 
 
-def _format_sources(citations: Iterable[CitationModel]) -> list[str]:
+def _format_sources(citations: Iterable[AskSource]) -> list[str]:
     sources: list[str] = []
     for citation in citations:
-        desc = citation.source_path
-        if citation.page_number is not None:
-            desc += f" (page {citation.page_number})"
+        desc = citation.path
+        if citation.page is not None:
+            desc += f" (page {citation.page})"
         if citation.heading:
             desc += f" - {citation.heading}"
         sources.append(desc)
@@ -51,6 +51,8 @@ async def ask_endpoint(
         settings=settings,
         filters=payload.filters,
         logger=logger,
+        top_k=payload.top_k,
+        context_hints=payload.context_hints,
     )
 
     request_id = getattr(request.state, "request_id", "unknown")
@@ -58,11 +60,11 @@ async def ask_endpoint(
     request.state.escalate = answer.should_escalate
     elapsed_ms = (time.perf_counter() - start) * 1000
 
-    citations = [
-        CitationModel(
-            chunk_id=item.chunk_id,
-            source_path=item.source_path,
-            page_number=item.page_number,
+    sources = [
+        AskSource(
+            chunkId=item.chunk_id,
+            path=item.source_path,
+            page=item.page_number,
             heading=item.heading,
             score=item.score,
         )
@@ -73,8 +75,8 @@ async def ask_endpoint(
         answer=answer.response,
         confidence=answer.confidence,
         should_escalate=answer.should_escalate,
-        citations=citations,
         request_id=request_id,
+        sources=sources,
     )
 
     log_event(
@@ -112,7 +114,7 @@ async def ask_endpoint(
             request_id=request_id,
             question=question,
             answer=answer.response,
-            sources=_format_sources(citations),
+            sources=_format_sources(sources),
             confidence=float(answer.confidence),
             tokens={
                 "question": user_tokens,

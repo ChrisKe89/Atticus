@@ -40,11 +40,15 @@ def answer_question(
     settings: AppSettings | None = None,
     filters: dict[str, str] | None = None,
     logger: logging.Logger | None = None,
+    *,
+    top_k: int | None = None,
+    context_hints: list[str] | None = None,
 ) -> Answer:
     settings = settings or load_settings()
     logger = logger or configure_logging(settings)
     store = VectorStore(settings, logger)
-    results = store.search(question, top_k=settings.top_k, filters=filters, hybrid=True)
+    window = top_k or settings.top_k
+    results = store.search(question, top_k=window, filters=filters, hybrid=True)
 
     if not results:
         response = "I don't have enough information in the current index to answer this."
@@ -63,6 +67,8 @@ def answer_question(
         return answer
 
     contexts, citations = _format_contexts(results, settings.max_context_chunks)
+    if context_hints:
+        contexts.extend(context_hints)
     generator = GeneratorClient(settings, logger)
     citation_texts = []
     for item in citations:
