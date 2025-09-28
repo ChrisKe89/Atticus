@@ -9,6 +9,7 @@ pydantic
 pydantic-settings
 httpx
 python-dotenv
+# Postgres driver – binary wheels keep setup simple across macOS/Windows until we switch fully to Prisma
 psycopg[binary]
 pgvector
 openai
