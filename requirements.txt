@@ -36,12 +36,6 @@ click==8.3.0
     #   camelot-py
     #   pip-tools
     #   uvicorn
-colorama==0.4.6
-    # via
-    #   build
-    #   click
-    #   pytest
-    #   tqdm
 coverage[toml]==7.10.7
     # via pytest-cov
 cryptography==46.0.1
@@ -244,12 +238,12 @@ typing-inspection==0.4.1
     #   pydantic
     #   pydantic-settings
 tzdata==2025.2
-    # via
-    #   pandas
-    #   psycopg
+    # via pandas
 urllib3==2.5.0
     # via requests
 uvicorn==0.37.0
+    # via -r requirements.in
+uvloop==0.21.0 ; sys_platform != "win32"
     # via -r requirements.in
 watchfiles==1.1.0
     # via -r requirements.in

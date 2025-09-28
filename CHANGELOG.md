@@ -11,6 +11,21 @@ _No changes yet._
 
 ---
 
+## [0.6.2] — 2025-09-29
+
+### Added
+- In-memory pgvector repository test double covering ingestion reuse and retrieval ranking behaviour.
+- Integration coverage ensuring the ingestion pipeline writes manifests/metadata and retrieval answers honour citations.
+
+### Changed
+- Regenerated Python dependency lockfile (`requirements.txt`) via `pip-compile` to capture upstream security updates.
+
+### Testing
+- `pytest tests/test_chunker.py tests/test_seed_manifest.py`
+- `pytest tests/test_ingestion_retrieval_integration.py`
+
+---
+
 ## [0.6.1] — 2025-09-28
 
 ### Added
