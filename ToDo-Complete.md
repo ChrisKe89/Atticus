@@ -63,6 +63,10 @@ Each entry includes the completion date and commit reference for traceability.
 
 - [x] TODO "Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock." — completed 2025-09-29 (commit 04216be).
 
+## 2025-09-30
+
+- [x] TODO "TROUBLESHOOTING.md — Add pgvector + Prisma troubleshooting (extension enablement, migration drift)." — completed 2025-09-30 (commit HEAD).
+
 
 
 

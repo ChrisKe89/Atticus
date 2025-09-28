@@ -17,6 +17,23 @@ The newest entries appear first.
 
 ---
 
+## [0.5.2] — 2025-09-30
+
+### Added
+- Prisma models and migrations for `atticus_documents` and `atticus_chunks`, aligning pgvector storage with the shared data layer.
+- `make db.verify` target plus CI workflow to run `scripts/verify_pgvector.sql` against a pgvector-enabled Postgres service.
+
+### Changed
+- Documented pgvector verification steps in README, OPERATIONS, and TROUBLESHOOTING with PowerShell equivalents.
+- Noted `psycopg[binary]` usage in Python tooling to keep local workflows consistent with Prisma migrations.
+
+### Testing
+- `npm run db:migrate` *(fails locally without Postgres; covered in CI)*
+- `make db.verify` *(requires `psql` client; enforced in CI)*
+- `npm run audit:ts`
+
+---
+
 ## [0.6.2] — 2025-09-29
 
 ### Added
