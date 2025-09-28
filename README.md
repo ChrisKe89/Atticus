@@ -1,5 +1,8 @@
 # Atticus\r\n\r\n> **Atticus for Sales Enablement** accelerates tender responses, keeps Sales self-sufficient, and frees Service/Marketing from ad-hoc requests.\r\n
 
+> [!WARNING]
+> This README still contains legacy FastAPI UI instructions. Refer to [AUDIT_REPORT.md](AUDIT_REPORT.md) finding FND-001 and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for the authoritative remediation plan while the documentation rewrite is in progress.
+
 ## Purpose
 
 Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to help **Sales** teams answer questions immediately, reduce interruptions to **Service** and **Marketing**, and speed up **tender** responses.  
@@ -38,6 +41,12 @@ Install Node dependencies once to run the Next.js workspace.
 npm install
 make ui            # start the Next.js dev server (http://localhost:3000)
 npm run build      # optional production build
+```
+
+```powershell
+npm install
+make ui            # uses the same Next.js dev server
+npm run build
 ```
 
 ### 2b. Database & Prisma
@@ -89,6 +98,11 @@ Start the FastAPI backend and the Next.js UI in separate terminals.
 ```bash
 make api   # http://localhost:8000
 make ui    # http://localhost:3000
+```
+
+```powershell
+make api
+make ui
 ```
 
 Docs remain at `http://localhost:8000/docs`; the web workspace runs on port 3000.
@@ -148,8 +162,17 @@ Common shortcuts:
 | `make test` | Run tests with >=90% coverage |
 | `make lint` / `make format` | Lint and auto-fix with Ruff |
 | `make typecheck` | Run static type checks |
+| `npm run audit:ts` | Static usage graph via `knip` |
+| `npm run audit:icons` | Validate Lucide icon tree-shaking configuration |
+| `npm run audit:routes` | Emit Next.js route inventory (JSON) |
+| `npm run audit:py` | Run Python dead-code audit (vulture) |
 
 ---
+
+## Audit Artifacts
+
+- [AUDIT_REPORT.md](AUDIT_REPORT.md) – detailed findings, evidence, and remediation estimates.
+- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) – phased rollout incorporating `TODO.md` items.
 
 ## SMTP / SES Notes
 
