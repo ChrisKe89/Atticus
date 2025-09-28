@@ -59,6 +59,10 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] TODO "reports/ — Configure CI to upload artifacts and document consumption workflow." — completed 2025-09-28 (commit 19bdc5d).
 > Continue logging future completed tasks below, grouped by date, to maintain a clear historical record.
 
+## 2025-09-29
+
+- [x] TODO "Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock." — completed 2025-09-29 (commit 04216be).
+
 
 
 
