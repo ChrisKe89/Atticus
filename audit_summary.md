@@ -48,3 +48,13 @@
 1. Replace the ask proxy with a true streaming bridge (or document/implement a temporary polling fallback) and fix mojibake in the UI components.
 1. Add RBAC enforcement to FastAPI admin routes (and corresponding tests), update glossary docs to the new schema, and ensure error payloads include request_id per contract.
 1. After remediation, rerun the documented audit scripts/tests (npm run audit:ts, make quality, pytest ...) to verify 90%+ coverage and contract conformance.
+## Phase 4
+
+- Medium - Legacy `web/static` directory still exists (albeit empty) alongside the archived assets, so the repo cleanup called out in IMPLEMENTATION_PLAN.md remains unfinished (`web/static`).
+- Medium - AGENTS stack guidance still mandates Framer Motion even though the dependency has been removed, which will mislead future contributors about required UI tooling (AGENTS.md:75-80).
+- Low - `ARCHITECTURE.md` retains control characters (`\u001a`) in its component table, leaving the Phase 4 documentation polish incomplete and risking downstream parsing/rendering issues (ARCHITECTURE.md:17).
+
+## Phase 5
+
+- Medium - Empty `web/` subfolders (`web/static`, `web/templates`) are still present, contradicting the "orphan cleanup" objective and signalling that FastAPI UI remnants were not fully retired.
+- Low - `REPO_STRUCTURE.md` omits the lingering `web/` tree, so the published structure map diverges from the actual repository layout (REPO_STRUCTURE.md:5-27).
