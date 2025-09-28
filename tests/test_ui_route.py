@@ -16,6 +16,7 @@ def test_ui_route_or_skip():
 
     client = TestClient(app)
     r = client.get("/")
-    assert r.status_code == 200
+    assert r.status_code == 404
     payload = r.json()
-    assert payload['status'] == 'ui_moved'
+    assert payload["error"] == "not_found"
+    assert payload["request_id"]
