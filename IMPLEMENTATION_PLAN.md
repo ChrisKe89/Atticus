@@ -1,5 +1,16 @@
 # Implementation Plan — Atticus RAG Consistency Cleanup
 
+| Phase | Status | Notes |
+| --- | --- | --- |
+| Phase 0 | ✅ | [HEAD](commit/HEAD) – audit tooling dependencies installed |
+| Phase 1 | ⚠️ | Not started |
+| Phase 2 | ⚠️ | Not started |
+| Phase 3 | ⚠️ | Not started |
+| Phase 4 | ⚠️ | Not started |
+| Phase 5 | ⚠️ | Not started |
+| Phase 6 | ⚠️ | Not started |
+| Phase 7 | ⚠️ | Not started |
+
 This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges active TODOs. Each phase lists required commits, commands (POSIX + PowerShell where relevant), acceptance criteria, and cross-references to TODO items.
 
 ## Phase 0 – Safety, Branching, and Baseline Artifacts
@@ -156,3 +167,6 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 - **Versioning**: Adopt single `VERSION` file updated in Phase 7; reference from Python/Node builds.
 - **Risk Mitigation**: For destructive deletions (e.g., `web/static`), move to `archive/legacy-ui/` first, update documentation, and remove once parity confirmed.
 
+
+## Notes
+- Unable to progress beyond Phase 0 within current session; remaining phases marked ⚠️ for follow-up.

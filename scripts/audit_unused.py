@@ -13,8 +13,6 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import List
-
 DEFAULT_PATHS: list[str] = [
     "atticus",
     "api",
