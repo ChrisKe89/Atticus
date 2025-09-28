@@ -17,9 +17,9 @@ If you discover a security issue:
 
 1. **Do not** open a public GitHub issue.
 2. Email the maintainers or your internal security contact with:
-   * A clear description of the vulnerability and its potential impact.
-   * Steps to reproduce or a proof‑of‑concept.
-   * Affected versions and environment details.
+   - A clear description of the vulnerability and its potential impact.
+   - Steps to reproduce or a proof‑of‑concept.
+   - Affected versions and environment details.
 
 We acknowledge reports within **3 business days** and coordinate a fix and disclosure timeline.
 
@@ -27,13 +27,13 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 
 ## Secrets Management
 
-* **Never commit secrets** to source control.
-* All configuration is read from `.env`. Host environment variables may override unless you set `ATTICUS_ENV_PRIORITY=env`.
-* Recommended environment keys (minimum for production):
+- **Never commit secrets** to source control.
+- All configuration is read from `.env`. Host environment variables may override unless you set `ATTICUS_ENV_PRIORITY=env`.
+- Recommended environment keys (minimum for production):
   - `OPENAI_API_KEY`
   - `CONTACT_EMAIL`
   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
-* Run diagnostics at any time:
+- Run diagnostics at any time:
   ```bash
   python scripts/debug_env.py
   ```
@@ -43,10 +43,10 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 
 ## Email Security (Amazon SES)
 
-* Use **SES SMTP credentials** (not IAM access keys) for mail sending.
-* The `SMTP_FROM` address must be a **verified SES identity** in the same AWS region.
-* If your SES account is in **sandbox mode**, all recipients must be verified until production access is granted.
-* Apply an IAM policy that **restricts sending** to approved addresses and your region only. Example:
+- Use **SES SMTP credentials** (not IAM access keys) for mail sending.
+- The `SMTP_FROM` address must be a **verified SES identity** in the same AWS region.
+- If your SES account is in **sandbox mode**, all recipients must be verified until production access is granted.
+- Apply an IAM policy that **restricts sending** to approved addresses and your region only. Example:
   ```json
   {
     "Version": "2012-10-17",
@@ -73,17 +73,17 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 
 ## Data Privacy and Logging
 
-* **Redact PII** (personally identifiable information) in all logs and traces.
-* The built‑in loggers `logs/app.jsonl` and `logs/errors.jsonl` already exclude known secret keys.
-* Preserve stack traces for debugging but never log actual secret values.
+- **Redact PII** (personally identifiable information) in all logs and traces.
+- The built‑in loggers `logs/app.jsonl` and `logs/errors.jsonl` already exclude known secret keys.
+- Preserve stack traces for debugging but never log actual secret values.
 
 ---
 
 ## Contributor Guidelines
 
-* Use environment variables and secret stores (e.g. AWS Secrets Manager) instead of hard‑coding credentials.
-* Follow least‑privilege and data‑minimisation principles when accessing data sources.
-* Before submitting code, run:
+- Use environment variables and secret stores (e.g. AWS Secrets Manager) instead of hard‑coding credentials.
+- Follow least‑privilege and data‑minimisation principles when accessing data sources.
+- Before submitting code, run:
   ```bash
   make lint
   make typecheck
@@ -94,6 +94,6 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 
 ## Cross-References
 
-* [AGENTS.md](AGENTS.md) — system architecture and escalation policies.
-* [README.md](README.md) — quick-start and environment setup.
-* [OPERATIONS.md](OPERATIONS.md) — day-to-day operations and evaluation metrics.
+- [AGENTS.md](AGENTS.md) — system architecture and escalation policies.
+- [README.md](README.md) — quick-start and environment setup.
+- [OPERATIONS.md](OPERATIONS.md) — day-to-day operations and evaluation metrics.

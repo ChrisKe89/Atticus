@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { PageHeader } from '@/components/page-header';
-import { ChatPanel } from '@/components/chat/chat-panel';
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { ChatPanel } from "@/components/chat/chat-panel";
 
 export default function HomePage() {
   return (

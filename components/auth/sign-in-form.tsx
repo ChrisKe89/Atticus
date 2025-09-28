@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { FormEvent, useState, useTransition } from 'react';
-import { signIn } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { FormEvent, useState, useTransition } from "react";
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function SignInForm() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -16,12 +16,12 @@ export function SignInForm() {
     event.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = await signIn('email', {
+      const result = await signIn("email", {
         email,
         redirect: false,
       });
       if (result?.error) {
-        setError('We could not send a magic link to that address. Ensure you are provisioned.');
+        setError("We could not send a magic link to that address. Ensure you are provisioned.");
         setSent(false);
         return;
       }
@@ -30,7 +30,10 @@ export function SignInForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+    >
       <div className="space-y-2 text-left">
         <Label htmlFor="email">Work email</Label>
         <Input
@@ -45,7 +48,7 @@ export function SignInForm() {
         />
       </div>
       <Button type="submit" className="w-full" disabled={isPending || sent}>
-        {sent ? 'Magic link sent' : isPending ? 'Sending...' : 'Email me a magic link'}
+        {sent ? "Magic link sent" : isPending ? "Sending..." : "Email me a magic link"}
       </Button>
       {error ? <p className="text-sm text-rose-600">{error}</p> : null}
       {sent ? (

@@ -13,15 +13,15 @@ This runbook documents the Auth.js + Prisma deployment that powers Atticus phase
 
 ## Environment variables
 
-| Variable | Purpose |
-| --- | --- |
-| `DATABASE_URL` | Postgres connection string used by Prisma and Auth.js. |
-| `AUTH_SECRET` | Random string used to sign NextAuth cookies/JWT. |
-| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME` | Seed organization for default tenancy. |
-| `ADMIN_EMAIL` / `ADMIN_NAME` | Bootstrap admin account created by `npm run db:seed`. |
-| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery. |
-| `EMAIL_FROM` | From address for Auth.js email provider. |
-| `AUTH_DEBUG_MAILBOX_DIR` | Filesystem directory where test magic links are persisted (used by Playwright). |
+| Variable                                                                                  | Purpose                                                                         |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                                                            | Postgres connection string used by Prisma and Auth.js.                          |
+| `AUTH_SECRET`                                                                             | Random string used to sign NextAuth cookies/JWT.                                |
+| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME`                                                     | Seed organization for default tenancy.                                          |
+| `ADMIN_EMAIL` / `ADMIN_NAME`                                                              | Bootstrap admin account created by `npm run db:seed`.                           |
+| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery.                                       |
+| `EMAIL_FROM`                                                                              | From address for Auth.js email provider.                                        |
+| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). |
 
 Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible defaults. Override secrets in production.
 

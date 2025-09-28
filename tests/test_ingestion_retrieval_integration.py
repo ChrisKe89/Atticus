@@ -6,7 +6,8 @@ import copy
 import json
 import logging
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any
+from collections.abc import Iterable, Sequence
 
 import pytest
 
@@ -179,9 +180,7 @@ def test_ingest_corpus_creates_manifest_and_metadata(test_settings: AppSettings)
     document_path = test_settings.content_dir / "catalog" / "spec.txt"
     _write_sample_document(document_path)
 
-    summary = ingest_corpus(
-        settings=test_settings, options=IngestionOptions(paths=[document_path])
-    )
+    summary = ingest_corpus(settings=test_settings, options=IngestionOptions(paths=[document_path]))
 
     assert summary.documents_processed == 1
     assert summary.chunks_indexed > 0
@@ -215,10 +214,15 @@ def test_retrieval_pipeline_answers_question(test_settings: AppSettings) -> None
     assert top_result.metadata.get("chunking") == "prose"
 
     answer = answer_question(
-        "Summarise the supported print resolution.", settings=test_settings, logger=logging.getLogger("atticus.test")
+        "Summarise the supported print resolution.",
+        settings=test_settings,
+        logger=logging.getLogger("atticus.test"),
     )
     assert answer.citations, "expected citations in answer"
-    assert any("resolution" in cite.source_path or "capabilities" in cite.source_path for cite in answer.citations)
+    assert any(
+        "resolution" in cite.source_path or "capabilities" in cite.source_path
+        for cite in answer.citations
+    )
     assert answer.response
     assert answer.confidence >= 0.4
     assert answer.should_escalate is False

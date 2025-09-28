@@ -1,31 +1,33 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Shield, Zap } from 'lucide-react';
-import { PageHeader } from '@/components/page-header';
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Shield, Zap } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 const toggles = [
   {
-    id: 'escalations',
-    label: 'Escalate low-confidence answers',
-    description: 'Automatically open an escalation email when answer confidence drops below the policy threshold.',
+    id: "escalations",
+    label: "Escalate low-confidence answers",
+    description:
+      "Automatically open an escalation email when answer confidence drops below the policy threshold.",
     defaultChecked: true,
   },
   {
-    id: 'request-logging',
-    label: 'Attach anonymised request logs',
-    description: 'Include hashed user IDs and request IDs so admins can correlate tickets with chat sessions.',
+    id: "request-logging",
+    label: "Attach anonymised request logs",
+    description:
+      "Include hashed user IDs and request IDs so admins can correlate tickets with chat sessions.",
     defaultChecked: true,
   },
   {
-    id: 'typing-preview',
-    label: 'Streaming responses',
-    description: 'Show tokens as they are generated for faster operator feedback.',
+    id: "typing-preview",
+    label: "Streaming responses",
+    description: "Show tokens as they are generated for faster operator feedback.",
     defaultChecked: false,
   },
 ];
 
 export const metadata: Metadata = {
-  title: 'Settings · Atticus',
+  title: "Settings · Atticus",
 };
 
 export default function SettingsPage() {
@@ -49,11 +51,20 @@ export default function SettingsPage() {
         <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-500">Policies</h2>
         <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           {toggles.map((toggle) => (
-            <label key={toggle.id} htmlFor={toggle.id} className="flex flex-col gap-2 rounded-2xl border border-transparent p-4 transition hover:border-indigo-200 dark:hover:border-indigo-500/40">
+            <label
+              key={toggle.id}
+              htmlFor={toggle.id}
+              className="flex flex-col gap-2 rounded-2xl border border-transparent p-4 transition hover:border-indigo-200 dark:hover:border-indigo-500/40"
+            >
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{toggle.label}</p>
-                  <p id={`${toggle.id}-description`} className="text-xs text-slate-500 dark:text-slate-400">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {toggle.label}
+                  </p>
+                  <p
+                    id={`${toggle.id}-description`}
+                    className="text-xs text-slate-500 dark:text-slate-400"
+                  >
                     {toggle.description}
                   </p>
                 </div>
@@ -75,18 +86,24 @@ export default function SettingsPage() {
           <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
             <Shield className="h-5 w-5" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Safety guardrails</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Safety guardrails
+          </h3>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Escalation allow-lists and role-based policies ensure sensitive documents never leave your tenant.
+            Escalation allow-lists and role-based policies ensure sensitive documents never leave
+            your tenant.
           </p>
         </article>
         <article className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
             <Zap className="h-5 w-5" aria-hidden="true" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Performance tuning</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            Performance tuning
+          </h3>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Adjust search probes, reranker policies, and streaming defaults to match your team&apos;s workflow.
+            Adjust search probes, reranker policies, and streaming defaults to match your
+            team&apos;s workflow.
           </p>
         </article>
       </section>

@@ -14,7 +14,6 @@ from atticus.logging import log_error
 
 from .schemas import ErrorResponse
 
-
 _ERROR_CODE_BY_STATUS: dict[int, str] = {
     status.HTTP_400_BAD_REQUEST: "bad_request",
     status.HTTP_401_UNAUTHORIZED: "unauthorized",
@@ -64,9 +63,7 @@ def _build_response(
     return response
 
 
-async def http_exception_handler(
-    request: Request, exc: StarletteHTTPException
-) -> JSONResponse:
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     error_code = _lookup_error_code(exc.status_code)
     detail = _normalize_detail(exc.detail)
     if exc.status_code >= status.HTTP_500_INTERNAL_SERVER_ERROR:

@@ -1,100 +1,172 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Atticus Team</title>
-    <link href="css/style.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
 
-<body data-api-base="" class="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors">
+  <body
+    data-api-base=""
+    class="min-h-screen bg-gray-100 transition-colors dark:bg-gray-900 dark:text-gray-100"
+  >
     <div class="relative flex min-h-screen flex-col">
-        <header class="border-b border-gray-200 bg-white/90 px-6 py-4 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90">
-            <div class="mx-auto flex w-full max-w-3xl items-center justify-between">
-                <div>
-                    <a href="index.html" class="flex items-center gap-2 text-sm text-blue-500 transition hover:text-blue-600">
-                        <span class="material-icons text-base">arrow_back</span>
-                        Back to chat
-                    </a>
-                    <h1 class="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">Contact escalation team</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Messages are routed using the SMTP configuration defined in your .env file.</p>
-                </div>
-            </div>
-        </header>
+      <header
+        class="border-b border-gray-200 bg-white/90 px-6 py-4 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90"
+      >
+        <div class="mx-auto flex w-full max-w-3xl items-center justify-between">
+          <div>
+            <a
+              href="index.html"
+              class="flex items-center gap-2 text-sm text-blue-500 transition hover:text-blue-600"
+            >
+              <span class="material-icons text-base">arrow_back</span>
+              Back to chat
+            </a>
+            <h1 class="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              Contact escalation team
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Messages are routed using the SMTP configuration defined in your .env file.
+            </p>
+          </div>
+        </div>
+      </header>
 
-        <main class="flex-1">
-            <section class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
-                <form id="contact-form" class="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white/95 p-8 shadow-lg backdrop-blur dark:border-gray-700 dark:bg-gray-900/95">
-                    <div>
-                        <label for="contact-subject" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Subject</label>
-                        <input id="contact-subject" name="contact-subject" type="text" placeholder="Escalation summary" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100" required>
-                    </div>
-                    <div>
-                        <label for="contact-body" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">Message body</label>
-                        <textarea id="contact-body" name="contact-body" rows="10" placeholder="Provide context for the escalation" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100" required></textarea>
-                    </div>
-                    <div class="flex flex-col gap-3">
-                        <button id="contact-send" type="submit" class="w-full rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-300 disabled:cursor-not-allowed disabled:bg-blue-400">
-                            Send message
-                        </button>
-                        <p id="contact-status" class="min-h-[1.5rem] text-sm text-gray-500 dark:text-gray-400"></p>
-                    </div>
-                </form>
-            </section>
-        </main>
+      <main class="flex-1">
+        <section class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
+          <form
+            id="contact-form"
+            class="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white/95 p-8 shadow-lg backdrop-blur dark:border-gray-700 dark:bg-gray-900/95"
+          >
+            <div>
+              <label
+                for="contact-subject"
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Subject</label
+              >
+              <input
+                id="contact-subject"
+                name="contact-subject"
+                type="text"
+                placeholder="Escalation summary"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="contact-body"
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Message body</label
+              >
+              <textarea
+                id="contact-body"
+                name="contact-body"
+                rows="10"
+                placeholder="Provide context for the escalation"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                required
+              ></textarea>
+            </div>
+            <div class="flex flex-col gap-3">
+              <button
+                id="contact-send"
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-300 disabled:cursor-not-allowed disabled:bg-blue-400"
+              >
+                Send message
+              </button>
+              <p
+                id="contact-status"
+                class="min-h-[1.5rem] text-sm text-gray-500 dark:text-gray-400"
+              ></p>
+            </div>
+          </form>
+        </section>
+      </main>
     </div>
 
-    <aside id="sidebar" class="sidebar w-64 bg-gray-900 dark:bg-gray-800 text-white flex flex-col transition-all duration-300 shadow-xl">
-        <div class="p-4 text-xl font-bold tracking-wide flex items-center gap-2">
-            <span class="material-icons text-blue-300">auto_stories</span>
-            <span class="uppercase">Atticus</span>
-        </div>
+    <aside
+      id="sidebar"
+      class="sidebar flex w-64 flex-col bg-gray-900 text-white shadow-xl transition-all duration-300 dark:bg-gray-800"
+    >
+      <div class="flex items-center gap-2 p-4 text-xl font-bold tracking-wide">
+        <span class="material-icons text-blue-300">auto_stories</span>
+        <span class="uppercase">Atticus</span>
+      </div>
 
-        <nav class="flex-1 flex flex-col space-y-1 p-2">
-            <button class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" data-view="home">
-                <span class="material-icons">home</span>
-                <span class="menu-text">Home</span>
-            </button>
-            <button class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" data-view="apps">
-                <span class="material-icons">apps</span>
-                <span class="menu-text">Apps</span>
-            </button>
-            <button class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" data-view="favorites">
-                <span class="material-icons">star</span>
-                <span class="menu-text">Favorites</span>
-            </button>
-            <button class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" data-view="chat">
-                <span class="material-icons">chat</span>
-                <span class="menu-text">Chat</span>
-            </button>
-            <button class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400" data-view="settings">
-                <span class="material-icons">settings</span>
-                <span class="menu-text">Settings</span>
-            </button>
-        </nav>
+      <nav class="flex flex-1 flex-col space-y-1 p-2">
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="home"
+        >
+          <span class="material-icons">home</span>
+          <span class="menu-text">Home</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="apps"
+        >
+          <span class="material-icons">apps</span>
+          <span class="menu-text">Apps</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="favorites"
+        >
+          <span class="material-icons">star</span>
+          <span class="menu-text">Favorites</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="chat"
+        >
+          <span class="material-icons">chat</span>
+          <span class="menu-text">Chat</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="settings"
+        >
+          <span class="material-icons">settings</span>
+          <span class="menu-text">Settings</span>
+        </button>
+      </nav>
 
-        <div class="mt-auto flex flex-col space-y-1 p-2">
-            <a href="admin.html" class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
-                <span class="material-icons">admin_panel_settings</span>
-                <span class="menu-text">Admin</span>
-            </a>
-            <a href="contact.html" class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
-                <span class="material-icons">mail</span>
-                <span class="menu-text">Contact</span>
-            </a>
-            <button id="clear-chat" class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
-                <span class="material-icons">delete</span>
-                <span class="menu-text">Clear Chat</span>
-            </button>
-            <button id="dark-toggle" class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400 mb-1">
-                <span class="material-icons">dark_mode</span>
-                <span class="menu-text">Dark Mode</span>
-            </button>
-        </div>
+      <div class="mt-auto flex flex-col space-y-1 p-2">
+        <a
+          href="admin.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">admin_panel_settings</span>
+          <span class="menu-text">Admin</span>
+        </a>
+        <a
+          href="contact.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">mail</span>
+          <span class="menu-text">Contact</span>
+        </a>
+        <button
+          id="clear-chat"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">delete</span>
+          <span class="menu-text">Clear Chat</span>
+        </button>
+        <button
+          id="dark-toggle"
+          class="menu-item mb-1 flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">dark_mode</span>
+          <span class="menu-text">Dark Mode</span>
+        </button>
+      </div>
     </aside>
     <script src="js/script.js"></script>
-</body>
-
+  </body>
 </html>

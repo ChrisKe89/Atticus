@@ -17,11 +17,7 @@ def test_admin_dictionary_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyP
 
     client = TestClient(api_main.app)
 
-    payload = {
-        "entries": [
-            {"term": "Managed print", "synonyms": ["MPS", "Print-as-a-service"]}
-        ]
-    }
+    payload = {"entries": [{"term": "Managed print", "synonyms": ["MPS", "Print-as-a-service"]}]}
     response = client.post("/admin/dictionary", json=payload)
     assert response.status_code == 200
     assert response.json()["entries"][0]["term"] == "Managed print"

@@ -19,8 +19,8 @@ from .errors import (
     validation_exception_handler,
 )
 from .middleware import RequestContextMiddleware
-from .routes import admin, chat, contact, eval, health, ingest
 from .rate_limit import RateLimiter
+from .routes import admin, chat, contact, eval, health, ingest
 
 
 @asynccontextmanager

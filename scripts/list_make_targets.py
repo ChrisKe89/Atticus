@@ -1,4 +1,5 @@
 """List unique make targets defined in provided makefiles."""
+
 from __future__ import annotations
 
 import pathlib

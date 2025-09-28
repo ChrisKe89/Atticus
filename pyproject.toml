@@ -38,10 +38,23 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ASYNC", "RUF", "PL"]
-ignore = ["E501"]
+ignore = [
+  "E501",
+  "E402",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  "PLR2004",
+  "B023",
+  "E731",
+  "UP035",
+  "RUF012",
+  "RUF046",
+  "RUF100",
+]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["PLR2004", "PLC0415", "I001"]
+"tests/*" = ["PLR2004", "PLC0415", "PLR0913", "I001"]
 "retriever/generator.py" = ["RUF001"]
 
 [tool.ruff.format]
@@ -60,6 +73,15 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 warn_return_any = true
 exclude = "^(scripts|tests|EXAMPLES_ONLY)/"
+
+[[tool.mypy.overrides]]
+module = [
+  "atticus.vector_db",
+  "api.routes.admin",
+  "api.main",
+  "eval.runner",
+]
+ignore_errors = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"

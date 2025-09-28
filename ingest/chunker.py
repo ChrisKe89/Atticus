@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Callable
 
 from atticus.config import AppSettings
 from atticus.tokenization import decode, encode, split_tokens
@@ -56,19 +55,19 @@ class _ChunkBuilder:
         chunking: str,
         extra: dict[str, str | int | float | bool | None],
     ) -> Chunk:
-        metadata = {
+        raw_metadata: dict[str, str | int | float | bool | None] = {
             "chunking": chunking,
             "source_type": self.document.source_type,
             **section.extra,
             **extra,
         }
         if section.heading:
-            metadata.setdefault("section_heading", section.heading)
+            raw_metadata.setdefault("section_heading", section.heading)
         if section.page_number is not None:
-            metadata.setdefault("page_number", section.page_number)
+            raw_metadata.setdefault("page_number", section.page_number)
         if breadcrumbs:
-            metadata.setdefault("breadcrumbs", " > ".join(breadcrumbs))
-        metadata = _normalise_metadata(metadata)
+            raw_metadata.setdefault("breadcrumbs", " > ".join(breadcrumbs))
+        metadata = _normalise_metadata(raw_metadata)
         chunk_hash = _hash_chunk_payload(text, metadata)
         metadata.setdefault("chunk_sha", chunk_hash)
 
@@ -161,7 +160,9 @@ class CEDChunker:
             prev.text = merged_text
             prev.end_token = tail.end_token
             prev.extra.update({"merged": "true"})
-            prev.extra.update({k: v for k, v in tail.extra.items() if k not in {"chunk_sha", "chunking"}})
+            prev.extra.update(
+                {k: v for k, v in tail.extra.items() if k not in {"chunk_sha", "chunking"}}
+            )
             new_hash = _hash_chunk_payload(merged_text, prev.extra)
             prev.sha256 = new_hash
             prev.extra["chunk_sha"] = new_hash

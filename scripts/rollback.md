@@ -31,6 +31,7 @@
    ```
 
    Review `evaluation/runs/YYYYMMDD/` outputs for the top queries (nDCG@10, Recall@50, MRR).
+
 6. **Log the rollback.**
    - Append the action to `CHANGELOG.md`.
    - Tag the rollback release (e.g., `v0.1.0-rollback1`) with a short summary of the trigger and outcome.

@@ -16,4 +16,3 @@
 6. Regenerate API documentation with `python scripts/generate_api_docs.py` so
    the OpenAPI schema in `docs/api/openapi.json` stays in sync with the
    deployed code.
-

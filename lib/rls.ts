@@ -1,13 +1,13 @@
-import type { Session } from 'next-auth';
-import type { Prisma } from '@prisma/client';
-import { prisma, setRlsContext, clearRlsContext } from '@/lib/prisma';
+import type { Session } from "next-auth";
+import type { Prisma } from "@prisma/client";
+import { prisma, setRlsContext, clearRlsContext } from "@/lib/prisma";
 
 export async function withRlsContext<T>(
   session: Session | null,
   fn: (client: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
   if (!session?.user?.id || !session.user.orgId || !session.user.role) {
-    throw new Error('RBAC enforcement requires an authenticated session');
+    throw new Error("RBAC enforcement requires an authenticated session");
   }
 
   return prisma.$transaction(async (tx) => {

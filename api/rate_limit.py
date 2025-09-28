@@ -5,7 +5,6 @@ from __future__ import annotations
 import time
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Deque, Dict
 
 
 @dataclass(slots=True)
@@ -13,7 +12,7 @@ class RateLimiter:
     limit: int
     window_seconds: int
     blocked: int = 0
-    _buckets: Dict[str, Deque[float]] = field(default_factory=dict)
+    _buckets: dict[str, deque[float]] = field(default_factory=dict)
 
     def allow(self, key: str) -> tuple[bool, int]:
         now = time.monotonic()
