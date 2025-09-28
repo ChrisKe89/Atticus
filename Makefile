@@ -1,5 +1,5 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api ui e2e openapi smtp-test test lint format typecheck quality web-build web-start web-lint web-typecheck \
+.PHONY: env ingest eval api ui e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck \
         db.up db.down db.migrate db.seed web-test web-e2e
 
 PYTHON ?= python
@@ -42,6 +42,22 @@ eval:
 
 openapi:
 	$(PYTHON) scripts/generate_api_docs.py
+
+smoke:
+	PYTHONPATH=. $(PYTHON) scripts/test_health.py
+
+test.unit:
+	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	       tests/test_hashing.py \
+	       tests/test_config_reload.py \
+	       tests/test_mailer.py
+
+test.api:
+	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	       tests/test_chat_route.py \
+	       tests/test_contact_route.py \
+	       tests/test_error_schema.py \
+	       tests/test_ui_route.py
 
 test:
         pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \

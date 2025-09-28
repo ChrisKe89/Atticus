@@ -129,6 +129,9 @@ Common shortcuts:
 | `make web-test` | Run Vitest unit tests for RBAC helpers |
 | `make web-e2e` | Run Playwright RBAC/authentication smoke tests |
 | `make smtp-test` | Send a test SES email |
+| `make smoke` | Run a lightweight FastAPI health probe |
+| `make test.unit` | Execute focused unit tests (hashing, config reload, mailer) |
+| `make test.api` | Execute API contract tests (ask/contact/error schema/UI) |
 | `make e2e` | Ingest -> Eval -> API/UI smoke (via `scripts/e2e_smoke.py`) |
 | `make openapi` | Regenerate OpenAPI schema |
 | `make test` | Run tests with >=90% coverage |
@@ -147,13 +150,13 @@ Common shortcuts:
 
 ## Web UI
 
-The chat experience is served from the static assets under `web/static`.
+The chat experience is served from the static assets under `web/static` while the production UI lives in the Next.js app.
 
-- `web/static/index.html` hosts the Atticus chat surface that calls the `/ask` API for grounded answers.
+- `web/static/index.html` hosts a lightweight chat surface that calls the unified `/ask` API returning `{answer, citations, confidence, should_escalate, request_id}`.
 - `web/static/contact.html` provides the escalation form backed by the `/contact` endpoint.
 - `web/static/admin.html` keeps quick navigation shortcuts for operations staff.
 
-Run `make api` and browse to `http://localhost:8000/static/index.html` (or your configured base URL) to load the interface.
+Run `make api` and browse to `http://localhost:8000/static/index.html` (or your configured base URL) to load the legacy interface.
 
 ---
 
