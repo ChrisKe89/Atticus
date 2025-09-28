@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Any
 
 import psycopg
 from pgvector.psycopg import Vector, register_vector
@@ -250,7 +251,9 @@ class PgVectorRepository:
         result: list[StoredChunk] = []
         for row in rows:
             metadata = row.get("metadata") or {}
-            meta = {str(k): str(v) for k, v in metadata.items()} if isinstance(metadata, dict) else {}
+            meta = (
+                {str(k): str(v) for k, v in metadata.items()} if isinstance(metadata, dict) else {}
+            )
             result.append(
                 StoredChunk(
                     chunk_id=str(row["chunk_id"]),
@@ -377,7 +380,9 @@ class PgVectorRepository:
         formatted: list[dict[str, Any]] = []
         for row in rows:
             metadata = row.get("metadata") or {}
-            meta = {str(k): str(v) for k, v in metadata.items()} if isinstance(metadata, dict) else {}
+            meta = (
+                {str(k): str(v) for k, v in metadata.items()} if isinstance(metadata, dict) else {}
+            )
             formatted.append(
                 {
                     "chunk_id": str(row["chunk_id"]),

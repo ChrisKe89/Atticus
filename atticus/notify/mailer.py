@@ -9,9 +9,11 @@ Exports:
 from __future__ import annotations
 
 import json
+import logging
 import smtplib
+from collections.abc import Iterable
 from email.message import EmailMessage
-from typing import Any, Iterable, Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 from atticus.config import load_settings
 from atticus.logging import configure_logging, log_error
@@ -75,7 +77,9 @@ def _compose_message(
     return msg
 
 
-def _log_failure(logger, *, reason: str, host: str, port: int, exc: Exception) -> None:
+def _log_failure(
+    logger: logging.Logger, *, reason: str, host: str, port: int, exc: Exception
+) -> None:
     log_error(
         logger,
         "escalation_email_failed",

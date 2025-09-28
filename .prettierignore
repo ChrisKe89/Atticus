@@ -1,0 +1,10 @@
+node_modules
+.next
+coverage
+reports
+logs
+dist
+build
+public
+*.lock
+Makefile

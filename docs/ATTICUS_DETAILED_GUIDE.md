@@ -15,12 +15,12 @@ setup steps and [OPERATIONS.md](../OPERATIONS.md) for runbooks.
 
 ## CED Chunking Rules
 
-* **Prose** – paragraphs respect token targets/overlap and emit metadata (`breadcrumbs`, `section_heading`, `chunk_index`).
+- **Prose** – paragraphs respect token targets/overlap and emit metadata (`breadcrumbs`, `section_heading`, `chunk_index`).
   Trailing fragments below `CHUNK_MIN_TOKENS` merge with the previous chunk and update the SHA-256 fingerprint.
-* **Tables** – each row (excluding headers) becomes a chunk with `chunking=table_row`, serialized cells, and table metadata
+- **Tables** – each row (excluding headers) becomes a chunk with `chunking=table_row`, serialized cells, and table metadata
   (`table_headers`, `table_row_index`).
-* **Footnotes** – headings or sections flagged as footnotes skip token splitting and emit a single `chunking=footnote` chunk.
-* **Deduplication** – every chunk carries a `chunk_sha` (SHA-256 of text + metadata). Duplicates within a document are skipped,
+- **Footnotes** – headings or sections flagged as footnotes skip token splitting and emit a single `chunking=footnote` chunk.
+- **Deduplication** – every chunk carries a `chunk_sha` (SHA-256 of text + metadata). Duplicates within a document are skipped,
   and the pipeline persists the hash in Postgres (`atticus_chunks.sha256`) and metadata snapshots.
 
 3. **Index Persistence** – pgvector tables (`atticus_documents`, `atticus_chunks`) record embeddings and metadata, while `indices/index_metadata.json` snapshots chunk payloads and `logs/app.jsonl` captures counts, durations, and token stats for every run.
@@ -99,13 +99,13 @@ Track these items in [TODO.md](../TODO.md#future-enhancements-from-examples_only
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Generate `.env` | `make env` |
-| Ingest new content | `make ingest` |
-| Run evaluation harness | `make eval` |
-| Launch API + UI | `make api` |
-| Regenerate OpenAPI schema | `make openapi` |
+| Task                       | Command                                          |
+| -------------------------- | ------------------------------------------------ |
+| Generate `.env`            | `make env`                                       |
+| Ingest new content         | `make ingest`                                    |
+| Run evaluation harness     | `make eval`                                      |
+| Launch API + UI            | `make api`                                       |
+| Regenerate OpenAPI schema  | `make openapi`                                   |
 | Trigger dry-run escalation | `SMTP_DRY_RUN=1 python -m atticus.notify.mailer` |
 
 For operational depth, see [OPERATIONS.md](../OPERATIONS.md) and [TROUBLESHOOTING.md](../TROUBLESHOOTING.md).

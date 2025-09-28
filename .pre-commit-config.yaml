@@ -19,6 +19,26 @@ repos:
         args: ["--config-file=pyproject.toml"]
   - repo: local
     hooks:
+      - id: eslint
+        name: eslint
+        entry: npx --yes eslint --max-warnings=0
+        language: node
+        types_or: [javascript, jsx, ts, tsx]
+        additional_dependencies:
+          - eslint@8.57.0
+          - eslint-config-next@14.2.5
+          - eslint-config-prettier@9.1.0
+          - eslint-plugin-tailwindcss@3.13.0
+          - typescript@5.4.5
+        args: ["--fix"]
+      - id: prettier
+        name: prettier
+        entry: npx --yes prettier --write
+        language: node
+        types_or: [javascript, jsx, ts, tsx, json, yaml, css, scss, less, markdown, mdx]
+        additional_dependencies:
+          - prettier@3.3.3
+          - prettier-plugin-tailwindcss@0.5.14
       - id: markdownlint-cli2
         name: markdownlint-cli2
         entry: npx --yes markdownlint-cli2

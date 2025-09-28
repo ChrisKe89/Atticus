@@ -1,4 +1,5 @@
-import pytest
+from __future__ import annotations
+
 import pytest
 
 
@@ -24,7 +25,7 @@ def test_send_escalation_smoke(monkeypatch):
 
     mailer = pytest.importorskip("atticus.notify.mailer")
 
-    created: list["FakeSMTP"] = []
+    created: list[FakeSMTP] = []
 
     class FakeSMTP:
         def __init__(self, host, port, timeout=None):
@@ -79,9 +80,7 @@ def test_send_escalation_smoke(monkeypatch):
     trace = {
         "user_id": "user-123",
         "request_id": "req-abc",
-        "top_documents": [
-            {"chunk_id": "chunk-1", "score": 0.8, "source_path": "doc.pdf"}
-        ],
+        "top_documents": [{"chunk_id": "chunk-1", "score": 0.8, "source_path": "doc.pdf"}],
         "question": "Explain toner yield",
     }
     result = mailer.send_escalation("Unit Test", "body", trace=trace)

@@ -49,7 +49,9 @@ class VectorStore:
         self.manifest: Manifest = manifest
 
         self.chunks: list[StoredChunk] = self.repository.load_all_chunk_metadata()
-        self.chunk_index_map: dict[str, int] = {chunk.chunk_id: idx for idx, chunk in enumerate(self.chunks)}
+        self.chunk_index_map: dict[str, int] = {
+            chunk.chunk_id: idx for idx, chunk in enumerate(self.chunks)
+        }
         self.chunk_lookup: dict[str, StoredChunk] = {chunk.chunk_id: chunk for chunk in self.chunks}
         self.embedding_client = EmbeddingClient(settings, logger=logger)
 
@@ -172,9 +174,9 @@ class VectorStore:
         bm25_all = self._bm25_scores(query)
         candidates: dict[str, dict[str, Any]] = {row["chunk_id"]: row for row in vector_rows}
 
-        top_lexical = sorted(
-            range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True
-        )[: max(top_k * 3, 30)]
+        top_lexical = sorted(range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True)[
+            : max(top_k * 3, 30)
+        ]
         for idx in top_lexical:
             chunk_id = self.chunks[idx].chunk_id
             candidates.setdefault(chunk_id, {"chunk_id": chunk_id})
@@ -183,9 +185,7 @@ class VectorStore:
             return []
 
         candidate_indices = [
-            self.chunk_index_map[c_id]
-            for c_id in candidates
-            if c_id in self.chunk_index_map
+            self.chunk_index_map[c_id] for c_id in candidates if c_id in self.chunk_index_map
         ]
         bm25_min = min((bm25_all[i] for i in candidate_indices), default=0.0)
         bm25_max = max((bm25_all[i] for i in candidate_indices), default=0.0)

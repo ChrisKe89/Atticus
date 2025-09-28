@@ -52,9 +52,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "question"
-        ],
+        "required": ["question"],
         "title": "AskRequest",
         "type": "object"
       },
@@ -84,13 +82,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "answer",
-          "confidence",
-          "should_escalate",
-          "request_id",
-          "sources"
-        ],
+        "required": ["answer", "confidence", "should_escalate", "request_id", "sources"],
         "title": "AskResponse",
         "type": "object"
       },
@@ -138,9 +130,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "path"
-        ],
+        "required": ["path"],
         "title": "AskSource",
         "type": "object"
       },
@@ -170,9 +160,7 @@
             "title": "Transcript"
           }
         },
-        "required": [
-          "reason"
-        ],
+        "required": ["reason"],
         "title": "ContactRequest",
         "type": "object"
       },
@@ -190,10 +178,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "term",
-          "synonyms"
-        ],
+        "required": ["term", "synonyms"],
         "title": "DictionaryEntry",
         "type": "object"
       },
@@ -207,9 +192,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "entries"
-        ],
+        "required": ["entries"],
         "title": "DictionaryPayload",
         "type": "object"
       },
@@ -231,10 +214,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "time",
-          "message"
-        ],
+        "required": ["time", "message"],
         "title": "ErrorLogEntry",
         "type": "object"
       },
@@ -263,12 +243,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "metrics",
-          "deltas",
-          "summary_csv",
-          "summary_json"
-        ],
+        "required": ["metrics", "deltas", "summary_csv", "summary_json"],
         "title": "EvalResponse",
         "type": "object"
       },
@@ -326,12 +301,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "status",
-          "manifest_present",
-          "document_count",
-          "chunk_count"
-        ],
+        "required": ["status", "manifest_present", "document_count", "chunk_count"],
         "title": "HealthResponse",
         "type": "object"
       },
@@ -515,9 +485,7 @@
             "title": "Time"
           }
         },
-        "required": [
-          "request_id"
-        ],
+        "required": ["request_id"],
         "title": "SessionLogEntry",
         "type": "object"
       },
@@ -531,9 +499,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "sessions"
-        ],
+        "required": ["sessions"],
         "title": "SessionLogResponse",
         "type": "object"
       },
@@ -562,11 +528,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationError",
         "type": "object"
       }

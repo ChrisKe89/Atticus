@@ -1,22 +1,22 @@
-import { expect, test } from '@playwright/test';
-import path from 'node:path';
-import fs from 'node:fs/promises';
+import { expect, test } from "@playwright/test";
+import path from "node:path";
+import fs from "node:fs/promises";
 
-const mailboxDir = process.env.AUTH_DEBUG_MAILBOX_DIR ?? './logs/mailbox';
-const adminEmail = process.env.PLAYWRIGHT_ADMIN_EMAIL ?? 'admin@atticus.local';
+const mailboxDir = process.env.AUTH_DEBUG_MAILBOX_DIR ?? "./logs/mailbox";
+const adminEmail = process.env.PLAYWRIGHT_ADMIN_EMAIL ?? "admin@atticus.local";
 
 async function waitForMagicLink(email: string, timeoutMs = 15_000): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   const filePath = path.resolve(mailboxDir, `${email.toLowerCase()}.txt`);
   while (Date.now() < deadline) {
     try {
-      const contents = await fs.readFile(filePath, 'utf-8');
+      const contents = await fs.readFile(filePath, "utf-8");
       const lines = contents
-        .split('\n')
+        .split("\n")
         .map((line) => line.trim())
         .filter(Boolean);
       const last = lines.at(-1);
-      if (last && last.startsWith('http')) {
+      if (last && last.startsWith("http")) {
         return last;
       }
     } catch (error) {
@@ -27,22 +27,22 @@ async function waitForMagicLink(email: string, timeoutMs = 15_000): Promise<stri
   throw new Error(`Magic link for ${email} not found in ${mailboxDir}`);
 }
 
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: "serial" });
 
-test('redirects unauthenticated users away from admin dashboard', async ({ page }) => {
-  const response = await page.goto('/admin');
+test("redirects unauthenticated users away from admin dashboard", async ({ page }) => {
+  const response = await page.goto("/admin");
   expect(response?.status()).toBeLessThan(500);
   await expect(page).toHaveURL(/\/signin/);
-  await expect(page.getByRole('heading', { name: 'Sign in to Atticus' })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sign in to Atticus" })).toBeVisible();
 });
 
-test('allows admins to load the glossary panel after magic link sign-in', async ({ page }) => {
-  await page.goto('/signin');
-  await page.getByLabel('Work email').fill(adminEmail);
-  await page.getByRole('button', { name: /magic link/i }).click();
+test("allows admins to load the glossary panel after magic link sign-in", async ({ page }) => {
+  await page.goto("/signin");
+  await page.getByLabel("Work email").fill(adminEmail);
+  await page.getByRole("button", { name: /magic link/i }).click();
   const magicLink = await waitForMagicLink(adminEmail);
   await page.goto(magicLink);
-  await page.waitForURL('**/admin');
-  await expect(page.getByRole('heading', { name: 'Operations and governance' })).toBeVisible();
-  await expect(page.getByText('Add glossary entry')).toBeVisible();
+  await page.waitForURL("**/admin");
+  await expect(page.getByRole("heading", { name: "Operations and governance" })).toBeVisible();
+  await expect(page.getByText("Add glossary entry")).toBeVisible();
 });

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
-import { readdirSync, statSync } from 'node:fs';
-import path from 'node:path';
+import { readdirSync, statSync } from "node:fs";
+import path from "node:path";
 
-const appDir = path.resolve('app');
+const appDir = path.resolve("app");
 
-function walkRoutes(current, prefix = '') {
+function walkRoutes(current, prefix = "") {
   const entries = readdirSync(current, { withFileTypes: true });
   const result = [];
   for (const entry of entries) {
-    if (entry.name.startsWith('_') || entry.name.startsWith('.')) continue;
+    if (entry.name.startsWith("_") || entry.name.startsWith(".")) continue;
     const fullPath = path.join(current, entry.name);
     const routePath = path.join(prefix, entry.name);
     if (entry.isDirectory()) {
-      const isRouteSegment = ['page.tsx', 'route.ts', 'layout.tsx'].some((file) => {
+      const isRouteSegment = ["page.tsx", "route.ts", "layout.tsx"].some((file) => {
         try {
           return statSync(path.join(fullPath, file)).isFile();
         } catch (error) {
@@ -20,7 +20,7 @@ function walkRoutes(current, prefix = '') {
         }
       });
       if (isRouteSegment) {
-        result.push({ segment: routePath.replace(/\\/g, '/'), files: readdirSync(fullPath) });
+        result.push({ segment: routePath.replace(/\\/g, "/"), files: readdirSync(fullPath) });
       }
       result.push(...walkRoutes(fullPath, routePath));
     }

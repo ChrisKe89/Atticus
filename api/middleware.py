@@ -1,4 +1,5 @@
 """Custom middleware for request IDs and logging."""
+
 from __future__ import annotations
 
 import hashlib
