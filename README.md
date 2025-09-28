@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to help **Sales** teams answer questions immediately, reduce interruptions to **Service** and **Marketing**, and speed up **tender** responses.  
+Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to help **Sales** teams answer questions immediately, reduce interruptions to **Service** and **Marketing**, and speed up **tender** responses.
 It ingests your content, builds a searchable index, and generates grounded answers with citations. When confidence is low, Atticus provides a cautious partial answer and escalates via email (SES).
 
 ## Quick Start
@@ -95,7 +95,7 @@ psql "$env:DATABASE_URL" `
 
 ### 3. Add content
 
-Drop documents into `content/`, naming them `YYYYMMDD_topic_version.ext` for easy traceability.  
+Drop documents into `content/`, naming them `YYYYMMDD_topic_version.ext` for easy traceability.
 Follow the taxonomy in [AGENTS.md](AGENTS.md#filefolder-glossary).
 
 ### 4. Ingest and index
