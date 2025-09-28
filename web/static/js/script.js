@@ -219,7 +219,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return { status: response.status, data };
     }
 
-    function renderBotReply({ answer, sources, confidence, escalated, ae_id, request_id }) {
+    function normalizeCitations(citations) {
+        if (!Array.isArray(citations)) {
+            return [];
+        }
+        return citations.map((citation) => {
+            if (!citation || typeof citation !== "object") {
+                return "";
+            }
+            const parts = [];
+            if (citation.source_path) {
+                parts.push(citation.source_path);
+            }
+            if (typeof citation.page_number === "number") {
+                parts.push(`page ${citation.page_number}`);
+            }
+            if (citation.heading) {
+                parts.push(citation.heading);
+            }
+            return parts.join(" · ") || "";
+        }).filter(Boolean);
+    }
+
+    function renderBotReply({ answer, citations, confidence, should_escalate, ae_id, request_id }) {
         const parts = [answer || "(No answer returned)"];
         const metaChunks = [];
         if (typeof confidence === "number") {
@@ -230,11 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const metaText = metaChunks.length ? metaChunks.join(" · ") : undefined;
         addMessage(parts.join("\n\n"), "bot", {
-            sources,
+            sources: normalizeCitations(citations),
             metaText,
         });
 
-        if (escalated) {
+        if (should_escalate) {
             const escalationMsg = ae_id
                 ? `Confidence below threshold. Escalation created (ticket ${ae_id}).`
                 : "Confidence below threshold. Escalation created.";
@@ -262,9 +284,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const { status, data } = await sendToApi(message);
                 renderBotReply({
                     answer: data.answer,
-                    sources: data.sources,
+                    citations: data.citations ?? data.sources,
                     confidence: data.confidence,
-                    escalated: Boolean(data.escalated || status === 206),
+                    should_escalate: Boolean(data.should_escalate || data.escalated || status === 206),
                     ae_id: data.ae_id,
                     request_id: data.request_id,
                 });
