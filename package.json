@@ -1,6 +1,9 @@
 {
   "name": "atticus",
+
   "version": "0.5.3",
+
+
   "private": true,
   "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {

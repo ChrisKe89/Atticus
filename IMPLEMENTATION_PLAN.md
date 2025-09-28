@@ -169,5 +169,9 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 
 
 ## Notes
+
 - Phase 2 introduced the shared Ask DTOs (`lib/ask-contract.ts`), streaming proxy (`app/api/ask/route.ts`), and Vitest coverage for SSE parsing.
 - Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.
+
+- Unable to progress beyond Phase 0 within current session; remaining phases marked ⚠️ for follow-up.
+
