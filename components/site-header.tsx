@@ -54,7 +54,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/80">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl items-center justify-between p-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 text-base font-semibold">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-white shadow-sm">
             A
@@ -116,7 +116,7 @@ export function SiteHeader() {
       <div
         id="mobile-nav"
         className={clsx(
-          "border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950 sm:hidden",
+          "border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           isOpen ? "block" : "hidden"
         )}
       >

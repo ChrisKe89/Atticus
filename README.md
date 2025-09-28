@@ -157,7 +157,7 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 
 ## Developer workflow
 
-1. **Environment** – generate `.env` and update SMTP + Postgres credentials.
+1. **Environment** – generate `.env` and update SMTP + Postgres credentials. Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match, and set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
 2. **Dependencies** – install Python + Node dependencies (`pip-sync` and `npm install`).
 3. **Database** – run `make db.up && make db.migrate && make db.verify && make db.seed`.
 4. **Quality** – run `make quality` locally before every PR. Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.

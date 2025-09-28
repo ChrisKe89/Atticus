@@ -18,6 +18,11 @@ The newest entries appear first.
 
 - README and AGENTS reference the new audit workflow and Windows-friendly commands.
 - Archived the legacy static UI under `archive/legacy-ui/`, pruned unused Tailwind animations, and updated docs/Makefile to use `make web-dev` as the canonical Next.js entry point.
+- `.env.example` and `scripts/generate_env.py` now surface Auth.js (`NEXTAUTH_*`) settings, reranker toggles, and safer SMTP placeholders to match `AppSettings`.
+
+### Fixed
+
+- `pyproject.toml` reads the package version from `VERSION`, restoring editable installs (`pip install -e .`) required by pytest and local tooling.
 
 ---
 
