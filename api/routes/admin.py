@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 
 from atticus.logging import log_event
 
-from ..dependencies import LoggerDep, MetricsDep, SettingsDep
+from ..dependencies import AdminGuard, LoggerDep, MetricsDep, SettingsDep
 from ..schemas import (
     DictionaryEntry,
     DictionaryPayload,
@@ -26,7 +26,7 @@ router = APIRouter(prefix="/admin")
 
 
 @router.get("/dictionary", response_model=DictionaryPayload)
-async def read_dictionary(settings: SettingsDep) -> DictionaryPayload:
+async def read_dictionary(_: AdminGuard, settings: SettingsDep) -> DictionaryPayload:
     try:
         entries = [DictionaryEntry(**item) for item in load_dictionary(settings.dictionary_path)]
     except ValueError as exc:  # pragma: no cover - corrupted file path
@@ -36,6 +36,7 @@ async def read_dictionary(settings: SettingsDep) -> DictionaryPayload:
 
 @router.post("/dictionary", response_model=DictionaryPayload)
 async def write_dictionary(
+    _: AdminGuard,
     payload: DictionaryPayload,
     settings: SettingsDep,
     logger: LoggerDep,
@@ -47,6 +48,7 @@ async def write_dictionary(
 
 @router.get("/errors", response_model=list[ErrorLogEntry])
 async def get_errors(
+    _: AdminGuard,
     settings: SettingsDep,
     since: str | None = Query(default=None, description="Return errors since ISO timestamp"),
 ) -> list[ErrorLogEntry]:
@@ -113,6 +115,7 @@ def _render_session_html(entries: list[dict[str, object]]) -> str:
     "/sessions", response_model=SessionLogResponse, responses={200: {"content": {"text/html": {}}}}
 )
 async def get_sessions(
+    _: AdminGuard,
     settings: SettingsDep,
     format: str = Query("json", pattern="^(json|html)$", description="Return JSON or HTML"),
     limit: int = Query(20, ge=1, le=200),
@@ -127,6 +130,7 @@ async def get_sessions(
 
 @router.get("/metrics", response_model=MetricsDashboard)
 async def get_metrics_dashboard(
+    _: AdminGuard,
     metrics: MetricsDep,
     request: Request,
 ) -> MetricsDashboard:

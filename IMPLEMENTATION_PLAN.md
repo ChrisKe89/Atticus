@@ -132,7 +132,7 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 ## Phase 6 – Developer Experience & CI (TODO §B.1)
 
 - **Objectives**
-  - Harmonize linting/formatting (ESLint, Prettier, Ruff, Black, mypy) and ensure CI runs frontend + backend gates.
+- Harmonize linting/formatting (ESLint, Prettier, Ruff formatter, mypy) and ensure CI runs frontend + backend gates.
 - **Commits**
   - `chore(phase-6): extend ci matrix for web stack`
   - `chore(phase-6): tighten lint/typecheck configs`

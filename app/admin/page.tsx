@@ -57,7 +57,7 @@ const panels: Array<{
 ];
 
 export const metadata: Metadata = {
-  title: "Admin · Atticus",
+  title: "Admin - Atticus",
 };
 
 type GlossaryEntryRecord = {

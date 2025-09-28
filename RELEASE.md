@@ -41,6 +41,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 
 4. **Sync Versioning**
    - Update [`VERSION`](VERSION), `package.json`, and [CHANGELOG.md](CHANGELOG.md) with the new semantic version (e.g. `0.7.0`).
+   - Confirm the values match by running `node -p "require('./package.json').version"` and comparing with `cat VERSION`.
    - Commit the changes with a descriptive message (e.g. `release(0.7.0): developer experience + docs sync`).
 5. **Tag the Release**
    - Tag using semantic versioning, e.g. `v0.7.0`:
