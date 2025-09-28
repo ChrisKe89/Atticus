@@ -35,6 +35,24 @@ Common ingestion checks:
 
 ---
 
+## pgvector & Prisma
+
+* **`pgvector extension not installed`** — run `make db.up` to ensure Postgres is online, then:
+
+  ```bash
+  make db.verify
+  ```
+
+  ```powershell
+  make db.verify
+  ```
+
+  The script enables the extension when migrations run; if verification still fails, connect with psql and execute `CREATE EXTENSION IF NOT EXISTS vector;` manually before retrying `npx prisma migrate deploy`.
+* **Embedding dimension mismatch** — export `PGVECTOR_DIMENSION` to the value used by the ingestion pipeline (default `3072`) and re-run `make db.verify`. Update `atticus/config.py` if the embeddings service changes dimension.
+* **IVFFlat index missing or stale** — rerun migrations (`npx prisma migrate deploy`) and then `make db.verify`. The migration recreates `idx_atticus_chunks_embedding` with the configured `PGVECTOR_LISTS` default (`100`).
+
+---
+
 ## SMTP / Email Escalation
 
 * Verify all SMTP settings in `.env`: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `CONTACT_EMAIL`, and `SMTP_ALLOW_LIST`.

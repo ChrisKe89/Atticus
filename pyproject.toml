@@ -20,6 +20,8 @@ dev = [
   "types-requests",
   "types-PyYAML",
   "vulture>=2.11",
+  # Include psycopg wheels so `pip install -e .[dev]` matches Prisma migrations locally
+  "psycopg[binary]>=3.2",
   "pre-commit>=3.7"
 ]
 

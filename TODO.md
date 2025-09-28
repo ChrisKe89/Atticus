@@ -19,7 +19,7 @@ Items completed are moved to [ToDo-Complete.md](ToDo-Complete.md).
    - [ ] Reconcile CLI commands/make targets with new workflow.
 4. **TROUBLESHOOTING.md** — Auth.js email flow; pgvector extension issues; Prisma migration conflicts; SSE timeouts.
    - [ ] Capture Auth.js email magic link failure scenarios and fixes.
-   - [ ] Add pgvector + Prisma troubleshooting (extension enablement, migration drift).
+   - [x] Add pgvector + Prisma troubleshooting (extension enablement, migration drift).
    - [ ] Note SSE timeout/root-cause patterns and mitigation steps.
 5. **REQUIREMENTS.md** — add Postgres + Prisma; deprecate FAISS/Jinja2; keep Windows notes.
    - [ ] Update functional/non-functional requirements to highlight new stack.

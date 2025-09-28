@@ -2,8 +2,8 @@
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| Phase 0 | ✅ | [HEAD](commit/HEAD) – audit tooling dependencies installed |
-| Phase 1 | ⚠️ | Not started |
+| Phase 0 | ✅ | [6e50c78](commit/6e50c78) – audit tooling dependencies installed |
+| Phase 1 | ✅ | [HEAD](commit/HEAD) – Prisma vector schema + pgvector verification wired |
 | Phase 2 | ⚠️ | Not started |
 | Phase 3 | ⚠️ | Not started |
 | Phase 4 | ⚠️ | Not started |
