@@ -24,6 +24,31 @@ The newest entries appear first.
 
 ---
 
+## [0.5.1] — 2025-09-27
+
+### Fixed
+- Resolved Auth.js and RBAC type regressions by aligning session shape, callback signatures, and server helpers with NextAuth definitions.
+- Restored TypeScript coverage for glossary admin handlers and unit tests, unblocking `npm run typecheck`.
+
+### Testing
+- `npm run typecheck`
+- `npm run test:unit`
+
+---
+
+## [0.5.0] — 2025-09-27
+
+### Added
+- Auth.js email magic link authentication with Prisma adapter, Postgres schema, and RLS enforcement.
+- Database-backed glossary admin APIs plus UI gated to `ADMIN` role; persisted glossary storage with author/audit metadata.
+- Vitest unit tests and Playwright RBAC journey along with Make targets (`db.*`, `web-test`, `web-e2e`) and runbook documentation.
+
+### Changed
+- Site navigation now reflects session state (sign-in/out) and protects `/admin` behind middleware + server checks.
+- Docker Compose, Makefile, and README updated for Postgres lifecycle, Prisma migrations, and auth onboarding.
+
+---
+
 ## [0.4.0] — 2025-09-27
 
 ### Added
