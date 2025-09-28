@@ -48,6 +48,7 @@
 1. Replace the ask proxy with a true streaming bridge (or document/implement a temporary polling fallback) and fix mojibake in the UI components.
 1. Add RBAC enforcement to FastAPI admin routes (and corresponding tests), update glossary docs to the new schema, and ensure error payloads include request_id per contract.
 1. After remediation, rerun the documented audit scripts/tests (npm run audit:ts, make quality, pytest ...) to verify 90%+ coverage and contract conformance.
+
 ## Phase 4
 
 - Medium - Legacy `web/static` directory still exists (albeit empty) alongside the archived assets, so the repo cleanup called out in IMPLEMENTATION_PLAN.md remains unfinished (`web/static`).
@@ -58,3 +59,125 @@
 
 - Medium - Empty `web/` subfolders (`web/static`, `web/templates`) are still present, contradicting the "orphan cleanup" objective and signalling that FastAPI UI remnants were not fully retired.
 - Low - `REPO_STRUCTURE.md` omits the lingering `web/` tree, so the published structure map diverges from the actual repository layout (REPO_STRUCTURE.md:5-27).
+
+## Audit Overview (Phases 0–5)
+
+— Phase 0 — Safety & Baseline —
+
+- Intended: Branch creation; complete env scaffolding; audit tool scripts runnable.
+- Evidence: `.env.example:4-19`, `scripts/generate_env.py:25-63`, `atticus/config.py:75-143`, `package.json: scripts`.
+- Status: Partial.
+- Gaps/Risks: Missing keys vs `AppSettings`; sensitive defaults in generator; alias mismatch (`CONTENT_DIR` vs `CONTENT_ROOT`).
+- Remediation: Align `.env.example` + generator with `AppSettings`; remove sensitive defaults; add `RATE_LIMIT_REQUESTS`, `RATE_LIMIT_WINDOW_SECONDS`, `LOG_FORMAT`, `EMAIL_SANDBOX`.
+
+— Phase 1 — Data Layer First —
+
+- Intended: Prisma models for pgvector; migrations; verification wired.
+- Evidence: Duplicate models `prisma/schema.prisma:116-190`; trigger function camelCase vs snake_case `updated_at`; `GlossaryEntry.synonyms` annotated incorrectly; verification present `scripts/verify_pgvector.sql`, `Makefile:37`.
+- Status: Fail (migration integrity).
+- Gaps/Risks: `prisma generate/validate` break; migration order/trigger failure.
+- Remediation: Remove duplicate models; correct `synonyms`; fix/update triggers; re-run migrations and verify IVFFlat.
+
+— Phase 2 — RAG Contract Unification —
+
+- Intended: Unified `/api/ask` contract; real SSE; UI shows sources/errors.
+- Evidence: Proxy buffers full JSON then emits events `app/api/ask/route.ts:39-103`; mojibake in chat/admin; contracts/tests exist.
+- Status: Partial.
+- Gaps/Risks: No incremental streaming; encoding defects; error schema gaps.
+- Remediation: Implement true streaming; fix encoding; normalize errors to include `request_id` and `fields`.
+
+— Phase 3 — Auth & RBAC Hardening —
+
+- Intended: Enforce RBAC in server actions; glossary review metadata; docs/runbooks updated.
+- Evidence: Prisma RBAC + glossary review migration; FastAPI admin routes lack RBAC; glossary error utils return bare errors; runbook updated.
+- Status: Partial.
+- Gaps/Risks: Server-side RBAC missing for FastAPI admin; inconsistent error schema.
+- Remediation: Add RBAC dependency to FastAPI admin routes; standardize error payloads; update tests/docs.
+
+— Phase 4 — Frontend Hygiene —
+
+- Intended: Tailwind paths; Framer Motion decision; shadcn/ui normalization; unused assets removed.
+- Evidence: Tailwind content paths OK; Framer Motion not used but mandated in AGENTS; `web/static` remains (empty); shadcn/ui used in components.
+- Status: Partial.
+- Gaps/Risks: Tooling-doc mismatch (Framer); lingering empty folders.
+- Remediation: Remove `web/static`/`web/templates` or archive; update AGENTS to optionalize or reintroduce FM minimally.
+
+— Phase 5 — Orphans & Structure Cleanup —
+
+- Intended: Remove FastAPI UI vestiges; update repo structure/docs; clarify make targets.
+- Evidence: `web/` folders persist; `REPO_STRUCTURE.md` omits them; Makefile target named `web-dev` (not `ui`).
+- Status: Partial.
+- Gaps/Risks: Structural drift; confusing targets.
+- Remediation: Remove lingering `web/` folders; align docs; rename/document targets.
+
+## Combined Implementation & Debug Plan (Phases 0–5)
+
+Goal: remedy gaps to attain a 95% working app with stable data model, streaming `/api/ask`, enforced RBAC, and clean UI.
+
+Phase 0 — Env & Safety
+
+- Add all required keys to `.env.example` matching `AppSettings` (Auth.js, SMTP, rate limit, logging, sandbox flags).
+- Replace sensitive generator defaults with placeholders; rename `CONTENT_DIR` → `CONTENT_ROOT`.
+- Debug: `python scripts/generate_env.py --force --ignore-env`; `python scripts/debug_env.py`; verify expected keys resolved.
+- Acceptance: `npm run audit:py`, `npm run audit:routes`, `npm run audit:ts` run without env-related failures.
+
+Phase 1 — Prisma & pgvector
+
+- Fix `prisma/schema.prisma` duplicates and `GlossaryEntry.synonyms` type.
+- Update `app_private.update_updated_at()` (or add per-table triggers) for `updated_at` columns.
+- Re-run: `npx prisma migrate dev --name fix-schema`, `npm run prisma:generate`, `make db.migrate`.
+- Verify: `make db.verify` with `PGVECTOR_DIMENSION`/`PGVECTOR_LISTS`.
+- Acceptance: `prisma validate` OK; `db.verify` success.
+
+Phase 2 — Ask Contract & Streaming
+
+- Implement true streaming in `app/api/ask/route.ts` forwarding upstream SSE/body chunks; set `Content-Type: text/event-stream`, `Cache-Control: no-transform`, `Connection: keep-alive`.
+- Fix mojibake in chat/admin; ensure ASCII or correct entities.
+- Normalize errors to global contract with `request_id` and optional `fields`.
+- Tests: Expand `tests/unit/ask-client.test.ts` (chunk boundaries, fallback JSON) + Playwright happy-path.
+- Acceptance: Incremental events received; UI renders sources; tests green.
+
+Phase 3 — RBAC & Glossary
+
+- Enforce server-side RBAC on FastAPI admin (`/admin/dictionary`…) using a role-check dependency; return 401/403 appropriately.
+- Standardize Next glossary error responses to include `request_id`.
+- Docs: Update `docs/glossary-spec.md` to match Prisma schema/workflows.
+- Tests: Pytest and Playwright to ensure non-admin is blocked; admin CRUD works.
+- Acceptance: Protected endpoints reject unauthorized users; admin flows pass; docs aligned.
+
+Phase 4 — Frontend Hygiene
+
+- Remove `web/static` and `web/templates` (archive if needed), ensure no references remain.
+- Decide on Framer Motion: add minimal variants or drop from AGENTS + package.json.
+- Run `npm run audit:ts` and resolve unused imports/components; confirm Tailwind purge coverage via `npm run build` size checks.
+- Acceptance: Lint/typecheck clean; audits clean; build succeeds; docs reflect final stack.
+
+Phase 5 — Orphans & Structure
+
+- Update `REPO_STRUCTURE.md` and `ARCHITECTURE.md` to match final tree and canonical Next.js UI.
+- Rename `web-dev` target to `app-dev` (or document alias) to avoid confusion.
+- Run `python scripts/audit_unused.py --json` to confirm no orphaned Python routes/utilities.
+- Acceptance: No orphans flagged; repo/docs/Makefile aligned.
+
+## Debug Workflow & Gating
+
+- After each phase run: `npm run lint`, `npm run typecheck`, `npm run test:unit`, `pytest -q`, `npm run build`, `npm run audit:ts`, `make db.verify`.
+- Observe runtime: `logs/app.jsonl`, `logs/errors.jsonl`; confirm SSE via `curl -N http://localhost:3000/api/ask`.
+- CI parity: ensure the above runs in CI (added in Phase 6 later) but validate locally now.
+
+## End-to-End Smoke for 95% Target
+
+- `make db.up && make db.migrate && make db.seed`.
+- Start services: `make api` (FastAPI) and `npm run dev` (Next.js).
+- Validate flows:
+  - Chat: ask, stream answer, sources visible, `X-Request-ID` present.
+  - Admin: magic link sign-in, RBAC gate `/admin`, glossary approve path.
+  - Contact: submit escalation; verify sandbox mail/log.
+- Coverage: ≥90% backend; ≥80% UI; audits pass.
+
+## Risks to Track
+
+- Migration/trigger order (ensure trigger exists before IVFFlat operations).
+- SSE behind proxies/load balancers (disable buffering; set `no-transform`).
+- Secret management in runners (placeholders for dev; central store for real envs).
+- Residual references to `web/` in docs/tools causing confusion.
