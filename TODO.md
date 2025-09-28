@@ -11,7 +11,7 @@ Phased Plan (Single Branch) which summarises the ToDo items below.
 
 - [x] Replace FAISS with pgvector (schema/migrations, ingestion & retrieval rewrite, dependency cleanup).
 - [x] Update atticus/config.py, remove atticus/faiss_index.py, adjust ingest/pipeline.py, retriever/vector_store.py, requirements.in.
-- [ ] Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock.
+- [x] Tests: ingestion/retrieval unit + integration suite, regenerate requirements lock.
 ### Phase 2 – API Contract Alignment
 
 - [x] Merge /api/ask and /api/chat; remove FastAPI UI remnants in api/main.py; update Makefile targets.

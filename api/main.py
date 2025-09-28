@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.6.1",
+    version="0.6.2",
     docs_url=None,
     redoc_url=None,
     lifespan=lifespan,
