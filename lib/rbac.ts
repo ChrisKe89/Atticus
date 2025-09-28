@@ -1,0 +1,39 @@
+import { Role } from '@prisma/client';
+import type { Session } from 'next-auth';
+
+export class ForbiddenError extends Error {
+  constructor(message = 'Forbidden') {
+    super(message);
+    this.name = 'ForbiddenError';
+  }
+}
+
+export class UnauthorizedError extends Error {
+  constructor(message = 'Unauthorized') {
+    super(message);
+    this.name = 'UnauthorizedError';
+  }
+}
+
+export function requireSession(session: Session | null): Session {
+  if (!session?.user?.id) {
+    throw new UnauthorizedError();
+  }
+  return session;
+}
+
+export function ensureRole(session: Session | null, allowed: Role[]): Session {
+  const activeSession = requireSession(session);
+  if (!allowed.includes(activeSession.user.role)) {
+    throw new ForbiddenError('Insufficient role');
+  }
+  return activeSession;
+}
+
+export function canReviewGlossary(session: Session | null): Session {
+  return ensureRole(session, [Role.ADMIN, Role.REVIEWER]);
+}
+
+export function canEditGlossary(session: Session | null): Session {
+  return ensureRole(session, [Role.ADMIN]);
+}
