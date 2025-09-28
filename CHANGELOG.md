@@ -17,6 +17,25 @@ The newest entries appear first.
 
 ---
 
+
+## [0.5.3] — 2025-10-04
+
+### Added
+- Next.js `/api/ask` route proxying the FastAPI retriever with SSE support and shared TypeScript/Pydantic DTOs.
+- Streaming chat client (`components/chat/chat-panel.tsx`) with typed `lib/ask-client.ts` helper and Vitest coverage for SSE parsing.
+- Prisma migration extending `GlossaryEntry` with synonyms and review metadata alongside tests for the FastAPI admin dictionary route.
+
+### Changed
+- FastAPI `AskResponse` now returns `sources` objects (`path`, `page`, `heading`, `chunkId`, `score`) and honours `contextHints`/`topK` overrides.
+- Glossary admin UI exposes synonyms, review notes, and reviewer timestamps; TROUBLESHOOTING now documents Auth.js magic link and SSE debugging steps (including PowerShell flows).
+- `.env.example` documents the `RAG_SERVICE_URL` required for the Next.js proxy, and README details the streaming `/api/ask` contract.
+
+### Testing
+- `npm run test:unit`
+- `pytest tests/test_chat_route.py`
+- `pytest tests/test_admin_route.py`
+
+
 ## [0.5.2] — 2025-09-30
 
 ### Added

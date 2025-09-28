@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerAuthSession } from '@/lib/auth';
 import { withRlsContext } from '@/lib/rls';
 import { canEditGlossary, canReviewGlossary } from '@/lib/rbac';
-import { handleGlossaryError, parseStatus, serializeEntry } from '@/app/api/glossary/utils';
+import { handleGlossaryError, parseStatus, parseSynonyms, serializeEntry } from '@/app/api/glossary/utils';
 
 export async function GET() {
   try {
@@ -13,6 +13,7 @@ export async function GET() {
         include: {
           author: { select: { id: true, email: true, name: true } },
           updatedBy: { select: { id: true, email: true, name: true } },
+          reviewer: { select: { id: true, email: true, name: true } },
         },
       })
     );
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
     const payload = await request.json();
     const term = typeof payload.term === 'string' ? payload.term.trim() : '';
     const definition = typeof payload.definition === 'string' ? payload.definition.trim() : '';
+    const synonyms = parseSynonyms(payload.synonyms);
     if (!term || !definition) {
       return NextResponse.json(
         { error: 'invalid_request', detail: 'Both term and definition are required.' },
@@ -42,6 +44,7 @@ export async function POST(request: Request) {
         data: {
           term,
           definition,
+          synonyms,
           status,
           orgId: session.user.orgId,
           authorId: session.user.id,
@@ -50,6 +53,7 @@ export async function POST(request: Request) {
         include: {
           author: { select: { id: true, email: true, name: true } },
           updatedBy: { select: { id: true, email: true, name: true } },
+          reviewer: { select: { id: true, email: true, name: true } },
         },
       })
     );
