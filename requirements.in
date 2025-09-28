@@ -45,3 +45,4 @@ ruff
 mypy
 types-PyYAML
 pip-tools
+vulture
