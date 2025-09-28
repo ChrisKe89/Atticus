@@ -11,6 +11,42 @@ _No changes yet._
 
 ---
 
+## [0.6.1] — 2025-09-28
+
+### Added
+- Regression test for the seed manifest generator plus contributor checklist guidance.
+- HTML evaluation dashboard (`metrics.html`) emitted alongside CSV/JSON artifacts and exposed via API/CLI.
+
+### Changed
+- `make test.unit` now executes seed manifest and evaluation artifact tests to keep ingestion guardrails enforced.
+- README and reports documentation updated to describe deterministic evaluation artifacts and CI uploads.
+
+### Testing
+- `pytest tests/test_seed_manifest.py`
+- `pytest tests/test_eval_runner.py`
+- `pytest tests/test_mailer.py`
+- `pytest tests/test_chunker.py`
+
+---
+
+## [0.6.0] — 2025-10-01
+
+### Added
+- CED chunkers with SHA-256 dedupe, ingestion manifest updates, and a `make seed` workflow for deterministic seed manifests.
+- SMTP escalation allow-list enforcement, trace payload attachments, and admin metrics dashboards with latency histograms.
+- Sample evaluation artifact scaffolding under `reports/` and glossary specification documentation.
+
+### Changed
+- Logging now propagates trace IDs across events and metrics capture P95 latency plus histogram buckets.
+- API middleware enforces per-user/IP rate limiting with structured 429 responses and hashed identifiers.
+- README, OPERATIONS, REQUIREMENTS, and TROUBLESHOOTING guides updated for ingestion, observability, and guardrail workflows.
+
+### Testing
+- `pytest tests/test_mailer.py`
+- `pytest tests/test_chat_route.py`
+
+---
+
 ## [0.4.1] — 2025-09-28
 
 ### Added

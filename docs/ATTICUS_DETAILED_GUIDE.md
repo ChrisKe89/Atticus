@@ -12,6 +12,17 @@ setup steps and [OPERATIONS.md](../OPERATIONS.md) for runbooks.
    convention and record metadata in `indices/manifest.json` during ingestion.
 2. **Chunking & Embedding** – `make ingest` honours `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, and
    `CHUNK_OVERLAP_TOKENS` before generating embeddings with the configured `EMBED_MODEL`.
+
+## CED Chunking Rules
+
+* **Prose** – paragraphs respect token targets/overlap and emit metadata (`breadcrumbs`, `section_heading`, `chunk_index`).
+  Trailing fragments below `CHUNK_MIN_TOKENS` merge with the previous chunk and update the SHA-256 fingerprint.
+* **Tables** – each row (excluding headers) becomes a chunk with `chunking=table_row`, serialized cells, and table metadata
+  (`table_headers`, `table_row_index`).
+* **Footnotes** – headings or sections flagged as footnotes skip token splitting and emit a single `chunking=footnote` chunk.
+* **Deduplication** – every chunk carries a `chunk_sha` (SHA-256 of text + metadata). Duplicates within a document are skipped,
+  and the pipeline persists the hash in Postgres (`atticus_chunks.sha256`) and metadata snapshots.
+
 3. **Index Persistence** – pgvector tables (`atticus_documents`, `atticus_chunks`) record embeddings and metadata, while `indices/index_metadata.json` snapshots chunk payloads and `logs/app.jsonl` captures counts, durations, and token stats for every run.
 4. **Retrieval** – Queries compose dense similarity with BM25 lexical scores. Optional reranking (see
    [ENABLE_RERANKER](#re-ranking-and-hybrid-retrieval)) boosts passages that align semantically, lexically,

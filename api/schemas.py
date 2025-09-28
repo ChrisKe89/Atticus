@@ -66,6 +66,7 @@ class EvalResponse(BaseModel):
     deltas: dict[str, float]
     summary_csv: str
     summary_json: str
+    summary_html: str
 
 
 class ErrorResponse(BaseModel):
@@ -106,3 +107,19 @@ class SessionLogEntry(BaseModel):
 
 class SessionLogResponse(BaseModel):
     sessions: list[SessionLogEntry]
+
+
+class MetricsHistogram(BaseModel):
+    bucket: str
+    count: int
+
+
+class MetricsDashboard(BaseModel):
+    queries: int
+    avg_confidence: float
+    escalations: int
+    avg_latency_ms: float
+    p95_latency_ms: float
+    histogram: list[MetricsHistogram]
+    recent_trace_ids: list[str]
+    rate_limit: dict[str, int] | None = None

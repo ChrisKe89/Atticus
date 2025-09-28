@@ -28,6 +28,7 @@ class StoredChunk:
     end_token: int
     page_number: int | None
     section: str | None
+    sha256: str
     embedding: Sequence[float] | None = None
     extra: dict[str, str] = field(default_factory=dict)
 
@@ -41,6 +42,7 @@ class StoredChunk:
             "end_token": self.end_token,
             "page_number": self.page_number,
             "section": self.section,
+            "sha256": self.sha256,
             "embedding": list(self.embedding or []),
             "extra": dict(self.extra),
         }
@@ -66,6 +68,7 @@ def load_metadata(path: Path) -> list[StoredChunk]:
         extra = item.get("extra", {}) or {}
         extra_str = {str(k): str(v) for k, v in extra.items()}
         embedding = item.get("embedding")
+        sha_value = str(item.get("sha256", ""))
         result.append(
             StoredChunk(
                 chunk_id=str(item["chunk_id"]),
@@ -76,6 +79,7 @@ def load_metadata(path: Path) -> list[StoredChunk]:
                 end_token=int(item.get("end_token", 0)),
                 page_number=item.get("page_number"),
                 section=item.get("section"),
+                sha256=sha_value,
                 embedding=list(map(float, embedding)) if embedding is not None else None,
                 extra=extra_str,
             )
@@ -144,11 +148,15 @@ class PgVectorRepository:
                     token_count INTEGER,
                     start_token INTEGER,
                     end_token INTEGER,
+                    sha256 TEXT NOT NULL,
                     metadata JSONB NOT NULL,
                     embedding vector({dimension}) NOT NULL,
                     ingested_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
                 """
+            )
+            conn.execute(
+                "ALTER TABLE atticus_chunks ADD COLUMN IF NOT EXISTS sha256 TEXT NOT NULL DEFAULT ''"
             )
             conn.execute(
                 """
@@ -160,6 +168,12 @@ class PgVectorRepository:
                 """
                 CREATE INDEX IF NOT EXISTS idx_atticus_chunks_source_path
                 ON atticus_chunks(source_path)
+                """
+            )
+            conn.execute(
+                """
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_atticus_chunks_doc_sha
+                ON atticus_chunks(document_id, sha256)
                 """
             )
             conn.execute(
@@ -184,7 +198,7 @@ class PgVectorRepository:
             cur.execute(
                 """
                 SELECT chunk_id, document_id, source_path, text, start_token, end_token,
-                       page_number, section, metadata, embedding
+                       page_number, section, sha256, metadata, embedding
                 FROM atticus_chunks
                 WHERE source_path = %s
                 ORDER BY position ASC
@@ -215,6 +229,7 @@ class PgVectorRepository:
                     end_token=int(row.get("end_token") or 0),
                     page_number=row.get("page_number"),
                     section=row.get("section"),
+                    sha256=str(row.get("sha256", "")),
                     embedding=embedding_list,
                     extra=meta,
                 )
@@ -226,7 +241,7 @@ class PgVectorRepository:
             cur.execute(
                 """
                 SELECT chunk_id, document_id, source_path, text, start_token, end_token,
-                       page_number, section, metadata
+                       page_number, section, sha256, metadata
                 FROM atticus_chunks
                 ORDER BY position ASC
                 """
@@ -246,6 +261,7 @@ class PgVectorRepository:
                     end_token=int(row.get("end_token") or 0),
                     page_number=row.get("page_number"),
                     section=row.get("section"),
+                    sha256=str(row.get("sha256", "")),
                     embedding=None,
                     extra=meta,
                 )
@@ -312,11 +328,12 @@ class PgVectorRepository:
                         token_count,
                         start_token,
                         end_token,
+                        sha256,
                         metadata,
                         embedding,
                         ingested_at
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::timestamptz)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::timestamptz)
                     """,
                     (
                         chunk.chunk_id,
@@ -329,6 +346,7 @@ class PgVectorRepository:
                         token_value,
                         chunk.start_token,
                         chunk.end_token,
+                        chunk.sha256,
                         Json(meta),
                         Vector(chunk.embedding),
                         ingest_time,

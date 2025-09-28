@@ -1,14 +1,14 @@
 """Custom middleware for request IDs and logging."""
-
 from __future__ import annotations
 
+import hashlib
 import time
 import uuid
 from collections.abc import Awaitable, Callable
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from atticus.logging import log_event
 
@@ -23,9 +23,39 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
     ) -> Response:
         request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
         request.state.request_id = request_id
+        request.state.trace_id = request_id
 
         start = time.perf_counter()
         logger = getattr(request.app.state, "logger", None)
+
+        limiter = getattr(request.app.state, "rate_limiter", None)
+        if limiter and request.url.path == "/ask":
+            identifier = (
+                request.headers.get("X-User-ID")
+                or request.headers.get("X-Forwarded-For")
+                or (request.client.host if request.client else "anonymous")
+            )
+            allowed, retry_after = limiter.allow(identifier)
+            if not allowed:
+                hashed = hashlib.sha256(identifier.encode("utf-8")).hexdigest()[:12]
+                if logger is not None:
+                    log_event(
+                        logger,
+                        "rate_limit_blocked",
+                        request_id=request_id,
+                        identifier_hash=hashed,
+                        retry_after=retry_after,
+                    )
+                payload = {
+                    "error": "rate_limited",
+                    "detail": "Rate limit exceeded. Please retry later.",
+                    "request_id": request_id,
+                }
+                return JSONResponse(
+                    payload,
+                    status_code=429,
+                    headers={"Retry-After": str(retry_after), "X-Request-ID": request_id},
+                )
 
         try:
             response = await call_next(request)
@@ -65,6 +95,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 float(request.state.confidence),
                 elapsed_ms,
                 bool(getattr(request.state, "escalate", False)),
+                trace_id=request_id,
             )
 
         return response

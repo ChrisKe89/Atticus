@@ -5,16 +5,18 @@ from __future__ import annotations
 import json
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 
 from atticus.logging import log_event
 
-from ..dependencies import LoggerDep, SettingsDep
+from ..dependencies import LoggerDep, MetricsDep, SettingsDep
 from ..schemas import (
     DictionaryEntry,
     DictionaryPayload,
     ErrorLogEntry,
+    MetricsDashboard,
+    MetricsHistogram,
     SessionLogEntry,
     SessionLogResponse,
 )
@@ -121,3 +123,27 @@ async def get_sessions(
         return HTMLResponse(html)
     payload = [SessionLogEntry(**entry) for entry in entries]
     return SessionLogResponse(sessions=payload)
+
+
+@router.get("/metrics", response_model=MetricsDashboard)
+async def get_metrics_dashboard(
+    metrics: MetricsDep,
+    request: Request,
+) -> MetricsDashboard:
+    data = metrics.dashboard()
+    histogram = [
+        MetricsHistogram(bucket=bucket, count=int(count))
+        for bucket, count in data.get("latency_histogram", {}).items()
+    ]
+    limiter = getattr(request.app.state, "rate_limiter", None)
+    rate_limit = limiter.snapshot() if limiter else None
+    return MetricsDashboard(
+        queries=int(data.get("queries", 0)),
+        avg_confidence=float(data.get("avg_confidence", 0.0)),
+        escalations=int(data.get("escalations", 0)),
+        avg_latency_ms=float(data.get("avg_latency_ms", 0.0)),
+        p95_latency_ms=float(data.get("p95_latency_ms", 0.0)),
+        histogram=histogram,
+        recent_trace_ids=list(data.get("recent_trace_ids", [])),
+        rate_limit=rate_limit,
+    )

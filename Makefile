@@ -1,6 +1,6 @@
 # Makefile — Atticus
 .PHONY: env ingest eval api ui e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck \
-        db.up db.down db.migrate db.seed web-test web-e2e
+        db.up db.down db.migrate db.seed seed web-test web-e2e
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -35,10 +35,13 @@ db.seed:
         npm run db:seed
 
 ingest:
-	$(PYTHON) scripts/ingest_cli.py
+        $(PYTHON) scripts/ingest_cli.py
+
+seed:
+        $(PYTHON) scripts/make_seed.py
 
 eval:
-	$(PYTHON) scripts/eval_run.py
+        $(PYTHON) scripts/eval_run.py
 
 openapi:
 	$(PYTHON) scripts/generate_api_docs.py
@@ -48,9 +51,12 @@ smoke:
 
 test.unit:
 	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-	       tests/test_hashing.py \
-	       tests/test_config_reload.py \
-	       tests/test_mailer.py
+	tests/test_hashing.py \
+	tests/test_config_reload.py \
+	tests/test_mailer.py \
+	tests/test_chunker.py \
+	tests/test_seed_manifest.py \
+	tests/test_eval_runner.py
 
 test.api:
 	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \

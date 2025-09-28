@@ -13,32 +13,78 @@ from .config import AppSettings
 @dataclass(slots=True)
 class MetricsRecorder:
     settings: AppSettings
+    store_path: Path = field(default_factory=lambda: Path("logs/metrics/metrics.csv"))
     queries: int = 0
     total_confidence: float = 0.0
     escalations: int = 0
     total_latency_ms: float = 0.0
-    store_path: Path = field(default_factory=lambda: Path("logs/metrics/metrics.csv"))
+    latency_samples: list[float] = field(default_factory=list)
+    recent_trace_ids: list[str] = field(default_factory=list)
+    trace_id_limit: int = 50
 
-    def record(self, confidence: float, latency_ms: float, escalated: bool) -> None:
+    def record(
+        self,
+        confidence: float,
+        latency_ms: float,
+        escalated: bool,
+        *,
+        trace_id: str | None = None,
+    ) -> None:
         self.queries += 1
         self.total_confidence += confidence
         self.total_latency_ms += latency_ms
+        self.latency_samples.append(latency_ms)
+        if len(self.latency_samples) > 500:
+            self.latency_samples = self.latency_samples[-500:]
         if escalated:
             self.escalations += 1
+        if trace_id:
+            self.recent_trace_ids.append(trace_id)
+            if len(self.recent_trace_ids) > self.trace_id_limit:
+                self.recent_trace_ids = self.recent_trace_ids[-self.trace_id_limit :]
 
-    def snapshot(self) -> dict[str, float]:
+    def _latency_percentile(self, percentile: float) -> float:
+        if not self.latency_samples:
+            return 0.0
+        ordered = sorted(self.latency_samples)
+        index = int(round((percentile / 100.0) * (len(ordered) - 1)))
+        return float(ordered[index])
+
+    def latency_histogram(self) -> dict[str, int]:
+        buckets = {"0-250": 0, "250-500": 0, "500-1000": 0, "1000+": 0}
+        for value in self.latency_samples:
+            if value < 250:
+                buckets["0-250"] += 1
+            elif value < 500:
+                buckets["250-500"] += 1
+            elif value < 1000:
+                buckets["500-1000"] += 1
+            else:
+                buckets["1000+"] += 1
+        return buckets
+
+    def snapshot(self) -> dict[str, float | int]:
         if self.queries == 0:
             return {
                 "queries": 0,
                 "avg_confidence": 0.0,
                 "escalations": 0,
                 "avg_latency_ms": 0.0,
+                "p95_latency_ms": 0.0,
             }
         return {
             "queries": self.queries,
-            "avg_confidence": round(self.total_confidence / self.queries, 2),
+            "avg_confidence": round(self.total_confidence / self.queries, 3),
             "escalations": self.escalations,
             "avg_latency_ms": round(self.total_latency_ms / self.queries, 2),
+            "p95_latency_ms": round(self._latency_percentile(95), 2),
+        }
+
+    def dashboard(self) -> dict[str, object]:
+        return {
+            **self.snapshot(),
+            "latency_histogram": self.latency_histogram(),
+            "recent_trace_ids": list(self.recent_trace_ids),
         }
 
     def flush(self) -> None:
@@ -56,6 +102,7 @@ class MetricsRecorder:
                     "avg_confidence",
                     "escalations",
                     "avg_latency_ms",
+                    "p95_latency_ms",
                 ],
             )
             if write_header:
@@ -75,3 +122,5 @@ class MetricsRecorder:
         self.total_confidence = 0.0
         self.escalations = 0
         self.total_latency_ms = 0.0
+        self.latency_samples.clear()
+        self.recent_trace_ids.clear()

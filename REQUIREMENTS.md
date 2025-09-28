@@ -47,9 +47,12 @@ Key variables include:
 | `OPENAI_API_KEY` | Access key for GPT and embeddings |
 | `GEN_MODEL` | Generation model (default `gpt-4.1`) |
 | `EMBED_MODEL` | Embedding model (default `text-embedding-3-large`) |
-| `CONTACT_EMAIL`, `SMTP_*` | Escalation email settings |
+| `DATABASE_URL` | Postgres connection string for pgvector |
+| `CONTACT_EMAIL`, `SMTP_*`, `SMTP_ALLOW_LIST` | Escalation email settings and allow-list guardrail |
 | ENABLE_RERANKER | Toggle hybrid reranking (defaults to disabled) |
 | SMTP_DRY_RUN | Log escalation attempts without sending email |
+| `RATE_LIMIT_REQUESTS`, `RATE_LIMIT_WINDOW_SECONDS` | Per-user/IP rate limit configuration |
+| `LOG_VERBOSE`, `LOG_TRACE` | Enable structured trace logging |
 
 Run `python scripts/debug_env.py` to verify that environment settings are sourced and fingerprinted correctly.
 
