@@ -12,10 +12,22 @@ def test_chat_route_or_skip() -> None:
     except FileNotFoundError as exc:
         pytest.skip(f"index not built: {exc}")
         return
+    except ValueError as exc:
+        pytest.skip(f"vector store unavailable: {exc}")
+        return
 
     assert r.status_code == 200
     data: dict[str, Any] = r.json()
+    assert data["request_id"]
+    assert r.headers.get("X-Request-ID") == data["request_id"]
     assert "answer" in data
+    assert "citations" in data
+    assert isinstance(data["citations"], list)
+    if data["citations"]:
+        first = data["citations"][0]
+        assert {"chunk_id", "source_path", "score"}.issubset(first)
+    assert isinstance(data["confidence"], (float, int))
+    assert isinstance(data["should_escalate"], bool)
 
 
 def test_chat_route_rejects_placeholder_or_skip() -> None:
@@ -27,6 +39,9 @@ def test_chat_route_rejects_placeholder_or_skip() -> None:
         r = client.post("/ask", json={"query": "string"})
     except FileNotFoundError as exc:
         pytest.skip(f"index not built: {exc}")
+        return
+    except ValueError as exc:
+        pytest.skip(f"vector store unavailable: {exc}")
         return
 
     assert r.status_code == 400
