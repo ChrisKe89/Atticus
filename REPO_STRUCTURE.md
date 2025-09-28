@@ -1,138 +1,29 @@
 # Repository Structure Snapshot
 
-Key directories and files to keep when migrating the project.
+Key directories to understand when working on Atticus.
 
-- `.` (repository root)
-  - `.github/`
-    - `.github/workflows/`
-      - `.github/workflows/auto-fix-ruff.yml`
-      - `.github/workflows/eval-gate.yml`
-      - `.github/workflows/lint-test.yml`
-      - `.github/workflows/release.yml`
-  - `.vscode/`
-    - `.vscode/extensions.json`
-  - `api/`
-    - `api/routes/`
-      - `api/routes/__init__.py`
-      - `api/routes/admin.py`
-      - `api/routes/ask.py`
-      - `api/routes/chat.py`
-      - `api/routes/contact.py`
-      - `api/routes/eval.py`
-      - `api/routes/health.py`
-      - `api/routes/ingest.py`
-    - `api/__init__.py`
-    - `api/dependencies.py`
-    - `api/Dockerfile`
-    - `api/main.py`
-    - `api/middleware.py`
-    - `api/schemas.py`
-    - `api/utils.py`
-  - `atticus/`
-    - `atticus/notify/`
-      - `atticus/notify/__init__.py`
-      - `atticus/notify/mailer.py`
-    - `atticus/utils/`
-      - `atticus/utils/__init__.py`
-      - `atticus/utils/hashing.py`
-    - `atticus/__init__.py`
-    - `atticus/config.py`
-    - `atticus/embeddings.py`
-    - `atticus/vector_db.py`
-    - `atticus/logging.py`
-    - `atticus/metrics.py`
-    - `atticus/tokenization.py`
-  - `content/`
-  - `docs/`
-    - `docs/api/`
-      - `docs/api/openapi.json`
-      - `docs/api/README.md`
-    - `docs/ATTICUS_DETAILED_GUIDE.md`
-    - `docs/README.md`
-    - `docs/REMOTE_ACCESS.md`
-  - `eval/`
-  - `examples/`
-    - `examples/dev.http`
-  - `EXAMPLES_ONLY/`
-  - `indexes/`
-  - `indices/`
-  - `ingest/`
-  - `nginx/`
-    - `nginx/certs/`
-      - `nginx/certs/.gitkeep`
-    - `nginx/Dockerfile`
-    - `nginx/nginx.conf`
-  - `retriever/`
-    - `retriever/__init__.py`
-    - `retriever/generator.py`
-    - `retriever/models.py`
-    - `retriever/service.py`
-    - `retriever/vector_store.py`
-  - `scripts/`
-    - `scripts/.gitkeep`
-    - `scripts/chunk_ced.py`
-    - `scripts/debug_env.py`
-    - `scripts/e2e_smoke.py`
-    - `scripts/eval_qa.py`
-    - `scripts/eval_run.py`
-    - `scripts/generate_api_docs.py`
-    - `scripts/generate_env.py`
-    - `scripts/ingest_cli.py`
-    - `scripts/rollback.md`
-    - `scripts/rollback.py`
-    - `scripts/run_ingestion.py`
-    - `scripts/smtp_test.py`
-    - `scripts/test_health.py`
-  - `tests/`
-    - `tests/test_chat_route.py`
-    - `tests/test_config_reload.py`
-    - `tests/test_contact_route.py`
-    - `tests/test_hashing.py`
-    - `tests/test_mailer.py`
-    - `tests/test_ui_route.py`
-  - `app/`
-    - `app/page.tsx`
-    - `app/admin/page.tsx`
-    - `app/settings/page.tsx`
-    - `app/contact/page.tsx`
-    - `app/apps/page.tsx`
-    - `app/layout.tsx`
-    - `app/globals.css`
-  - `components/`
-    - `components/page-header.tsx`
-    - `components/site-footer.tsx`
-    - `components/site-header.tsx`
-  - `.coverage`
-  - `.editorconfig`
-  - `.env`
-  - `.env.example`
-  - `.gitattributes`
-  - `.gitignore`
-  - `.markdownlint-cli2.yaml`
-  - `.pre-commit-config.yaml`
-  - `AGENTS.md`
-  - `ARCHITECTURE.md`
-  - `Atticus.code-workspace`
-  - `CHANGELOG.md`
-  - `config.yaml`
-  - `CONTRIBUTING.md`
-  - `docker-compose.yml`
-  - `LICENSE`
-  - `Makefile`
-  - `OPERATIONS.md`
-  - `package-lock.json`
-  - `package.json`
-  - `postcss.config.js`
-  - `pyproject.toml`
-  - `README.md`
-  - `RELEASE.md`
-  - `REPO_STRUCTURE.md`
-  - `requirements.in`
-  - `REQUIREMENTS.md`
-  - `requirements.txt`
-  - `SECURITY.md`
-  - `STYLEGUIDE.md`
-  - `tailwind.config.js`
-  - `ToDo-Complete.md`
-  - `TODO.md`
-  - `TROUBLESHOOTING.md`
+- `app/`
+  - `page.tsx` – streaming chat surface using the unified `/api/ask` contract.
+  - `admin/` – admin dashboard with glossary workflow.
+  - `contact/` – escalation form backed by the FastAPI `/contact` endpoint.
+  - `signin/`, `settings/`, `apps/` – additional Next.js routes.
+- `components/`
+  - `chat/` – chat panel client components.
+  - `glossary/` – admin glossary UI using shadcn-style primitives.
+  - `ui/` – shared button/input/table components.
+- `lib/`
+  - `ask-client.ts`, `ask-contract.ts` – shared DTOs and streaming helpers.
+  - `auth.ts`, `rls.ts`, `utils.ts` – auth, row-level security, and UI helpers.
+- `api/`
+  - `main.py` – FastAPI entry point wiring dependencies/middleware.
+  - `routes/` – JSON APIs (`chat.py`, `contact.py`, `ingest.py`, etc.).
+  - `middleware.py`, `schemas.py` – shared FastAPI utilities and contracts.
+- `atticus/`, `retriever/`, `ingest/`, `eval/` – Python services and pipelines for ingestion, retrieval, and evaluation.
+- `prisma/` – Prisma schema and migrations for auth/glossary data.
+- `scripts/` – operational tooling (env generation, audits, ingestion, eval, etc.).
+- `tests/`
+  - Python pytest suites covering API contracts, ingestion utilities, and auth flows.
+- `archive/legacy-ui/` – historical static HTML prototype retained for reference only.
+- `content/`, `indices/`, `reports/`, `logs/` – document corpus, vector indices, evaluation artifacts, and log outputs.
+
+Supporting docs live at the repository root (`README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `OPERATIONS.md`, etc.).

@@ -81,7 +81,7 @@ Use the [Evaluation Metrics Interpretation](#evaluation-metrics-interpretation) 
   ```
 
   Available at `http://localhost:8000` (OpenAPI docs at `/docs`).
-* If the UI is ever split out, reintroduce `make ui` and update the port mapping.
+* The UI runs via `make web-dev`; if the workspace splits again, reintroduce an explicit target and update port mapping.
 * To run a full smoke test (ingest → eval → API/UI check):
 
   ```bash

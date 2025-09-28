@@ -40,13 +40,13 @@ Install Node dependencies once to run the Next.js workspace.
 
 ```bash
 npm install
-make ui            # start the Next.js dev server (http://localhost:3000)
+make web-dev       # start the Next.js dev server (http://localhost:3000)
 npm run build      # optional production build
 ```
 
 ```powershell
 npm install
-make ui            # uses the same Next.js dev server
+make web-dev       # uses the same Next.js dev server
 npm run build
 ```
 
@@ -126,13 +126,13 @@ and `metrics.html` into `eval/runs/<timestamp>/` for review and CI gating.
 Start the FastAPI backend and the Next.js UI in separate terminals.
 
 ```bash
-make api   # http://localhost:8000
-make ui    # http://localhost:3000
+make api    # http://localhost:8000
+make web-dev  # http://localhost:3000
 ```
 
 ```powershell
 make api
-make ui
+make web-dev
 ```
 
 Docs remain at `http://localhost:8000/docs`; the web workspace runs on port 3000.
@@ -179,12 +179,12 @@ From zero to production:
 2. **Content** – add or update files under `content/`.
 3. **Ingest** – `make ingest` to rebuild the index.
 4. **Evaluate** – `make eval` and review metrics.
-5. **Run** – `make api` for the backend and `make ui` for the Next.js workspace.
+5. **Run** – `make api` for the backend and `make web-dev` for the Next.js workspace.
 6. **Observe** – check `logs/app.jsonl` and `logs/errors.jsonl` or browse `/admin/sessions`.
 7. **Release** – commit the updated `indices/manifest.json` and tag a new version.
 
 Common shortcuts:
-* Fresh machine -> `make env -> make ingest -> make eval -> make api -> make ui`
+* Fresh machine -> `make env -> make ingest -> make eval -> make api -> make web-dev`
 * Content changed -> `make ingest` (+ `make eval` if regression checks are needed)
 * Code changed -> `make test`, `make lint`, `make typecheck`
 * Full smoke test -> `make e2e` (runs ingest, eval, and API/UI smoke checks)
@@ -200,12 +200,13 @@ Common shortcuts:
 | `make seed` | Generate deduplicated seed manifest (`seeds/seed_manifest.json`) |
 | `make eval` | Run retrieval evaluation and write metrics |
 | `make api` | Start FastAPI backend |
-| `make ui` | Run Next.js dev server (port 3000) |
+| `make web-dev` | Run Next.js dev server (port 3000) |
 | `make db.up` | Start Postgres (Docker) |
 | `make db.down` | Stop Postgres (Docker) |
 | `make db.migrate` | Run Prisma migrations |
 | `make db.verify` | Run pgvector health checks (extension, dimensions, IVFFlat) |
 | `make db.seed` | Seed default organization/admin |
+| `make help` | List available make targets |
 | `make web-build` | Build the production Next.js bundle |
 | `make web-start` | Start the built Next.js app |
 | `make web-lint` | Run Next.js lint checks |
@@ -253,13 +254,13 @@ Common shortcuts:
 
 ## Web UI
 
-The chat experience is served from the static assets under `web/static` while the production UI lives in the Next.js app.
+The Next.js application under `app/` is the only supported interface.
 
 - `app/page.tsx` hosts the streaming chat surface and calls the unified `/api/ask` contract returning `{answer, sources, confidence, should_escalate, request_id}`.
-- `web/static/contact.html` provides the escalation form backed by the `/contact` endpoint.
-- `web/static/admin.html` keeps quick navigation shortcuts for operations staff.
+- `app/contact/page.tsx` exposes the escalation form that posts to the FastAPI `/contact` endpoint.
+- `app/admin/page.tsx` provides the glossary workflow for administrators.
 
-Run `make api` and browse to `http://localhost:8000/static/index.html` (or your configured base URL) to load the legacy interface.
+Legacy static assets now live under `archive/legacy-ui/` for historical reference and must not be deployed.
 
 ---
 

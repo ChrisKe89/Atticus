@@ -11,9 +11,11 @@ The newest entries appear first.
 - `AUDIT_REPORT.md` capturing findings FND-001–FND-008 with evidence and remediation guidance.
 - `IMPLEMENTATION_PLAN.md` outlining phases 0–7 and consolidating TODO.md.
 - Automation scripts: `npm run audit:*`, `scripts/audit_unused.py`, `scripts/route-audit.mjs`, and `scripts/verify_pgvector.sql`.
+- Shadcn-style UI primitives under `components/ui/`, a shared `lib/utils.ts` helper, and `scripts/list_make_targets.py` for enumerating Makefile targets.
 
 ### Changed
 - README and AGENTS reference the new audit workflow and Windows-friendly commands.
+- Archived the legacy static UI under `archive/legacy-ui/`, pruned unused Tailwind animations, and updated docs/Makefile to use `make web-dev` as the canonical Next.js entry point.
 
 ---
 
