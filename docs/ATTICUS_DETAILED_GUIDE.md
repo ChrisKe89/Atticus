@@ -93,7 +93,7 @@ instructions covering Tailscale, Cloudflare Tunnel, and SSH reverse tunnels.
 - Collaborative project room management inspired by `projects-overview.mdx`.
 - Observability dashboards similar to `server-monitoring.mdx` (service health, queue depth, alerts).
 
-Track these items in [TODO.md](../TODO.md#future-enhancements-from-examples_only) for prioritisation.
+Track these items in [TODO_NEW.md](../TODO_NEW.md#1-glossary-baseline--documentation-hardening) for prioritisation.
 
 ---
 

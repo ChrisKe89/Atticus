@@ -13,6 +13,8 @@
 
 This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges active TODOs. Each phase lists required commits, commands (POSIX + PowerShell where relevant), acceptance criteria, and cross-references to TODO items.
 
+> **Note:** Legacy references to `TODO` sections map to the consolidated backlog in [TODO_NEW.md](TODO_NEW.md).
+
 ## Phase 0 – Safety, Branching, and Baseline Artifacts
 
 - **Objectives**
@@ -158,14 +160,14 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - `docs(phase-7): refresh product documentation`
   - `release(phase-7): bump version and changelog`
 - **Key Tasks**
-  - Complete TODO items under sections A–C in TODO.md; move finished tasks to `ToDo-Complete.md`.
+  - Complete outstanding items documented in [TODO_NEW.md](TODO_NEW.md); move finished tasks to `ToDo-Complete.md`.
   - Add upgrade/rollback steps to README + RELEASE.md (per universal backlog instructions).
   - Provide Windows PowerShell equivalents for all scripts/make invocations.
 - **Commands**
   - POSIX: `git tag vX.Y.Z`
   - PowerShell: `git tag vX.Y.Z`
 - **Acceptance Criteria**
-  - `TODO.md` reflects only new/remaining work; duplicates removed.
+  - [TODO_NEW.md](TODO_NEW.md) reflects only new/remaining work; duplicates removed.
   - `CHANGELOG.md` documents release with version synced across packages.
   - README accurately describes Next.js + FastAPI hybrid deployment.
 
@@ -181,4 +183,3 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 - Phase 2 introduced the shared Ask DTOs (`lib/ask-contract.ts`), streaming proxy (`app/api/ask/route.ts`), and Vitest coverage for SSE parsing.
 - Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.
 
-- Unable to progress beyond Phase 0 within current session; remaining phases marked ⚠️ for follow-up.
