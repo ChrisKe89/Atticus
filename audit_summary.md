@@ -1,12 +1,12 @@
 # Audit Summary
 
 Update — Phases 6 & 7 were implemented. Tooling, CI, and documentation have materially improved and align with the plan.
-Critical items in Phases 0–3 remain and still block functional completeness, but DX/CI and docs are now in a much better state.
+Remaining blockers sit primarily in Phases 1–3, while DX/CI and docs are stable and only need incremental follow-up.
 
 Summary of current state:
 
-- Phases 6–7: Largely compliant (details below). Minor follow‑ups remain (release CI parity, TODO logs hygiene, vulnerability posture notes).
-- Phases 0–3: High‑risk gaps persist (env, migrations, streaming, RBAC) and still require remediation before declaring these phases done.
+- Phases 6–7: Largely compliant (details below). Minor follow‑ups remain (version parity checks, optional vulnerability posture notes).
+- Phases 1–3: Medium/High gaps persist (pgvector config, RBAC integration tests, glossary runbook) and still require remediation before declaring these phases done.
 
 ## Phase 6 — Developer Experience & CI (Audit)
 
@@ -20,9 +20,8 @@ Pass
 
 Gaps / Suggestions
 
-- Release workflow parity: `release.yml` lacks a Next.js lint/typecheck/build step. Add `npm ci && npm run lint && npm run typecheck && npm run build` to align with Phase 6 gates before publishing artifacts.
 - Formatter choice: Plan mentioned Black, but the repo uses Ruff formatter (Black‑compatible). This is fine; update any lingering “Black” references to avoid confusion.
-- Optional: Add `npm audit --omit=dev` as non‑blocking step to surface runtime dependency risk in CI, with a waiver policy captured in TROUBLESHOOTING/OPERATIONS.
+- Optional: Consider a lightweight CI assertion that `VERSION` == `package.json.version` to catch drift automatically.
 
 ## Phase 7 — Documentation & Release (Audit)
 
@@ -35,117 +34,90 @@ Pass
 
 Gaps / Suggestions
 
-- Replace “commit pending” placeholders in `ToDo-Complete.md` entries with actual SHAs once merged/tagged to keep the audit trail authoritative.
 - Ensure `README.md` and `RELEASE.md` instruct checking that `VERSION` and `package.json` remain in lockstep (already implied—consider a tiny CI check to assert equality).
 - Optional: Add a docs checklist to PR template confirming README/CHANGELOG were updated when code changes require documentation edits.
 
 ## Phase 0
 
-- High - .env.example omits required secrets (Auth.js, email, rate limiting, logging flag, Azure toggle) so new contributors cannot satisfy the AGENTS baseline (.env.example:4-19; compare against expected inputs in atticus/config.py:72-143).
-- High – scripts/generate_env.py writes live-looking SMTP credentials into .env by default (scripts/generate_env.py:42-53), creating a leakage risk; defaults must be placeholders.
-- Medium – The generator emits CONTENT_DIR, but the settings loader only honors CONTENT_ROOT, leaving the app to fall back to defaults unexpectedly (scripts/generate_env.py:41 vs atticus/config.py:75-84).
-- Medium – Neither .env.example nor the generator includes RATE_LIMIT_REQUESTS, RATE_LIMIT_WINDOW_SECONDS, LOG_FORMAT, EMAIL_SANDBOX, etc., so make quality/API rate limiting will diverge from documented guardrails (scripts/generate_env.py:25-63, .env.example:4-19).
-- Medium – No evidence the TROUBLESHOOTING update records dependency failures from npm install/pip-sync as mandated by the phase acceptance criteria (the section is present but lacks actual findings).
+- ✅ Environment scaffolding now mirrors `AppSettings` (Auth.js, SMTP, rate limiting, logging) with placeholder defaults in `.env.example` and `scripts/generate_env.py`.
+- ✅ `AppSettings` accepts both `CONTENT_ROOT` and `CONTENT_DIR`, removing the earlier mismatch.
+- ✅ TROUBLESHOOTING captures dependency failure logging guidance for `pip-sync`/`npm install` scenarios.
 
 ## Phase 1
 
-- Critical – prisma/schema.prisma defines AtticusDocument/AtticusChunk twice (prisma/schema.prisma:116-190), so prisma validate and generated clients will fail; phase deliverable not shippable.
-- High – The shared trigger app_private.update_updated_at() still targets camelCase (NEW."updatedAt") while the new vector tables use snake_case (updated_at), causing CREATE TRIGGER to abort at migration time (prisma/migrations/20240702120000_auth_rbac/migration.sql:10-16 vs prisma/migrations/20240708123000_pgvector_schema/migration.sql:74-82).
-- High – GlossaryEntry.synonyms is declared as String[] @db.Text, which Prisma does not permit for array columns; codegen will error (prisma/schema.prisma:95-107).
-- Medium – No migration ensures set_config('app.pgvector_lists', …) exists before verifying IVFFlat; the verification script assumes the trigger ran cleanly (scripts/verify_pgvector.sql:1-72) but the migration fails earlier.
-- Low – Missing documentation tying scripts/verify_pgvector.sql into CI acceptance criteria; Makefile adds db.verify, but there is no workflow update yet.
+- Medium – No migration ensures `set_config('app.pgvector_lists', …)` exists before verifying IVFFlat; the verification script still assumes the config has been set upstream. Consider a bootstrap migration or doc update clarifying how to seed the GUC.
 
 ## Phase 2
 
-- High – The Next.js /api/ask handler pulls the entire upstream JSON response before emitting three SSE events, so clients never receive incremental tokens (no real streaming) and long responses buffer in memory (app/api/ask/route.ts:39-103). Acceptance criteria around “streamed responses via SSE” are unmet.
-- Medium – Chat UI renders mojibake separators (�) instead of ASCII bullets for citations, indicating encoding/regression in the new panel (components/chat/chat-panel.tsx:179-181).
-- Medium – Similar mojibake appears in the admin metadata title (“Admin � Atticus”), signaling inconsistent charset handling across the UI refresh (app/admin/page.tsx:48).
-- Low – Error responses from the new ask proxy surface raw upstream payloads without harmonising to the documented error schema (no request_id, missing fields), undermining contract guarantees.
+- ✅ Next.js `/api/ask` now streams upstream SSE chunks, normalises error payloads, and the chat/admin UI no longer exhibits mojibake.
 
 ## Phase 3
 
-- Critical – FastAPI admin endpoints remain completely unauthenticated/unauthorised: the router exposes /admin/dictionary et al. with no RBAC checks (api/routes/admin.py:18-116), and the regression test suite still exercises them without credentials (tests/test_admin_route.py:16-43). This violates “RBAC enforced server-side” acceptance criteria.
-- High – The new Next.js glossary APIs return bare {error: ...} bodies without request identifiers or consistent error codes, diverging from the global error contract (app/api/glossary/utils.ts:72-85).
-- Medium – docs/glossary-spec.md still documents the legacy schema and API (e.g., status: String, DictionaryPayload), contradicting the Prisma model and new routes (docs/glossary-spec.md:18-46).
-- Medium – Playwright/Next RBAC coverage exists only at the helper level (lib/rbac.ts:1-39; tests/unit/rbac.test.ts:4-43); there’s no integration test proving non-admins are blocked from /api/glossary or /admin.
-- Low – TROUBLESHOOTING covers Auth.js updates, but there’s no audit trail documenting glossary provisioning/rollback steps demanded by the phase goals.
+- ✅ FastAPI admin endpoints now require the configured `X-Admin-Token`, and tests assert unauthenticated access is rejected.
+- ✅ Glossary APIs emit contract-compliant error payloads with `request_id` propagation.
+- ✅ `docs/glossary-spec.md` reflects the new Prisma schema and reviewer workflow.
+- Medium – Add integration coverage proving non-admin users cannot access `/api/glossary` or `/admin` (e.g., Playwright + API tests).
+- Low – Document glossary provisioning/rollback steps in OPERATIONS/TROUBLESHOOTING to satisfy the runbook requirement.
 
 ## Open Questions
 
-1. Should the ask proxy stream upstream SSE events instead of buffering JSON? If upstream cannot stream yet, do we document an exemption?
-1. What is the intended secret management policy for SMTP credentials now that generate_env embeds values?
-1. How will RBAC be enforced on the FastAPI side-middleware injection, dependency-based gating, or eventual deprecation of those endpoints?
-1. Should `release.yml` include the Next.js lint/typecheck/build stage to fully mirror quality gates on tags?
-1. Do we want CI to enforce `VERSION == package.json.version` explicitly?
+1. Where should `app.pgvector_lists` be initialised so migrations and verification scripts agree (database init script vs. Prisma migration)?
+1. Should we codify a CI assertion that `VERSION`, `package.json`, and FastAPI metadata stay in lockstep?
+1. What form should cross-stack RBAC integration tests take (Playwright end-to-end vs. API tests with mocked auth)?
 
 ## Suggested Next Steps
 
-1. Patch the Prisma schema/migrations to remove duplicate models, fix trigger functions for snake_case tables, and ensure synonyms uses a supported column type. Re-run prisma migrate dev to confirm success.
-1. Align .env.example and scripts/generate_env.py with the required config set (placeholders only), and add missing keys so python scripts/generate_env.py produces a working .env without leaking secrets.
-1. Replace the ask proxy with a true streaming bridge (or document/implement a temporary polling fallback) and fix mojibake in the UI components.
-1. Add RBAC enforcement to FastAPI admin routes (and corresponding tests), update glossary docs to the new schema, and ensure error payloads include request_id per contract.
-1. After remediation, rerun the documented audit scripts/tests (npm run audit:ts, make quality, pytest ...) to verify 90%+ coverage and contract conformance.
+1. Introduce a bootstrap migration (or documented DBA step) that sets `app.pgvector_lists` so `make db.verify` never fails on new environments.
+2. Add integration tests covering RBAC restrictions for `/api/glossary` and `/admin`, then extend OPERATIONS/TROUBLESHOOTING with glossary provisioning + rollback guidance.
+3. Add an automated check (e.g., unit test or CI step) asserting `VERSION`, `package.json.version`, and FastAPI metadata stay aligned.
 
 ## Phase 4
 
-- Medium - Legacy `web/static` directory still exists (albeit empty) alongside the archived assets, so the repo cleanup called out in IMPLEMENTATION_PLAN.md remains unfinished (`web/static`).
-- Medium - AGENTS stack guidance still mandates Framer Motion even though the dependency has been removed, which will mislead future contributors about required UI tooling (AGENTS.md:75-80).
-- Low - `ARCHITECTURE.md` retains control characters (`\u001a`) in its component table, leaving the Phase 4 documentation polish incomplete and risking downstream parsing/rendering issues (ARCHITECTURE.md:17).
+- ✅ Legacy FastAPI UI assets live only under `archive/legacy-ui/`, AGENTS reflects Framer Motion as optional, and docs render cleanly.
 
 ## Phase 5
 
-- Medium - Empty `web/` subfolders (`web/static`, `web/templates`) are still present, contradicting the "orphan cleanup" objective and signalling that FastAPI UI remnants were not fully retired.
-- Low - `REPO_STRUCTURE.md` omits the lingering `web/` tree, so the published structure map diverges from the actual repository layout (REPO_STRUCTURE.md:5-27).
+- ✅ `web/` subfolders were removed and `REPO_STRUCTURE.md` documents the current layout.
 
 ## Audit Overview (Phases 0–5)
 
 — Phase 0 — Safety & Baseline —
 
-- Intended: Branch creation; complete env scaffolding; audit tool scripts runnable.
-- Evidence: `.env.example:4-19`, `scripts/generate_env.py:25-63`, `atticus/config.py:75-143`, `package.json: scripts`.
-- Status: Partial.
-- Gaps/Risks: Missing keys vs `AppSettings`; sensitive defaults in generator; alias mismatch (`CONTENT_DIR` vs `CONTENT_ROOT`).
-- Remediation: Align `.env.example` + generator with `AppSettings`; remove sensitive defaults; add `RATE_LIMIT_REQUESTS`, `RATE_LIMIT_WINDOW_SECONDS`, `LOG_FORMAT`, `EMAIL_SANDBOX`.
+- Status: Complete.
+- Evidence: `.env.example`, `scripts/generate_env.py`, `atticus/config.py`, `TROUBLESHOOTING.md` cover required keys, placeholders, and failure logging.
+- Notes: New contributors can satisfy AGENTS baseline without leaking secrets.
 
 — Phase 1 — Data Layer First —
 
-- Intended: Prisma models for pgvector; migrations; verification wired.
-- Evidence: Duplicate models `prisma/schema.prisma:116-190`; trigger function camelCase vs snake_case `updated_at`; `GlossaryEntry.synonyms` annotated incorrectly; verification present `scripts/verify_pgvector.sql`, `Makefile:37`.
-- Status: Fail (migration integrity).
-- Gaps/Risks: `prisma generate/validate` break; migration order/trigger failure.
-- Remediation: Remove duplicate models; correct `synonyms`; fix/update triggers; re-run migrations and verify IVFFlat.
+- Status: Partial (pending pgvector GUC bootstrap).
+- Evidence: `prisma/migrations/20240708123000_pgvector_schema/migration.sql`, `scripts/verify_pgvector.sql`, `lib/prisma.ts`.
+- Gaps/Risks: `make db.verify` assumes `app.pgvector_lists` exists; cold environments may fail verification.
+- Remediation: Add a migration or documented DBA step to seed `app.pgvector_lists` before verification.
 
 — Phase 2 — RAG Contract Unification —
 
-- Intended: Unified `/api/ask` contract; real SSE; UI shows sources/errors.
-- Evidence: Proxy buffers full JSON then emits events `app/api/ask/route.ts:39-103`; mojibake in chat/admin; contracts/tests exist.
-- Status: Partial.
-- Gaps/Risks: No incremental streaming; encoding defects; error schema gaps.
-- Remediation: Implement true streaming; fix encoding; normalize errors to include `request_id` and `fields`.
+- Status: Complete.
+- Evidence: `app/api/ask/route.ts`, `components/chat/chat-panel.tsx`, `app/admin/page.tsx`, `app/api/glossary/utils.ts`.
+- Notes: SSE streaming, encoding fixes, and error normalisation delivered.
 
 — Phase 3 — Auth & RBAC Hardening —
 
-- Intended: Enforce RBAC in server actions; glossary review metadata; docs/runbooks updated.
-- Evidence: Prisma RBAC + glossary review migration; FastAPI admin routes lack RBAC; glossary error utils return bare errors; runbook updated.
-- Status: Partial.
-- Gaps/Risks: Server-side RBAC missing for FastAPI admin; inconsistent error schema.
-- Remediation: Add RBAC dependency to FastAPI admin routes; standardize error payloads; update tests/docs.
+- Status: Partial (tests/runbook outstanding).
+- Evidence: `api/routes/admin.py`, `tests/test_admin_route.py`, `docs/glossary-spec.md`, `app/api/glossary/utils.ts`.
+- Gaps/Risks: Need cross-stack RBAC tests and glossary lifecycle documentation.
+- Remediation: Add RBAC integration coverage and extend OPERATIONS/TROUBLESHOOTING with glossary runbook content.
 
 — Phase 4 — Frontend Hygiene —
 
-- Intended: Tailwind paths; Framer Motion decision; shadcn/ui normalization; unused assets removed.
-- Evidence: Tailwind content paths OK; Framer Motion not used but mandated in AGENTS; `web/static` remains (empty); shadcn/ui used in components.
-- Status: Partial.
-- Gaps/Risks: Tooling-doc mismatch (Framer); lingering empty folders.
-- Remediation: Remove `web/static`/`web/templates` or archive; update AGENTS to optionalize or reintroduce FM minimally.
+- Status: Complete.
+- Evidence: `archive/legacy-ui/`, `AGENTS.md`, `ARCHITECTURE.md`.
+- Notes: Next.js guidance aligned; legacy folders archived.
 
 — Phase 5 — Orphans & Structure Cleanup —
 
-- Intended: Remove FastAPI UI vestiges; update repo structure/docs; clarify make targets.
-- Evidence: `web/` folders persist; `REPO_STRUCTURE.md` omits them; Makefile target named `web-dev` (not `ui`).
-- Status: Partial.
-- Gaps/Risks: Structural drift; confusing targets.
-- Remediation: Remove lingering `web/` folders; align docs; rename/document targets.
+- Status: Complete.
+- Evidence: `REPO_STRUCTURE.md`, repository tree.
+- Notes: No lingering FastAPI UI directories.
 
 ## Combined Implementation & Debug Plan (Phases 0–5)
 
