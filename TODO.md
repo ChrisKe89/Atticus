@@ -11,8 +11,6 @@ _(All Section A documentation tasks completed 2025-09-28 — see ToDo-Complete.m
 
 _(Section B.1 CI gates addressed 2025-09-28 — see ToDo-Complete.md.)_ 2. **Dictionary/glossary admin** — keep concept; migrate storage to DB; surface in Admin.
 
-- [x] Design Prisma schema/API contracts for glossary records with approval workflow.
-- [x] Implement admin UI for propose/review/approve flows with RBAC checks.
 - [ ] Seed baseline glossary entries and add documentation/tests.
 
 **C. Documentation depth improvements**
@@ -28,15 +26,7 @@ _(Section B.1 CI gates addressed 2025-09-28 — see ToDo-Complete.md.)_ 2. **Dic
    - [ ] Remove template/static configuration and unused imports.
    - [ ] Confirm API router mounts only expose JSON endpoints.
    - [ ] Update deployment docs referencing FastAPI-served UI.
-2. `api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure `request_id` & `should_escalate`; remove unused import in `api/routes/__init__.py`.
-   - [x] Merge route handlers and delete deprecated module.
-   - [x] Guarantee response includes `request_id`/`should_escalate` and shared error handling.
-   - [x] Clean up router exports/imports and associated tests.
-3. `requirements.in` — remove `faiss-cpu`, `jinja2`; add `psycopg[binary]` for local Python dev until TS/Next.js replaces Python API.
-   - [ ] Prune deprecated dependencies and add Postgres driver entry.
-   - [ ] Regenerate `requirements.txt`/lockfiles and verify tests pass.
-   - [ ] Update docs referencing dependency installation.
-4. `ARCHITECTURE.md` & legacy `AGENTS.md` — replace FAISS/FastAPI mentions with references to this doc; mark migration phases.
+2. `ARCHITECTURE.md` & legacy `AGENTS.md` — replace FAISS/FastAPI mentions with references to this doc; mark migration phases.
    - [ ] Identify all legacy references and map to new terminology.
    - [ ] Rewrite sections to align with Next.js/pgvector plan and note migration status.
    - [ ] Link back to authoritative AGENTS/TODO entries.
