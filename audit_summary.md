@@ -1,7 +1,8 @@
 # Audit Summary
 
 Update — Phases 6 & 7 were implemented. Tooling, CI, and documentation have materially improved and align with the plan.
-Remaining blockers sit primarily in Phases 1–3, while DX/CI and docs are stable and only need incremental follow-up.
+Remaining blockers sit primarily in Phases 1–3, while DX/CI and docs are stable and only need incremental follow-up. Active
+remediation tasks are tracked in [TODO_NEW.md](TODO_NEW.md).
 
 Summary of current state:
 

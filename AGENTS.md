@@ -7,7 +7,7 @@
 ## Current Audit Status
 
 - Refer to [AUDIT_REPORT.md](AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
-- Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to TODO.md.
+- Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO_NEW.md](TODO_NEW.md).
 - Run `make quality` (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
 
 ## Execution Criteria — **Must‑Follow for Repo Work**
@@ -413,7 +413,7 @@ python scripts/debug_env.py
 
 ## Notes on Conflicts (resolved)
 
-- Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in TODOs.
+- Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in [TODO_NEW.md](TODO_NEW.md).
 - Static HTML prototypes now live under `archive/legacy-ui/`; ship only the Next.js application under `app/`.
 
 ---

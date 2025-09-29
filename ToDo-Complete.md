@@ -79,3 +79,8 @@ Each entry includes the completion date and commit reference for traceability.
 - [x] TODO "`api/routes/chat.py` and `api/routes/ask.py` — consolidate; ensure request_id & should_escalate; remove unused import in api/routes/**init**.py." — completed 2025-10-04 (commit 2af9f6e).
 - [x] TODO "Dictionary/glossary admin — Design Prisma schema/API contracts for glossary records with approval workflow." — completed 2025-10-04 (commit 2bc7206).
 - [x] TODO "Dictionary/glossary admin — Implement admin UI for propose/review/approve flows with RBAC checks." — completed 2025-10-04 (commit 2bc7206).
+
+## 2025-10-05
+
+- [x] TODO "`api/main.py` — drop Jinja2 templates/static mounts; stop serving `/` HTML; keep JSON APIs; Next.js owns UI." — completed 2025-10-05 (present in commit 9a7620b9; verified during backlog audit).
+- [x] TODO "`ARCHITECTURE.md` & legacy `AGENTS.md` — replace FAISS/FastAPI mentions with references to this doc; mark migration phases." — completed 2025-10-05 (present in commit 9a7620b9; verified during backlog audit).
