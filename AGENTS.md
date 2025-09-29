@@ -74,7 +74,7 @@
 - **Styling:** Tailwind CSS
 - **UI Components:** shadcn/ui
 - **Icons:** Lucide
-- **Animation:** Framer Motion
+- **Animation:** Framer Motion (optional; add only when a feature needs motion)
 - **Fonts:**
   - **Headings & Body:** Inter (single-family stack for simplicity and performance)
     - Load via `next/font/google` and self‑hosted subset; fallbacks: `ui-sans-serif, system-ui`.
@@ -143,7 +143,7 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 ### UI & API
 
 - **Next.js (TypeScript)** app for chat + admin
-- **Tailwind** + **shadcn/ui** + **Lucide** + **Framer Motion**
+- **Tailwind** + **shadcn/ui** + **Lucide** + optional **Framer Motion**
 - Streaming answers via **SSE** route handlers
 - **Auth.js (NextAuth)** — start with **Email (magic link)**; add **Azure AD (OIDC)** later for SSO
 
