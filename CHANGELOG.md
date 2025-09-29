@@ -7,24 +7,38 @@ The newest entries appear first.
 
 ## [Unreleased]
 
-### Added
+_No unreleased changes._
 
-- `AUDIT_REPORT.md` capturing findings FND-001–FND-008 with evidence and remediation guidance.
-- `IMPLEMENTATION_PLAN.md` outlining phases 0–7 and consolidating TODO.md.
-- Automation scripts: `npm run audit:*`, `scripts/audit_unused.py`, `scripts/route-audit.mjs`, and `scripts/verify_pgvector.sql`.
-- Shadcn-style UI primitives under `components/ui/`, a shared `lib/utils.ts` helper, and `scripts/list_make_targets.py` for enumerating Makefile targets.
+---
+
+## [0.7.2] — 2025-10-05
 
 ### Changed
 
-- README and AGENTS reference the new audit workflow and Windows-friendly commands.
-- Archived the legacy static UI under `archive/legacy-ui/`, pruned unused Tailwind animations, and updated docs/Makefile to use `make web-dev` as the canonical Next.js entry point.
-- `.env.example` and `scripts/generate_env.py` now surface Auth.js (`NEXTAUTH_*`) settings, reranker toggles, and safer SMTP placeholders to match `AppSettings`.
+- Synchronized all version sources (`VERSION`, `package.json`, FastAPI metadata) at 0.7.2 and documented the change in the audit report.
+- Trimmed resolved findings from `audit_summary.md` and `AUDIT_REPORT.md`, highlighting the remaining remediation work for Phases 0–5.
+- Updated `TODO.md`/`ToDo-Complete.md` to remove completed items, backfill commit references, and keep the active backlog authoritative.
+- Clarified that Framer Motion is optional in `AGENTS.md`, aligning guidance with current dependencies.
 
 ### Fixed
 
-- `pyproject.toml` reads the package version from `VERSION`, restoring editable installs (`pip install -e .`) required by pytest and local tooling.
+- Marked finished audit tasks as complete, ensuring the ledger, audit summary, and changelog stay in sync.
 
 ---
+
+## [0.7.1] — 2025-10-05
+
+### Added
+
+- Web and database security assessment recorded at `reports/security/2025-10-05-web-db-assessment.md`, detailing dependency vulnerabilities, configuration hardening, and pgvector prerequisites.
+
+### Changed
+
+- Bumped repository version to 0.7.1 to publish the audit findings and align `package.json`/`VERSION` metadata.
+
+### Security
+
+- Flagged critical Next.js 14.2.5 advisories (cache poisoning, image optimisation DoS/injection) and outlined mitigation steps, including immediate upgrade guidance for `next`, `next-auth`, and supporting tooling.
 
 ## [0.7.0] — 2025-09-28
 
