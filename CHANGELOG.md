@@ -7,7 +7,10 @@ The newest entries appear first.
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Changed
+
+- Consolidated the active backlog into `TODO_NEW.md`, updated cross-references, and recorded completed tasks in `ToDo-Complete.md`.
+- Resolved merge artefacts in `VERSION` to restore 0.7.2 as the canonical release number and flagged the follow-up automation in the backlog.
 
 ---
 

@@ -61,7 +61,7 @@ This setup eliminates the need for `ruff-lsp` and ensures consistent formatting 
 
 - Keep references between [README.md](README.md), [AGENTS.md](AGENTS.md), and [OPERATIONS.md](OPERATIONS.md) accurate.
 - Update [CHANGELOG.md](CHANGELOG.md) if your changes affect users.
-- Move completed tasks from [TODO.md](TODO.md) to [ToDo-Complete.md](ToDo-Complete.md) with date and commit reference.
+- Move completed tasks from [TODO_NEW.md](TODO_NEW.md) to [ToDo-Complete.md](ToDo-Complete.md) with date and commit reference.
 
 ---
 
