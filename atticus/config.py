@@ -278,9 +278,7 @@ def _path_metadata(path: Path) -> dict[str, Any]:
     metadata = {"path": str(absolute), "exists": absolute.exists()}
     if absolute.exists():
         stat_result = absolute.stat()
-        metadata["modified_at"] = datetime.fromtimestamp(
-            stat_result.st_mtime, tz=UTC
-        ).isoformat()
+        metadata["modified_at"] = datetime.fromtimestamp(stat_result.st_mtime, tz=UTC).isoformat()
         metadata["size_bytes"] = stat_result.st_size
     else:
         metadata["modified_at"] = None
