@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -14,6 +14,18 @@ from zoneinfo import ZoneInfo
 import yaml
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+SECRET_FIELD_NAMES = {
+    "database_url",
+    "openai_api_key",
+    "smtp_user",
+    "smtp_pass",
+    "smtp_from",
+    "smtp_to",
+    "smtp_allow_list_raw",
+    "contact_email",
+    "admin_api_token",
+}
 
 
 def _fingerprint_secret(value: str | None) -> str | None:
@@ -239,6 +251,53 @@ def _env_variables_fingerprint() -> str:
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 
+def _parse_env_file(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+
+    values: dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export ") :]
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if value and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        values[key] = value
+    return values
+
+
+def _path_metadata(path: Path) -> dict[str, Any]:
+    absolute = path if path.is_absolute() else path.resolve()
+    metadata = {"path": str(absolute), "exists": absolute.exists()}
+    if absolute.exists():
+        stat_result = absolute.stat()
+        metadata["modified_at"] = datetime.fromtimestamp(stat_result.st_mtime, tz=UTC).isoformat()
+        metadata["size_bytes"] = stat_result.st_size
+    else:
+        metadata["modified_at"] = None
+        metadata["size_bytes"] = None
+    return metadata
+
+
+def _serialize_value(value: Any) -> Any:
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, ZoneInfo):
+        return value.key
+    if isinstance(value, dict):
+        return {str(k): _serialize_value(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_serialize_value(item) for item in value]
+    return value
+
+
 def _resolve_env_file() -> Path | None:
     env_file = AppSettings.model_config.get("env_file")
     if isinstance(env_file, (list, tuple)):
@@ -283,3 +342,76 @@ def load_settings() -> AppSettings:
     _SETTINGS_CACHE.key = cache_key
     _SETTINGS_CACHE.settings = settings
     return settings
+
+
+def environment_diagnostics() -> dict[str, Any]:
+    """Return sanitized diagnostics for environment configuration resolution."""
+
+    env_path = _resolve_env_file() or Path(".env")
+    env_values = _parse_env_file(env_path)
+
+    settings = load_settings()
+    config_path = settings.config_path
+    config_data = _load_yaml_config(config_path)
+
+    relevant_keys: set[str] = set()
+    non_secret_settings: dict[str, Any] = {}
+    secrets_report: dict[str, dict[str, Any]] = {}
+
+    for name, field in AppSettings.model_fields.items():
+        if name == "secrets_report":
+            continue
+
+        aliases = {name.upper()}
+        aliases.update(_iter_alias_strings(getattr(field, "alias", None)))
+        aliases.update(_iter_alias_strings(getattr(field, "validation_alias", None)))
+        relevant_keys.update(aliases)
+
+        env_key = next((key for key in aliases if key in os.environ), None)
+        env_file_key = next((key for key in aliases if key in env_values), None)
+        config_key = name if name in config_data else None
+
+        if env_key:
+            source = f"os.environ:{env_key}"
+        elif env_file_key:
+            source = f".env:{env_file_key}"
+        elif config_key:
+            source = f"config.yaml:{config_key}"
+        else:
+            source = "default"
+
+        value = getattr(settings, name)
+
+        if name in SECRET_FIELD_NAMES:
+            fingerprint = _fingerprint_secret(str(value) if value is not None else None)
+            secrets_report[name] = {
+                "aliases": sorted(aliases),
+                "defined": bool(value),
+                "fingerprint": fingerprint,
+                "source": source,
+            }
+        else:
+            non_secret_settings[name] = {
+                "aliases": sorted(aliases),
+                "source": source,
+                "value": _serialize_value(value),
+            }
+
+    settings.secrets_report = secrets_report
+
+    env_override_keys = sorted(key for key in os.environ if key in relevant_keys)
+    env_file_override_keys = sorted(key for key in env_values if key in relevant_keys)
+
+    return {
+        "generated_at": datetime.now(tz=UTC).isoformat(),
+        "environment_fingerprint": _env_variables_fingerprint(),
+        "env_file": _path_metadata(env_path),
+        "config_file": _path_metadata(config_path),
+        "overrides": {
+            "environment": env_override_keys,
+            ".env": env_file_override_keys,
+            "config": sorted(str(key) for key in config_data.keys()),
+        },
+        "settings": non_secret_settings,
+        "secrets": secrets_report,
+    }
