@@ -5,6 +5,7 @@ artifacts. Each item lists the required deliverables, implementation steps, and
 acceptance criteria so ownership can be assigned quickly.
 
 ## 1. Glossary baseline & documentation hardening
+
 - **Goal:** Deliver a production-ready glossary workflow with deterministic seed data and
   contributor guidance.
 - **Scope:**
@@ -21,6 +22,7 @@ acceptance criteria so ownership can be assigned quickly.
   data for each environment.
 
 ## 2. Glossary UX specification follow-through
+
 - **Goal:** Close the loop on the glossary admin design work captured in the current spec.
 - **Scope:**
   - Produce lightweight sequence diagrams (PlantUML or Mermaid) illustrating reviewer →
@@ -35,6 +37,7 @@ acceptance criteria so ownership can be assigned quickly.
   a checklist of spun-off tickets with owners/status.
 
 ## 3. Cross-stack RBAC integration coverage
+
 - **Goal:** Prove that RBAC restrictions hold across both FastAPI and Next.js layers.
 - **Scope:**
   - Add Playwright coverage for reviewer sessions interacting with `/admin` and `/api/glossary`
@@ -49,6 +52,7 @@ acceptance criteria so ownership can be assigned quickly.
   `make quality` and the GitHub Actions frontend job.
 
 ## 4. pgvector configuration bootstrap
+
 - **Goal:** Eliminate manual steps when configuring `app.pgvector_lists` so `make db.verify`
   is reliable in fresh environments.
 - **Scope:**
@@ -64,6 +68,7 @@ acceptance criteria so ownership can be assigned quickly.
   app.pgvector_lists`, documentation reflects the automation, and CI captures the new guard.
 
 ## 5. Version parity automation
+
 - **Goal:** Prevent drift between `VERSION`, `package.json`, and FastAPI metadata.
 - **Scope:**
   - Add a lightweight script or unit test that compares the values at build/test time,
