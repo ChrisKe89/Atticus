@@ -53,17 +53,22 @@ Launch Postgres, apply migrations, and seed the default admin specified in `.env
 
 ```bash
 make db.up
-make db.migrate
-make db.verify  # pgvector extension, dimension, IVFFlat probes
-npm run prisma:generate
+make db.migrate   # runs `prisma generate` before applying migrations
+set -a; source .env; set +a  # export DATABASE_URL for verification
+make db.verify    # pgvector extension, dimension, IVFFlat probes
 make db.seed
 ```
 
 ```powershell
 make db.up
 make db.migrate
+Get-Content .env | ForEach-Object {
+  if ($_ -and $_ -notmatch '^#') {
+    $name, $value = $_.Split('=', 2)
+    if ($value) { [System.Environment]::SetEnvironmentVariable($name.Trim(), $value.Trim(), 'Process') }
+  }
+}
 make db.verify
-npm run prisma:generate
 make db.seed
 ```
 
@@ -159,7 +164,7 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 
 1. **Environment** – generate `.env` and update SMTP + Postgres credentials. Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match, and set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
 2. **Dependencies** – install Python + Node dependencies (`pip-sync` and `npm install`).
-3. **Database** – run `make db.up && make db.migrate && make db.verify && make db.seed`.
+3. **Database** – run `make db.up && make db.migrate && make db.seed`. Export `.env` (`set -a; source .env; set +a`) before `make db.verify` so `DATABASE_URL` is available.
 4. **Quality** – run `make quality` locally before every PR. Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
 5. **Run** – `make api` and `make web-dev` for local development.
 6. **Observe** – watch `logs/app.jsonl`, `logs/errors.jsonl`, and the `/admin/metrics` dashboard.
