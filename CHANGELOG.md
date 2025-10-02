@@ -14,6 +14,36 @@ The newest entries appear first.
 
 ---
 
+## [0.7.3] — 2025-10-06
+
+### Changed
+
+- Documented the required environment export before running `make db.verify` and removed the redundant Prisma client generation step from the README developer workflow.
+- Added source attribution, hashed fingerprints, and sanitized snapshots to `python scripts/debug_env.py` by implementing `atticus.config.environment_diagnostics`.
+
+### Added
+
+- Regression coverage for the new environment diagnostics helper to ensure secrets remain redacted while reporting their provenance.
+
+### Testing
+
+- `ruff check .`
+- `ruff format --check .`
+- `mypy atticus api ingest retriever eval`
+- `PYTHONPATH=. pytest tests/test_hashing.py tests/test_config_reload.py tests/test_mailer.py tests/test_chunker.py tests/test_seed_manifest.py tests/test_eval_runner.py tests/test_environment_diagnostics.py`
+- `PYTHONPATH=. pytest tests/test_chat_route.py tests/test_contact_route.py tests/test_error_schema.py tests/test_ui_route.py tests/test_admin_route.py`
+- `PYTHONPATH=. pytest tests/test_ingestion_retrieval_integration.py -vv`
+- `npm run test:unit`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+- `npm run audit:ts`
+- `npm run audit:icons`
+- `npm run audit:routes`
+- `npm run audit:py`
+
+---
+
 ## [0.7.2] — 2025-10-05
 
 ### Changed
