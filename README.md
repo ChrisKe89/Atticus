@@ -8,169 +8,186 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 ## Quick Start
 
-### 1. Bootstrap environment variables
+1. Bootstrap environment variables
 
-Generate a local `.env` so secrets stay inside the repository:
+    Generate a local `.env` so secrets stay inside the repository:
 
-```bash
-python scripts/generate_env.py
-python scripts/debug_env.py  # inspect precedence when overriding values
-```
+    ```bash
+    python scripts/generate_env.py
+    python scripts/debug_env.py  # inspect precedence when overriding values
+    ```
 
-```powershell
-python scripts/generate_env.py
-python scripts/debug_env.py  # inspect precedence when overriding values
-```
+    ```powershell
+    python scripts/generate_env.py
+    python scripts/debug_env.py  # inspect precedence when overriding values
+    ```
 
-Populate SMTP settings for escalation email delivery:
+    Populate SMTP settings for escalation email delivery:
 
-- `CONTACT_EMAIL` – escalation recipient
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials
-- `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
-- `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
+    - `CONTACT_EMAIL` – escalation recipient
+    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials
+    - `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
+    - `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
 
-### 2. Install dependencies
+2. Install dependencies
 
-Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
+    Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
 
-```bash
-pip install -U pip pip-tools
-pip-compile -U requirements.in
-pip-sync requirements.txt
-npm install
-```
+    ```bash
+    pip install -U pip pip-tools
+    pip-compile -U requirements.in
+    pip-sync requirements.txt
+    npm install
+    ```
 
-```powershell
-pip install -U pip pip-tools
-pip-compile -U requirements.in
-pip-sync requirements.txt
-npm install
-```
+    ```powershell
+    pip install -U pip pip-tools
+    pip-compile -U requirements.in
+    pip-sync requirements.txt
+    npm install
+    ```
 
-### 3. Database and Prisma
+ 3. Database and Prisma
 
-Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
+    Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
 
-```bash
-make db.up
-make db.migrate   # runs `prisma generate` before applying migrations
-set -a; source .env; set +a  # export DATABASE_URL for verification
-make db.verify    # pgvector extension, dimension, IVFFlat probes
-make db.seed
-```
+    ```bash
+    make db.up
+    make db.migrate   # runs `prisma generate` before applying migrations
+    set -a; source .env; set +a  # export DATABASE_URL for verification
+    make db.verify    # pgvector extension, dimension, IVFFlat probes
+    make db.seed
+    ```
 
-```powershell
-make db.up
-make db.migrate
-Get-Content .env | ForEach-Object {
-  if ($_ -and $_ -notmatch '^#') {
-    $name, $value = $_.Split('=', 2)
-    if ($value) { [System.Environment]::SetEnvironmentVariable($name.Trim(), $value.Trim(), 'Process') }
-  }
-}
-make db.verify
-make db.seed
-```
+    ```powershell
+    make db.up
+    make db.migrate
+    Get-Content .env | ForEach-Object {
+    if ($_ -and $_ -notmatch '^#') {
+        $name, $value = $_.Split('=', 2)
+        if ($value) { [System.Environment]::SetEnvironmentVariable($name.Trim(), $value.Trim(), 'Process') }
+    }
+    }
+    make db.verify
+    make db.seed
+    ```
 
-Run the verification SQL directly when debugging:
+    Run the verification SQL directly when debugging:
 
-```bash
-psql "$DATABASE_URL" \
-  -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
-  -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
-  -f scripts/verify_pgvector.sql
-```
+    ```bash
+    psql "$DATABASE_URL" \
+    -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
+    -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+    -f scripts/verify_pgvector.sql
+    ```
 
-```powershell
-if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
-if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
-psql "$env:DATABASE_URL" `
-  -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
-  -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
-  -f scripts/verify_pgvector.sql
-```
+    ```powershell
+    if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
+    if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+    psql "$env:DATABASE_URL" `
+    -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
+    -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
+    -f scripts/verify_pgvector.sql
+    ```
 
-### 4. Quality gates
+4. Quality gates
 
-`make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
+    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
 
-```bash
-make quality
-```
+    ```bash
+    make quality
+    ```
 
-```powershell
-make quality
-```
+    ```powershell
+    make quality
+    ```
 
-Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+    Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
-### 5. Run services
+5. Run services
 
-Use separate terminals for the FastAPI backend and the Next.js UI.
+    Use separate terminals for the FastAPI backend and the Next.js UI.
 
-```bash
-make api        # FastAPI service on http://localhost:8000
-make web-dev    # Next.js workspace on http://localhost:3000
-```
+    ```bash
+    make api        # FastAPI service on http://localhost:8000
+    make web-dev    # Next.js workspace on http://localhost:3000
+    ```
 
-```powershell
-make api
-make web-dev
-```
+    ```powershell
+    make api
+    make web-dev
+    ```
 
-### 6. Ingest, evaluate, and iterate
+6. Ingest, evaluate, and iterate
 
-```bash
-make ingest     # parse, chunk, embed, and update pgvector index
-make eval       # run retrieval evaluation and emit metrics under eval/runs/
-make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
-```
+    ```bash
+    make ingest     # parse, chunk, embed, and update pgvector index
+    make eval       # run retrieval evaluation and emit metrics under eval/runs/
+    make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+    ```
 
-### 7. Authenticate with magic link
+7. Authenticate with magic link
 
-Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
+    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
 
-### 8. `/api/ask` contract
+8. `/api/ask` contract
 
-The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
+    The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
 
-**Request**
+    **Request**
 
-```json
-{
-  "question": "What is the pilot timeline?",
-  "contextHints": ["Managed print"],
-  "topK": 8
-}
-```
+    ```json
+    {
+    "question": "What is the pilot timeline?",
+    "contextHints": ["Managed print"],
+    "topK": 8
+    }
+    ```
 
-**Response**
+    **Response**
 
-```json
-{
-  "answer": "...",
-  "sources": [{ "path": "content/pilot.pdf", "page": 3 }],
-  "confidence": 0.82,
-  "request_id": "abc123",
-  "should_escalate": false
-}
-```
+    ```json
+    {
+    "answer": "...",
+    "sources": [{ "path": "content/pilot.pdf", "page": 3 }],
+    "confidence": 0.82,
+    "request_id": "abc123",
+    "should_escalate": false
+    }
+    ```
 
-Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.ts` handles SSE parsing, JSON fallback, and request-id logging.
+    Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.ts` handles SSE parsing, JSON fallback, and request-id logging.
 
----
+    ---
 
 ## Developer workflow
 
-1. **Environment** – generate `.env` and update SMTP + Postgres credentials. Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match, and set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
-2. **Dependencies** – install Python + Node dependencies (`pip-sync` and `npm install`).
-3. **Database** – run `make db.up && make db.migrate && make db.seed`. Export `.env` (`set -a; source .env; set +a`) before `make db.verify` so `DATABASE_URL` is available.
-4. **Quality** – run `make quality` locally before every PR. Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
-5. **Run** – `make api` and `make web-dev` for local development.
-6. **Observe** – watch `logs/app.jsonl`, `logs/errors.jsonl`, and the `/admin/metrics` dashboard.
-7. **Release** – follow [RELEASE.md](RELEASE.md) for tagging and upgrade/rollback steps, confirming `VERSION` matches `package.json` before tagging.
+1. **Environment**:
+   - Generate `.env` and update SMTP + Postgres credentials. 
+   - Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match.
+   - Set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
+2. **Dependencies**:
+   - install Python + Node dependencies (`pip-sync` and `npm install`).
+3. **Database**:
+   - Run `make db.up && make db.migrate && make db.seed`. 
+   - Export `.env` (`set -a; source .env; set +a`) before `make db.verify` so `DATABASE_URL` is available.
+4. **Quality**: 
+   - Run `make quality` locally before every PR. 
+   - Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
+5. **Run** 
+   - `make api`
+   - `make web-dev` for local development.
+6. **Observe**
+   - `logs/app.jsonl`
+   - `logs/errors.jsonl`
+   - `/admin/metrics` (dashboard)
+7. **Release**
+   - Follow [RELEASE.md](RELEASE.md) for tagging.
+   - Upgrade/rollback steps, confirming `VERSION` matches `package.json` before tagging.
 
-Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene. Use `pre-commit run --all-files` to verify manually.
+8. **Git**
+   - Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene
+    - Use `pre-commit run --all-files` to verify manually.
 
 ---
 
