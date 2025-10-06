@@ -17,11 +17,6 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     python scripts/debug_env.py  # inspect precedence when overriding values
     ```
 
-    ```powershell
-    python scripts/generate_env.py
-    python scripts/debug_env.py  # inspect precedence when overriding values
-    ```
-
     Populate SMTP settings for escalation email delivery:
 
     - `CONTACT_EMAIL` – escalation recipient
@@ -32,13 +27,6 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 2. Install dependencies
 
     Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
-
-    ```bash
-    pip install -U pip pip-tools
-    pip-compile -U requirements.in
-    pip-sync requirements.txt
-    npm install
-    ```
 
     ```powershell
     pip install -U pip pip-tools
@@ -90,7 +78,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     -f scripts/verify_pgvector.sql
     ```
 
-4. Quality gates
+3. Quality gates
 
     `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
 
@@ -104,7 +92,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
     Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
-5. Run services
+4. Run services
 
     Use separate terminals for the FastAPI backend and the Next.js UI.
 
@@ -118,7 +106,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make web-dev
     ```
 
-6. Ingest, evaluate, and iterate
+5. Ingest, evaluate, and iterate
 
     ```bash
     make ingest     # parse, chunk, embed, and update pgvector index
@@ -126,11 +114,11 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
     ```
 
-7. Authenticate with magic link
+6. Authenticate with magic link
 
     Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
 
-8. `/api/ask` contract
+7. `/api/ask` contract
 
     The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
 
