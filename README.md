@@ -4,6 +4,8 @@
 
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
+> **Release 0.7.4** – Streamlined the chat workspace cards, gated the Settings navigation for authenticated users, and focused the escalation page content.
+
 ---
 
 ## Quick Start

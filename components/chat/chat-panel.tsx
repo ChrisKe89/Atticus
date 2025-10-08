@@ -20,18 +20,6 @@ const shortcuts = [
   { label: "Esc", description: "Clear composer" },
 ];
 
-const highlights = [
-  {
-    title: "Grounded responses",
-    description:
-      "Atticus cites every answer with the supporting evidence so Sales stays audit-ready.",
-  },
-  {
-    title: "Fast ingest pipeline",
-    description: "Deterministic chunking keeps the knowledge base fresh without manual clean-up.",
-  },
-];
-
 function createId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -138,8 +126,8 @@ export function ChatPanel() {
   }
 
   return (
-    <section className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-      <div className="flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <section className="flex w-full justify-center">
+      <div className="flex w-full max-w-3xl flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-slate-900 dark:text-white">
             Live conversation
@@ -277,18 +265,6 @@ export function ChatPanel() {
           </div>
         </form>
       </div>
-
-      <aside className="flex flex-col gap-6">
-        {highlights.map((item) => (
-          <article
-            key={item.title}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-          >
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{item.title}</h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{item.description}</p>
-          </article>
-        ))}
-      </aside>
     </section>
   );
 }

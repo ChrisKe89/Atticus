@@ -33,19 +33,23 @@ export function SiteHeader() {
   }, [session?.user]);
 
   const visibleLinks = useMemo(() => {
-    if (!role) {
-      return links.filter((link) => !link.roles);
-    }
-    return links.filter((link) => !link.roles || link.roles.includes(role));
-  }, [role]);
+    return links.filter((link) => {
+      if (link.href === "/settings" && status !== "authenticated") {
+        return false;
+      }
+      if (!role) {
+        return !link.roles;
+      }
+      return !link.roles || link.roles.includes(role);
+    });
+  }, [role, status]);
 
   const activeHref = useMemo(() => {
     if (!pathname) {
       return "/";
     }
     return (
-      visibleLinks.find((link) => pathname === link.href || pathname.startsWith(`${link.href}/`))
-        ?.href ?? "/"
+      visibleLinks.find((link) => pathname === link.href || pathname.startsWith(`${link.href}/`))?.href ?? "/"
     );
   }, [pathname, visibleLinks]);
 

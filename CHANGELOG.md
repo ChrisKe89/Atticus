@@ -18,6 +18,17 @@ The newest entries appear first.
 
 ### Changed
 
+
+- Streamlined the chat workspace to focus on live conversations and removed legacy highlight cards.
+- Hid the Settings navigation link for unauthenticated visitors and removed redundant contact escalation callouts.
+- Cleared footer navigation links to maintain spacing without duplicate destinations.
+
+### Testing
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+
 - Switched the CED chunker to a zero-overlap default across configuration, ingestion scripts, and metadata snapshots.
 - Allowed explicit `CHUNK_OVERLAP_TOKENS=0` in environment configuration and documentation so bespoke corpora can opt back into overlap deliberately.
 
@@ -28,6 +39,7 @@ The newest entries appear first.
 ### Testing
 
 - `PYTHONPATH=. pytest tests/test_ingestion_retrieval_integration.py -vv`
+
 
 ---
 
