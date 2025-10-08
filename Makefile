@@ -60,6 +60,10 @@ eval:
 openapi:
 	$(PYTHON) scripts/generate_api_docs.py
 
+# Unified CLI dispatcher
+atticus:
+	$(PYTHON) scripts/atticus_cli.py --help
+
 smoke:
 	PYTHONPATH=. $(PYTHON) scripts/test_health.py
 
@@ -107,6 +111,19 @@ typecheck:
 
 quality: lint typecheck test web-lint web-typecheck web-build web-audit
 
+# Full verification pass for CI / release
+verify:
+	@echo "Running full integration checks..."
+	make env
+	make lint
+	make typecheck
+	make test.unit
+	make test.api
+	make web-lint
+	make web-typecheck
+	make web-build
+	make web-audit
+	@echo "✅ All checks passed."
 web-build:
 	npm run build
 

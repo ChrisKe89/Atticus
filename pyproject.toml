@@ -78,6 +78,9 @@ warn_redundant_casts = true
 warn_return_any = true
 exclude = "^(scripts|tests|EXAMPLES_ONLY)/"
 
+# Treat optional vendored helpers as 3rd-party to avoid noise
+explicit_package_bases = true
+
 [[tool.mypy.overrides]]
 module = [
   "atticus.vector_db",
