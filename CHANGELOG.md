@@ -14,6 +14,22 @@ The newest entries appear first.
 
 ---
 
+## [0.7.4] — 2025-10-07
+
+### Changed
+
+- Streamlined the chat workspace to focus on live conversations and removed legacy highlight cards.
+- Hid the Settings navigation link for unauthenticated visitors and removed redundant contact escalation callouts.
+- Cleared footer navigation links to maintain spacing without duplicate destinations.
+
+### Testing
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+
+---
+
 ## [0.7.3] — 2025-10-06
 
 ### Changed

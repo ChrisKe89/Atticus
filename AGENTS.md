@@ -9,6 +9,7 @@
 - Refer to [AUDIT_REPORT.md](AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
 - Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO_NEW.md](TODO_NEW.md).
 - Run `make quality` (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
+- Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav gated behind authentication.
 
 ## Execution Criteria — **Must‑Follow for Repo Work**
 

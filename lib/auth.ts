@@ -47,18 +47,19 @@ type CreateUserEventParams = Parameters<NonNullable<AuthEvents["createUser"]>>[0
 const adapter: Adapter = {
   ...baseAdapter,
   async createUser(data: CreateUserParams) {
-    if (!data.email) {
+    const userData = data as AdapterUser & { role?: Role; orgId?: string };
+    if (!userData.email) {
       throw new Error("Email is required to create a user");
     }
-    const normalized = normalizeEmail(data.email);
+    const normalized = normalizeEmail(userData.email);
     const created = await prisma.user.create({
       data: {
         email: normalized,
-        name: data.name ?? null,
-        image: data.image ?? null,
-        emailVerified: data.emailVerified ?? null,
-        role: (data as AdapterUser & { role?: Role }).role ?? Role.USER,
-        orgId: (data as AdapterUser & { orgId?: string }).orgId ?? defaultOrgId,
+        name: userData.name ?? null,
+        image: userData.image ?? null,
+        emailVerified: userData.emailVerified ?? null,
+        role: userData.role ?? Role.USER,
+        orgId: userData.orgId ?? defaultOrgId,
       },
     });
     return created as unknown as AdapterUser;
