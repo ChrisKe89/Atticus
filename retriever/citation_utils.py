@@ -1,0 +1,59 @@
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any, Iterable
+
+
+def _getattr_or_key(obj: Any, name: str, default: Any = None) -> Any:
+    """Support both attr and dict access (Citation object vs dict)."""
+    if hasattr(obj, name):
+        return getattr(obj, name)
+    if isinstance(obj, dict):
+        return obj.get(name, default)
+    return default
+
+
+def _norm_source_path(value: str | None) -> str:
+    if not value:
+        return ""
+    try:
+        path = Path(value)
+        return path.stem.lower()
+    except Exception:
+        return str(value).strip().lower()
+
+
+def _norm_pages(pages: Any) -> tuple[int, ...]:
+    if pages is None:
+        return ()
+    try:
+        if isinstance(pages, (list, tuple, set)):
+            return tuple(sorted(int(x) for x in pages))
+        if isinstance(pages, int):
+            return (pages,)
+        if isinstance(pages, str):
+            normalized: list[int] = []
+            for token in pages.replace(",", " ").split():
+                if token.isdigit():
+                    normalized.append(int(token))
+            return tuple(sorted(normalized))
+    except Exception:
+        return ()
+    return ()
+
+
+def dedupe_citations(items: Iterable[Any] | None) -> list[Any]:
+    """Return citations with unique (normalized path, normalized page range)."""
+    seen: set[tuple[str, tuple[int, ...]]] = set()
+    result: list[Any] = []
+    if not items:
+        return result
+    for item in items:
+        source_path = _getattr_or_key(item, "source_path")
+        page_range = _getattr_or_key(item, "page_range", _getattr_or_key(item, "pages"))
+        key = (_norm_source_path(source_path), _norm_pages(page_range))
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(item)
+    return result
