@@ -14,6 +14,23 @@ The newest entries appear first.
 
 ---
 
+## [0.7.4] — 2025-10-07
+
+### Changed
+
+- Switched the CED chunker to a zero-overlap default across configuration, ingestion scripts, and metadata snapshots.
+- Allowed explicit `CHUNK_OVERLAP_TOKENS=0` in environment configuration and documentation so bespoke corpora can opt back into overlap deliberately.
+
+### Documentation
+
+- Highlighted the zero-overlap behaviour in the README quick start and CED chunking guide.
+
+### Testing
+
+- `PYTHONPATH=. pytest tests/test_ingestion_retrieval_integration.py -vv`
+
+---
+
 ## [0.7.3] — 2025-10-06
 
 ### Changed

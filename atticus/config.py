@@ -51,10 +51,12 @@ class AppSettings(BaseSettings):
     pgvector_lists: int = Field(default=100, alias="PGVECTOR_LISTS")
     pgvector_probes: int = Field(default=4, alias="PGVECTOR_PROBES")
     chunk_size: int = Field(default=512, ge=64)
-    chunk_overlap_ratio: float = Field(default=0.2, ge=0.0, lt=1.0)
+    chunk_overlap_ratio: float = Field(default=0.0, ge=0.0, lt=1.0)
     chunk_target_tokens: int = Field(default=512, alias="CHUNK_TARGET_TOKENS")
     chunk_min_tokens: int = Field(default=256, alias="CHUNK_MIN_TOKENS")
-    chunk_overlap_tokens_setting: int = Field(default=100, alias="CHUNK_OVERLAP_TOKENS")
+    chunk_overlap_tokens_setting: int | None = Field(
+        default=None, alias="CHUNK_OVERLAP_TOKENS", ge=0
+    )
     max_context_chunks: int = Field(default=10, ge=1)
     enable_reranker: bool = Field(default=False, alias="ENABLE_RERANKER")
     top_k: int = Field(default=20, ge=1)
@@ -105,9 +107,9 @@ class AppSettings(BaseSettings):
 
     @property
     def chunk_overlap_tokens(self) -> int:
-        if self.chunk_overlap_tokens_setting:
-            return max(1, self.chunk_overlap_tokens_setting)
-        return max(1, int(self.chunk_size * self.chunk_overlap_ratio))
+        if self.chunk_overlap_tokens_setting is not None:
+            return max(0, self.chunk_overlap_tokens_setting)
+        return max(0, int(self.chunk_size * self.chunk_overlap_ratio))
 
     def ensure_directories(self) -> None:
         for path in [
