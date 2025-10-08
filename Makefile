@@ -109,7 +109,7 @@ format:
 typecheck:
 	mypy atticus api ingest retriever eval
 
-quality: lint typecheck test web-lint web-typecheck web-build web-audit
+quality: lint typecheck test version-check web-lint web-typecheck web-build web-audit
 
 # Full verification pass for CI / release
 verify:
@@ -119,6 +119,7 @@ verify:
 	make typecheck
 	make test.unit
 	make test.api
+	make version-check
 	make web-lint
 	make web-typecheck
 	make web-build
@@ -141,3 +142,7 @@ web-audit:
 	npm run audit:icons
 	npm run audit:routes
 	npm run audit:py
+
+# Ensure VERSION and package.json are aligned
+version-check:
+	@$(PYTHON) scripts/check_version_parity.py

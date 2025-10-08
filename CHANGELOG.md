@@ -9,7 +9,7 @@ The newest entries appear first.
 
 ### Changed
 
-- Consolidated the active backlog into `TODO_NEW.md`, updated cross-references, and recorded completed tasks in `ToDo-Complete.md`.
+- Consolidated the active backlog into `TODO.md`, updated cross-references, and recorded completed tasks in `TODO_COMPLETE.md`.
 - Resolved merge artefacts in `VERSION` to restore 0.7.2 as the canonical release number and flagged the follow-up automation in the backlog.
 
 ---
@@ -79,7 +79,7 @@ The newest entries appear first.
 
 - Synchronized all version sources (`VERSION`, `package.json`, FastAPI metadata) at 0.7.2 and documented the change in the audit report.
 - Trimmed resolved findings from `audit_summary.md` and `AUDIT_REPORT.md`, highlighting the remaining remediation work for Phases 0–5.
-- Updated `TODO.md`/`ToDo-Complete.md` to remove completed items, backfill commit references, and keep the active backlog authoritative.
+- Updated `TODO.md`/`TODO_COMPLETE.md` to remove completed items, backfill commit references, and keep the active backlog authoritative.
 - Clarified that Framer Motion is optional in `AGENTS.md`, aligning guidance with current dependencies.
 
 ### Fixed

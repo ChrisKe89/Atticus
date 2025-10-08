@@ -284,7 +284,7 @@ Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.
 - [CHANGELOG.md](CHANGELOG.md) – release history
 - [CONTRIBUTING.md](CONTRIBUTING.md) – contributor workflow
 - [STYLEGUIDE.md](STYLEGUIDE.md) – code and writing standards
-- [TODO_NEW.md](TODO_NEW.md) / [ToDo-Complete.md](ToDo-Complete.md) – authoritative backlog
+- [TODO.md](TODO.md) / [TODO_COMPLETE.md](TODO_COMPLETE.md) – authoritative backlog
 
 ---
 
