@@ -22,8 +22,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from atticus.config import load_settings  # noqa: E402
+from atticus.logging_utils import get_logger  # noqa: E402
 from atticus.tokenization import decode, encode, split_tokens  # noqa: E402
 from atticus.utils import sha256_file, sha256_text  # noqa: E402
+
+log = get_logger("chunk_ced")
 
 try:  # pragma: no cover - optional dependency
     import camelot  # type: ignore[import-untyped]
@@ -364,6 +367,7 @@ def main() -> None:
     models = _extract_models(source_file)
     timestamp = datetime.utcnow().isoformat(timespec="seconds") + "Z"
 
+    log.info("open_document", path=str(source_file))
     document = fitz.open(str(source_file))
     font_baseline = _compute_font_baseline(document)
     sections = extract_sections(document, font_baseline + FONT_SIZE_PADDING)
@@ -382,7 +386,14 @@ def main() -> None:
     table_payloads: list[dict[str, object]] = []
     chunk_index = 0
     for chunk in chunks:
-        if garble_ratio(chunk.text) > GARBLE_THRESHOLD:
+        ratio = garble_ratio(chunk.text)
+        if ratio > GARBLE_THRESHOLD:
+            log.warning(
+                "skip_garbled_chunk",
+                pages=sorted(chunk.pages),
+                garble_ratio=ratio,
+                chunk_id=f"{ced_id}::chunk_{chunk_index + 1:04d}",
+            )
             continue
         chunk_index += 1
         pages = sorted(chunk.pages)
@@ -446,6 +457,13 @@ def main() -> None:
 
     write_jsonl(args.output, chunk_payloads)
     write_jsonl(args.tables, table_payloads)
+    log.info(
+        "write_chunks_complete",
+        text_chunks=len(chunk_payloads),
+        table_chunks=len(table_payloads),
+        output=str(args.output),
+        tables=str(args.tables),
+    )
 
     doc_index = {
         "ced_id": ced_id,
@@ -462,15 +480,13 @@ def main() -> None:
     args.doc_index.parent.mkdir(parents=True, exist_ok=True)
     args.doc_index.write_text(json.dumps(doc_index, indent=2), encoding="utf-8")
 
-    print(
-        json.dumps(
-            {
-                "chunks": len(chunk_payloads),
-                "tables": len(table_payloads),
-                "doc_index": str(args.doc_index),
-            },
-            indent=2,
-        )
+    log.info(
+        "chunk_ced_complete",
+        chunks=len(chunk_payloads),
+        tables=len(table_payloads),
+        doc_index=str(args.doc_index),
+        models=models,
+        ced_id=ced_id,
     )
 
 
