@@ -130,7 +130,7 @@ class CEDChunker:
         if not tokens:
             return []
         target_tokens = self.settings.chunk_target_tokens or self.settings.chunk_size
-        overlap = self.settings.chunk_overlap_tokens
+        overlap = 0
         splits = list(split_tokens(tokens, target_tokens, overlap))
         result: list[Chunk] = []
         for index, (start, end) in enumerate(splits, start=1):

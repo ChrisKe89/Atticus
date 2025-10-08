@@ -3,9 +3,17 @@
 
 CREATE SCHEMA IF NOT EXISTS app_private;
 
-ALTER DATABASE current_database() SET app.current_user_role TO 'SERVICE';
-ALTER DATABASE current_database() SET app.current_org_id TO '';
-ALTER DATABASE current_database() SET app.current_user_id TO '';
+DO $$
+DECLARE
+  db_name text := current_database();
+BEGIN
+  EXECUTE format('ALTER DATABASE %I SET app.current_user_role = %L', db_name, 'SERVICE');
+  EXECUTE format('ALTER DATABASE %I SET app.current_org_id = %L', db_name, '');
+  EXECUTE format('ALTER DATABASE %I SET app.current_user_id = %L', db_name, '');
+  EXECUTE format('ALTER DATABASE %I SET app.pgvector_lists = %L', db_name, '100');
+  EXECUTE format('ALTER DATABASE %I SET app.pgvector_dimension = %L', db_name, '3072');
+END
+$$;
 
 CREATE OR REPLACE FUNCTION app_private.update_updated_at()
 RETURNS trigger AS $$
@@ -258,4 +266,3 @@ CREATE POLICY "Glossary_admin_delete" ON "GlossaryEntry"
     )
     OR current_setting('app.current_user_role', true) = 'SERVICE'
   );
-

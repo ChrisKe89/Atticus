@@ -15,20 +15,40 @@ from .vector_store import SearchResult, VectorStore
 def _format_contexts(results: list[SearchResult], limit: int) -> tuple[list[str], list[Citation]]:
     contexts: list[str] = []
     citations: list[Citation] = []
-    for result in results[:limit]:
+    seen: set[tuple[str, int | None]] = set()
+
+    for result in results:
+        page_value = result.page_number
+        if isinstance(page_value, str):
+            try:
+                page_key = int(page_value)
+            except ValueError:
+                page_key = page_value.strip()
+        else:
+            page_key = page_value
+
+        key = (result.source_path, page_key)
+        if key in seen:
+            continue
+
+        seen.add(key)
         descriptor = result.source_path
-        if result.page_number:
-            descriptor += f" (page {result.page_number})"
-        contexts.append(f"{descriptor}\n{result.text}")
+        if page_value:
+            descriptor += f" (page {page_value})"
+        contexts.append(result.text)
         citations.append(
             Citation(
                 chunk_id=result.chunk_id,
                 source_path=result.source_path,
-                page_number=result.page_number,
+                page_number=page_key if isinstance(page_key, int) else result.page_number,
                 heading=result.heading,
                 score=round(result.score, 4),
             )
         )
+
+        if len(contexts) >= limit:
+            break
+
     return contexts, citations
 
 
