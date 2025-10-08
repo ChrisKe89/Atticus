@@ -1,4 +1,5 @@
 """Helper to invoke the pgvector verification SQL in a cross-platform way."""
+
 from __future__ import annotations
 
 import os
@@ -24,7 +25,9 @@ def _load_env_from_file(env_path: Path) -> None:
         if not key or key in os.environ:
             continue
         cleaned = value.strip()
-        if (cleaned.startswith('"') and cleaned.endswith('"')) or (cleaned.startswith("'") and cleaned.endswith("'")):
+        if (cleaned.startswith('"') and cleaned.endswith('"')) or (
+            cleaned.startswith("'") and cleaned.endswith("'")
+        ):
             cleaned = cleaned[1:-1]
         os.environ[key] = cleaned
 
@@ -45,8 +48,8 @@ def main() -> int:
     dimension = os.environ.get("PGVECTOR_DIMENSION", "3072")
     lists = os.environ.get("PGVECTOR_LISTS", "100")
     sql_template = sql_path.read_text(encoding="utf-8")
-    sql_rendered = (
-        sql_template.replace(":expected_pgvector_dimension", dimension).replace(":expected_pgvector_lists", lists)
+    sql_rendered = sql_template.replace(":expected_pgvector_dimension", dimension).replace(
+        ":expected_pgvector_lists", lists
     )
 
     with NamedTemporaryFile("w", encoding="utf-8", suffix=".sql", delete=False) as tmp_file:
@@ -76,14 +79,15 @@ def main() -> int:
             )
             return 1
 
-        command_prefix = compose_base + ["exec", "-T", "postgres", "psql"]
+        command_prefix = [*compose_base, "exec", "-T", "postgres", "psql"]
         remote_path = "/tmp/verify_pgvector.sql"
-        copy_cmd = compose_base + ["cp", str(tmp_path), f"postgres:{remote_path}"]
+        copy_cmd = [*compose_base, "cp", str(tmp_path), f"postgres:{remote_path}"]
         subprocess.run(copy_cmd, check=True)
         sql_arg = remote_path
-        extra_cleanup.append(compose_base + ["exec", "-T", "postgres", "rm", "-f", remote_path])
+        extra_cleanup.append([*compose_base, "exec", "-T", "postgres", "rm", "-f", remote_path])
 
-    cmd: list[str] = command_prefix + [
+    cmd: list[str] = [
+        *command_prefix,
         "--dbname",
         database_url,
         "-v",
