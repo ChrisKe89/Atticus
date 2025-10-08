@@ -326,6 +326,16 @@ def summarize(text: str) -> str:
     return sentences[0][:240] if sentences else text[:240]
 
 
+# Remove trailing markdown anchors like: ([Secondary Ethernet Limitations](#37)).
+_TRAILING_ANCHOR_RE = re.compile(r"\s*\(\[[^\]]+\]\(#\d+\)\)\.?\s*$")
+
+
+def clean_summary(text: str) -> str:
+    """Summarize and strip dangling anchor-style citations."""
+    summary = summarize(text)
+    return _TRAILING_ANCHOR_RE.sub("", summary).strip()
+
+
 def extract_keywords(text: str, top_n: int = 5) -> list[str]:
     words = [re.sub(r"[^a-z0-9]", "", token.lower()) for token in text.split()]
     words = [word for word in words if word and word not in STOPWORDS]
@@ -397,7 +407,7 @@ def main() -> None:
             "ingested_at": timestamp,
             "hash": sha256_text(chunk.text),
             "keywords": extract_keywords(chunk.text),
-            "context_summary": summarize(chunk.text),
+            "context_summary": clean_summary(chunk.text),
             "text": chunk.text,
         }
         chunk_payloads.append(payload)
@@ -429,7 +439,7 @@ def main() -> None:
             "ingested_at": timestamp,
             "hash": sha256_text(table.text),
             "keywords": extract_keywords(table.text),
-            "context_summary": summarize(table.text),
+            "context_summary": clean_summary(table.text),
             "text": table.text,
         }
         table_payloads.append(payload)

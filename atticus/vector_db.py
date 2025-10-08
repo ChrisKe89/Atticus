@@ -197,7 +197,9 @@ class PgVectorRepository:
                     "to enable ANN search.",
                     dimension,
                 )
-            conn.execute("ALTER TABLE atticus_documents ALTER COLUMN metadata SET DEFAULT '{}'::jsonb")
+            conn.execute(
+                "ALTER TABLE atticus_documents ALTER COLUMN metadata SET DEFAULT '{}'::jsonb"
+            )
             conn.execute("ALTER TABLE atticus_chunks ALTER COLUMN metadata SET DEFAULT '{}'::jsonb")
             conn.execute("ANALYZE atticus_chunks")
             conn.execute("ANALYZE atticus_chunks")
@@ -216,7 +218,9 @@ class PgVectorRepository:
         if not record:
             return
         with self.connection() as conn, conn.cursor() as cur:
-            cur.execute("DELETE FROM atticus_documents WHERE document_id = %s", (record["document_id"],))
+            cur.execute(
+                "DELETE FROM atticus_documents WHERE document_id = %s", (record["document_id"],)
+            )
 
     def fetch_chunks_for_source(self, source_path: str) -> list[StoredChunk]:
         with self.connection() as conn, conn.cursor() as cur:
