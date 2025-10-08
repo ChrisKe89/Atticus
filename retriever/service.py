@@ -7,6 +7,7 @@ import logging
 from atticus.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
 
+from .citation_utils import dedupe_citations
 from .generator import GeneratorClient
 from .models import Answer, Citation
 from .vector_store import SearchResult, VectorStore
@@ -111,6 +112,8 @@ def answer_question(
         w_r, w_l = 0.2, 0.8
     confidence = round(w_r * retrieval_conf + w_l * llm_conf, 2)
     should_escalate = confidence < settings.confidence_threshold
+
+    citations = dedupe_citations(citations)
 
     answer = Answer(
         question=question,
