@@ -38,26 +38,48 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_atticus_chunks_doc_sha ON atticus_chunks(d
 DO $$
 DECLARE
     desired_lists INTEGER;
+    raw_lists TEXT;
+    raw_dimension TEXT;
+    dimension INTEGER := 3072;
 BEGIN
-    BEGIN
-        desired_lists := current_setting('app.pgvector_lists', true)::INTEGER;
-    EXCEPTION WHEN OTHERS THEN
+    raw_lists := current_setting('app.pgvector_lists', true);
+    raw_dimension := current_setting('app.pgvector_dimension', true);
+
+    IF raw_dimension IS NOT NULL AND raw_dimension <> '' THEN
+        BEGIN
+            dimension := raw_dimension::INTEGER;
+        EXCEPTION WHEN OTHERS THEN
+            dimension := 3072;
+        END;
+    END IF;
+
+    IF raw_lists IS NULL OR raw_lists = '' THEN
         desired_lists := 100;
-    END;
+    ELSE
+        BEGIN
+            desired_lists := raw_lists::INTEGER;
+        EXCEPTION WHEN OTHERS THEN
+            desired_lists := 100;
+        END;
+    END IF;
 
-    EXECUTE format(
-        'CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding ON atticus_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = %s)',
-        desired_lists
-    );
-
-    BEGIN
+    IF dimension > 2000 THEN
+        RAISE NOTICE 'Skipping ANN index creation: dimension % exceeds 2000. Install a pgvector build with higher INDEX_MAX_DIMENSIONS to enable ivfflat.', dimension;
+    ELSE
         EXECUTE format(
-            'ALTER INDEX idx_atticus_chunks_embedding SET (lists = %s)',
+            'CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding ON atticus_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = %s)',
             desired_lists
         );
-    EXCEPTION WHEN OTHERS THEN
-        NULL;
-    END;
+
+        BEGIN
+            EXECUTE format(
+                'ALTER INDEX idx_atticus_chunks_embedding SET (lists = %s)',
+                desired_lists
+            );
+        EXCEPTION WHEN OTHERS THEN
+            NULL;
+        END;
+    END IF;
 END$$;
 
 ALTER TABLE atticus_documents

@@ -24,7 +24,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     - `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
     - `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
 
-2. Install dependencies
+1. Install dependencies
 
     Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
 
@@ -35,17 +35,22 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     npm install
     ```
 
- 3. Database and Prisma
+1. Database and Prisma
 
     Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
 
     ```bash
     make db.up
     make db.migrate   # runs `prisma generate` before applying migrations
-    set -a; source .env; set +a  # export DATABASE_URL for verification
+    # POSIX shells (bash/zsh): export DATABASE_URL before verification
+    set -a
+    . .env
+    set +a
     make db.verify    # pgvector extension, dimension, IVFFlat probes
     make db.seed
     ```
+
+    > Windows users: do **not** run the `set -a` snippet—instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
 
     ```powershell
     make db.up
@@ -60,13 +65,15 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make db.seed
     ```
 
+    `make db.verify` auto-loads `.env`, then shells out to `psql` (falling back to `docker compose exec postgres psql` when the CLI is unavailable) and will emit a notice if your pgvector build caps ANN indexes at 2K dimensions; upgrade the image to regain IVFFlat on 3K-dim embeddings.
+
     Run the verification SQL directly when debugging:
 
     ```bash
     psql "$DATABASE_URL" \
-    -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
-    -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
-    -f scripts/verify_pgvector.sql
+      -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
+      -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+      -f scripts/verify_pgvector.sql
     ```
 
     ```powershell
@@ -78,21 +85,17 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     -f scripts/verify_pgvector.sql
     ```
 
-3. Quality gates
+1. Ingest documents
 
-    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
+    Run ingestion once after the database is ready so the assistant has content to answer with; rerun whenever new documents land. `make eval` and `make seed` help during iteration.
 
     ```bash
-    make quality
+    make ingest     # parse, chunk, embed, and update pgvector index
+    make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+    make eval       # run retrieval evaluation and emit metrics under eval/runs/
     ```
 
-    ```powershell
-    make quality
-    ```
-
-    Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
-
-4. Run services
+1. Run services
 
     Use separate terminals for the FastAPI backend and the Next.js UI.
 
@@ -106,19 +109,23 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make web-dev
     ```
 
-5. Ingest, evaluate, and iterate
+1. Quality gates (before committing)
 
     ```bash
-    make ingest     # parse, chunk, embed, and update pgvector index
-    make eval       # run retrieval evaluation and emit metrics under eval/runs/
-    make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+    make quality
     ```
 
-6. Authenticate with magic link
+    ```powershell
+    make quality
+    ```
+
+    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+
+1. Authenticate with magic link
 
     Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
 
-7. `/api/ask` contract
+1. `/api/ask` contract
 
     The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
 
@@ -158,7 +165,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
    - install Python + Node dependencies (`pip-sync` and `npm install`).
 3. **Database**:
    - Run `make db.up && make db.migrate && make db.seed`. 
-   - Export `.env` (`set -a; source .env; set +a`) before `make db.verify` so `DATABASE_URL` is available.
+   - Export `.env` before `make db.verify` so `DATABASE_URL` is available (`set -a; . .env; set +a` on POSIX shells, or use the PowerShell snippet in Quick Start on Windows).
 4. **Quality**: 
    - Run `make quality` locally before every PR. 
    - Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.

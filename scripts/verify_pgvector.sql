@@ -35,7 +35,7 @@ DECLARE
   dimension integer;
   expected integer := :expected_pgvector_dimension;
 BEGIN
-  SELECT atttypmod - 4 INTO dimension
+  SELECT atttypmod INTO dimension
   FROM pg_attribute
   WHERE attrelid = 'atticus_chunks'::regclass
     AND attname = 'embedding'
@@ -55,7 +55,23 @@ DO $$
 DECLARE
   idx_record TEXT;
   expected_lists INTEGER := :expected_pgvector_lists;
+  dimension INTEGER;
 BEGIN
+  SELECT atttypmod INTO dimension
+  FROM pg_attribute
+  WHERE attrelid = 'atticus_chunks'::regclass
+    AND attname = 'embedding'
+    AND NOT attisdropped;
+
+  IF dimension IS NULL THEN
+    RAISE EXCEPTION 'atticus_chunks.embedding column missing';
+  END IF;
+
+  IF dimension > 2000 THEN
+    RAISE NOTICE 'Skipping IVFFlat verification because dimension % exceeds 2000. Install a pgvector build with higher INDEX_MAX_DIMENSIONS to enable ANN indexing.', dimension;
+    RETURN;
+  END IF;
+
   SELECT indexdef INTO idx_record
   FROM pg_indexes
   WHERE tablename = 'atticus_chunks'

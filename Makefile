@@ -21,16 +21,16 @@ help:
 	@python scripts/list_make_targets.py $(MAKEFILE_LIST)
 
 api:
-        $(PYTHON) -m uvicorn api.main:app --reload --port 8000
+	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
 
 
 web-dev:
-        @echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
-        npm run dev
+	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
+	npm run dev
 
 app-dev:
-        @echo "Alias for web-dev; launching Next.js UI"
-        $(MAKE) web-dev
+	@echo "Alias for web-dev; launching Next.js UI"
+	$(MAKE) web-dev
 
 db.up:
 	docker compose up -d $(DB_SERVICE)
@@ -43,11 +43,7 @@ db.migrate:
 	npm run db:migrate
 
 db.verify:
-	@if [ -z "$(DATABASE_URL)" ]; then \
-	echo "DATABASE_URL is not set. Export it before running db.verify."; \
-	exit 1; \
-	fi
-	psql "$(DATABASE_URL)" -v expected_pgvector_dimension=$(PGVECTOR_DIMENSION) -v expected_pgvector_lists=$(PGVECTOR_LISTS) -f scripts/verify_pgvector.sql
+	$(PYTHON) scripts/db_verify.py
 
 db.seed:
 	npm run db:seed
@@ -84,9 +80,9 @@ test.api:
 	       tests/test_ui_route.py
 
 test:
-        PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-               --cov=atticus --cov=api --cov=retriever \
-               --cov-report=term-missing --cov-fail-under=90
+	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	       --cov=atticus --cov=api --cov=retriever \
+	       --cov-report=term-missing --cov-fail-under=90
 
 web-test:
 	npm run test:unit

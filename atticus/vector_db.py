@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import Iterable, Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -15,6 +16,8 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Json
 
 from atticus.config import AppSettings
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -44,7 +47,7 @@ class StoredChunk:
             "page_number": self.page_number,
             "section": self.section,
             "sha256": self.sha256,
-            "embedding": list(self.embedding or []),
+            "embedding": [float(value) for value in (self.embedding or [])],
             "extra": dict(self.extra),
         }
 
@@ -120,6 +123,7 @@ class PgVectorRepository:
 
         lists = max(1, int(self.settings.pgvector_lists))
         dimension = int(self.settings.embed_dimensions)
+        ann_supported = dimension <= 2000
         with self.connection(autocommit=True) as conn:
             conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
             conn.execute(
@@ -150,7 +154,7 @@ class PgVectorRepository:
                     start_token INTEGER,
                     end_token INTEGER,
                     sha256 TEXT NOT NULL,
-                    metadata JSONB NOT NULL,
+                    metadata JSONB NOT NULL DEFAULT '{{}}'::jsonb,
                     embedding vector({dimension}) NOT NULL,
                     ingested_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
@@ -177,13 +181,25 @@ class PgVectorRepository:
                 ON atticus_chunks(document_id, sha256)
                 """
             )
-            conn.execute(
-                f"""
-                CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding
-                ON atticus_chunks USING ivfflat (embedding vector_cosine_ops)
-                WITH (lists = {lists})
-                """
-            )
+            if ann_supported:
+                conn.execute(
+                    f"""
+                    CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding
+                    ON atticus_chunks USING ivfflat (embedding vector_cosine_ops)
+                    WITH (lists = {lists})
+                    """
+                )
+            else:
+                logger.warning(
+                    "Skipping ivfflat index on atticus_chunks.embedding; "
+                    "dimension %s exceeds the 2000 limit for this pgvector build. "
+                    "Install a pgvector build compiled with a higher INDEX_MAX_DIMENSIONS "
+                    "to enable ANN search.",
+                    dimension,
+                )
+            conn.execute("ALTER TABLE atticus_documents ALTER COLUMN metadata SET DEFAULT '{}'::jsonb")
+            conn.execute("ALTER TABLE atticus_chunks ALTER COLUMN metadata SET DEFAULT '{}'::jsonb")
+            conn.execute("ANALYZE atticus_chunks")
             conn.execute("ANALYZE atticus_chunks")
 
     def fetch_document(self, source_path: str) -> dict[str, Any] | None:
@@ -193,6 +209,14 @@ class PgVectorRepository:
                 (source_path,),
             )
             return cur.fetchone()
+
+    def remove_document(self, source_path: str) -> None:
+        """Delete a document (and its chunks) by source path if it exists."""
+        record = self.fetch_document(source_path)
+        if not record:
+            return
+        with self.connection() as conn, conn.cursor() as cur:
+            cur.execute("DELETE FROM atticus_documents WHERE document_id = %s", (record["document_id"],))
 
     def fetch_chunks_for_source(self, source_path: str) -> list[StoredChunk]:
         with self.connection() as conn, conn.cursor() as cur:
@@ -365,7 +389,7 @@ class PgVectorRepository:
     ) -> list[dict[str, Any]]:
         with self.connection() as conn, conn.cursor() as cur:
             if probes and probes > 0:
-                cur.execute("SET LOCAL ivfflat.probes = %s", (probes,))
+                cur.execute(f"SET LOCAL ivfflat.probes = {int(probes)}")
             cur.execute(
                 """
                 SELECT chunk_id, document_id, source_path, text, metadata, page_number, section,

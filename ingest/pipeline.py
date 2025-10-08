@@ -212,6 +212,12 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         record["sha256"] = document.sha256
         record["source_type"] = document.source_type
 
+    previous_paths = set(previous_docs.keys())
+    current_paths = set(document_records.keys())
+    removed_paths = previous_paths - current_paths
+    for missing_path in removed_paths:
+        repo.remove_document(missing_path)
+
     document_hashes = [
         f"{path}:{info.get('sha256', '')}" for path, info in sorted(document_records.items())
     ]
