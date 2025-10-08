@@ -7,7 +7,7 @@
 ## Current Audit Status
 
 - Refer to [AUDIT_REPORT.md](AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
-- Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO_NEW.md](TODO_NEW.md).
+- Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO.md](TODO.md).
 - Run `make quality` (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
 - Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav gated behind authentication.
 
@@ -29,6 +29,7 @@
     - Update documentation as necessary.
     - Keep changes minimal, focused, and consistent with existing style.
     - Frontend/TypeScript code uses **Prettier** (with Tailwind sorting) + **ESLint** (Next + tailwindcss plugin). Run `npm run format` for writes and `npm run lint` for checks.
+    - Python uses the **Ruff formatter** (`ruff format`) and **Ruff** linting; no Black.
     - **Never** add copyright/license headers unless requested.
 
 ### Persistence
@@ -414,7 +415,7 @@ python scripts/debug_env.py
 
 ## Notes on Conflicts (resolved)
 
-- Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in [TODO_NEW.md](TODO_NEW.md).
+- Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in [TODO.md](TODO.md).
 - Static HTML prototypes now live under `archive/legacy-ui/`; ship only the Next.js application under `app/`.
 
 ---

@@ -1,7 +1,26 @@
-# Completed Tasks — Atticus
+
+# TODO — Completed / Obsolete
 
 This file is the **permanent log of completed tasks**.
 Each entry includes the completion date and commit reference for traceability.
+
+The following items are done or no longer relevant and are recorded here for traceability.
+
+## Completed
+- **FND-001 → FND-008** (Audit): Next.js UI, proxy contracts, schema ownership, env scaffolding, request-id propagation, CI audits — delivered.
+- **Ask Contract & Streaming**: `/api/ask` SSE endpoint and UI consumer normalised; error contracts include `request_id`.
+- **Frontend Hygiene & Repo Structure**: Legacy FastAPI UI archived; canonical Next.js app; docs updated.
+- **DX & Docs**: Makefile `quality` runs Python + Next gates + audits; pre-commit configured; release docs added.
+- **Structured Logging**: Centralised logger with JSON output; instrumented key scripts.
+- **Unified CLI**: `scripts/atticus_cli.py` with Makefile alias `atticus`.
+
+## Obsolete / Superseded
+- “Prisma duplicates and `Glossary.synonyms` type fix” — resolved in current schema/migrations.
+- “Decide on Framer Motion” — kept as optional; AGENTS reflects this.
+- “Archive web/static” — done; legacy moved under `archive/legacy-ui/`.
+- “CONTENT_DIR → CONTENT_ROOT rename” — standardised across code/docs.
+- “Rebuild evaluator harness” — present via tests and `eval` target.
+- “Glossary API error normalisation” — implemented with `request_id`.
 
 ---
 

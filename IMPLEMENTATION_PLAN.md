@@ -13,7 +13,7 @@
 
 This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges active TODOs. Each phase lists required commits, commands (POSIX + PowerShell where relevant), acceptance criteria, and cross-references to TODO items.
 
-> **Note:** Legacy references to `TODO` sections map to the consolidated backlog in [TODO_NEW.md](TODO_NEW.md).
+> **Note:** Legacy references to `TODO` sections map to the consolidated backlog in [TODO.md](TODO.md).
 
 ## Phase 0 – Safety, Branching, and Baseline Artifacts
 
@@ -160,14 +160,14 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
   - `docs(phase-7): refresh product documentation`
   - `release(phase-7): bump version and changelog`
 - **Key Tasks**
-  - Complete outstanding items documented in [TODO_NEW.md](TODO_NEW.md); move finished tasks to `ToDo-Complete.md`.
+  - Complete outstanding items documented in [TODO.md](TODO.md); move finished tasks to `TODO_COMPLETE.md`.
   - Add upgrade/rollback steps to README + RELEASE.md (per universal backlog instructions).
   - Provide Windows PowerShell equivalents for all scripts/make invocations.
 - **Commands**
   - POSIX: `git tag vX.Y.Z`
   - PowerShell: `git tag vX.Y.Z`
 - **Acceptance Criteria**
-  - [TODO_NEW.md](TODO_NEW.md) reflects only new/remaining work; duplicates removed.
+  - [TODO.md](TODO.md) reflects only new/remaining work; duplicates removed.
   - `CHANGELOG.md` documents release with version synced across packages.
   - README accurately describes Next.js + FastAPI hybrid deployment.
 
