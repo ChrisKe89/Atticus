@@ -14,7 +14,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from atticus.config import load_settings  # noqa: E402
+from atticus.logging_utils import get_logger  # noqa: E402
 from eval.runner import run_evaluation  # noqa: E402
+
+log = get_logger("eval_run")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -55,6 +58,12 @@ def main() -> None:
         os.environ["CONFIG_PATH"] = str(args.config)
 
     settings = load_settings()
+    log.info(
+        "eval_start",
+        gold_override=bool(args.gold_set),
+        baseline_override=bool(args.baseline),
+        output_dir=str(args.output_dir) if args.output_dir else None,
+    )
     result = run_evaluation(
         settings=settings,
         gold_path=args.gold_set,
@@ -71,15 +80,17 @@ def main() -> None:
     }
 
     if args.json or not args.output_dir:
-        print(json.dumps(payload, indent=2))
+        log.info("eval_result", **payload)
     else:
-        (args.output_dir / "run_summary.json").write_text(
-            json.dumps(payload, indent=2), encoding="utf-8"
-        )
+        summary_path = args.output_dir / "run_summary.json"
+        summary_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        log.info("eval_summary_written", path=str(summary_path))
 
     threshold = settings.eval_regression_threshold / 100.0
     if any(delta < -threshold for delta in result.deltas.values()):
+        log.error("eval_regression_detected", threshold=threshold, deltas=result.deltas)
         raise SystemExit(1)
+    log.info("eval_ok")
 
 
 if __name__ == "__main__":
