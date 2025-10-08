@@ -14,6 +14,15 @@ from rapidfuzz import fuzz
 
 from atticus.config import AppSettings
 
+UNCERTAINTY_PATTERNS: tuple[str, ...] = (
+    r"\b(?:i|we)\s+(?:am|are)\s+(?:not\s+sure|unsure)\b",
+    r"\b(?:i|we)\s+(?:cannot|can't|am\s+unable\s+to)\s+(?:answer|determine|confirm)\b",
+    r"\b(?:i|we)\s+(?:do\s+not|don't)\s+know\b",
+    r"\b(?:i|we)\s+(?:do\s+not|don't)\s+have\s+enough\s+(?:info|information|context)\b",
+    r"\b(?:cannot|can't|unable\s+to)\s+(?:answer|determine|confirm)\b",
+    r"\binsufficient\s+(?:information|context)\b",
+)
+
 
 class GeneratorClient:
     """Wrapper around OpenAI responses with offline fallback."""
@@ -165,7 +174,7 @@ class GeneratorClient:
 
             if re.search(r"\b\d{2,4}\s*(?:[x×]\s*\d{2,4}\s*)?dpi\b", lowered):
                 return 0.9
-        if any(token in lowered for token in ["not sure", "cannot", "unable", "insufficient"]):
+        if any(re.search(pattern, lowered) for pattern in UNCERTAINTY_PATTERNS):
             return 0.3
         if "confidence" in lowered and "%" in lowered:
             try:
