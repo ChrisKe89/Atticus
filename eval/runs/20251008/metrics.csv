@@ -1,119 +1,119 @@
 query,nDCG@10,Recall@50,MRR,top_document
-What is the maximum print resolution of the Apeos C7070 series?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum scanning resolution?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the minimum AMPV for the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum AMPV for the C4570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the duty cycle for the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the machine life for the C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the rated print speed of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the touch panel size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the standard system memory?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the standard SSD capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What type of encryption is standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which kit enables data overwrite security?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the warm-up time with plug-ins enabled?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the recovery time from sleep for the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the first copy output time for the C2570 (colour)?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the continuous copy speed of the C5570 for A4 LEF simplex?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum supported paper size in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the minimum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum supported paper weight in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the continuous copy limit per job?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the reduction/enlargement range?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum print size using the bypass tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the minimum print size supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What PDLs are standard and optional?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which interfaces are standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which wireless standards are supported by the wireless kit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What file systems are supported for USB printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What operating systems are supported for PCL printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What operating systems are supported for Adobe PostScript 3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-How many fonts are included with PCL?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-How many fonts are included with PostScript?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the scanning speed of the C7070 with DADF C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the scanning speed of the C2570 with DADF B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What scanning resolutions are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What file formats are supported for colour scans?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What additional formats require the Advanced Scan Kit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What fax transmission time is specified per A4 page?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What maximum fax resolution is supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What coding methods are supported for fax?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What fax transmission speeds are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-How many fax ports are supported with expansion?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum duplex feeder capacity on C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum duplex feeder capacity on B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which models come standard with C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the standard side tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which finisher is not supported on C7070/C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum staple capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum staple-free capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the booklet capacity of the B4/B5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the booklet capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum staple capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum half-fold capacity on C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What folding unit is available?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What fold types does Folder Unit CD3 support?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the capacity of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum output tray capacity of the centre tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum input tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the tandem tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the bypass tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the capacity of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the capacity of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the capacity of the envelope tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which tray supports banner paper?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the toner yield for black toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the toner yield for cyan toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the toner yield for magenta toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the toner yield for yellow toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the drum yield for C7070 mono?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the drum yield for C3070 colour?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the waste toner bottle yield for C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which consumables are considered excess?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What consumables are not covered as standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the staple cartridge life for 50-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the staple cartridge life for booklet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the staple cartridge life for 65-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the EPSV kit used for?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which kit enables searchable PDF output?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which kit enables secure watermarking?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which kit enables image logging?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Which kit enables IP Fax (SIP)?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum banner print size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What drivers are supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the billing meter for colour impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the billing meter for black impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the billing meter for colour large impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the billing meter for total impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What are recommended paper storage conditions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Is carbonless stock supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Are envelopes guaranteed for print quality?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Is coated stock performance guaranteed?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Are labels reusable in the device?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum humidity for operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the minimum operating temperature?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum operating temperature?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the maximum power consumption?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the TEC of the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the TEC of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the noise emission of the C7070 in operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the heat emission of the C7070 when running?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the machine weight of the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the weight of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the weight of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the weight of the C4/C5 Finisher with Booklet Maker?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the weight of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What are the electrical requirements?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the recommended clearance behind the C7070 for service?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the recommended clearance on the left side of C3070 for service?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the recommended minimum overhead clearance for all models?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Is duplex supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What are typical image-to-paper alignment tolerances?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Does duplex speed reduce when outputting to the centre tray with a finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Are authenticated prints supported via AirPrint?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What file systems are supported for USB storage?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-What is the USB storage capacity limit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
-How many devices can connect via Wi‑Fi Direct concurrently?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum print resolution of the Apeos C7070 series?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum scanning resolution?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum AMPV for the C3070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum AMPV for the C4570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the duty cycle for the C2570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the machine life for the C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the rated print speed of the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the touch panel size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard system memory?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard SSD capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What type of encryption is standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables data overwrite security?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the warm-up time with plug-ins enabled?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recovery time from sleep for the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the first copy output time for the C2570 (colour)?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum supported paper size in trays?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum bypass tray size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum bypass tray size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum supported paper weight in trays?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the continuous copy limit per job?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the reduction/enlargement range?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum print size using the bypass tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum print size supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What PDLs are standard and optional?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which interfaces are standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which wireless standards are supported by the wireless kit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file systems are supported for USB printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What operating systems are supported for PCL printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What operating systems are supported for Adobe PostScript 3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fonts are included with PCL?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fonts are included with PostScript?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the scanning speed of the C7070 with DADF C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the scanning speed of the C2570 with DADF B2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What scanning resolutions are supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file formats are supported for colour scans?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What additional formats require the Advanced Scan Kit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fax transmission time is specified per A4 page?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What maximum fax resolution is supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What coding methods are supported for fax?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fax transmission speeds are supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fax ports are supported with expansion?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on B2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which models come standard with C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard side tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which finisher is not supported on C7070/C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple-free capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the booklet capacity of the B4/B5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the booklet capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum half-fold capacity on C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What folding unit is available?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fold types does Folder Unit CD3 support?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of Folder Unit CD3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum output tray capacity of the centre tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum input tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the tandem tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the bypass tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of HCF-B1?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of HCF-B2?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of the envelope tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which tray supports banner paper?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for black toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for cyan toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for magenta toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for yellow toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the drum yield for C7070 mono?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the drum yield for C3070 colour?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the waste toner bottle yield for C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which consumables are considered excess?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What consumables are not covered as standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for 50-sheet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for booklet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for 65-sheet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the EPSV kit used for?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables searchable PDF output?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables secure watermarking?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables image logging?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables IP Fax (SIP)?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum banner print size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What drivers are supported for banner printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for colour impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for black impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for colour large impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for total impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are recommended paper storage conditions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is carbonless stock supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are envelopes guaranteed for print quality?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is coated stock performance guaranteed?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are labels reusable in the device?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum humidity for operation?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum operating temperature?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum operating temperature?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum power consumption?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the TEC of the C2570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the TEC of the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the noise emission of the C7070 in operation?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the heat emission of the C7070 when running?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the machine weight of the C3070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of HCF-B1?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of HCF-B2?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of the C4/C5 Finisher with Booklet Maker?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of Folder Unit CD3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are the electrical requirements?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended clearance behind the C7070 for service?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended clearance on the left side of C3070 for service?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended minimum overhead clearance for all models?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is duplex supported for banner printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are typical image-to-paper alignment tolerances?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Does duplex speed reduce when outputting to the centre tray with a finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are authenticated prints supported via AirPrint?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file systems are supported for USB storage?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the USB storage capacity limit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many devices can connect via Wi‑Fi Direct concurrently?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
 AVERAGE,1.0,1.0,1.0,

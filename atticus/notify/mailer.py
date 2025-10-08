@@ -129,8 +129,27 @@ def send_escalation(
     settings = load_settings()
     logger = configure_logging(settings)
 
-    recipient = (to or settings.smtp_to or settings.contact_email or "").strip()
-    if not recipient:
+    candidates = [
+        (to or "").strip(),
+        (settings.smtp_to or "").strip(),
+        (settings.contact_email or "").strip(),
+    ]
+    allow_list = settings.smtp_allow_list
+    recipient: str | None = None
+    for candidate in candidates:
+        if not candidate:
+            continue
+        if allow_list and not _address_allowed(candidate, allow_list):
+            continue
+        recipient = candidate
+        break
+
+    if recipient is None:
+        if allow_list:
+            raise EscalationDeliveryError(
+                "Recipient not approved for escalation email.",
+                reason="recipient_not_allowed",
+            )
         logger.warning("No recipient configured for escalation email; skipping send")
         return None
 
@@ -142,7 +161,6 @@ def send_escalation(
     port = int(settings.smtp_port or 587)
     sender = settings.smtp_from or settings.smtp_user or f"no-reply@{host}"
 
-    allow_list = settings.smtp_allow_list
     if not _address_allowed(recipient, allow_list):
         raise EscalationDeliveryError(
             "Recipient not approved for escalation email.",

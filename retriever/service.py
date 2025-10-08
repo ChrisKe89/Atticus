@@ -7,6 +7,7 @@ import logging
 from atticus.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
 
+from .answer_format import format_answer_markdown
 from .citation_utils import dedupe_citations
 from .generator import GeneratorClient
 from .models import Answer, Citation
@@ -114,10 +115,10 @@ def answer_question(
     should_escalate = confidence < settings.confidence_threshold
 
     citations = dedupe_citations(citations)
-
+    formatted_response = format_answer_markdown(response, citations)
     answer = Answer(
         question=question,
-        response=response,
+        response=formatted_response,
         citations=citations,
         confidence=confidence,
         should_escalate=should_escalate,

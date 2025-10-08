@@ -7,9 +7,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence, cast
 
 try:  # pragma: no cover - optional runtime dependency
-    from openpyxl import load_workbook
+    from openpyxl import load_workbook as _load_workbook
 except Exception:  # pragma: no cover - graceful fallback for typing
-    load_workbook = None  # type: ignore[assignment]
+    _load_workbook = None  # type: ignore[assignment]
+
+load_workbook: Any = _load_workbook
 
 if TYPE_CHECKING:
     from openpyxl.worksheet.worksheet import Worksheet
