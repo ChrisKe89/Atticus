@@ -97,6 +97,10 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make eval       # run retrieval evaluation and emit metrics under eval/runs/
     ```
 
+    > **Note:** The CED chunker now operates with zero token overlap by default
+    > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
+    > different stride is required for specialised corpora.
+
 1. Run services
 
     Use separate terminals for the FastAPI backend and the Next.js UI.

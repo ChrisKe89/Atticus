@@ -10,12 +10,13 @@ setup steps and [OPERATIONS.md](../OPERATIONS.md) for runbooks.
 
 1. **Content Intake** – Place source files under `content/` using the `YYYYMMDD_topic_version.ext`
    convention and record metadata in `indices/manifest.json` during ingestion.
-2. **Chunking & Embedding** – `make ingest` honours `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, and
-   `CHUNK_OVERLAP_TOKENS` before generating embeddings with the configured `EMBED_MODEL`.
+2. **Chunking & Embedding** – `make ingest` honours `CHUNK_TARGET_TOKENS`, `CHUNK_MIN_TOKENS`, and a
+   zero-overlap default (`CHUNK_OVERLAP_TOKENS=0`) before generating embeddings with the configured
+   `EMBED_MODEL`.
 
 ## CED Chunking Rules
 
-- **Prose** – paragraphs respect token targets/overlap and emit metadata (`breadcrumbs`, `section_heading`, `chunk_index`).
+- **Prose** – paragraphs respect token targets with **no overlap** and emit metadata (`breadcrumbs`, `section_heading`, `chunk_index`).
   Trailing fragments below `CHUNK_MIN_TOKENS` merge with the previous chunk and update the SHA-256 fingerprint.
 - **Tables** – each row (excluding headers) becomes a chunk with `chunking=table_row`, serialized cells, and table metadata
   (`table_headers`, `table_row_index`).

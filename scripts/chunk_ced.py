@@ -361,7 +361,10 @@ def main() -> None:
     base_breadcrumbs = [ced_id.upper(), source_file.stem]
     target_tokens = args.target_tokens or settings.chunk_target_tokens or 800
     min_tokens = args.min_tokens or settings.chunk_min_tokens or 400
-    overlap = args.overlap or settings.chunk_overlap_tokens_setting or 120
+    if args.overlap is not None:
+        overlap = max(0, args.overlap)
+    else:
+        overlap = settings.chunk_overlap_tokens
     chunks = chunk_sections(sections, target_tokens, min_tokens, overlap, base_breadcrumbs)
     document.close()
 
