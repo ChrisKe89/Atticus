@@ -65,10 +65,10 @@ atticus:
 	$(PYTHON) scripts/atticus_cli.py --help
 
 smoke:
-	PYTHONPATH=. $(PYTHON) scripts/test_health.py
+	$(PYTHON) scripts/test_health.py
 
 test.unit:
-	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
 	tests/test_hashing.py \
 	tests/test_config_reload.py \
 	tests/test_mailer.py \
@@ -77,14 +77,14 @@ test.unit:
 	tests/test_eval_runner.py
 
 test.api:
-	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
 	       tests/test_chat_route.py \
 	       tests/test_contact_route.py \
 	       tests/test_error_schema.py \
 	       tests/test_ui_route.py
 
 test:
-	PYTHONPATH=. pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
 	       --cov=atticus --cov=api --cov=retriever \
 	       --cov-report=term-missing --cov-fail-under=90
 

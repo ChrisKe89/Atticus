@@ -170,8 +170,6 @@ class GeneratorClient:
         lowered = answer.lower()
         # If we produced a clear spec with DPI, boost confidence slightly
         if "dpi" in lowered:
-            import re  # noqa: PLC0415
-
             if re.search(r"\b\d{2,4}\s*(?:[x×]\s*\d{2,4}\s*)?dpi\b", lowered):
                 return 0.9
         if any(re.search(pattern, lowered) for pattern in UNCERTAINTY_PATTERNS):
