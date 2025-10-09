@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { GlossaryStatus } from "@prisma/client";
+import { GlossaryStatus, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary } from "@/lib/rbac";
@@ -8,60 +8,91 @@ import {
   parseSynonyms,
   serializeEntry,
   handleGlossaryError,
+  snapshotEntry,
 } from "@/app/api/glossary/utils";
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+const relationSelect = {
+  author: { select: { id: true, email: true, name: true } },
+  updatedBy: { select: { id: true, email: true, name: true } },
+  reviewer: { select: { id: true, email: true, name: true } },
+} as const;
+
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = canEditGlossary(await getServerAuthSession());
     const payload = await request.json();
-    const updates: Record<string, unknown> = {};
-    if (typeof payload.definition === "string" && payload.definition.trim()) {
-      updates.definition = payload.definition.trim();
-    }
-    if (payload.synonyms !== undefined) {
-      updates.synonyms = parseSynonyms(payload.synonyms);
-    }
-    if (payload.reviewNotes !== undefined) {
-      if (typeof payload.reviewNotes === "string") {
-        const note = payload.reviewNotes.trim();
-        updates.reviewNotes = note ? note : null;
-      } else if (payload.reviewNotes === null) {
-        updates.reviewNotes = null;
-      }
-    }
-    if (payload.status) {
-      const status = parseStatus(payload.status);
-      updates.status = status;
-      if (status === GlossaryStatus.PENDING) {
-        updates.reviewedAt = null;
-        updates.reviewerId = null;
-      } else {
-        updates.reviewedAt = new Date();
-        updates.reviewerId = session.user.id;
-      }
-    }
-
-    if (Object.keys(updates).length === 0) {
+    const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
+    if (!definition) {
       return NextResponse.json(
-        { error: "invalid_request", detail: "Provide definition or status." },
+        { error: "invalid_request", detail: "Definition is required." },
         { status: 400 }
       );
     }
+    const term = typeof payload.term === "string" && payload.term.trim().length > 0 ? payload.term.trim() : undefined;
+    const synonyms = parseSynonyms(payload.synonyms);
+    const status = parseStatus(payload.status);
+    const reviewNotes =
+      typeof payload.reviewNotes === "string"
+        ? payload.reviewNotes.trim() || null
+        : payload.reviewNotes === null
+        ? null
+        : undefined;
 
-    const entry = await withRlsContext(session, (tx) =>
-      tx.glossaryEntry.update({
+    const entry = await withRlsContext(session, async (tx) => {
+      const existing = await tx.glossaryEntry.findUnique({
         where: { id: params.id },
+        include: relationSelect,
+      });
+      if (!existing) {
+        return null;
+      }
+
+      const before = snapshotEntry(existing);
+      const data: Record<string, unknown> = {
+        definition,
+        synonyms,
+        status,
+        updatedById: session.user.id,
+      };
+      if (term) {
+        data.term = term;
+      }
+      if (reviewNotes !== undefined) {
+        data.reviewNotes = reviewNotes;
+      }
+      if (status === GlossaryStatus.PENDING) {
+        data.reviewedAt = null;
+        data.reviewerId = null;
+      } else {
+        data.reviewedAt = new Date();
+        data.reviewerId = session.user.id;
+      }
+
+      const updated = await tx.glossaryEntry.update({
+        where: { id: params.id },
+        data,
+        include: relationSelect,
+      } as any);
+
+      await tx.ragEvent.create({
         data: {
-          ...updates,
-          updatedById: session.user.id,
+          orgId: session.user.orgId,
+          actorId: session.user.id,
+          actorRole: session.user.role,
+          action: "glossary.updated",
+          entity: "glossary",
+          glossaryId: updated.id,
+          before,
+          after: snapshotEntry(updated),
         },
-        include: {
-          author: { select: { id: true, email: true, name: true } },
-          updatedBy: { select: { id: true, email: true, name: true } },
-          reviewer: { select: { id: true, email: true, name: true } },
-        },
-      } as any)
-    );
+      });
+
+      return updated;
+    });
+
+    if (!entry) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
 
     return NextResponse.json(serializeEntry(entry));
   } catch (error) {
@@ -69,10 +100,36 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
+export async function PATCH(request: Request, ctx: { params: { id: string } }) {
+  return PUT(request, ctx);
+}
+
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   try {
     const session = canEditGlossary(await getServerAuthSession());
-    await withRlsContext(session, (tx) => tx.glossaryEntry.delete({ where: { id: params.id } }));
+    const result = await withRlsContext(session, async (tx) => {
+      const existing = await tx.glossaryEntry.findUnique({ where: { id: params.id } });
+      if (!existing) {
+        return null;
+      }
+      await tx.glossaryEntry.delete({ where: { id: params.id } });
+      await tx.ragEvent.create({
+        data: {
+          orgId: session.user.orgId,
+          actorId: session.user.id,
+          actorRole: session.user.role,
+          action: "glossary.deleted",
+          entity: "glossary",
+          glossaryId: existing.id,
+          before: snapshotEntry(existing),
+          after: Prisma.JsonNull,
+        },
+      });
+      return true;
+    });
+    if (result === null) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
     return NextResponse.json({ status: "ok" });
   } catch (error) {
     return handleGlossaryError(error);

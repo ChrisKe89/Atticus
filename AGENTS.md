@@ -86,6 +86,7 @@
 - Next.js Route Handlers for API (streamed responses via **SSE**).
 - Pages: `/` (chat), `/admin`, `/settings`, `/contact`, `/apps`.
 - Shared header/nav pattern; role‑gated admin.
+- FastAPI hosts JSON APIs only; any historical UI assets remain under `archive/legacy-ui/` for reference.
 
 ### DB
 

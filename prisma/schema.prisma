@@ -27,6 +27,9 @@ model Organization {
   name      String
   users     User[]
   glossary  GlossaryEntry[]
+  chats     Chat[]
+  tickets   Ticket[]
+  events    RagEvent[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
@@ -47,6 +50,9 @@ model User {
   glossaryAuthored GlossaryEntry[] @relation("GlossaryAuthor")
   glossaryUpdated GlossaryEntry[] @relation("GlossaryUpdatedBy")
   glossaryReviewed GlossaryEntry[] @relation("GlossaryReviewer")
+  chats             Chat[]           @relation("ChatAuthor")
+  chatsReviewed     Chat[]           @relation("ChatReviewer")
+  auditEvents      RagEvent[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -105,12 +111,81 @@ model GlossaryEntry {
   reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
   reviewNotes  String?         @db.Text
   reviewedAt   DateTime?
+  events       RagEvent[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
   @@unique([orgId, term])
   @@index([orgId, status])
   @@index([status, reviewedAt])
+}
+
+model Chat {
+  id             String      @id @default(cuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  userId         String?
+  author         User?       @relation("ChatAuthor", fields: [userId], references: [id], onDelete: SetNull)
+  question       String
+  answer         String?     @db.Text
+  confidence     Float
+  status         String      @default("ok")
+  topSources     Json?       @db.JsonB
+  requestId      String?
+  reviewedById   String?
+  reviewer       User?       @relation("ChatReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt     DateTime?
+  followUpPrompt String?     @db.Text
+  auditLog       Json?       @db.JsonB
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  tickets        Ticket[]
+  events         RagEvent[]
+
+  @@index([orgId, status])
+  @@index([status, reviewedAt])
+}
+
+model RagEvent {
+  id         String       @id @default(cuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  actorId    String?
+  actor      User?        @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorRole  Role?
+  action     String
+  entity     String
+  glossaryId String?
+  glossary   GlossaryEntry? @relation(fields: [glossaryId], references: [id], onDelete: SetNull)
+  chatId     String?
+  chat       Chat?         @relation(fields: [chatId], references: [id], onDelete: SetNull)
+  requestId  String?
+  before     Json?         @db.JsonB
+  after      Json?         @db.JsonB
+  createdAt  DateTime      @default(now())
+
+  @@index([orgId, action, createdAt])
+  @@index([glossaryId])
+  @@index([chatId])
+}
+
+model Ticket {
+  id             String      @id @default(cuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  key            String
+  status         String
+  assignee       String?
+  lastActivity   DateTime?
+  summary        String?     @db.Text
+  chatId         String?
+  chat           Chat?       @relation(fields: [chatId], references: [id], onDelete: SetNull)
+  auditLog       Json?       @db.JsonB
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([orgId, key])
+  @@index([status, assignee])
 }
 
 model AtticusDocument {

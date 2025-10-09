@@ -52,9 +52,47 @@ Run these checks after applying Prisma migrations or when diagnosing ingestion a
    psql "$env:DATABASE_URL" -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION -v expected_pgvector_lists=$env:PGVECTOR_LISTS -f scripts/verify_pgvector.sql
    ```
 
-   The script fails fast if the extension is missing, the embedding dimension drifts, or the IVFFlat index loses its cosine lists configuration.
+   The script fails fast if the extension is missing, the embedding dimension drifts, the IVFFlat index loses its cosine lists configuration, or the `app.pgvector_lists` GUC is unset/mismatched.
 
    > Requires the `psql` client (`postgresql-client` on Debian/Ubuntu).
+
+4. The migration `20251019090000_pgvector_lists_guc` sets `ALTER DATABASE … SET app.pgvector_lists = '100'`. Override the default by running `ALTER DATABASE <db> SET app.pgvector_lists = '<lists>'` prior to deployments if you require different IVFFlat list counts, then re-run `make db.verify` to confirm.
+
+---
+
+## Glossary Baseline & Rollback
+
+Use these steps to keep glossary fixtures deterministic across environments.
+
+1. Seed the database:
+
+   ```bash
+   make db.seed
+   ```
+
+   ```powershell
+   make db.seed
+   ```
+
+   The target provisions service users (`glossary.author@seed.atticus`, `glossary.approver@seed.atticus`) and three glossary entries spanning `APPROVED`, `PENDING`, and `REJECTED` states.
+
+2. Verify the baseline rows (requires Postgres access):
+
+   ```bash
+   pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip
+   ```
+
+   ```powershell
+   pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip
+   ```
+
+3. To reset production data after exploratory edits:
+
+   - Snapshot current entries: `psql "$DATABASE_URL" -c 'COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER' > glossary_backup.csv`.
+   - Re-import when ready: `psql "$DATABASE_URL" -c "\copy \"GlossaryEntry\" FROM 'glossary_backup.csv' WITH CSV HEADER"`.
+   - Rerun `make db.seed` to restore deterministic reviewer accounts.
+
+Document deviations (e.g., temporary reviewer overrides) in the incident or release notes and update `docs/glossary-spec.md` if the workflow changes.
 
 ---
 
@@ -82,6 +120,7 @@ Run `make quality` before every pull request. The target chains:
 - `ruff check` / `ruff format --check`
 - `mypy` across `atticus`, `api`, `ingest`, `retriever`, `eval`
 - `pytest` with coverage ≥90%
+- `npm run test:unit` (Vitest RBAC/unit coverage) and `npm run test:e2e` (Playwright admin/RBAC flows)
 - `npm run lint`, `npm run typecheck`, `npm run build`
 - Audit scripts: `npm run audit:ts`, `npm run audit:icons` (lucide import hygiene), `npm run audit:routes`, `npm run audit:py`
 
@@ -103,20 +142,52 @@ make format
 
 ## API & UI Operations
 
-- Start the API and integrated UI:
+- Start the FastAPI service (JSON APIs only):
 
   ```bash
   make api
   ```
 
-  Available at `http://localhost:8000` (OpenAPI docs at `/docs`).
+  Available at `http://localhost:8000`; FastAPI docs remain disabled in production and staging.
 
-- The UI runs via `make web-dev`; if the workspace splits again, reintroduce an explicit target and update port mapping.
+- Launch the Next.js workspace separately for the UI:
+
+  ```bash
+  make web-dev
+  ```
+
+  The UI expects the API to be reachable at `RAG_SERVICE_URL` (defaults to `http://localhost:8000`).
 - To run a full smoke test (ingest → eval → API/UI check):
 
   ```bash
   make e2e
   ```
+
+---
+
+## Admin Ops Console
+
+- URL: `https://<host>/admin`
+- Roles:
+  - **Admin** — full access to Uncertain, Tickets, and Glossary tabs. Can capture follow-up prompts, approve or escalate chats, and edit glossary entries.
+  - **Reviewer** — may approve chats but cannot escalate or edit glossary entries. Glossary UI is read-only and shows a banner reflecting restricted access.
+  - **User** — redirected to `/` and receives `403` responses from admin APIs.
+- Data sources:
+  - `Chat` records capture low-confidence conversations with `status` (`pending_review`, `reviewed`, `escalated`), `topSources[]`, and `auditLog[]` entries that chronicle actions.
+  - `Ticket` records store AE escalations with `key`, `status`, `assignee`, `summary`, `lastActivity`, and `auditLog[]` metadata.
+  - `RagEvent` rows track glossary and chat actions (`chat.captured`, `chat.followup_recorded`, `chat.approved`, `chat.escalated`, `glossary.*`) for audit review.
+- API endpoints:
+  - `GET /api/admin/uncertain` — reviewer/admin list of `pending_review` chats.
+  - `POST /api/admin/uncertain/:id/approve` — reviewer/admin action to mark a chat as reviewed and stamp reviewer metadata.
+  - `POST /api/admin/uncertain/:id/escalate` — admin-only action that creates a ticket, marks the chat as `escalated`, and appends audit log entries.
+  - `POST /api/admin/uncertain/:id/ask-followup` — reviewer/admin action that stores a canonical follow-up prompt on the chat and extends its audit trail.
+- Seed data:
+  - `make db.seed` provisions a `chat-low-confidence-toner` pending review example and an `AE-1001` escalation for smoke testing.
+- Rollback:
+  1. `prisma migrate resolve --rolled-back "20251018090000_admin_ops_console"` (marks the migration reversed).
+  2. Drop `Chat` and `Ticket` tables (or restore from backup) if the migration was applied.
+  3. Remove the admin console routes/components and revert `prisma/seed.ts` to clear sample data.
+  4. Re-run `npm run build` and `PYTHONPATH=. pytest tests/unit/admin-uncertain-route.test.ts -q` to confirm restoration.
 
 ---
 

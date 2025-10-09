@@ -4,11 +4,12 @@ Key directories to understand when working on Atticus.
 
 - `app/`
   - `page.tsx` – streaming chat surface using the unified `/api/ask` contract.
-  - `admin/` – admin dashboard with glossary workflow.
+  - `admin/` – admin console surfacing Uncertain, Tickets, and Glossary tabs for reviewers/admins.
   - `contact/` – escalation form backed by the FastAPI `/contact` endpoint.
   - `signin/`, `settings/`, `apps/` – additional Next.js routes.
 - `components/`
   - `chat/` – chat panel client components.
+  - `admin/` – console widgets (tabs, tables) powering `/admin`.
   - `glossary/` – admin glossary UI using shadcn-style primitives.
   - `ui/` – shared button/input/table components.
 - `lib/`
@@ -16,10 +17,10 @@ Key directories to understand when working on Atticus.
   - `auth.ts`, `rls.ts`, `utils.ts` – auth, row-level security, and UI helpers.
 - `api/`
   - `main.py` – FastAPI entry point wiring dependencies/middleware.
-  - `routes/` – JSON APIs (`chat.py`, `contact.py`, `ingest.py`, etc.).
+  - `routes/` – JSON APIs (`chat.py`, `contact.py`, `ingest.py`, etc.); no templates or static mounts remain in FastAPI.
   - `middleware.py`, `schemas.py` – shared FastAPI utilities and contracts.
 - `atticus/`, `retriever/`, `ingest/`, `eval/` – Python services and pipelines for ingestion, retrieval, and evaluation.
-- `prisma/` – Prisma schema and migrations for auth/glossary data.
+- `prisma/` – Prisma schema and migrations for auth, glossary, chat review, and ticket data.
 - `scripts/` – operational tooling (env generation, audits, ingestion, eval, etc.).
 - `tests/`
   - Python pytest suites covering API contracts, ingestion utilities, and auth flows.
