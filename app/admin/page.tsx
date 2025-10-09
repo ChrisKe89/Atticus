@@ -107,15 +107,34 @@ export default async function AdminPage() {
       if (!path) {
         continue;
       }
-      const score = "score" in item && typeof item.score === "number" ? item.score : undefined;
-      sources.push({ path, score });
+      sources.push({
+        path,
+        score: "score" in item && typeof item.score === "number" ? item.score : null,
+        page: "page" in item && typeof item.page === "number" ? item.page : null,
+        heading: "heading" in item && typeof item.heading === "string" ? item.heading : null,
+        chunkId: "chunkId" in item && typeof item.chunkId === "string" ? item.chunkId : null,
+      });
     }
     return sources;
+  }
+
+  function parseAuditLog(value: Prisma.JsonValue | null): Record<string, unknown>[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    const entries: Record<string, unknown>[] = [];
+    for (const item of value) {
+      if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+        entries.push(item as Record<string, unknown>);
+      }
+    }
+    return entries;
   }
 
   const uncertainChats: UncertainChat[] = chats.map((chat) => ({
     id: chat.id,
     question: chat.question,
+    answer: chat.answer ?? null,
     confidence: chat.confidence,
     status: chat.status,
     requestId: chat.requestId ?? null,
@@ -130,6 +149,8 @@ export default async function AdminPage() {
       assignee: ticket.assignee,
       lastActivity: ticket.lastActivity ? ticket.lastActivity.toISOString() : null,
     })),
+    followUpPrompt: chat.followUpPrompt ?? null,
+    auditLog: parseAuditLog(chat.auditLog),
   }));
 
   const ticketSummaries: TicketSummary[] = tickets.map((ticket) => ({

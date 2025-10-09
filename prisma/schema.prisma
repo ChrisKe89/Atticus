@@ -29,6 +29,7 @@ model Organization {
   glossary  GlossaryEntry[]
   chats     Chat[]
   tickets   Ticket[]
+  events    RagEvent[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
@@ -51,6 +52,7 @@ model User {
   glossaryReviewed GlossaryEntry[] @relation("GlossaryReviewer")
   chats             Chat[]           @relation("ChatAuthor")
   chatsReviewed     Chat[]           @relation("ChatReviewer")
+  auditEvents      RagEvent[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -109,6 +111,7 @@ model GlossaryEntry {
   reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
   reviewNotes  String?         @db.Text
   reviewedAt   DateTime?
+  events       RagEvent[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
@@ -137,9 +140,33 @@ model Chat {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   tickets        Ticket[]
+  events         RagEvent[]
 
   @@index([orgId, status])
   @@index([status, reviewedAt])
+}
+
+model RagEvent {
+  id         String       @id @default(cuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  actorId    String?
+  actor      User?        @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorRole  Role?
+  action     String
+  entity     String
+  glossaryId String?
+  glossary   GlossaryEntry? @relation(fields: [glossaryId], references: [id], onDelete: SetNull)
+  chatId     String?
+  chat       Chat?         @relation(fields: [chatId], references: [id], onDelete: SetNull)
+  requestId  String?
+  before     Json?         @db.JsonB
+  after      Json?         @db.JsonB
+  createdAt  DateTime      @default(now())
+
+  @@index([orgId, action, createdAt])
+  @@index([glossaryId])
+  @@index([chatId])
 }
 
 model Ticket {

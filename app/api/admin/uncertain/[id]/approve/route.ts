@@ -34,7 +34,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const result = await withRlsContext(session, async (tx) => {
       const existing = await tx.chat.findUnique({
         where: { id },
-        select: { auditLog: true, status: true },
+        select: { auditLog: true, status: true, orgId: true, requestId: true },
       });
       if (!existing) {
         return null;
@@ -66,6 +66,24 @@ export async function POST(request: Request, { params }: { params: { id: string 
           reviewedAt: true,
           reviewer: { select: { id: true, email: true, name: true } },
           auditLog: true,
+          orgId: true,
+          requestId: true,
+        },
+      });
+
+      await tx.ragEvent.create({
+        data: {
+          orgId: existing.orgId,
+          actorId: session.user.id,
+          actorRole: session.user.role,
+          action: "chat.approved",
+          entity: "chat",
+          chatId: updated.id,
+          requestId: updated.requestId,
+          after: {
+            status: updated.status,
+            reviewedAt: updated.reviewedAt?.toISOString() ?? null,
+          },
         },
       });
 

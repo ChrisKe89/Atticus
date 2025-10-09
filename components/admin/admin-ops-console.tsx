@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Role } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,15 +8,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GlossaryAdminPanel, GlossaryEntryDto } from "@/components/glossary/admin-panel";
+import { Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader } from "@/components/ui/drawer";
+import { Textarea } from "@/components/ui/textarea";
 
 export type SourceSummary = {
   path: string;
-  score?: number;
+  score: number | null;
+  page: number | null;
+  heading: string | null;
+  chunkId: string | null;
 };
 
 export type UncertainChat = {
   id: string;
   question: string;
+  answer: string | null;
   confidence: number;
   status: string;
   requestId: string | null;
@@ -31,6 +37,8 @@ export type UncertainChat = {
     assignee: string | null;
     lastActivity: string | null;
   }>;
+  followUpPrompt: string | null;
+  auditLog: Array<Record<string, unknown>>;
 };
 
 export type TicketSummary = {
@@ -64,11 +72,27 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
   const [ticketSummaries, setTicketSummaries] = useState(tickets);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [drawerChatId, setDrawerChatId] = useState<string | null>(null);
+  const [followUpDraft, setFollowUpDraft] = useState("");
 
   const canApprove = role === Role.ADMIN || role === Role.REVIEWER;
   const canEscalate = role === Role.ADMIN;
   const canManageGlossary = role === Role.ADMIN;
   const defaultTab = role === Role.ADMIN ? "uncertain" : "glossary";
+
+  const activeChat = useMemo(
+    () => uncertainChats.find((chat) => chat.id === drawerChatId) ?? null,
+    [drawerChatId, uncertainChats]
+  );
+
+  useEffect(() => {
+    setFollowUpDraft(activeChat?.followUpPrompt ?? "");
+  }, [activeChat?.followUpPrompt, drawerChatId]);
+
+  function openDrawer(chatId: string) {
+    setDrawerChatId(chatId);
+    setFeedback(null);
+  }
 
   async function handleApprove(chatId: string) {
     if (!canApprove) {
@@ -84,6 +108,9 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
       }
       setUncertainChats((prev) => prev.filter((chat) => chat.id !== chatId));
       setFeedback("Chat approved and removed from the uncertain queue.");
+      if (drawerChatId === chatId) {
+        setDrawerChatId(null);
+      }
     });
   }
 
@@ -107,6 +134,40 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
       setUncertainChats((prev) => prev.filter((item) => item.id !== chat.id));
       setTicketSummaries((prev) => [{ ...ticket, summary: chat.question }, ...prev]);
       setFeedback(`Escalated to ticket ${ticket.key}.`);
+      if (drawerChatId === chat.id) {
+        setDrawerChatId(null);
+      }
+    });
+  }
+
+  function updateChat(chatId: string, partial: Partial<UncertainChat>) {
+    setUncertainChats((prev) => prev.map((chat) => (chat.id === chatId ? { ...chat, ...partial } : chat)));
+  }
+
+  async function handleFollowUpSave(chat: UncertainChat) {
+    if (!canApprove) {
+      return;
+    }
+    const trimmed = followUpDraft.trim();
+    if (!trimmed) {
+      setFeedback("Add a follow-up prompt before saving.");
+      return;
+    }
+    setFeedback(null);
+    startTransition(async () => {
+      const response = await fetch(`/api/admin/uncertain/${chat.id}/ask-followup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: trimmed }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        setFeedback(body.detail ?? "Unable to store follow-up prompt.");
+        return;
+      }
+      const payload = await response.json();
+      updateChat(chat.id, { followUpPrompt: payload.followUpPrompt, auditLog: payload.auditLog ?? [] });
+      setFeedback("Follow-up prompt saved.");
     });
   }
 
@@ -139,11 +200,12 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
   );
 
   return (
-    <Tabs defaultValue={defaultTab} className="space-y-6">
-      <TabsList>
-        <TabsTrigger value="uncertain">Uncertain ({pendingCount})</TabsTrigger>
-        <TabsTrigger value="tickets">Tickets ({ticketCount})</TabsTrigger>
-        <TabsTrigger value="glossary">Glossary</TabsTrigger>
+    <>
+      <Tabs defaultValue={defaultTab} className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="uncertain">Uncertain ({pendingCount})</TabsTrigger>
+          <TabsTrigger value="tickets">Tickets ({ticketCount})</TabsTrigger>
+          <TabsTrigger value="glossary">Glossary</TabsTrigger>
       </TabsList>
       {feedback ? (
         <Badge variant="subtle" className="normal-case">
@@ -185,11 +247,18 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
                             <span className="truncate text-xs text-slate-500 dark:text-slate-400">
                               {source.path}
                             </span>
-                            {source.score != null ? (
+                            {source.heading ? (
                               <span className="text-xs text-slate-400 dark:text-slate-500">
-                                Score {(source.score * 100).toFixed(1)}%
+                                {source.heading}
                               </span>
                             ) : null}
+                            <div className="flex flex-wrap gap-2 text-[11px] text-slate-400 dark:text-slate-500">
+                              {source.page != null ? <span>Page {source.page}</span> : null}
+                              {source.score != null ? (
+                                <span>Score {(source.score * 100).toFixed(1)}%</span>
+                              ) : null}
+                              {source.chunkId ? <span>{source.chunkId}</span> : null}
+                            </div>
                           </li>
                         ))
                       ) : (
@@ -205,6 +274,14 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
                   </TableCell>
                   <TableCell className="align-top text-right">
                     <div className="flex flex-col items-end gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => openDrawer(chat.id)}
+                        variant="default"
+                      >
+                        Review
+                      </Button>
                       <Button
                         type="button"
                         size="sm"
@@ -254,6 +331,128 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
       <TabsContent value="glossary" className="p-0">
         <GlossaryAdminPanel initialEntries={glossaryEntries} canEdit={canManageGlossary} />
       </TabsContent>
-    </Tabs>
+      </Tabs>
+      <Drawer
+        open={drawerChatId !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDrawerChatId(null);
+            setFollowUpDraft("");
+          }
+        }}
+      >
+        <DrawerContent>
+          <DrawerHeader>
+            <div className="flex-1">
+              <p className="text-xs uppercase text-slate-400">Review uncertain chat</p>
+              <p className="mt-1 text-base font-semibold text-slate-900 dark:text-white">
+                {activeChat?.question ?? "No chat selected"}
+              </p>
+              {activeChat ? (
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  Captured {new Date(activeChat.createdAt).toLocaleString()}
+                </p>
+              ) : null}
+            </div>
+          </DrawerHeader>
+          <DrawerBody>
+            {activeChat ? (
+              <div className="space-y-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge variant={confidenceVariant(activeChat.confidence)}>
+                    {(activeChat.confidence * 100).toFixed(1)}%
+                  </Badge>
+                  {activeChat.requestId ? (
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                      Request {activeChat.requestId}
+                    </span>
+                  ) : null}
+                  <span className="text-xs capitalize text-slate-500 dark:text-slate-400">
+                    Status {activeChat.status}
+                  </span>
+                </div>
+                <section className="space-y-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Answer</h3>
+                  <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
+                    {activeChat.answer?.length ? activeChat.answer : "No answer captured for this request."}
+                  </div>
+                </section>
+                <section className="space-y-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Top sources</h3>
+                  <ul className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+                    {activeChat.topSources.length ? (
+                      activeChat.topSources.map((source, index) => (
+                        <li key={`${activeChat.id}-drawer-source-${index}`} className="rounded-md border border-slate-200 p-3 dark:border-slate-800">
+                          <p className="font-medium text-slate-700 dark:text-slate-200">{source.path}</p>
+                          {source.heading ? <p className="mt-1">{source.heading}</p> : null}
+                          <div className="mt-2 flex flex-wrap gap-3">
+                            {source.page != null ? <span>Page {source.page}</span> : null}
+                            {source.score != null ? <span>Score {(source.score * 100).toFixed(1)}%</span> : null}
+                            {source.chunkId ? <span>{source.chunkId}</span> : null}
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li>No sources recorded for this chat.</li>
+                    )}
+                  </ul>
+                </section>
+                <section className="space-y-2">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Follow-up prompt</h3>
+                  <Textarea
+                    value={followUpDraft}
+                    onChange={(event) => setFollowUpDraft(event.target.value)}
+                    minLength={3}
+                    rows={4}
+                    placeholder="What would you ask next?"
+                    disabled={!canApprove || isPending}
+                  />
+                  {activeChat.followUpPrompt ? (
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Last saved prompt: “{activeChat.followUpPrompt}”
+                    </p>
+                  ) : null}
+                </section>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 dark:text-slate-400">Select a chat to review details.</p>
+            )}
+          </DrawerBody>
+          <DrawerFooter className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                disabled={!activeChat || !canApprove || isPending}
+                onClick={() => activeChat && handleFollowUpSave(activeChat)}
+              >
+                Save follow-up
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                disabled={!activeChat || !canApprove || isPending}
+                onClick={() => activeChat && handleApprove(activeChat.id)}
+              >
+                Approve
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={!activeChat || !canEscalate || isPending}
+                onClick={() => activeChat && handleEscalate(activeChat)}
+              >
+                Escalate
+              </Button>
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              Actions are recorded in the chat audit trail.
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }

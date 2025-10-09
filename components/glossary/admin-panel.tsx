@@ -59,6 +59,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
   const [status, setStatus] = useState<GlossaryStatus>(GlossaryStatus.PENDING);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [definitionDraft, setDefinitionDraft] = useState("");
+  const [synonymsDraft, setSynonymsDraft] = useState("");
 
   function parseSynonyms(value: string): string[] {
     return value
@@ -93,6 +96,53 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     });
   }
 
+  function beginEditing(entry: GlossaryEntryDto) {
+    setEditingId(entry.id);
+    setDefinitionDraft(entry.definition);
+    setSynonymsDraft(entry.synonyms.join(", "));
+    setFeedback(null);
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setDefinitionDraft("");
+    setSynonymsDraft("");
+  }
+
+  async function saveEntryUpdate(
+    entry: GlossaryEntryDto,
+    overrides: Partial<{
+      definition: string;
+      synonyms: string[];
+      status: GlossaryStatus;
+      reviewNotes: string | null;
+    }>
+  ) {
+    if (!canEdit) {
+      return null;
+    }
+    const payload = {
+      term: entry.term,
+      definition: overrides.definition ?? entry.definition,
+      synonyms: overrides.synonyms ?? entry.synonyms,
+      status: overrides.status ?? entry.status,
+      reviewNotes: overrides.reviewNotes ?? entry.reviewNotes,
+    };
+    const response = await fetch(`/api/glossary/${entry.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      setFeedback(body.detail ?? "Unable to update entry.");
+      return null;
+    }
+    const updated: GlossaryEntryDto = await response.json();
+    setEntries((prev) => prev.map((item) => (item.id === entry.id ? updated : item)));
+    return updated;
+  }
+
   async function updateStatus(entry: GlossaryEntryDto, nextStatus: GlossaryStatus) {
     if (!canEdit) {
       return;
@@ -103,19 +153,13 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
         reviewNotes =
           window.prompt("Add review notes (optional)", entry.reviewNotes ?? "") ?? undefined;
       }
-      const response = await fetch(`/api/glossary/${entry.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus, reviewNotes }),
+      const updated = await saveEntryUpdate(entry, {
+        status: nextStatus,
+        reviewNotes: reviewNotes === undefined ? entry.reviewNotes : reviewNotes ?? null,
       });
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        setFeedback(body.detail ?? "Unable to update entry.");
-        return;
+      if (updated) {
+        setFeedback(`Status updated to ${nextStatus.toLowerCase()}.`);
       }
-      const updated: GlossaryEntryDto = await response.json();
-      setEntries((prev) => prev.map((item) => (item.id === entry.id ? updated : item)));
-      setFeedback(`Status updated to ${nextStatus.toLowerCase()}.`);
     });
   }
 
@@ -127,11 +171,36 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
       const response = await fetch(`/api/glossary/${entryId}`, { method: "DELETE" });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        setFeedback(body.detail ?? "Unable to delete entry.");
-        return;
+      setFeedback(body.detail ?? "Unable to delete entry.");
+      return;
       }
       setEntries((prev) => prev.filter((item) => item.id !== entryId));
       setFeedback("Entry deleted.");
+      if (editingId === entryId) {
+        cancelEditing();
+      }
+    });
+  }
+
+  function submitDraft(entry: GlossaryEntryDto) {
+    if (!canEdit) {
+      return;
+    }
+    const trimmedDefinition = definitionDraft.trim();
+    if (!trimmedDefinition) {
+      setFeedback("Definition is required.");
+      return;
+    }
+    setFeedback(null);
+    startTransition(async () => {
+      const updated = await saveEntryUpdate(entry, {
+        definition: trimmedDefinition,
+        synonyms: parseSynonyms(synonymsDraft),
+      });
+      if (updated) {
+        setFeedback("Entry updated.");
+        cancelEditing();
+      }
     });
   }
 
@@ -237,15 +306,34 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
                     {entry.term}
                   </TableCell>
                   <TableCell>
-                    <p>{entry.definition}</p>
-                    {entry.synonyms.length ? (
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                        Synonyms: {entry.synonyms.join(", ")}
-                      </p>
-                    ) : null}
-                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                      Added by {entry.author?.name ?? entry.author?.email ?? "unknown"}
-                    </p>
+                    {editingId === entry.id ? (
+                      <div className="space-y-3">
+                        <Textarea
+                          value={definitionDraft}
+                          onChange={(event) => setDefinitionDraft(event.target.value)}
+                          rows={4}
+                          disabled={!canEdit || isPending}
+                        />
+                        <Input
+                          value={synonymsDraft}
+                          onChange={(event) => setSynonymsDraft(event.target.value)}
+                          placeholder="Comma-separated synonyms"
+                          disabled={!canEdit || isPending}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <p>{entry.definition}</p>
+                        {entry.synonyms.length ? (
+                          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            Synonyms: {entry.synonyms.join(", ")}
+                          </p>
+                        ) : null}
+                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                          Added by {entry.author?.name ?? entry.author?.email ?? "unknown"}
+                        </p>
+                      </>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -279,13 +367,46 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-wrap justify-end gap-2">
+                      {editingId === entry.id ? (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => submitDraft(entry)}
+                            disabled={isPending || !canEdit}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={cancelEditing}
+                            disabled={isPending}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => beginEditing(entry)}
+                          disabled={isPending || !canEdit}
+                        >
+                          Edit
+                        </Button>
+                      )}
                       {statusOptions.map((option) => (
                         <Button
                           key={option}
                           type="button"
                           size="sm"
                           variant={option === entry.status ? "secondary" : "outline"}
-                          disabled={option === entry.status || isPending || !canEdit}
+                          disabled={
+                            option === entry.status || isPending || !canEdit || editingId === entry.id
+                          }
                           onClick={() => updateStatus(entry, option)}
                         >
                           {option.toLowerCase()}
