@@ -60,9 +60,7 @@ def test_admin_dictionary_requires_token(tmp_path: Path, monkeypatch: pytest.Mon
         assert data["request_id"]
 
 
-def test_admin_dictionary_rejects_invalid_token(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_admin_dictionary_rejects_invalid_token(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()
     dictionary_path = tmp_path / "dictionary.json"

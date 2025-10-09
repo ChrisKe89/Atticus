@@ -14,6 +14,25 @@ The newest entries appear first.
 
 ---
 
+## [0.7.9] — 2025-10-13
+
+### Added
+
+- Introduced shared shadcn-inspired primitives (`Card`, `Badge`) under `components/ui` and extended the button component with `asChild` support via `@radix-ui/react-slot` for consistent navigation styling.
+
+### Changed
+
+- Refreshed the chat workspace, admin overview, glossary management, settings, apps catalogue, and contact escalation form to compose the new card and badge primitives, aligning typography, spacing, and status indicators across the UI.
+- Updated the site header to reuse the shared button component for sign-in/out flows and to standardise mobile navigation controls.
+- Documented the frontend design system in `README.md` and noted the new dependency in `RELEASE.md` upgrade steps.
+
+### Testing
+
+- `npm run lint`
+- `npm run build`
+
+---
+
 ## [0.7.8] — 2025-10-12
 
 ### Added
