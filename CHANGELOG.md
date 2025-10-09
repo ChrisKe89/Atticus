@@ -14,6 +14,23 @@ The newest entries appear first.
 
 ---
 
+## [0.7.5] — 2025-10-09
+
+### Added
+
+- Recorded the Phase 0 baseline verification summary in `reports/todo-phase-0-baseline.md` to document current blockers before implementation work begins.
+
+### Changed
+
+- Bumped the tracked release version to 0.7.5 to capture the Phase 0 baseline report.
+
+### Testing
+
+- `make db.verify` (fails: missing `DATABASE_URL` in the execution environment).
+- `make quality` (fails: mypy reports an unused `type: ignore` in `ingest/parsers/xlsx.py`).
+
+---
+
 ## [0.7.4] — 2025-10-07
 
 ### Changed
