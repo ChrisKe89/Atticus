@@ -77,11 +77,12 @@ test.unit:
 	tests/test_eval_runner.py
 
 test.api:
-	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-	       tests/test_chat_route.py \
-	       tests/test_contact_route.py \
-	       tests/test_error_schema.py \
-	       tests/test_ui_route.py
+        $(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+               tests/test_chat_route.py \
+               tests/test_contact_route.py \
+               tests/test_error_schema.py \
+               tests/test_api_version.py \
+               tests/test_ui_route.py
 
 test:
 	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \

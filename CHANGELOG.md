@@ -14,6 +14,25 @@ The newest entries appear first.
 
 ---
 
+## [0.7.10] — 2025-10-14
+
+### Added
+
+- Pytest coverage ensuring the FastAPI application metadata reads directly from the repository `VERSION` file so version drift is caught automatically.
+
+### Changed
+
+- FastAPI now loads its version string from the shared `VERSION` file, eliminating manual sync steps with `package.json`.
+- Documentation (README, AGENTS, ARCHITECTURE, OPERATIONS, REPO_STRUCTURE, release notes, and workspace settings) explicitly records that Next.js owns the UI while FastAPI serves JSON APIs only.
+
+### Testing
+
+- `pytest tests/test_api_version.py`
+- `npm run lint`
+- `npm run build`
+
+---
+
 ## [0.7.9] — 2025-10-13
 
 ### Added

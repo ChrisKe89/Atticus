@@ -44,9 +44,9 @@ The Next.js application is the canonical UI; historical static assets live under
 ### Ask flow (SSE)
 
 1. Next.js `/api/ask` receives the chat request and validates payloads with shared DTOs in `lib/ask-contract.ts`.
-2. The handler proxies the request to the FastAPI `/ask` endpoint, opening an SSE stream.
-3. FastAPI streams JSON events (`answer`, `sources`, `progress`) until a terminating `done` event that includes `request_id`, `confidence`, and `should_escalate`.
-4. The UI progressively renders tokens, logs the propagated `request_id`, and stores metadata for escalations.
+2. The handler proxies the request to the FastAPI `/ask` endpoint.
+3. FastAPI returns the canonical JSON payload; when the caller requested SSE, the Next.js proxy emits `start`, `answer`, and `end` events so the UI has a consistent streaming interface.
+4. The UI renders the received answer (currently delivered as a single chunk), logs the propagated `request_id`, and stores metadata for escalations.
 
 ---
 
