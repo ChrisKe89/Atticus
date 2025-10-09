@@ -16,7 +16,7 @@ Key directories to understand when working on Atticus.
   - `auth.ts`, `rls.ts`, `utils.ts` – auth, row-level security, and UI helpers.
 - `api/`
   - `main.py` – FastAPI entry point wiring dependencies/middleware.
-  - `routes/` – JSON APIs (`chat.py`, `contact.py`, `ingest.py`, etc.).
+  - `routes/` – JSON APIs (`chat.py`, `contact.py`, `ingest.py`, etc.); no templates or static mounts remain in FastAPI.
   - `middleware.py`, `schemas.py` – shared FastAPI utilities and contracts.
 - `atticus/`, `retriever/`, `ingest/`, `eval/` – Python services and pipelines for ingestion, retrieval, and evaluation.
 - `prisma/` – Prisma schema and migrations for auth/glossary data.

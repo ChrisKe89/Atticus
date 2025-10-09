@@ -83,6 +83,8 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    docker compose up -d --build
    ```
 
+   > **Note:** Release 0.7.10 removes FastAPI-hosted UI remnants and reads API metadata from the shared `VERSION` file. Rebuild both the FastAPI service and Next.js workspace so the new metadata and docs are deployed together.
+
 4. Verify health:
 
    ```bash
