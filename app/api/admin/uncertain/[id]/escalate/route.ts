@@ -1,0 +1,140 @@
+import { NextResponse } from "next/server";
+import { Role } from "@prisma/client";
+import { getServerAuthSession } from "@/lib/auth";
+import { withRlsContext } from "@/lib/rls";
+
+function generateTicketKey(now: Date): string {
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(now.getUTCDate()).padStart(2, "0");
+  const suffix = now.getUTCHours().toString().padStart(2, "0") + now.getUTCMinutes().toString().padStart(2, "0");
+  return `AE-${year}${month}${day}-${suffix}`;
+}
+
+type EscalateBody = {
+  summary?: string;
+  assignee?: string;
+};
+
+export async function POST(request: Request, { params }: { params: { id: string } }) {
+  const session = await getServerAuthSession();
+  if (!session) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  if (session.user.role !== Role.ADMIN) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  const { id } = params;
+  let body: EscalateBody = {};
+  try {
+    body = (await request.json()) as EscalateBody;
+  } catch (error) {
+    body = {};
+  }
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const summary = typeof body.summary === "string" && body.summary.trim().length > 0 ? body.summary.trim() : undefined;
+  const assignee = typeof body.assignee === "string" && body.assignee.trim().length > 0 ? body.assignee.trim() : undefined;
+
+  const result = await withRlsContext(session, async (tx) => {
+    const chat = await tx.chat.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        orgId: true,
+        status: true,
+        question: true,
+        requestId: true,
+        auditLog: true,
+      },
+    });
+    if (!chat) {
+      return null;
+    }
+    if (chat.status === "escalated") {
+      return "already_escalated" as const;
+    }
+
+    const auditLog = Array.isArray(chat.auditLog) ? [...chat.auditLog] : [];
+    auditLog.push({
+      action: "escalate",
+      actorId: session.user.id,
+      actorRole: session.user.role,
+      at: nowIso,
+      assignee: assignee ?? null,
+      summary: summary ?? chat.question,
+    });
+
+    const ticket = await tx.ticket.create({
+      data: {
+        orgId: chat.orgId,
+        key: generateTicketKey(now),
+        status: "open",
+        assignee: assignee ?? null,
+        lastActivity: now,
+        summary: summary ?? chat.question,
+        chatId: chat.id,
+        auditLog: [
+          {
+            action: "created",
+            actorId: session.user.id,
+            actorRole: session.user.role,
+            at: nowIso,
+          },
+        ],
+      },
+      select: {
+        id: true,
+        key: true,
+        status: true,
+        assignee: true,
+        lastActivity: true,
+        summary: true,
+      },
+    });
+
+    await tx.chat.update({
+      where: { id: chat.id },
+      data: {
+        status: "escalated",
+        auditLog,
+      },
+    });
+
+    await tx.ragEvent.create({
+      data: {
+        orgId: chat.orgId,
+        actorId: session.user.id,
+        actorRole: session.user.role,
+        action: "chat.escalated",
+        entity: "chat",
+        chatId: chat.id,
+        requestId: chat.requestId,
+        after: {
+          status: "escalated",
+          ticketId: ticket.id,
+          assignee: ticket.assignee ?? null,
+        },
+      },
+    });
+
+    return ticket;
+  });
+
+  if (result === null) {
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+  if (result === "already_escalated") {
+    return NextResponse.json({ error: "invalid_status" }, { status: 409 });
+  }
+
+  return NextResponse.json({
+    id: result.id,
+    key: result.key,
+    status: result.status,
+    assignee: result.assignee,
+    lastActivity: result.lastActivity ? result.lastActivity.toISOString() : null,
+    summary: result.summary ?? summary ?? null,
+  });
+}

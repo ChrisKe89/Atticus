@@ -90,6 +90,16 @@ export function serializeEntry(entry: any) {
   };
 }
 
+export function snapshotEntry(entry: any) {
+  return {
+    term: entry.term,
+    definition: entry.definition,
+    synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
+    status: entry.status,
+    reviewNotes: entry.reviewNotes ?? null,
+  };
+}
+
 export function handleGlossaryError(error: unknown) {
   if (error instanceof UnauthorizedError) {
     return buildError(401, "unauthorized", error.message || "Authentication required.");

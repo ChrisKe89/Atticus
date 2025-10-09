@@ -1,9 +1,12 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import path from "node:path";
 import fs from "node:fs/promises";
 
 const mailboxDir = process.env.AUTH_DEBUG_MAILBOX_DIR ?? "./logs/mailbox";
 const adminEmail = process.env.PLAYWRIGHT_ADMIN_EMAIL ?? "admin@atticus.local";
+const reviewerEmail =
+  process.env.PLAYWRIGHT_REVIEWER_EMAIL ?? "glossary.author@seed.atticus";
 
 async function waitForMagicLink(email: string, timeoutMs = 15_000): Promise<string> {
   const deadline = Date.now() + timeoutMs;
@@ -29,6 +32,19 @@ async function waitForMagicLink(email: string, timeoutMs = 15_000): Promise<stri
 
 test.describe.configure({ mode: "serial" });
 
+test.beforeEach(async ({ context }) => {
+  await context.clearCookies();
+});
+
+async function signInWithMagicLink(page: Page, email: string) {
+  await page.goto("/signin");
+  await page.getByLabel("Work email").fill(email);
+  await page.getByRole("button", { name: /magic link/i }).click();
+  const magicLink = await waitForMagicLink(email);
+  await page.goto(magicLink);
+  await page.waitForLoadState("networkidle");
+}
+
 test("redirects unauthenticated users away from admin dashboard", async ({ page }) => {
   const response = await page.goto("/admin");
   expect(response?.status()).toBeLessThan(500);
@@ -36,13 +52,50 @@ test("redirects unauthenticated users away from admin dashboard", async ({ page 
   await expect(page.getByRole("heading", { name: "Sign in to Atticus" })).toBeVisible();
 });
 
+test("restricts reviewer capabilities on the admin console", async ({ page }) => {
+  await signInWithMagicLink(page, reviewerEmail);
+  await page.goto("/admin");
+  await expect(page).toHaveURL(/\/admin$/);
+
+  await expect(page.getByRole("tab", { name: /uncertain/i })).toBeVisible();
+  await page.getByRole("tab", { name: /glossary/i }).click();
+  await expect(page.getByText("Reviewer access is read-only")).toBeVisible();
+  await expect(page.getByRole("button", { name: /save entry/i })).toBeDisabled();
+
+  const escalateResponse = await page.request.post("/api/admin/uncertain/example/escalate");
+  expect(escalateResponse.status()).toBe(403);
+});
+
 test("allows admins to load the glossary panel after magic link sign-in", async ({ page }) => {
-  await page.goto("/signin");
-  await page.getByLabel("Work email").fill(adminEmail);
-  await page.getByRole("button", { name: /magic link/i }).click();
-  const magicLink = await waitForMagicLink(adminEmail);
-  await page.goto(magicLink);
+  await signInWithMagicLink(page, adminEmail);
   await page.waitForURL("**/admin");
-  await expect(page.getByRole("heading", { name: "Operations and governance" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Operations console" })).toBeVisible();
+
+  const pendingRow = page.getByRole("cell", { name: /toner replacement alerts/i }).first();
+  await expect(pendingRow).toBeVisible();
+  await page.getByRole("button", { name: "Review" }).first().click();
+  await page.getByPlaceholder("What would you ask next?").fill("Confirm toner serial numbers.");
+  await page.getByRole("button", { name: "Save follow-up" }).click();
+  await expect(page.getByText("Follow-up prompt saved.")).toBeVisible();
+  await page.getByRole("button", { name: "Approve" }).click();
+  await expect(page.getByText("Chat approved and removed from the uncertain queue.")).toBeVisible();
+  await expect(page.getByRole("cell", { name: /All caught up/i })).toBeVisible();
+
+  await page.getByRole("tab", { name: /glossary/i }).click();
   await expect(page.getByText("Add glossary entry")).toBeVisible();
+
+  const newTerm = `Playwright QA ${Date.now()}`;
+  await page.getByLabel("Term").fill(newTerm);
+  await page.getByLabel("Definition").fill("Confidence gate coverage from Playwright");
+  await page.getByLabel("Synonyms").fill("qa-term, reviewer-check");
+  await page.getByLabel("Status").selectOption({ value: "PENDING" });
+  await page.getByRole("button", { name: "Save entry" }).click();
+
+  await expect(page.getByText("Entry created successfully.")).toBeVisible();
+  const createdRow = page.locator("tr", { hasText: newTerm }).first();
+  await expect(createdRow).toBeVisible();
+
+  await createdRow.getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByText("Entry deleted.")).toBeVisible();
+  await expect(page.locator("tr", { hasText: newTerm })).toHaveCount(0);
 });

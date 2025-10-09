@@ -2,7 +2,16 @@
 
 import { useState, useTransition } from "react";
 import { GlossaryStatus } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -33,6 +42,7 @@ export interface GlossaryEntryDto {
 
 interface GlossaryAdminPanelProps {
   initialEntries: GlossaryEntryDto[];
+  canEdit?: boolean;
 }
 
 const statusOptions: GlossaryStatus[] = [
@@ -41,7 +51,7 @@ const statusOptions: GlossaryStatus[] = [
   GlossaryStatus.REJECTED,
 ];
 
-export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) {
+export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryAdminPanelProps) {
   const [entries, setEntries] = useState(initialEntries);
   const [term, setTerm] = useState("");
   const [definition, setDefinition] = useState("");
@@ -49,6 +59,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   const [status, setStatus] = useState<GlossaryStatus>(GlossaryStatus.PENDING);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [definitionDraft, setDefinitionDraft] = useState("");
+  const [synonymsDraft, setSynonymsDraft] = useState("");
 
   function parseSynonyms(value: string): string[] {
     return value
@@ -58,6 +71,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   }
 
   async function createEntry() {
+    if (!canEdit) {
+      return;
+    }
     setFeedback(null);
     startTransition(async () => {
       const response = await fetch("/api/glossary", {
@@ -80,51 +96,125 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
     });
   }
 
+  function beginEditing(entry: GlossaryEntryDto) {
+    setEditingId(entry.id);
+    setDefinitionDraft(entry.definition);
+    setSynonymsDraft(entry.synonyms.join(", "));
+    setFeedback(null);
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setDefinitionDraft("");
+    setSynonymsDraft("");
+  }
+
+  async function saveEntryUpdate(
+    entry: GlossaryEntryDto,
+    overrides: Partial<{
+      definition: string;
+      synonyms: string[];
+      status: GlossaryStatus;
+      reviewNotes: string | null;
+    }>
+  ) {
+    if (!canEdit) {
+      return null;
+    }
+    const payload = {
+      term: entry.term,
+      definition: overrides.definition ?? entry.definition,
+      synonyms: overrides.synonyms ?? entry.synonyms,
+      status: overrides.status ?? entry.status,
+      reviewNotes: overrides.reviewNotes ?? entry.reviewNotes,
+    };
+    const response = await fetch(`/api/glossary/${entry.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      setFeedback(body.detail ?? "Unable to update entry.");
+      return null;
+    }
+    const updated: GlossaryEntryDto = await response.json();
+    setEntries((prev) => prev.map((item) => (item.id === entry.id ? updated : item)));
+    return updated;
+  }
+
   async function updateStatus(entry: GlossaryEntryDto, nextStatus: GlossaryStatus) {
+    if (!canEdit) {
+      return;
+    }
     startTransition(async () => {
       let reviewNotes: string | null | undefined;
       if (nextStatus !== GlossaryStatus.PENDING) {
         reviewNotes =
           window.prompt("Add review notes (optional)", entry.reviewNotes ?? "") ?? undefined;
       }
-      const response = await fetch(`/api/glossary/${entry.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: nextStatus, reviewNotes }),
+      const updated = await saveEntryUpdate(entry, {
+        status: nextStatus,
+        reviewNotes: reviewNotes === undefined ? entry.reviewNotes : reviewNotes ?? null,
       });
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        setFeedback(body.detail ?? "Unable to update entry.");
-        return;
+      if (updated) {
+        setFeedback(`Status updated to ${nextStatus.toLowerCase()}.`);
       }
-      const updated: GlossaryEntryDto = await response.json();
-      setEntries((prev) => prev.map((item) => (item.id === entry.id ? updated : item)));
-      setFeedback(`Status updated to ${nextStatus.toLowerCase()}.`);
     });
   }
 
   async function deleteEntry(entryId: string) {
+    if (!canEdit) {
+      return;
+    }
     startTransition(async () => {
       const response = await fetch(`/api/glossary/${entryId}`, { method: "DELETE" });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        setFeedback(body.detail ?? "Unable to delete entry.");
-        return;
+      setFeedback(body.detail ?? "Unable to delete entry.");
+      return;
       }
       setEntries((prev) => prev.filter((item) => item.id !== entryId));
       setFeedback("Entry deleted.");
+      if (editingId === entryId) {
+        cancelEditing();
+      }
+    });
+  }
+
+  function submitDraft(entry: GlossaryEntryDto) {
+    if (!canEdit) {
+      return;
+    }
+    const trimmedDefinition = definitionDraft.trim();
+    if (!trimmedDefinition) {
+      setFeedback("Definition is required.");
+      return;
+    }
+    setFeedback(null);
+    startTransition(async () => {
+      const updated = await saveEntryUpdate(entry, {
+        definition: trimmedDefinition,
+        synonyms: parseSynonyms(synonymsDraft),
+      });
+      if (updated) {
+        setFeedback("Entry updated.");
+        cancelEditing();
+      }
     });
   }
 
   return (
     <section className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Add glossary entry</h2>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-          Approved terms appear instantly in chat responses. Pending entries stay private until
-          promoted.
-        </p>
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle>Add glossary entry</CardTitle>
+          <CardDescription>
+            Approved terms appear instantly in chat responses. Pending entries stay private until
+            promoted.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="term">Term</Label>
             <Input
@@ -132,6 +222,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               value={term}
               onChange={(event) => setTerm(event.target.value)}
               placeholder="Consumables"
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-2">
@@ -140,6 +231,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               id="status"
               value={status}
               onChange={(event) => setStatus(event.target.value as GlossaryStatus)}
+              disabled={!canEdit}
             >
               {statusOptions.map((option) => (
                 <option key={option} value={option}>
@@ -148,122 +240,205 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               ))}
             </Select>
           </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="synonyms">Synonyms</Label>
-          <Input
-            id="synonyms"
-            value={synonyms}
-            onChange={(event) => setSynonyms(event.target.value)}
-            placeholder="Comma-separated list"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="definition">Definition</Label>
-          <Textarea
-            id="definition"
-            value={definition}
-            onChange={(event) => setDefinition(event.target.value)}
-            rows={4}
-            placeholder="How the team uses this term..."
-          />
-        </div>
-        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Button type="button" disabled={isPending || !term || !definition} onClick={createEntry}>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="synonyms">Synonyms</Label>
+            <Input
+              id="synonyms"
+              value={synonyms}
+              onChange={(event) => setSynonyms(event.target.value)}
+              placeholder="Comma-separated list"
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="definition">Definition</Label>
+            <Textarea
+              id="definition"
+              value={definition}
+              onChange={(event) => setDefinition(event.target.value)}
+              rows={4}
+              placeholder="How the team uses this term..."
+              disabled={!canEdit}
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <Button type="button" disabled={isPending || !term || !definition || !canEdit} onClick={createEntry}>
             {isPending ? "Saving…" : "Save entry"}
           </Button>
-          {feedback ? (
-            <p className="text-xs text-slate-500 dark:text-slate-400">{feedback}</p>
-          ) : null}
-        </div>
-      </div>
+          <div className="flex flex-1 items-center justify-end gap-2">
+            {!canEdit ? (
+              <Badge variant="outline" className="normal-case">
+                Reviewer access is read-only
+              </Badge>
+            ) : null}
+            {feedback ? (
+              <Badge variant="subtle" className="normal-case">
+                {feedback}
+              </Badge>
+            ) : null}
+          </div>
+        </CardFooter>
+      </Card>
 
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Term</TableHead>
-              <TableHead>Definition</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {entries.map((entry) => (
-              <TableRow key={entry.id}>
-                <TableCell className="font-medium text-slate-900 dark:text-white">
-                  {entry.term}
-                </TableCell>
-                <TableCell>
-                  <p>{entry.definition}</p>
-                  {entry.synonyms.length ? (
-                    <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                      Synonyms: {entry.synonyms.join(", ")}
-                    </p>
-                  ) : null}
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                    Added by {entry.author?.name ?? entry.author?.email ?? "unknown"}
-                  </p>
-                </TableCell>
-                <TableCell className="capitalize">{entry.status.toLowerCase()}</TableCell>
-                <TableCell>
-                  <p>{new Date(entry.updatedAt).toLocaleString()}</p>
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                    By {entry.updatedBy?.name ?? entry.updatedBy?.email ?? "system"}
-                  </p>
-                  {entry.reviewedAt ? (
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-4">
+          <CardTitle>Glossary entries</CardTitle>
+          <CardDescription>
+            Review pending definitions, promote approved terms, and prune duplicates in one place.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Term</TableHead>
+                <TableHead>Definition</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {entries.map((entry) => (
+                <TableRow key={entry.id}>
+                  <TableCell className="font-medium text-slate-900 dark:text-white">
+                    {entry.term}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === entry.id ? (
+                      <div className="space-y-3">
+                        <Textarea
+                          value={definitionDraft}
+                          onChange={(event) => setDefinitionDraft(event.target.value)}
+                          rows={4}
+                          disabled={!canEdit || isPending}
+                        />
+                        <Input
+                          value={synonymsDraft}
+                          onChange={(event) => setSynonymsDraft(event.target.value)}
+                          placeholder="Comma-separated synonyms"
+                          disabled={!canEdit || isPending}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <p>{entry.definition}</p>
+                        {entry.synonyms.length ? (
+                          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                            Synonyms: {entry.synonyms.join(", ")}
+                          </p>
+                        ) : null}
+                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                          Added by {entry.author?.name ?? entry.author?.email ?? "unknown"}
+                        </p>
+                      </>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        entry.status === GlossaryStatus.APPROVED
+                          ? "success"
+                          : entry.status === GlossaryStatus.REJECTED
+                          ? "destructive"
+                          : "warning"
+                      }
+                    >
+                      {entry.status.toLowerCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <p>{new Date(entry.updatedAt).toLocaleString()}</p>
                     <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                      Reviewed {new Date(entry.reviewedAt).toLocaleString()} by{" "}
-                      {entry.reviewer?.name ?? entry.reviewer?.email ?? "admin"}
+                      By {entry.updatedBy?.name ?? entry.updatedBy?.email ?? "system"}
                     </p>
-                  ) : null}
-                  {entry.reviewNotes ? (
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      Notes: {entry.reviewNotes}
-                    </p>
-                  ) : null}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {statusOptions.map((option) => (
+                    {entry.reviewedAt ? (
+                      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                        Reviewed {new Date(entry.reviewedAt).toLocaleString()} by {" "}
+                        {entry.reviewer?.name ?? entry.reviewer?.email ?? "admin"}
+                      </p>
+                    ) : null}
+                    {entry.reviewNotes ? (
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Notes: {entry.reviewNotes}
+                      </p>
+                    ) : null}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex flex-wrap justify-end gap-2">
+                      {editingId === entry.id ? (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => submitDraft(entry)}
+                            disabled={isPending || !canEdit}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={cancelEditing}
+                            disabled={isPending}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => beginEditing(entry)}
+                          disabled={isPending || !canEdit}
+                        >
+                          Edit
+                        </Button>
+                      )}
+                      {statusOptions.map((option) => (
+                        <Button
+                          key={option}
+                          type="button"
+                          size="sm"
+                          variant={option === entry.status ? "secondary" : "outline"}
+                          disabled={
+                            option === entry.status || isPending || !canEdit || editingId === entry.id
+                          }
+                          onClick={() => updateStatus(entry, option)}
+                        >
+                          {option.toLowerCase()}
+                        </Button>
+                      ))}
                       <Button
-                        key={option}
                         type="button"
                         size="sm"
-                        variant={option === entry.status ? "secondary" : "outline"}
-                        disabled={option === entry.status || isPending}
-                        onClick={() => updateStatus(entry, option)}
+                        variant="destructive"
+                        onClick={() => deleteEntry(entry.id)}
+                        disabled={isPending || !canEdit}
                       >
-                        {option.toLowerCase()}
+                        Delete
                       </Button>
-                    ))}
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => deleteEntry(entry.id)}
-                      disabled={isPending}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {entries.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="py-6 text-center text-sm text-slate-500 dark:text-slate-400"
-                >
-                  No glossary entries yet. Create one above to seed the knowledge base.
-                </TableCell>
-              </TableRow>
-            ) : null}
-          </TableBody>
-        </Table>
-      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {entries.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className="py-6 text-center text-sm text-slate-500 dark:text-slate-400"
+                  >
+                    No glossary entries yet. Create one above to seed the knowledge base.
+                  </TableCell>
+                </TableRow>
+              ) : null}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </section>
   );
 }

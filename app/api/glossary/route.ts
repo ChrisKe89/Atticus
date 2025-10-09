@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { GlossaryStatus, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary, canReviewGlossary } from "@/lib/rbac";
@@ -7,7 +8,14 @@ import {
   parseStatus,
   parseSynonyms,
   serializeEntry,
+  snapshotEntry,
 } from "@/app/api/glossary/utils";
+
+const relationSelect = {
+  author: { select: { id: true, email: true, name: true } },
+  updatedBy: { select: { id: true, email: true, name: true } },
+  reviewer: { select: { id: true, email: true, name: true } },
+} as const;
 
 export async function GET() {
   try {
@@ -43,10 +51,38 @@ export async function POST(request: Request) {
     }
 
     const status = parseStatus(payload.status);
+    const reviewNotes =
+      typeof payload.reviewNotes === "string"
+        ? payload.reviewNotes.trim() || null
+        : payload.reviewNotes === null
+        ? null
+        : undefined;
 
-    const entry = await withRlsContext(session, (tx) =>
-      tx.glossaryEntry.create({
-        data: {
+    const result = await withRlsContext(session, async (tx) => {
+      const existing = await tx.glossaryEntry.findFirst({
+        where: { orgId: session.user.orgId, term },
+      });
+
+      const data: Record<string, unknown> = {
+        definition,
+        synonyms,
+        status,
+        updatedById: session.user.id,
+      };
+      if (reviewNotes !== undefined) {
+        data.reviewNotes = reviewNotes;
+      }
+      if (status === GlossaryStatus.PENDING) {
+        data.reviewedAt = null;
+        data.reviewerId = null;
+      } else {
+        data.reviewedAt = new Date();
+        data.reviewerId = session.user.id;
+      }
+
+      const entry = await tx.glossaryEntry.upsert({
+        where: { orgId_term: { orgId: session.user.orgId, term } },
+        create: {
           term,
           definition,
           synonyms,
@@ -54,16 +90,31 @@ export async function POST(request: Request) {
           orgId: session.user.orgId,
           authorId: session.user.id,
           updatedById: session.user.id,
+          reviewNotes: reviewNotes ?? null,
+          reviewedAt: status === GlossaryStatus.PENDING ? null : new Date(),
+          reviewerId: status === GlossaryStatus.PENDING ? null : session.user.id,
         },
-        include: {
-          author: { select: { id: true, email: true, name: true } },
-          updatedBy: { select: { id: true, email: true, name: true } },
-          reviewer: { select: { id: true, email: true, name: true } },
-        },
-      } as any)
-    );
+        update: data,
+        include: relationSelect,
+      } as any);
 
-    return NextResponse.json(serializeEntry(entry), { status: 201 });
+      await tx.ragEvent.create({
+        data: {
+          orgId: session.user.orgId,
+          actorId: session.user.id,
+          actorRole: session.user.role,
+          action: existing ? "glossary.updated" : "glossary.created",
+          entity: "glossary",
+          glossaryId: entry.id,
+          before: existing ? snapshotEntry(existing) : Prisma.JsonNull,
+          after: snapshotEntry(entry),
+        },
+      });
+
+      return { entry, created: !existing };
+    });
+
+    return NextResponse.json(serializeEntry(result.entry), { status: result.created ? 201 : 200 });
   } catch (error) {
     return handleGlossaryError(error);
   }

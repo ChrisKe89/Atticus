@@ -1,60 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Activity, Database, Folder, Users } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { GlossaryStatus, Role } from "@prisma/client";
+import { GlossaryStatus, Prisma, Role } from "@prisma/client";
 import { PageHeader } from "@/components/page-header";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
-import { GlossaryAdminPanel, GlossaryEntryDto } from "@/components/glossary/admin-panel";
-
-const panels: Array<{
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  items: string[];
-}> = [
-  {
-    title: "System activity",
-    description: "Live logs from ingestion, retrieval, and escalation workers.",
-    icon: Activity,
-    items: [
-      "Real-time request IDs with latency histograms",
-      "Escalation attempts with masked payload metadata",
-      "Vector search probes and IVFFlat statistics",
-    ],
-  },
-  {
-    title: "User roster",
-    description: "Manage RBAC roles and enforce org-level segregation.",
-    icon: Users,
-    items: [
-      "Invite new teammates via magic link",
-      "Assign admin/reviewer roles",
-      "View last active session",
-    ],
-  },
-  {
-    title: "Content health",
-    description: "Track ingestion status and data freshness across products.",
-    icon: Folder,
-    items: [
-      "Chunk coverage by document type",
-      "Footnote/table extraction success",
-      "SHA-256 drift detection",
-    ],
-  },
-  {
-    title: "Database metrics",
-    description: "pgvector statistics with quality guardrails.",
-    icon: Database,
-    items: [
-      "IVFFlat list/probe recommendations",
-      "Recall@k snapshots by corpus",
-      "Storage growth and vacuum cadence",
-    ],
-  },
-];
+import { AdminOpsConsole, TicketSummary, UncertainChat } from "@/components/admin/admin-ops-console";
+import type { GlossaryEntryDto } from "@/components/glossary/admin-panel";
 
 export const metadata: Metadata = {
   title: "Admin - Atticus",
@@ -80,23 +31,48 @@ export default async function AdminPage() {
   if (!session) {
     redirect("/signin?from=/admin");
   }
-  if (session.user.role !== Role.ADMIN) {
+  if (session.user.role !== Role.ADMIN && session.user.role !== Role.REVIEWER) {
     redirect("/");
   }
 
-  const rawEntries = await withRlsContext(session, (tx) =>
-    tx.glossaryEntry.findMany({
-      orderBy: { term: "asc" },
-      include: {
-        author: { select: { id: true, email: true, name: true } },
-        updatedBy: { select: { id: true, email: true, name: true } },
-        reviewer: { select: { id: true, email: true, name: true } },
-      },
-    } as any)
-  );
-  const entries = rawEntries as unknown as GlossaryEntryRecord[];
+  const { chats, tickets, glossary } = await withRlsContext(session, async (tx) => {
+    const [pendingChats, ticketRows, glossaryRows] = await Promise.all([
+      tx.chat.findMany({
+        where: { status: "pending_review" },
+        include: {
+          author: { select: { id: true, email: true, name: true } },
+          reviewer: { select: { id: true, email: true, name: true } },
+          tickets: {
+            select: { id: true, key: true, status: true, assignee: true, lastActivity: true },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      tx.ticket.findMany({
+        orderBy: { updatedAt: "desc" },
+        select: {
+          id: true,
+          key: true,
+          status: true,
+          assignee: true,
+          lastActivity: true,
+          summary: true,
+        },
+      }),
+      tx.glossaryEntry.findMany({
+        orderBy: { term: "asc" },
+        include: {
+          author: { select: { id: true, email: true, name: true } },
+          updatedBy: { select: { id: true, email: true, name: true } },
+          reviewer: { select: { id: true, email: true, name: true } },
+        },
+      }),
+    ]);
 
-  const glossaryEntries: GlossaryEntryDto[] = entries.map((entry) => ({
+    return { chats: pendingChats, tickets: ticketRows, glossary: glossaryRows };
+  });
+
+  const glossaryEntries: GlossaryEntryDto[] = (glossary as GlossaryEntryRecord[]).map((entry) => ({
     id: entry.id,
     term: entry.term,
     definition: entry.definition,
@@ -111,46 +87,87 @@ export default async function AdminPage() {
     reviewNotes: entry.reviewNotes ?? null,
   }));
 
+  function parseSources(value: Prisma.JsonValue | null): UncertainChat["topSources"] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    const sources: UncertainChat["topSources"] = [];
+    for (const item of value) {
+      if (typeof item !== "object" || item === null) {
+        continue;
+      }
+      const path = "path" in item && typeof item.path === "string" ? item.path : null;
+      if (!path) {
+        continue;
+      }
+      sources.push({
+        path,
+        score: "score" in item && typeof item.score === "number" ? item.score : null,
+        page: "page" in item && typeof item.page === "number" ? item.page : null,
+        heading: "heading" in item && typeof item.heading === "string" ? item.heading : null,
+        chunkId: "chunkId" in item && typeof item.chunkId === "string" ? item.chunkId : null,
+      });
+    }
+    return sources;
+  }
+
+  function parseAuditLog(value: Prisma.JsonValue | null): Record<string, unknown>[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    const entries: Record<string, unknown>[] = [];
+    for (const item of value) {
+      if (typeof item === "object" && item !== null && !Array.isArray(item)) {
+        entries.push(item as Record<string, unknown>);
+      }
+    }
+    return entries;
+  }
+
+  const uncertainChats: UncertainChat[] = chats.map((chat) => ({
+    id: chat.id,
+    question: chat.question,
+    answer: chat.answer ?? null,
+    confidence: chat.confidence,
+    status: chat.status,
+    requestId: chat.requestId ?? null,
+    createdAt: chat.createdAt.toISOString(),
+    topSources: parseSources(chat.topSources),
+    author: chat.author,
+    reviewer: chat.reviewer,
+    tickets: chat.tickets.map((ticket) => ({
+      id: ticket.id,
+      key: ticket.key,
+      status: ticket.status,
+      assignee: ticket.assignee,
+      lastActivity: ticket.lastActivity ? ticket.lastActivity.toISOString() : null,
+    })),
+    followUpPrompt: chat.followUpPrompt ?? null,
+    auditLog: parseAuditLog(chat.auditLog),
+  }));
+
+  const ticketSummaries: TicketSummary[] = tickets.map((ticket) => ({
+    id: ticket.id,
+    key: ticket.key,
+    status: ticket.status,
+    assignee: ticket.assignee,
+    lastActivity: ticket.lastActivity ? ticket.lastActivity.toISOString() : null,
+    summary: ticket.summary ?? null,
+  }));
+
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
       <PageHeader
         eyebrow="Admin"
-        title="Operations and governance"
-        description="Monitor escalation volume, tune retrieval quality, and manage access policies."
+        title="Operations console"
+        description="Review low-confidence chats, manage ticket escalations, and curate glossary terminology."
       />
-
-      <section className="grid gap-6 md:grid-cols-2">
-        {panels.map((panel) => {
-          const IconComponent = panel.icon;
-          return (
-            <article
-              key={panel.title}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-            >
-              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
-                <IconComponent className="h-5 w-5" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                {panel.title}
-              </h2>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{panel.description}</p>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                {panel.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span
-                      className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"
-                      aria-hidden="true"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          );
-        })}
-      </section>
-
-      <GlossaryAdminPanel initialEntries={glossaryEntries} />
+      <AdminOpsConsole
+        role={session.user.role}
+        uncertain={uncertainChats}
+        tickets={ticketSummaries}
+        glossaryEntries={glossaryEntries}
+      />
     </div>
   );
 }
