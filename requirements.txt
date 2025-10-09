@@ -54,7 +54,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 execnet==2.1.1
     # via pytest-xdist
-fastapi==0.118.0
+fastapi==0.118.2
     # via -r requirements.in
 h11==0.16.0
     # via

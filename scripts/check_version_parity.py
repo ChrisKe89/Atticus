@@ -61,10 +61,10 @@ def main() -> int:
 
     if mismatches:
         for mismatch in mismatches:
-            print(f"❌ {mismatch}")
+            print(f"[WARN] {mismatch}")
         return 1
 
-    print(f"✅ Version parity check passed: {repo_version}")
+    print(f"[OK] Version parity check passed: {repo_version}")
     return 0
 
 

@@ -1,10 +1,9 @@
-import { defineConfig, devices } from "@playwright/test";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+const { defineConfig, devices } = require("@playwright/test");
+const path = require("node:path");
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: "tests/playwright",
   timeout: 30_000,
   expect: {
@@ -22,8 +21,5 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  outputDir: path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "reports/playwright-artifacts"
-  ),
+  outputDir: path.join(__dirname, "reports/playwright-artifacts"),
 });

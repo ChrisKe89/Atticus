@@ -334,7 +334,7 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
       </Tabs>
       <Drawer
         open={drawerChatId !== null}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setDrawerChatId(null);
             setFollowUpDraft("");

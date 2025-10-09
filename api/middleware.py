@@ -11,7 +11,10 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
+from atticus.config import load_settings
 from atticus.logging import log_event
+
+from .rate_limit import RateLimiter
 
 
 class RequestContextMiddleware(BaseHTTPMiddleware):
@@ -30,7 +33,19 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         logger = getattr(request.app.state, "logger", None)
 
         limiter = getattr(request.app.state, "rate_limiter", None)
-        if limiter and request.url.path == "/ask":
+        if request.url.path == "/ask":
+            settings = load_settings()
+            if (
+                limiter is None
+                or limiter.limit != settings.rate_limit_requests
+                or limiter.window_seconds != settings.rate_limit_window_seconds
+            ):
+                limiter = RateLimiter(
+                    limit=settings.rate_limit_requests,
+                    window_seconds=settings.rate_limit_window_seconds,
+                )
+                request.app.state.rate_limiter = limiter
+            request.app.state.settings = settings
             identifier = (
                 request.headers.get("X-User-ID")
                 or request.headers.get("X-Forwarded-For")
