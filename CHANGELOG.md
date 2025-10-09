@@ -14,6 +14,18 @@ The newest entries appear first.
 
 ---
 
+## [0.8.1] — 2025-10-20
+
+### Fixed
+
+- Restored Playwright RBAC flows by persisting magic links to the default `./logs/mailbox` directory whenever `AUTH_DEBUG_MAILBOX_DIR` is unset, preserving the ability to disable persistence with an empty value and documenting the fallback for operators.
+
+### Testing
+
+- `npm run test:unit`
+
+---
+
 ## [0.8.0] — 2025-10-19
 
 ### Added

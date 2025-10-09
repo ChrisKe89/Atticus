@@ -11,13 +11,26 @@ import { prisma } from "@/lib/prisma";
 
 const defaultOrgId = process.env.DEFAULT_ORG_ID ?? "org-atticus";
 const emailFrom = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? "atticus@localhost";
+const defaultMailboxDir = "./logs/mailbox";
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+function resolveMailboxDir(): string | null {
+  const configured = process.env.AUTH_DEBUG_MAILBOX_DIR;
+  if (configured === undefined) {
+    return defaultMailboxDir;
+  }
+  const trimmed = configured.trim();
+  if (!trimmed) {
+    return null;
+  }
+  return trimmed;
+}
+
 async function persistMagicLink(email: string, url: string) {
-  const mailboxDir = process.env.AUTH_DEBUG_MAILBOX_DIR;
+  const mailboxDir = resolveMailboxDir();
   if (!mailboxDir) {
     return;
   }
@@ -182,6 +195,12 @@ export const authOptions: NextAuthConfig = {
       });
     },
   },
+};
+
+export const __test = {
+  defaultMailboxDir,
+  resolveMailboxDir,
+  persistMagicLink,
 };
 
 export function getServerAuthSession(): Promise<Session | null> {
