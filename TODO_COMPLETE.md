@@ -107,3 +107,7 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-10
 
 - [x] TODO "Glossary Seed & Runbook" — completed 2025-10-10 (this PR aligns Prisma seeds, docs, and verification tests).
+
+## 2025-10-11
+
+- [x] TODO "Glossary UX Follow-through" — completed 2025-10-11 (added workflow sequence diagram, decision notes, and backlog links in `docs/glossary-spec.md`).

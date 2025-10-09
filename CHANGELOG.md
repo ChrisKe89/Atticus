@@ -14,6 +14,21 @@ The newest entries appear first.
 
 ---
 
+
+## [0.7.7] — 2025-10-11
+
+### Changed
+
+- Documented the glossary review workflow with a Mermaid sequence diagram, decision notes, and backlog links in `docs/glossary-spec.md`.
+- Removed the fulfilled Glossary UX backlog item from `TODO.md` and logged completion in `TODO_COMPLETE.md`.
+
+### Testing
+
+- Documentation-only change; no automated tests were run.
+
+---
+
+
 ## [0.7.6] — 2025-10-10
 
 ### Added
