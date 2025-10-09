@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { GlossaryStatus, Prisma, Role } from "@prisma/client";
 import { PageHeader } from "@/components/page-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { AdminOpsConsole, TicketSummary, UncertainChat } from "@/components/admin/admin-ops-console";
