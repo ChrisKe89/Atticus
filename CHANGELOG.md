@@ -14,6 +14,18 @@ The newest entries appear first.
 
 ---
 
+## [0.7.8] — 2025-10-12
+
+### Added
+
+- Playwright RBAC coverage to confirm reviewers are redirected from `/admin`, blocked from `/api/glossary`, and that admins can create/delete glossary entries end-to-end.
+- Vitest unit tests for Next.js glossary route handlers to assert reviewer read access, admin-only mutations, and reviewer metadata stamping on approvals.
+
+### Changed
+
+- FastAPI admin dictionary tests now assert 403 contracts for invalid tokens, `make quality` runs Vitest + Playwright in addition to existing gates, and documentation reflects the expanded quality bar.
+
+---
 
 ## [0.7.7] — 2025-10-11
 
@@ -27,7 +39,6 @@ The newest entries appear first.
 - Documentation-only change; no automated tests were run.
 
 ---
-
 
 ## [0.7.6] — 2025-10-10
 

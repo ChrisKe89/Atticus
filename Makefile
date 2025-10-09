@@ -109,7 +109,7 @@ format:
 typecheck:
 	mypy atticus api ingest retriever eval
 
-quality: lint typecheck test version-check web-lint web-typecheck web-build web-audit
+quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e
 
 # Full verification pass for CI / release
 verify:

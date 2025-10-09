@@ -111,5 +111,5 @@ sequenceDiagram
 ## CI Expectations
 
 - `make test.api` exercises glossary endpoints under auth.
-- `make quality` enforces type checks on the Prisma client and Next.js components.
+- `make quality` runs Prisma client type checks, Vitest RBAC unit tests, and Playwright admin flows to guard glossary access.
 - Seed data for glossary lives alongside the CED seed manifest (`make seed`).
