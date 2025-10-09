@@ -113,13 +113,19 @@ export const authOptions: NextAuthConfig = {
         const server = buildEmailServer();
         const transport = nodemailer.createTransport(server);
         const to = normalizeEmail(identifier);
-        await transport.sendMail({
-          to,
-          from: emailFrom,
-          subject: "Your Atticus magic link",
-          text: `Sign in to Atticus by opening this link:\n${url}\n`,
-          html: `<p>Sign in to Atticus by selecting the button below.</p><p><a href="${url}">Complete sign-in</a></p>`,
-        });
+        try {
+          await transport.sendMail({
+            to,
+            from: emailFrom,
+            subject: "Your Atticus magic link",
+            text: `Sign in to Atticus by opening this link:\n${url}\n`,
+            html: `<p>Sign in to Atticus by selecting the button below.</p><p><a href="${url}">Complete sign-in</a></p>`,
+          });
+        } catch (error) {
+          if (!process.env.AUTH_DEBUG_MAILBOX_DIR) {
+            throw error;
+          }
+        }
         await persistMagicLink(to, url);
       },
     }),
