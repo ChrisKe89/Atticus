@@ -4,6 +4,13 @@ import { Activity, Database, Folder, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { GlossaryStatus, Role } from "@prisma/client";
 import { PageHeader } from "@/components/page-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { GlossaryAdminPanel, GlossaryEntryDto } from "@/components/glossary/admin-panel";
@@ -123,29 +130,23 @@ export default async function AdminPage() {
         {panels.map((panel) => {
           const IconComponent = panel.icon;
           return (
-            <article
-              key={panel.title}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
-            >
-              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
-                <IconComponent className="h-5 w-5" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                {panel.title}
-              </h2>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{panel.description}</p>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+            <Card key={panel.title}>
+              <CardHeader className="gap-3 pb-0">
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
+                  <IconComponent className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <CardTitle>{panel.title}</CardTitle>
+                <CardDescription>{panel.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
                 {panel.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span
-                      className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"
-                      aria-hidden="true"
-                    />
+                  <div key={item} className="flex items-start gap-2">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500" aria-hidden="true" />
                     <span>{item}</span>
-                  </li>
+                  </div>
                 ))}
-              </ul>
-            </article>
+              </CardContent>
+            </Card>
           );
         })}
       </section>

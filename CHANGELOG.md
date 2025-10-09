@@ -14,6 +14,104 @@ The newest entries appear first.
 
 ---
 
+## [0.7.10] — 2025-10-14
+
+### Added
+
+- Pytest coverage ensuring the FastAPI application metadata reads directly from the repository `VERSION` file so version drift is caught automatically.
+
+### Changed
+
+- FastAPI now loads its version string from the shared `VERSION` file, eliminating manual sync steps with `package.json`.
+- Documentation (README, AGENTS, ARCHITECTURE, OPERATIONS, REPO_STRUCTURE, release notes, and workspace settings) explicitly records that Next.js owns the UI while FastAPI serves JSON APIs only.
+
+### Testing
+
+- `pytest tests/test_api_version.py`
+- `npm run lint`
+- `npm run build`
+
+---
+
+## [0.7.9] — 2025-10-13
+
+### Added
+
+- Introduced shared shadcn-inspired primitives (`Card`, `Badge`) under `components/ui` and extended the button component with `asChild` support via `@radix-ui/react-slot` for consistent navigation styling.
+
+### Changed
+
+- Refreshed the chat workspace, admin overview, glossary management, settings, apps catalogue, and contact escalation form to compose the new card and badge primitives, aligning typography, spacing, and status indicators across the UI.
+- Updated the site header to reuse the shared button component for sign-in/out flows and to standardise mobile navigation controls.
+- Documented the frontend design system in `README.md` and noted the new dependency in `RELEASE.md` upgrade steps.
+
+### Testing
+
+- `npm run lint`
+- `npm run build`
+
+---
+
+## [0.7.8] — 2025-10-12
+
+### Added
+
+- Playwright RBAC coverage to confirm reviewers are redirected from `/admin`, blocked from `/api/glossary`, and that admins can create/delete glossary entries end-to-end.
+- Vitest unit tests for Next.js glossary route handlers to assert reviewer read access, admin-only mutations, and reviewer metadata stamping on approvals.
+
+### Changed
+
+- FastAPI admin dictionary tests now assert 403 contracts for invalid tokens, `make quality` runs Vitest + Playwright in addition to existing gates, and documentation reflects the expanded quality bar.
+
+---
+
+## [0.7.7] — 2025-10-11
+
+### Changed
+
+- Documented the glossary review workflow with a Mermaid sequence diagram, decision notes, and backlog links in `docs/glossary-spec.md`.
+- Removed the fulfilled Glossary UX backlog item from `TODO.md` and logged completion in `TODO_COMPLETE.md`.
+
+### Testing
+
+- Documentation-only change; no automated tests were run.
+
+---
+
+## [0.7.6] — 2025-10-10
+
+### Added
+
+- Seeded deterministic glossary fixtures (approved, pending, rejected) with dedicated reviewer/author accounts for smoke tests.
+
+### Changed
+
+- Documented glossary seeding, verification, and rollback workflows in `OPERATIONS.md` and `docs/glossary-spec.md`.
+- Pruned the completed glossary seed backlog item from `TODO.md` and logged the closure in `TODO_COMPLETE.md`.
+
+### Testing
+
+- `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` *(skipped: requires DATABASE_URL and npm in CI/dev)*
+
+---
+
+## [0.7.5] — 2025-10-09
+
+### Added
+
+- Recorded the Phase 0 baseline verification summary in `reports/todo-phase-0-baseline.md` to document current blockers before implementation work begins.
+
+### Changed
+
+- Bumped the tracked release version to 0.7.5 to capture the Phase 0 baseline report.
+
+### Testing
+
+- `make db.verify` (fails: missing `DATABASE_URL` in the execution environment).
+- `make quality` (fails: mypy reports an unused `type: ignore` in `ingest/parsers/xlsx.py`).
+
+---
+
 ## [0.7.4] — 2025-10-07
 
 ### Changed
