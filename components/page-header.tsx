@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
 
 interface PageHeaderProps {
   title: string;
@@ -9,12 +10,12 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, eyebrow, actions }: PageHeaderProps) {
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <div className="space-y-4">
         {eyebrow ? (
-          <span className="text-xs font-semibold uppercase tracking-widest text-indigo-600">
+          <Badge variant="outline" className="w-fit">
             {eyebrow}
-          </span>
+          </Badge>
         ) : null}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">

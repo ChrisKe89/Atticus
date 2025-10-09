@@ -4,7 +4,7 @@
 
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
-> **Release 0.7.4** – Streamlined the chat workspace cards, gated the Settings navigation for authenticated users, and focused the escalation page content.
+> **Release 0.7.10** – Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
 
 ---
 
@@ -125,15 +125,16 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make quality
     ```
 
-    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
 
-    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
+    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
     The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
+    FastAPI still returns canonical JSON; the proxy synthesises `start`, `answer`, and `end` events so the UI can subscribe using a single streaming interface.
 
     **Request**
 
@@ -189,6 +190,15 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 8. **Git**
    - Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene
     - Use `pre-commit run --all-files` to verify manually.
+
+---
+
+## Frontend design system
+
+- Shared primitives built on shadcn/ui live under [`components/ui`](components/ui). Compose new surfaces with these building blocks instead of bespoke Tailwind markup to keep typography, spacing, and focus states consistent.
+- Cards (`Card`, `CardHeader`, `CardContent`, etc.) wrap dashboard panels, admin glossaries, and contact forms with rounded borders and responsive padding.
+- Badges (`Badge`) expose semantic variants (`default`, `success`, `warning`, `destructive`, etc.) for status chips, streaming indicators, and keyboard shortcut callouts.
+- Buttons now support the `asChild` pattern for wrapping Next.js `Link` components, ensuring consistent styling for navigation pills and in-form actions.
 
 ---
 
@@ -264,7 +274,7 @@ Legacy static assets live under `archive/legacy-ui/` for reference only.
 ## Auth & RBAC
 
 - Email magic links deliver sign-in using SES SMTP credentials from `.env`.
-- Admins (`ADMIN_EMAIL`) manage glossary terms at `/admin`; non-admins are redirected to `/`.
+- Admins (`ADMIN_EMAIL`) manage the Uncertain, Tickets, and Glossary tabs at `/admin`. Reviewers share the same surface with approval capabilities but cannot escalate chats or edit glossary entries. Standard users are redirected to `/`.
 - Postgres Row Level Security gates glossary CRUD, user/session tables, and admin APIs by `org_id` + role.
 - Use `withRlsContext(session, fn)` for Prisma calls that inherit user context.
 

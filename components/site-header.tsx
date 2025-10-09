@@ -6,7 +6,8 @@ import { useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import type { Role } from "@prisma/client";
-import clsx from "clsx";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type NavLink = {
   href: string;
@@ -73,7 +74,7 @@ export function SiteHeader() {
             <Link
               key={link.href}
               href={link.href}
-              className={clsx(
+              className={cn(
                 "rounded-full px-3 py-1.5 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-500/10",
                 activeHref === link.href
                   ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-600"
@@ -86,24 +87,30 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
+              className="hidden rounded-full sm:inline-flex"
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="hidden rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200 sm:inline-flex"
             >
               Sign out
-            </button>
+            </Button>
           ) : (
-            <Link
-              href="/signin"
-              className="hidden rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200 sm:inline-flex"
+            <Button
+              asChild
+              variant="secondary"
+              size="sm"
+              className="hidden rounded-full sm:inline-flex"
             >
-              Sign in
-            </Link>
+              <Link href="/signin">Sign in</Link>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
-            className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white p-2 text-slate-600 hover:bg-slate-100 focus-visible:ring-indigo-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 sm:hidden"
+            variant="outline"
+            size="icon"
+            className="sm:hidden"
             onClick={() => setIsOpen((prev) => !prev)}
             aria-expanded={isOpen}
             aria-controls="mobile-nav"
@@ -114,12 +121,12 @@ export function SiteHeader() {
               <Menu className="h-5 w-5" aria-hidden="true" />
             )}
             <span className="sr-only">Toggle navigation</span>
-          </button>
+          </Button>
         </div>
       </div>
       <div
         id="mobile-nav"
-        className={clsx(
+        className={cn(
           "border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           isOpen ? "block" : "hidden"
         )}
@@ -130,7 +137,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={clsx(
+                className={cn(
                   "rounded-xl px-3 py-2 hover:bg-indigo-50 dark:hover:bg-indigo-500/10",
                   activeHref === link.href
                     ? "bg-indigo-600 text-white shadow-sm"
@@ -144,24 +151,20 @@ export function SiteHeader() {
           </nav>
           <div className="border-t border-slate-200 pt-3 text-sm dark:border-slate-800">
             {isAuthenticated ? (
-              <button
+              <Button
                 type="button"
-                className="w-full rounded-xl bg-slate-900 px-3 py-2 font-semibold text-white dark:bg-white dark:text-slate-900"
+                className="w-full"
                 onClick={() => {
                   setIsOpen(false);
                   signOut({ callbackUrl: "/" });
                 }}
               >
                 Sign out ({userLabel})
-              </button>
+              </Button>
             ) : (
-              <Link
-                href="/signin"
-                className="w-full rounded-xl bg-slate-900 px-3 py-2 text-center font-semibold text-white dark:bg-white dark:text-slate-900"
-                onClick={() => setIsOpen(false)}
-              >
-                Sign in
-              </Link>
+              <Button asChild className="w-full" onClick={() => setIsOpen(false)}>
+                <Link href="/signin">Sign in</Link>
+              </Button>
             )}
           </div>
         </div>

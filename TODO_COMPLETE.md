@@ -103,3 +103,23 @@ The following items are done or no longer relevant and are recorded here for tra
 
 - [x] TODO "`api/main.py` — drop Jinja2 templates/static mounts; stop serving `/` HTML; keep JSON APIs; Next.js owns UI." — completed 2025-10-05 (present in commit 9a7620b9; verified during backlog audit).
 - [x] TODO "`ARCHITECTURE.md` & legacy `AGENTS.md` — replace FAISS/FastAPI mentions with references to this doc; mark migration phases." — completed 2025-10-05 (present in commit 9a7620b9; verified during backlog audit).
+
+## 2025-10-10
+
+- [x] TODO "Glossary Seed & Runbook" — completed 2025-10-10 (this PR aligns Prisma seeds, docs, and verification tests).
+
+## 2025-10-11
+
+- [x] TODO "Glossary UX Follow-through" — completed 2025-10-11 (added workflow sequence diagram, decision notes, and backlog links in `docs/glossary-spec.md`).
+
+## 2025-10-12
+
+- [x] TODO "RBAC Integration Coverage" — completed 2025-10-12 (Playwright reviewer/admin coverage, Next.js route RBAC tests, FastAPI admin token assertions, and `make quality` wiring).
+
+## 2025-10-14
+
+- [x] TODO "Phase 5 — Orphans & Structure Cleanup" — completed 2025-10-14 (FastAPI now sources its version from `VERSION`, docs highlight Next.js as the canonical UI, and release notes capture the separation of backend and frontend responsibilities).
+
+## 2025-10-15
+
+- [x] TODO "Admin Ops Console (Uncertain Chats, Tickets, Glossary)" — completed 2025-10-15 (introduced Prisma chat/ticket models, Next.js admin tabs, RBAC-aware API routes, and seeds/tests covering the reviewer/admin workflow).

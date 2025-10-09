@@ -27,6 +27,8 @@ model Organization {
   name      String
   users     User[]
   glossary  GlossaryEntry[]
+  chats     Chat[]
+  tickets   Ticket[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
@@ -47,6 +49,8 @@ model User {
   glossaryAuthored GlossaryEntry[] @relation("GlossaryAuthor")
   glossaryUpdated GlossaryEntry[] @relation("GlossaryUpdatedBy")
   glossaryReviewed GlossaryEntry[] @relation("GlossaryReviewer")
+  chats             Chat[]           @relation("ChatAuthor")
+  chatsReviewed     Chat[]           @relation("ChatReviewer")
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 }
@@ -111,6 +115,50 @@ model GlossaryEntry {
   @@unique([orgId, term])
   @@index([orgId, status])
   @@index([status, reviewedAt])
+}
+
+model Chat {
+  id             String      @id @default(cuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  userId         String?
+  author         User?       @relation("ChatAuthor", fields: [userId], references: [id], onDelete: SetNull)
+  question       String
+  answer         String?     @db.Text
+  confidence     Float
+  status         String      @default("ok")
+  topSources     Json?       @db.JsonB
+  requestId      String?
+  reviewedById   String?
+  reviewer       User?       @relation("ChatReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt     DateTime?
+  followUpPrompt String?     @db.Text
+  auditLog       Json?       @db.JsonB
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  tickets        Ticket[]
+
+  @@index([orgId, status])
+  @@index([status, reviewedAt])
+}
+
+model Ticket {
+  id             String      @id @default(cuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  key            String
+  status         String
+  assignee       String?
+  lastActivity   DateTime?
+  summary        String?     @db.Text
+  chatId         String?
+  chat           Chat?       @relation(fields: [chatId], references: [id], onDelete: SetNull)
+  auditLog       Json?       @db.JsonB
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([orgId, key])
+  @@index([status, assignee])
 }
 
 model AtticusDocument {
