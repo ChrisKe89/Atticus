@@ -60,6 +60,32 @@ the `X-Admin-Token` header.
 2. Admin views pending proposals on `/admin/glossary`, reviews the diff, and approves.
 3. Approved entries become available to all users and propagate via the API contract.
 
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  participant Reviewer
+  participant Admin
+  participant System
+  Reviewer->>Admin: Submit glossary entry
+  Admin->>System: Approve/Reject
+  System-->>Reviewer: Status update + audit log
+```
+
+### Decision Notes
+
+- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
+  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
+- **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
+  changes without polling Prisma directly.
+- **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
+  period.
+
+### Follow-ups
+
+- Reviewer/admin notifications for status changes remain open in the backlog — tracked in [TODO.md §5](../TODO.md#5-uncertain-chat-validation-flow).
+- Dedicated audit UI enhancements live under [TODO.md §4](../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary) alongside the combined admin console workstream.
+
 ## Seed Data & Provisioning
 
 - `make db.seed` provisions:
