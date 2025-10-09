@@ -4,7 +4,7 @@
 
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
-> **Release 0.7.4** – Streamlined the chat workspace cards, gated the Settings navigation for authenticated users, and focused the escalation page content.
+> **Release 0.7.10** – Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
 
 ---
 
@@ -134,6 +134,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 1. `/api/ask` contract
 
     The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
+    FastAPI still returns canonical JSON; the proxy synthesises `start`, `answer`, and `end` events so the UI can subscribe using a single streaming interface.
 
     **Request**
 

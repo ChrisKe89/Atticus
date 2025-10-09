@@ -16,7 +16,7 @@
             "**/.venv/**",
             "**/site-packages/**"
         ],
-        // Suppress specific library-only warnings seen in Starlette's Jinja integration
+        // Suppress optional typing noise from Starlette response types in FastAPI
         "python.analysis.diagnosticSeverityOverrides": {
             "reportInvalidTypeForm": "none",
             "reportOptionalMemberAccess": "none"

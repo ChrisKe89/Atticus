@@ -140,15 +140,21 @@ make format
 
 ## API & UI Operations
 
-- Start the API and integrated UI:
+- Start the FastAPI service (JSON APIs only):
 
   ```bash
   make api
   ```
 
-  Available at `http://localhost:8000` (OpenAPI docs at `/docs`).
+  Available at `http://localhost:8000`; FastAPI docs remain disabled in production and staging.
 
-- The UI runs via `make web-dev`; if the workspace splits again, reintroduce an explicit target and update port mapping.
+- Launch the Next.js workspace separately for the UI:
+
+  ```bash
+  make web-dev
+  ```
+
+  The UI expects the API to be reachable at `RAG_SERVICE_URL` (defaults to `http://localhost:8000`).
 - To run a full smoke test (ingest → eval → API/UI check):
 
   ```bash
