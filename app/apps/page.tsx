@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Calendar, FileText, KanbanSquare, Layers } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const integrations = [
   {
@@ -47,26 +55,23 @@ export default function AppsPage() {
 
       <section className="grid gap-6 md:grid-cols-2">
         {integrations.map((integration) => (
-          <article
+          <Card
             key={integration.name}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
+            className="transition hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-indigo-500/10"
           >
-            <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
-              <integration.icon className="h-5 w-5" aria-hidden="true" />
-            </div>
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-              {integration.name}
-            </h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              {integration.description}
-            </p>
-            <Link
-              href={integration.href}
-              className="mt-4 inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-indigo-500"
-            >
-              View setup guide
-            </Link>
-          </article>
+            <CardHeader className="gap-3 pb-0">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
+                <integration.icon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <CardTitle>{integration.name}</CardTitle>
+              <CardDescription>{integration.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <Button asChild variant="link" className="px-0">
+                <Link href={integration.href}>View setup guide</Link>
+              </Button>
+            </CardContent>
+          </Card>
         ))}
       </section>
     </div>
