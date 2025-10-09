@@ -1,0 +1,85 @@
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cn } from "@/lib/utils";
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
+}
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(function Card(
+  { className, asChild = false, ...props },
+  ref
+) {
+  const Comp = asChild ? Slot : "div";
+
+  return (
+    <Comp
+      ref={ref as React.Ref<any>}
+      className={cn(
+        "rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900",
+        className
+      )}
+      {...props}
+    />
+  );
+});
+
+export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  function CardHeader({ className, ...props }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={cn("flex flex-col gap-2 p-6", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+export const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  function CardTitle({ className, ...props }, ref) {
+    return (
+      <h2
+        ref={ref}
+        className={cn("text-lg font-semibold tracking-tight text-slate-900 dark:text-white", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  function CardDescription({ className, ...props }, ref) {
+    return (
+      <p
+        ref={ref}
+        className={cn("text-sm text-slate-600 dark:text-slate-300", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  function CardContent({ className, ...props }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={cn("p-6 pt-0", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+export const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  function CardFooter({ className, ...props }, ref) {
+    return (
+      <div
+        ref={ref}
+        className={cn("p-6 pt-0", className)}
+        {...props}
+      />
+    );
+  }
+);
