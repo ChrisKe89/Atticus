@@ -60,6 +60,28 @@ the `X-Admin-Token` header.
 2. Admin views pending proposals on `/admin/glossary`, reviews the diff, and approves.
 3. Approved entries become available to all users and propagate via the API contract.
 
+## Seed Data & Provisioning
+
+- `make db.seed` provisions:
+  - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
+  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
+  - Three glossary rows covering the primary workflow states:
+    - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
+    - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
+    - `glossary-entry-toner-optimization` → **REJECTED** with notes capturing why it failed review.
+- Re-running the seed is idempotent: each entry is upserted by stable IDs and the reviewer/author assignments are refreshed.
+- Override defaults (organization name, admin bootstrap account, etc.) by exporting `DEFAULT_ORG_NAME`, `ADMIN_EMAIL`, and `ADMIN_NAME` before invoking the target.
+
+## Reset & Rollback
+
+- To reset the glossary to the deterministic baseline:
+  1. `make db.seed` — reruns Prisma seeding and restores the canonical entries.
+  2. Confirm via `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` (requires a reachable Postgres instance).
+- To restore production data after testing seeds:
+  1. Snapshot `GlossaryEntry` rows (e.g., `COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER`).
+  2. After validation, re-import using `COPY ... FROM STDIN` or Prisma scripts, then rerun `make db.seed` to ensure support accounts persist.
+- Rollbacks should always re-run `make db.seed` so the deterministic reviewers remain available for smoke suites.
+
 ## CI Expectations
 
 - `make test.api` exercises glossary endpoints under auth.
