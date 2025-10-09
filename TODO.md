@@ -2,22 +2,7 @@
 
 This file replaces previous scattered TODOs and audit todos. It tracks only what is **still relevant**.
 
-## 1) Glossary Seed & Runbook
-**Goal:** deterministic baseline data + clear reset/rollback steps.
-
-**Deliverables**
-- Extend `prisma/seed.ts` with sample entries covering states: `approved`, `pending`, `rejected` (stable IDs).
-- Add pytest `tests/test_seed_manifest.py` asserting baseline rows exist after `make db.seed`.
-- Update docs:
-  - `OPERATIONS.md` — how to reset/rollback glossary.
-  - `docs/glossary-spec.md` — provisioning + rollback guidance.
-
-**Acceptance**
-- `make db.seed` produces deterministic rows; tests pass; docs explain reset/rollback for each environment.
-
----
-
-## 2) Glossary UX Follow-through
+## 1) Glossary UX Follow-through
 **Goal:** visualise the review/approve path and capture decisions.
 
 **Deliverables**
@@ -37,7 +22,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 3) RBAC Integration Coverage
+## 2) RBAC Integration Coverage
 **Goal:** prove role gates across **Next.js** and **FastAPI**.
 
 **Deliverables**
@@ -53,7 +38,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 4) pgvector GUC Bootstrap
+## 3) pgvector GUC Bootstrap
 **Goal:** fresh DBs pass `make db.verify` without manual steps.
 
 **Deliverables**
@@ -66,7 +51,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 5) Version Parity Automation
+## 4) Version Parity Automation
 **Goal:** prevent drift between `VERSION`, `package.json`, and API metadata.
 
 **Deliverables**
@@ -79,7 +64,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 6) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
+## 5) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
 **Goal:** give reviewers a single place to triage low-confidence chats, manage tickets, and edit glossary.
 
 **Deliverables**
@@ -102,7 +87,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 7) Uncertain Chat Validation Flow
+## 6) Uncertain Chat Validation Flow
 **Goal:** make the “low confidence” path observable and correctable.
 
 **Deliverables**
@@ -116,7 +101,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 8) Dictionary (Glossary) Update Semantics
+## 7) Dictionary (Glossary) Update Semantics
 **Goal:** safe, idempotent updates to existing terms; create on first write.
 
 **Deliverables**
