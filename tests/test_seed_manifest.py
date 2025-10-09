@@ -143,7 +143,10 @@ def test_glossary_seed_entries_round_trip() -> None:
                 'SELECT "id", "status", "topSources", "auditLog" FROM "Chat" WHERE "id" = ANY(%s)',
                 (["chat-low-confidence-toner", "chat-escalated-calibration"],),
             )
-            chats = {row[0]: {"status": row[1], "topSources": row[2], "auditLog": row[3]} for row in cursor.fetchall()}
+            chats = {
+                row[0]: {"status": row[1], "topSources": row[2], "auditLog": row[3]}
+                for row in cursor.fetchall()
+            }
 
             cursor.execute(
                 'SELECT "id", "key", "status", "assignee", "summary" FROM "Ticket" WHERE "id" = %s',
@@ -170,7 +173,9 @@ def test_glossary_seed_entries_round_trip() -> None:
     assert chats["chat-low-confidence-toner"]["status"] == "pending_review"
     assert isinstance(chats["chat-low-confidence-toner"]["topSources"], list)
     assert chats["chat-escalated-calibration"]["status"] == "escalated"
-    assert chats["chat-escalated-calibration"]["auditLog"], "Escalated chat should have audit history"
+    assert chats["chat-escalated-calibration"]["auditLog"], (
+        "Escalated chat should have audit history"
+    )
 
     assert ticket is not None, "Expected AE escalation ticket to be seeded"
     assert ticket[1] == "AE-1001"
