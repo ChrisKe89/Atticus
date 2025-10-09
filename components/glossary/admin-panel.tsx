@@ -42,6 +42,7 @@ export interface GlossaryEntryDto {
 
 interface GlossaryAdminPanelProps {
   initialEntries: GlossaryEntryDto[];
+  canEdit?: boolean;
 }
 
 const statusOptions: GlossaryStatus[] = [
@@ -50,7 +51,7 @@ const statusOptions: GlossaryStatus[] = [
   GlossaryStatus.REJECTED,
 ];
 
-export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) {
+export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryAdminPanelProps) {
   const [entries, setEntries] = useState(initialEntries);
   const [term, setTerm] = useState("");
   const [definition, setDefinition] = useState("");
@@ -67,6 +68,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   }
 
   async function createEntry() {
+    if (!canEdit) {
+      return;
+    }
     setFeedback(null);
     startTransition(async () => {
       const response = await fetch("/api/glossary", {
@@ -90,6 +94,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   }
 
   async function updateStatus(entry: GlossaryEntryDto, nextStatus: GlossaryStatus) {
+    if (!canEdit) {
+      return;
+    }
     startTransition(async () => {
       let reviewNotes: string | null | undefined;
       if (nextStatus !== GlossaryStatus.PENDING) {
@@ -113,6 +120,9 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
   }
 
   async function deleteEntry(entryId: string) {
+    if (!canEdit) {
+      return;
+    }
     startTransition(async () => {
       const response = await fetch(`/api/glossary/${entryId}`, { method: "DELETE" });
       if (!response.ok) {
@@ -143,6 +153,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               value={term}
               onChange={(event) => setTerm(event.target.value)}
               placeholder="Consumables"
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-2">
@@ -151,6 +162,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               id="status"
               value={status}
               onChange={(event) => setStatus(event.target.value as GlossaryStatus)}
+              disabled={!canEdit}
             >
               {statusOptions.map((option) => (
                 <option key={option} value={option}>
@@ -166,6 +178,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               value={synonyms}
               onChange={(event) => setSynonyms(event.target.value)}
               placeholder="Comma-separated list"
+              disabled={!canEdit}
             />
           </div>
           <div className="space-y-2 md:col-span-2">
@@ -176,18 +189,26 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
               onChange={(event) => setDefinition(event.target.value)}
               rows={4}
               placeholder="How the team uses this term..."
+              disabled={!canEdit}
             />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Button type="button" disabled={isPending || !term || !definition} onClick={createEntry}>
+          <Button type="button" disabled={isPending || !term || !definition || !canEdit} onClick={createEntry}>
             {isPending ? "Saving…" : "Save entry"}
           </Button>
-          {feedback ? (
-            <Badge variant="subtle" className="normal-case">
-              {feedback}
-            </Badge>
-          ) : null}
+          <div className="flex flex-1 items-center justify-end gap-2">
+            {!canEdit ? (
+              <Badge variant="outline" className="normal-case">
+                Reviewer access is read-only
+              </Badge>
+            ) : null}
+            {feedback ? (
+              <Badge variant="subtle" className="normal-case">
+                {feedback}
+              </Badge>
+            ) : null}
+          </div>
         </CardFooter>
       </Card>
 
@@ -264,7 +285,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                           type="button"
                           size="sm"
                           variant={option === entry.status ? "secondary" : "outline"}
-                          disabled={option === entry.status || isPending}
+                          disabled={option === entry.status || isPending || !canEdit}
                           onClick={() => updateStatus(entry, option)}
                         >
                           {option.toLowerCase()}
@@ -275,7 +296,7 @@ export function GlossaryAdminPanel({ initialEntries }: GlossaryAdminPanelProps) 
                         size="sm"
                         variant="destructive"
                         onClick={() => deleteEntry(entry.id)}
-                        disabled={isPending}
+                        disabled={isPending || !canEdit}
                       >
                         Delete
                       </Button>

@@ -163,6 +163,30 @@ make format
 
 ---
 
+## Admin Ops Console
+
+- URL: `https://<host>/admin`
+- Roles:
+  - **Admin** — full access to Uncertain, Tickets, and Glossary tabs. Can approve or escalate chats and edit glossary entries.
+  - **Reviewer** — may approve chats but cannot escalate or edit glossary entries. Glossary UI is read-only and shows a banner reflecting restricted access.
+  - **User** — redirected to `/` and receives `403` responses from admin APIs.
+- Data sources:
+  - `Chat` records capture low-confidence conversations with `status` (`pending_review`, `reviewed`, `escalated`), `topSources[]`, and `auditLog[]` entries that chronicle actions.
+  - `Ticket` records store AE escalations with `key`, `status`, `assignee`, `summary`, `lastActivity`, and `auditLog[]` metadata.
+- API endpoints:
+  - `GET /api/admin/uncertain` — reviewer/admin list of `pending_review` chats.
+  - `POST /api/admin/uncertain/:id/approve` — reviewer/admin action to mark a chat as reviewed and stamp reviewer metadata.
+  - `POST /api/admin/uncertain/:id/escalate` — admin-only action that creates a ticket, marks the chat as `escalated`, and appends audit log entries.
+- Seed data:
+  - `make db.seed` provisions a `chat-low-confidence-toner` pending review example and an `AE-1001` escalation for smoke testing.
+- Rollback:
+  1. `prisma migrate resolve --rolled-back "20251018090000_admin_ops_console"` (marks the migration reversed).
+  2. Drop `Chat` and `Ticket` tables (or restore from backup) if the migration was applied.
+  3. Remove the admin console routes/components and revert `prisma/seed.ts` to clear sample data.
+  4. Re-run `npm run build` and `PYTHONPATH=. pytest tests/unit/admin-uncertain-route.test.ts -q` to confirm restoration.
+
+---
+
 ## Escalation Email (SES)
 
 - Requires valid SES **SMTP credentials** (not IAM keys).

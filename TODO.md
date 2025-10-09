@@ -28,30 +28,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 3) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
-**Goal:** give reviewers a single place to triage low-confidence chats, manage tickets, and edit glossary.
-
-**Deliverables**
-- **UI**: `/admin` with tabs — **Uncertain**, **Tickets**, **Glossary**.
-  - Uncertain: table (date, user, question, confidence, top sources) + actions (**Approve**, **Ask Follow-up**, **Escalate**).
-  - Tickets: list AExxx with status, assignee, last activity.
-  - Glossary: search + inline edit (RBAC-gated).
-- **API**:
-  - `GET /api/admin/uncertain` — list chats where `confidence < CONFIDENCE_THRESHOLD` and `status='pending_review'`.
-  - `POST /api/admin/uncertain/:id/approve` — marks reviewed; persists reviewer + timestamp.
-  - `POST /api/admin/uncertain/:id/escalate` — creates/links AE ticket, logs action.
-- **DB** (Prisma):
-  - `chats`: add columns `confidence FLOAT`, `status TEXT DEFAULT 'ok'`, `reviewed_by`, `reviewed_at`.
-  - `tickets`: ensure `AE` id, `status`, `assignee`, `linked_chat_id`.
-- **RBAC**: only `admin` sees `/admin`; `reviewer` sees Uncertain+Glossary read, limited write.
-
-**Acceptance**
-- `reviewer` cannot access admin-only actions; `admin` can.
-- Uncertain list populates from real chats; actions emit audit events; Playwright + API tests cover 403s for non-admins.
-
----
-
-## 4) Uncertain Chat Validation Flow
+## 3) Uncertain Chat Validation Flow
 **Goal:** make the “low confidence” path observable and correctable.
 
 **Deliverables**
@@ -63,9 +40,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 **Acceptance**
 - A low-confidence chat appears in Uncertain within one run; actions change status and are reflected in DB + UI; tests green.
 
----
-
-## 5) Dictionary (Glossary) Update Semantics
+## 4) Dictionary (Glossary) Update Semantics
 **Goal:** safe, idempotent updates to existing terms; create on first write.
 
 **Deliverables**

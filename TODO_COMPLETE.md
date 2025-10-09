@@ -119,3 +119,7 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-14
 
 - [x] TODO "Phase 5 — Orphans & Structure Cleanup" — completed 2025-10-14 (FastAPI now sources its version from `VERSION`, docs highlight Next.js as the canonical UI, and release notes capture the separation of backend and frontend responsibilities).
+
+## 2025-10-15
+
+- [x] TODO "Admin Ops Console (Uncertain Chats, Tickets, Glossary)" — completed 2025-10-15 (introduced Prisma chat/ticket models, Next.js admin tabs, RBAC-aware API routes, and seeds/tests covering the reviewer/admin workflow).
