@@ -14,6 +14,23 @@ The newest entries appear first.
 
 ---
 
+## [0.7.6] — 2025-10-10
+
+### Added
+
+- Seeded deterministic glossary fixtures (approved, pending, rejected) with dedicated reviewer/author accounts for smoke tests.
+
+### Changed
+
+- Documented glossary seeding, verification, and rollback workflows in `OPERATIONS.md` and `docs/glossary-spec.md`.
+- Pruned the completed glossary seed backlog item from `TODO.md` and logged the closure in `TODO_COMPLETE.md`.
+
+### Testing
+
+- `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` *(skipped: requires DATABASE_URL and npm in CI/dev)*
+
+---
+
 ## [0.7.5] — 2025-10-09
 
 ### Added
