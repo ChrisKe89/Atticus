@@ -21,7 +21,7 @@ This runbook documents the Auth.js + Prisma deployment that powers Atticus phase
 | `ADMIN_EMAIL` / `ADMIN_NAME`                                                              | Bootstrap admin account created by `npm run db:seed`.                           |
 | `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery.                                       |
 | `EMAIL_FROM`                                                                              | From address for Auth.js email provider.                                        |
-| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). |
+| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). Defaults to `./logs/mailbox`. |
 
 Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible defaults. Override secrets in production.
 
@@ -53,7 +53,7 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 ## Testing
 
 - **Unit**: `npm run test:unit` (Vitest) covers RBAC helpers.
-- **Playwright**: `npm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` is writable before running.
+- **Playwright**: `npm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`) is writable before running.
 - **Smoke**: `make web-test` + `make web-e2e` are wired into CI.
 
 ## RLS behaviour
@@ -64,7 +64,7 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 
 ## Operations
 
-- **Magic link debugging**: When `AUTH_DEBUG_MAILBOX_DIR` is set, each email writes `<email>.txt` containing the latest link. Clear the file to invalidate previous links.
+- **Magic link debugging**: Magic links are written to `<email>.txt` in `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`). Clear the file to invalidate previous links.
 - **Role changes**: Use Prisma Studio or a SQL client to update `User.role`. RLS allows admins to self-manage via future UI.
 - **Glossary management**: Admins manage terms in `/admin`. Reviewers will gain propose-only permissions in later phases.
 

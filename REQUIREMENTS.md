@@ -70,7 +70,7 @@ Key variables include:
 | `NEXTAUTH_SECRET`, `NEXTAUTH_URL`                  | Auth.js session signing and callback origin                |
 | `EMAIL_SERVER`, `EMAIL_FROM`                       | Auth.js email provider configuration                       |
 | `CONTACT_EMAIL`, `SMTP_*`, `SMTP_ALLOW_LIST`       | Escalation email settings and allow-list guardrail         |
-| `AUTH_DEBUG_MAILBOX_DIR`                           | Local directory where magic-link emails are written in dev |
+| `AUTH_DEBUG_MAILBOX_DIR`                           | Local directory where magic-link emails are written in dev. Defaults to `./logs/mailbox`. |
 | `RAG_SERVICE_URL`                                  | Base URL for FastAPI retrieval service proxied by Next.js  |
 | `ENABLE_RERANKER`                                  | Toggle hybrid reranking (defaults to disabled)             |
 | `SMTP_DRY_RUN`                                     | Log escalation attempts without sending email              |
