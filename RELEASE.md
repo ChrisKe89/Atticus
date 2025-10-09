@@ -83,6 +83,8 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    docker compose up -d --build
    ```
 
+   > **Note:** Release 0.7.9 introduces new shadcn/ui primitives powered by `@radix-ui/react-slot`. Running `npm install` ensures the dependency is present before rebuilding containers.
+
 4. Verify health:
 
    ```bash
