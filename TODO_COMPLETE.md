@@ -111,3 +111,7 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-11
 
 - [x] TODO "Glossary UX Follow-through" — completed 2025-10-11 (added workflow sequence diagram, decision notes, and backlog links in `docs/glossary-spec.md`).
+
+## 2025-10-12
+
+- [x] TODO "RBAC Integration Coverage" — completed 2025-10-12 (Playwright reviewer/admin coverage, Next.js route RBAC tests, FastAPI admin token assertions, and `make quality` wiring).

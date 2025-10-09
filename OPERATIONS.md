@@ -118,6 +118,7 @@ Run `make quality` before every pull request. The target chains:
 - `ruff check` / `ruff format --check`
 - `mypy` across `atticus`, `api`, `ingest`, `retriever`, `eval`
 - `pytest` with coverage ≥90%
+- `npm run test:unit` (Vitest RBAC/unit coverage) and `npm run test:e2e` (Playwright admin/RBAC flows)
 - `npm run lint`, `npm run typecheck`, `npm run build`
 - Audit scripts: `npm run audit:ts`, `npm run audit:icons` (lucide import hygiene), `npm run audit:routes`, `npm run audit:py`
 
