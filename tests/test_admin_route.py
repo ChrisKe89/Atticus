@@ -58,3 +58,22 @@ def test_admin_dictionary_requires_token(tmp_path: Path, monkeypatch: pytest.Mon
         data = response.json()
         assert data["error"] == "unauthorized"
         assert data["request_id"]
+
+
+def test_admin_dictionary_rejects_invalid_token(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    config_module = pytest.importorskip("atticus.config")
+    config_module.reset_settings_cache()
+    dictionary_path = tmp_path / "dictionary.json"
+    monkeypatch.setenv("DICTIONARY_PATH", str(dictionary_path))
+    monkeypatch.setenv("ADMIN_API_TOKEN", "test-admin-token")
+    settings = config_module.load_settings()
+    assert settings.dictionary_path == dictionary_path
+
+    api_main = pytest.importorskip("api.main")
+    TestClient = pytest.importorskip("fastapi.testclient").TestClient
+
+    with TestClient(api_main.app) as client:
+        response = client.get("/admin/dictionary", headers={"X-Admin-Token": "wrong-token"})
+        assert response.status_code == 403
+        data = response.json()
+        assert data == {"detail": "Invalid admin token."}
