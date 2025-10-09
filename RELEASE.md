@@ -83,6 +83,8 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    docker compose up -d --build
    ```
 
+   > **Note:** Release 0.7.11 adds Prisma `Chat`/`Ticket` tables plus the tabbed admin console and RBAC APIs. Run `make db.migrate && make db.seed` before `npm run build` so low-confidence chat data and escalations materialise in the UI.
+
 4. Verify health:
 
    ```bash

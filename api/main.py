@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
@@ -47,9 +48,20 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         metrics.flush()
 
 
+def _load_version() -> str:
+    """Return the semantic version recorded in the repository root."""
+
+    version_path = Path(__file__).resolve().parents[1] / "VERSION"
+    try:
+        version = version_path.read_text(encoding="utf-8").strip()
+    except OSError:
+        return "0.0.0"
+    return version or "0.0.0"
+
+
 app = FastAPI(
     title="Atticus RAG API",
-    version="0.7.4",
+    version=_load_version(),
     docs_url=None,
     redoc_url=None,
     lifespan=lifespan,

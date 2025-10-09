@@ -2,58 +2,7 @@
 
 This file replaces previous scattered TODOs and audit todos. It tracks only what is **still relevant**.
 
-## 1) Glossary Seed & Runbook
-**Goal:** deterministic baseline data + clear reset/rollback steps.
-
-**Deliverables**
-- Extend `prisma/seed.ts` with sample entries covering states: `approved`, `pending`, `rejected` (stable IDs).
-- Add pytest `tests/test_seed_manifest.py` asserting baseline rows exist after `make db.seed`.
-- Update docs:
-  - `OPERATIONS.md` — how to reset/rollback glossary.
-  - `docs/glossary-spec.md` — provisioning + rollback guidance.
-
-**Acceptance**
-- `make db.seed` produces deterministic rows; tests pass; docs explain reset/rollback for each environment.
-
----
-
-## 2) Glossary UX Follow-through
-**Goal:** visualise the review/approve path and capture decisions.
-
-**Deliverables**
-- Add Mermaid sequence diagram to `docs/glossary-spec.md`:
-  ```mermaid
-  sequenceDiagram
-    participant Reviewer
-    participant Admin
-    Reviewer->>Admin: Submit glossary entry
-    Admin->>System: Approve/Reject
-    System-->>Reviewer: Status update + audit log
-  ```
-- Append ADR links or short “Decision Notes” explaining why this workflow was chosen.
-
-**Acceptance**
-- Spec renders with diagram + decisions; open follow-ups (notifications, audit UI) listed as backlog links.
-
----
-
-## 3) RBAC Integration Coverage
-**Goal:** prove role gates across **Next.js** and **FastAPI**.
-
-**Deliverables**
-- **Playwright** specs:
-  - Non-admin → `/admin` and `/api/glossary` → `403/redirect`.
-  - Admin can CRUD glossary.
-- **API/route tests**:
-  - Next route handlers with mocked sessions for each role.
-  - FastAPI admin endpoints with invalid/missing admin token return `401/403` contracts.
-
-**Acceptance**
-- Tests fail on regressions; wired into CI via `make quality` / frontend job.
-
----
-
-## 4) pgvector GUC Bootstrap
+## 1) pgvector GUC Bootstrap
 **Goal:** fresh DBs pass `make db.verify` without manual steps.
 
 **Deliverables**
@@ -66,7 +15,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 5) Version Parity Automation
+## 2) Version Parity Automation
 **Goal:** prevent drift between `VERSION`, `package.json`, and API metadata.
 
 **Deliverables**
@@ -79,30 +28,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 6) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
-**Goal:** give reviewers a single place to triage low-confidence chats, manage tickets, and edit glossary.
-
-**Deliverables**
-- **UI**: `/admin` with tabs — **Uncertain**, **Tickets**, **Glossary**.
-  - Uncertain: table (date, user, question, confidence, top sources) + actions (**Approve**, **Ask Follow-up**, **Escalate**).
-  - Tickets: list AExxx with status, assignee, last activity.
-  - Glossary: search + inline edit (RBAC-gated).
-- **API**:
-  - `GET /api/admin/uncertain` — list chats where `confidence < CONFIDENCE_THRESHOLD` and `status='pending_review'`.
-  - `POST /api/admin/uncertain/:id/approve` — marks reviewed; persists reviewer + timestamp.
-  - `POST /api/admin/uncertain/:id/escalate` — creates/links AE ticket, logs action.
-- **DB** (Prisma):
-  - `chats`: add columns `confidence FLOAT`, `status TEXT DEFAULT 'ok'`, `reviewed_by`, `reviewed_at`.
-  - `tickets`: ensure `AE` id, `status`, `assignee`, `linked_chat_id`.
-- **RBAC**: only `admin` sees `/admin`; `reviewer` sees Uncertain+Glossary read, limited write.
-
-**Acceptance**
-- `reviewer` cannot access admin-only actions; `admin` can.
-- Uncertain list populates from real chats; actions emit audit events; Playwright + API tests cover 403s for non-admins.
-
----
-
-## 7) Uncertain Chat Validation Flow
+## 3) Uncertain Chat Validation Flow
 **Goal:** make the “low confidence” path observable and correctable.
 
 **Deliverables**
@@ -114,9 +40,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 **Acceptance**
 - A low-confidence chat appears in Uncertain within one run; actions change status and are reflected in DB + UI; tests green.
 
----
-
-## 8) Dictionary (Glossary) Update Semantics
+## 4) Dictionary (Glossary) Update Semantics
 **Goal:** safe, idempotent updates to existing terms; create on first write.
 
 **Deliverables**
