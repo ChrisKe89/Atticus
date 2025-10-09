@@ -2,7 +2,27 @@
 
 This file replaces previous scattered TODOs and audit todos. It tracks only what is **still relevant**.
 
-## 1) RBAC Integration Coverage
+## 1) Glossary UX Follow-through
+**Goal:** visualise the review/approve path and capture decisions.
+
+**Deliverables**
+- Add Mermaid sequence diagram to `docs/glossary-spec.md`:
+  ```mermaid
+  sequenceDiagram
+    participant Reviewer
+    participant Admin
+    Reviewer->>Admin: Submit glossary entry
+    Admin->>System: Approve/Reject
+    System-->>Reviewer: Status update + audit log
+  ```
+- Append ADR links or short “Decision Notes” explaining why this workflow was chosen.
+
+**Acceptance**
+- Spec renders with diagram + decisions; open follow-ups (notifications, audit UI) listed as backlog links.
+
+---
+
+## 2) RBAC Integration Coverage
 **Goal:** prove role gates across **Next.js** and **FastAPI**.
 
 **Deliverables**
@@ -18,7 +38,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 2) pgvector GUC Bootstrap
+## 3) pgvector GUC Bootstrap
 **Goal:** fresh DBs pass `make db.verify` without manual steps.
 
 **Deliverables**
@@ -31,7 +51,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 3) Version Parity Automation
+## 4) Version Parity Automation
 **Goal:** prevent drift between `VERSION`, `package.json`, and API metadata.
 
 **Deliverables**
@@ -44,7 +64,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 4) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
+## 5) Admin Ops Console (Uncertain Chats, Tickets, Glossary)
 **Goal:** give reviewers a single place to triage low-confidence chats, manage tickets, and edit glossary.
 
 **Deliverables**
@@ -67,7 +87,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 5) Uncertain Chat Validation Flow
+## 6) Uncertain Chat Validation Flow
 **Goal:** make the “low confidence” path observable and correctable.
 
 **Deliverables**
@@ -81,7 +101,7 @@ This file replaces previous scattered TODOs and audit todos. It tracks only what
 
 ---
 
-## 6) Dictionary (Glossary) Update Semantics
+## 7) Dictionary (Glossary) Update Semantics
 **Goal:** safe, idempotent updates to existing terms; create on first write.
 
 **Deliverables**
