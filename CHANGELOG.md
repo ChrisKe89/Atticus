@@ -14,6 +14,23 @@ The newest entries appear first.
 
 ---
 
+## [0.7.11] — 2025-10-15
+
+### Added
+
+- Prisma `Chat` and `Ticket` models with deterministic seeds plus admin API endpoints for listing, approving, and escalating low-confidence chats.
+- Next.js admin operations console with Uncertain, Tickets, and Glossary tabs, including reviewer read-only safeguards and shadcn-powered tabs.
+- Vitest coverage for admin API RBAC along with updated Playwright smoke ensuring reviewers stay constrained while admins manage glossary entries end-to-end.
+
+### Testing
+
+- `PYTHONPATH=. pytest tests/unit/admin-uncertain-route.test.ts -q`
+- `npm run lint`
+- `npm run test:unit`
+- `CI=1 npm run build`
+
+---
+
 ## [0.7.10] — 2025-10-14
 
 ### Added

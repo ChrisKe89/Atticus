@@ -139,6 +139,18 @@ def test_glossary_seed_entries_round_trip() -> None:
                 for row in cursor.fetchall()
             }
 
+            cursor.execute(
+                'SELECT "id", "status", "topSources", "auditLog" FROM "Chat" WHERE "id" = ANY(%s)',
+                (["chat-low-confidence-toner", "chat-escalated-calibration"],),
+            )
+            chats = {row[0]: {"status": row[1], "topSources": row[2], "auditLog": row[3]} for row in cursor.fetchall()}
+
+            cursor.execute(
+                'SELECT "id", "key", "status", "assignee", "summary" FROM "Ticket" WHERE "id" = %s',
+                ("ticket-ae-1001",),
+            )
+            ticket = cursor.fetchone()
+
     for entry_id, expectations in expected.items():
         assert entry_id in rows, f"Missing glossary seed {entry_id}"
         record = rows[entry_id]
@@ -154,3 +166,12 @@ def test_glossary_seed_entries_round_trip() -> None:
         else:
             assert record["reviewerId"] is None
             assert record["reviewNotes"] in (None, "")
+
+    assert chats["chat-low-confidence-toner"]["status"] == "pending_review"
+    assert isinstance(chats["chat-low-confidence-toner"]["topSources"], list)
+    assert chats["chat-escalated-calibration"]["status"] == "escalated"
+    assert chats["chat-escalated-calibration"]["auditLog"], "Escalated chat should have audit history"
+
+    assert ticket is not None, "Expected AE escalation ticket to be seeded"
+    assert ticket[1] == "AE-1001"
+    assert ticket[2] == "open"

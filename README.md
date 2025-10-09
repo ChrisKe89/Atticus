@@ -129,7 +129,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 1. Authenticate with magic link
 
-    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins can reach `/admin` to approve glossary entries.
+    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
@@ -274,7 +274,7 @@ Legacy static assets live under `archive/legacy-ui/` for reference only.
 ## Auth & RBAC
 
 - Email magic links deliver sign-in using SES SMTP credentials from `.env`.
-- Admins (`ADMIN_EMAIL`) manage glossary terms at `/admin`; non-admins are redirected to `/`.
+- Admins (`ADMIN_EMAIL`) manage the Uncertain, Tickets, and Glossary tabs at `/admin`. Reviewers share the same surface with approval capabilities but cannot escalate chats or edit glossary entries. Standard users are redirected to `/`.
 - Postgres Row Level Security gates glossary CRUD, user/session tables, and admin APIs by `org_id` + role.
 - Use `withRlsContext(session, fn)` for Prisma calls that inherit user context.
 

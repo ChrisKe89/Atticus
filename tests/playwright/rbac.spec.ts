@@ -52,21 +52,25 @@ test("redirects unauthenticated users away from admin dashboard", async ({ page 
   await expect(page.getByRole("heading", { name: "Sign in to Atticus" })).toBeVisible();
 });
 
-test("prevents reviewer accounts from loading admin-only surfaces", async ({ page }) => {
+test("restricts reviewer capabilities on the admin console", async ({ page }) => {
   await signInWithMagicLink(page, reviewerEmail);
   await page.goto("/admin");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/admin$/);
 
-  const glossaryResponse = await page.request.get("/api/glossary");
-  expect(glossaryResponse.status()).toBe(403);
-  const payload = await glossaryResponse.json();
-  expect(payload).toMatchObject({ error: "forbidden" });
+  await expect(page.getByRole("tab", { name: /uncertain/i })).toBeVisible();
+  await page.getByRole("tab", { name: /glossary/i }).click();
+  await expect(page.getByText("Reviewer access is read-only")).toBeVisible();
+  await expect(page.getByRole("button", { name: /save entry/i })).toBeDisabled();
+
+  const escalateResponse = await page.request.post("/api/admin/uncertain/example/escalate");
+  expect(escalateResponse.status()).toBe(403);
 });
 
 test("allows admins to load the glossary panel after magic link sign-in", async ({ page }) => {
   await signInWithMagicLink(page, adminEmail);
   await page.waitForURL("**/admin");
-  await expect(page.getByRole("heading", { name: "Operations and governance" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Operations console" })).toBeVisible();
+  await page.getByRole("tab", { name: /glossary/i }).click();
   await expect(page.getByText("Add glossary entry")).toBeVisible();
 
   const newTerm = `Playwright QA ${Date.now()}`;
