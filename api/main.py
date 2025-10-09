@@ -21,7 +21,7 @@ from .errors import (
 )
 from .middleware import RequestContextMiddleware
 from .rate_limit import RateLimiter
-from .routes import admin, chat, contact, eval, health, ingest
+from .routes import admin, chat, contact, eval, health, ingest, ui
 
 
 @asynccontextmanager
@@ -76,3 +76,4 @@ app.include_router(chat.router)
 app.include_router(admin.router)
 app.include_router(eval.router)
 app.include_router(contact.router)
+app.include_router(ui.router)

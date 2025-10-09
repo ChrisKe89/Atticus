@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Role } from "@prisma/client";
 import type { Session } from "next-auth";
 
-const mockGetServerAuthSession = vi.hoisted(() => vi.fn<[], Promise<Session | null>>());
+const mockGetServerAuthSession = vi.hoisted(
+  () => vi.fn<() => Promise<Session | null>>()
+);
 const mockWithRlsContext = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({

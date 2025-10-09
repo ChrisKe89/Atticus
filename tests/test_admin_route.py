@@ -78,4 +78,6 @@ def test_admin_dictionary_rejects_invalid_token(
         response = client.get("/admin/dictionary", headers={"X-Admin-Token": "wrong-token"})
         assert response.status_code == 403
         data = response.json()
-        assert data == {"detail": "Invalid admin token."}
+        assert data["error"] == "forbidden"
+        assert data["detail"] == "Invalid admin token."
+        assert data["request_id"]

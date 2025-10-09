@@ -17,11 +17,32 @@
     "prisma/**/*.ts"
   ],
   "paths": {
-    "@": ["."],
-    "@/components": ["components"],
-    "@/app": ["app"],
-    "@/lib": ["lib"]
+    "@": [
+      "."
+    ],
+    "@/components": [
+      "components"
+    ],
+    "@/app": [
+      "app"
+    ],
+    "@/lib": [
+      "lib"
+    ]
   },
-  "ignoreDependencies": ["@auth/prisma-adapter", "clsx", "zod"],
-  "ignore": ["archive/legacy-ui/**", "prisma/seed.ts", "scripts/route-audit.mjs"]
+  "ignoreDependencies": [
+    "@auth/prisma-adapter",
+    "@radix-ui/react-dialog",
+    "@radix-ui/react-slot",
+    "@radix-ui/react-tabs",
+    "clsx",
+    "react-markdown",
+    "remark-gfm",
+    "zod"
+  ],
+  "ignore": [
+    "archive/legacy-ui/**",
+    "prisma/seed.ts",
+    "scripts/route-audit.mjs"
+  ]
 }
