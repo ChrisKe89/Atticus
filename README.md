@@ -125,11 +125,11 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make quality
     ```
 
-    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
 
-    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
+    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
@@ -245,7 +245,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 | `make test`                 | Run pytest suite with coverage >=90%                                |
 | `make lint` / `make format` | Ruff lint + auto-fix                                                |
 | `make typecheck`            | Run mypy over atticus/api/ingest/retriever/eval                     |
-| `make quality`              | Combined Python + Next quality gates and audits                     |
+| `make quality`              | Combined Python + Next quality gates, version-parity check, and audits |
 | `make web-audit`            | Run Node and Python audit scripts                                   |
 
 ---

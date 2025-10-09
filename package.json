@@ -1,6 +1,6 @@
 {
   "name": "atticus",
-  "version": "0.7.11",
+  "version": "0.8.0",
   "private": true,
   "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {
@@ -25,8 +25,9 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
     "@prisma/client": "^5.18.0",
-    "@radix-ui/react-tabs": "^1.0.5",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.0.4",
+    "@radix-ui/react-tabs": "^1.0.5",
     "clsx": "^2.1.1",
     "lucide-react": "^0.452.0",
     "next": "^14.2.33",

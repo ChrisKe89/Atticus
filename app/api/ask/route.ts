@@ -1,8 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { askRequestSchema, askResponseSchema } from "@/lib/ask-contract";
+import type { AskRequest } from "@/lib/ask-contract";
+import { captureLowConfidenceChat } from "@/lib/chat-capture";
 
 const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 
 function getServiceUrl() {
   const raw = process.env.RAG_SERVICE_URL ?? process.env.ASK_SERVICE_URL ?? "http://localhost:8000";
@@ -80,7 +83,7 @@ export async function POST(request: Request) {
   const acceptsSse = (request.headers.get("accept") ?? "").includes("text/event-stream");
   const requestId = request.headers.get("x-request-id") ?? randomUUID();
 
-  let parsed;
+  let parsed: AskRequest;
   try {
     const payload = await request.json();
     parsed = askRequestSchema.parse(payload);
@@ -121,6 +124,8 @@ export async function POST(request: Request) {
 
   if (acceptsSse && contentType.includes("text/event-stream") && upstream.body) {
     const reader = upstream.body.getReader();
+    let buffer = "";
+    let capturePromise: Promise<void> | null = null;
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
         controller.enqueue(
@@ -130,6 +135,9 @@ export async function POST(request: Request) {
       async pull(controller) {
         const { done, value } = await reader.read();
         if (done) {
+          if (capturePromise) {
+            await capturePromise.catch(() => undefined);
+          }
           controller.enqueue(
             encoder.encode(`event: end\ndata: ${JSON.stringify({ request_id: upstreamRequestId })}\n\n`)
           );
@@ -138,6 +146,40 @@ export async function POST(request: Request) {
         }
         if (value) {
           controller.enqueue(value);
+          buffer += decoder.decode(value, { stream: true });
+          let boundary = buffer.indexOf("\n\n");
+          while (boundary !== -1) {
+            const rawEvent = buffer.slice(0, boundary);
+            buffer = buffer.slice(boundary + 2);
+            boundary = buffer.indexOf("\n\n");
+
+            let eventType = "";
+            let dataPayload = "";
+            for (const rawLine of rawEvent.split("\n")) {
+              const line = rawLine.trim();
+              if (!line) {
+                continue;
+              }
+              if (line.startsWith("event:")) {
+                eventType = line.slice(6).trim();
+              } else if (line.startsWith("data:")) {
+                const fragment = line.slice(5).trim();
+                dataPayload = dataPayload ? `${dataPayload}${fragment}` : fragment;
+              }
+            }
+
+            if (eventType === "answer" && dataPayload && !capturePromise) {
+              try {
+                const parsedAnswer = askResponseSchema.parse(JSON.parse(dataPayload));
+                capturePromise = captureLowConfidenceChat({
+                  question: parsed.question,
+                  response: parsedAnswer,
+                });
+              } catch (error) {
+                // Ignore malformed payloads; the client will handle upstream data.
+              }
+            }
+          }
         }
       },
       cancel(reason) {
@@ -164,6 +206,8 @@ export async function POST(request: Request) {
     const detail = error instanceof Error ? error.message : "Invalid upstream response";
     return buildErrorResponse(502, upstreamRequestId, "invalid_upstream_response", detail);
   }
+
+  await captureLowConfidenceChat({ question: parsed.question, response: askResponse });
 
   if (acceptsSse) {
     const stream = new ReadableStream<Uint8Array>({

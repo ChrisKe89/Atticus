@@ -70,6 +70,17 @@ test("allows admins to load the glossary panel after magic link sign-in", async 
   await signInWithMagicLink(page, adminEmail);
   await page.waitForURL("**/admin");
   await expect(page.getByRole("heading", { name: "Operations console" })).toBeVisible();
+
+  const pendingRow = page.getByRole("cell", { name: /toner replacement alerts/i }).first();
+  await expect(pendingRow).toBeVisible();
+  await page.getByRole("button", { name: "Review" }).first().click();
+  await page.getByPlaceholder("What would you ask next?").fill("Confirm toner serial numbers.");
+  await page.getByRole("button", { name: "Save follow-up" }).click();
+  await expect(page.getByText("Follow-up prompt saved.")).toBeVisible();
+  await page.getByRole("button", { name: "Approve" }).click();
+  await expect(page.getByText("Chat approved and removed from the uncertain queue.")).toBeVisible();
+  await expect(page.getByRole("cell", { name: /All caught up/i })).toBeVisible();
+
   await page.getByRole("tab", { name: /glossary/i }).click();
   await expect(page.getByText("Add glossary entry")).toBeVisible();
 

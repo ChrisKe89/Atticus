@@ -1,0 +1,58 @@
+"use client";
+
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export const Drawer = DialogPrimitive.Root;
+export const DrawerTrigger = DialogPrimitive.Trigger;
+export const DrawerClose = DialogPrimitive.Close;
+
+export function DrawerContent({
+  className,
+  children,
+  ...props
+}: DialogPrimitive.DialogContentProps) {
+  return (
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm" />
+      <DialogPrimitive.Content
+        className={cn(
+          "fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col border-l border-slate-200 bg-white shadow-2xl transition-transform duration-200 ease-out dark:border-slate-800 dark:bg-slate-950",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </DialogPrimitive.Content>
+    </DialogPrimitive.Portal>
+  );
+}
+
+export function DrawerHeader({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("flex items-start justify-between border-b border-slate-200 p-6 dark:border-slate-800", className)}
+      {...props}
+    >
+      {children}
+      <DrawerClose className="rounded-md p-1 text-slate-500 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary dark:text-slate-400 dark:hover:bg-slate-900">
+        <span className="sr-only">Close</span>
+        <X className="h-4 w-4" aria-hidden />
+      </DrawerClose>
+    </div>
+  );
+}
+
+export function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex-1 overflow-y-auto p-6", className)} {...props} />;
+}
+
+export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("border-t border-slate-200 p-6 dark:border-slate-800", className)} {...props} />;
+}

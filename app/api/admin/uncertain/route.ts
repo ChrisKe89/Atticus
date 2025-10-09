@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 
@@ -39,11 +39,12 @@ export async function GET() {
   const payload = chats.map((chat) => ({
     id: chat.id,
     question: chat.question,
+    answer: chat.answer ?? null,
     confidence: chat.confidence,
     status: chat.status,
     createdAt: chat.createdAt.toISOString(),
     requestId: chat.requestId,
-    topSources: chat.topSources ?? [],
+    topSources: normalizeSources(chat.topSources),
     author: chat.author,
     reviewer: chat.reviewer,
     tickets: chat.tickets.map((ticket) => ({
@@ -53,7 +54,33 @@ export async function GET() {
       assignee: ticket.assignee,
       lastActivity: ticket.lastActivity ? ticket.lastActivity.toISOString() : null,
     })),
+    followUpPrompt: chat.followUpPrompt ?? null,
+    auditLog: Array.isArray(chat.auditLog) ? chat.auditLog : [],
   }));
 
   return NextResponse.json(payload);
+}
+
+function normalizeSources(value: Prisma.JsonValue | null): Array<Record<string, unknown>> {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  const normalized: Array<Record<string, unknown>> = [];
+  for (const item of value) {
+    if (typeof item !== "object" || item === null) {
+      continue;
+    }
+    const path = "path" in item && typeof item.path === "string" ? item.path : null;
+    if (!path) {
+      continue;
+    }
+    normalized.push({
+      path,
+      score: "score" in item && typeof item.score === "number" ? item.score : null,
+      page: "page" in item && typeof item.page === "number" ? item.page : null,
+      heading: "heading" in item && typeof item.heading === "string" ? item.heading : null,
+      chunkId: "chunkId" in item && typeof item.chunkId === "string" ? item.chunkId : null,
+    });
+  }
+  return normalized;
 }

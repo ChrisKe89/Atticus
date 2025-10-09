@@ -39,7 +39,7 @@ The Next.js application is the canonical UI; historical static assets live under
    The selected context is passed to the generation model (default `gpt-4.1`) to produce a concise, sourced answer with inline citations.
 
 5. **Escalation (if needed)**
-   If the confidence score falls below the configured threshold, the conversation is written to the Prisma `Chat` table with `status='pending_review'` and stored `topSources[]`. Admins can approve or escalate these records from the Next.js `/admin` console, which also raises SES escalations when required.
+   If the confidence score falls below the configured threshold, the conversation is written to the Prisma `Chat` table with `status='pending_review'`, stored `topSources[]`, and appended `RagEvent` audit rows. Admins can capture follow-up prompts, approve, or escalate these records from the Next.js `/admin` console, which also raises SES escalations when required.
 
 ### Ask flow (SSE)
 

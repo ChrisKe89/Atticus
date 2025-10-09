@@ -45,6 +45,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         orgId: true,
         status: true,
         question: true,
+        requestId: true,
         auditLog: true,
       },
     });
@@ -98,6 +99,23 @@ export async function POST(request: Request, { params }: { params: { id: string 
       data: {
         status: "escalated",
         auditLog,
+      },
+    });
+
+    await tx.ragEvent.create({
+      data: {
+        orgId: chat.orgId,
+        actorId: session.user.id,
+        actorRole: session.user.role,
+        action: "chat.escalated",
+        entity: "chat",
+        chatId: chat.id,
+        requestId: chat.requestId,
+        after: {
+          status: "escalated",
+          ticketId: ticket.id,
+          assignee: ticket.assignee ?? null,
+        },
       },
     });
 

@@ -27,7 +27,14 @@ type ChatSeed = {
   confidence: number;
   status: string;
   requestId?: string;
-  topSources: Array<{ path: string; score?: number }>;
+  topSources: Array<{
+    path: string;
+    score?: number;
+    page?: number;
+    heading?: string;
+    chunkId?: string;
+  }>;
+  followUpPrompt?: string;
   auditLog?: Array<Record<string, unknown>>;
   createdAt: Date;
   userId?: string;
@@ -192,8 +199,19 @@ async function main() {
       status: "pending_review",
       requestId: "req-seed-001",
       topSources: [
-        { path: "content/operations/toner-optimization.md#alerts", score: 0.82 },
-        { path: "content/playbooks/ced-toner-guide.pdf#page=3", score: 0.74 },
+        {
+          path: "content/operations/toner-optimization.md#alerts",
+          score: 0.82,
+          heading: "Alert tuning guidance",
+          chunkId: "chunk-toner-alerts",
+        },
+        {
+          path: "content/playbooks/ced-toner-guide.pdf",
+          score: 0.74,
+          page: 3,
+          heading: "Replace cartridges sequence",
+          chunkId: "chunk-toner-guide-3",
+        },
       ],
       createdAt: new Date("2024-07-08T10:15:00Z"),
       auditLog: [
@@ -202,8 +220,14 @@ async function main() {
           at: "2024-07-08T10:15:10.000Z",
           confidence: 0.38,
         },
+        {
+          action: "followup",
+          at: "2024-07-08T10:17:00.000Z",
+          prompt: "Confirm the affected device serial numbers and share recent firmware updates.",
+        },
       ],
       userId: author.id,
+      followUpPrompt: "Confirm serial numbers and firmware applied last week.",
     },
     {
       id: "chat-escalated-calibration",
@@ -212,8 +236,18 @@ async function main() {
       status: "escalated",
       requestId: "req-seed-002",
       topSources: [
-        { path: "content/troubleshooting/calibration-checklist.md#step-4", score: 0.68 },
-        { path: "content/faq/pressroom-maintenance.md#color", score: 0.62 },
+        {
+          path: "content/troubleshooting/calibration-checklist.md#step-4",
+          score: 0.68,
+          heading: "Step 4 — Inspect rollers",
+          chunkId: "chunk-calibration-4",
+        },
+        {
+          path: "content/faq/pressroom-maintenance.md#color",
+          score: 0.62,
+          heading: "Color drift playbook",
+          chunkId: "chunk-maintenance-color",
+        },
       ],
       createdAt: new Date("2024-06-18T14:45:00Z"),
       auditLog: [
@@ -261,6 +295,7 @@ async function main() {
         userId: chatSeed.userId ?? author.id,
         reviewedById: chatSeed.reviewedById ?? null,
         reviewedAt: chatSeed.reviewedAt ?? null,
+        followUpPrompt: chatSeed.followUpPrompt ?? null,
       },
       create: {
         id: chatSeed.id,
@@ -276,8 +311,71 @@ async function main() {
         createdAt: chatSeed.createdAt,
         reviewedById: chatSeed.reviewedById ?? null,
         reviewedAt: chatSeed.reviewedAt ?? null,
+        followUpPrompt: chatSeed.followUpPrompt ?? null,
       },
     });
+
+    await prisma.ragEvent.upsert({
+      where: { id: `${chatSeed.id}-captured` },
+      update: {
+        orgId: organization.id,
+        actorId: chatSeed.userId ?? author.id,
+        actorRole: Role.USER,
+        action: "chat.captured",
+        entity: "chat",
+        chatId: chat.id,
+        requestId: chatSeed.requestId ?? null,
+        after: {
+          status: chatSeed.status,
+          confidence: chatSeed.confidence,
+        },
+      },
+      create: {
+        id: `${chatSeed.id}-captured`,
+        orgId: organization.id,
+        actorId: chatSeed.userId ?? author.id,
+        actorRole: Role.USER,
+        action: "chat.captured",
+        entity: "chat",
+        chatId: chat.id,
+        requestId: chatSeed.requestId ?? null,
+        after: {
+          status: chatSeed.status,
+          confidence: chatSeed.confidence,
+        },
+      },
+    });
+
+    if (chatSeed.followUpPrompt) {
+      await prisma.ragEvent.upsert({
+        where: { id: `${chatSeed.id}-followup` },
+        update: {
+          orgId: organization.id,
+          actorId: approver.id,
+          actorRole: Role.ADMIN,
+          action: "chat.followup_recorded",
+          entity: "chat",
+          chatId: chat.id,
+          requestId: chatSeed.requestId ?? null,
+          after: {
+            followUpPrompt: chatSeed.followUpPrompt,
+          },
+        },
+        create: {
+          id: `${chatSeed.id}-followup`,
+          orgId: organization.id,
+          actorId: approver.id,
+          actorRole: Role.ADMIN,
+          action: "chat.followup_recorded",
+          entity: "chat",
+          chatId: chat.id,
+          requestId: chatSeed.requestId ?? null,
+          after: {
+            followUpPrompt: chatSeed.followUpPrompt,
+          },
+        },
+      });
+    }
 
     if (chatSeed.tickets?.length) {
       for (const ticket of chatSeed.tickets) {
@@ -306,6 +404,37 @@ async function main() {
           },
         });
       }
+
+      await prisma.ragEvent.upsert({
+        where: { id: `${chatSeed.id}-escalated` },
+        update: {
+          orgId: organization.id,
+          actorId: approver.id,
+          actorRole: Role.ADMIN,
+          action: "chat.escalated",
+          entity: "chat",
+          chatId: chat.id,
+          requestId: chatSeed.requestId ?? null,
+          after: {
+            status: "escalated",
+            ticket: chatSeed.tickets.at(0)?.key ?? null,
+          },
+        },
+        create: {
+          id: `${chatSeed.id}-escalated`,
+          orgId: organization.id,
+          actorId: approver.id,
+          actorRole: Role.ADMIN,
+          action: "chat.escalated",
+          entity: "chat",
+          chatId: chat.id,
+          requestId: chatSeed.requestId ?? null,
+          after: {
+            status: "escalated",
+            ticket: chatSeed.tickets.at(0)?.key ?? null,
+          },
+        },
+      });
     }
   }
 }

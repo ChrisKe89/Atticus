@@ -14,6 +14,30 @@ The newest entries appear first.
 
 ---
 
+## [0.8.0] — 2025-10-19
+
+### Added
+
+- Automatic capture of low-confidence chat turns via `captureLowConfidenceChat`, including follow-up prompts, request metadata, and structured audit events stored in the new `RagEvent` ledger.
+- Admin follow-up workflow with a review drawer, POST `/api/admin/uncertain/:id/ask-followup`, and deterministic seeds plus UI wiring for tracking prompts alongside escalations.
+- Glossary upsert semantics with POST idempotency, PUT updates, inline editing, and audit logging to `rag_events` so term changes remain traceable.
+- `scripts/check_version_parity.py` and a `make version-check` gate to keep `VERSION`, `package.json`, and `package-lock.json` synchronized during releases.
+- Pgvector configuration migration that enforces the `app.pgvector_lists` GUC and verification SQL ensuring ANN indexes stay aligned with planner expectations.
+
+### Changed
+
+- Admin operations console now surfaces question context, answers, top sources, and follow-up prompts inside a Radix drawer to streamline approvals and escalations.
+- Glossary management panel supports inline definition edits, optimistic saves, and PUT-based status transitions backed by rag event auditing.
+
+### Testing
+
+- `PYTHONPATH=. pytest tests/unit/admin-uncertain-route.test.ts tests/unit/glossary-route.test.ts -q`
+- `npm run lint`
+- `npm run test:unit`
+- `CI=1 npm run build`
+
+---
+
 ## [0.7.11] — 2025-10-15
 
 ### Added

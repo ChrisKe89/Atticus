@@ -123,3 +123,10 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-15
 
 - [x] TODO "Admin Ops Console (Uncertain Chats, Tickets, Glossary)" — completed 2025-10-15 (introduced Prisma chat/ticket models, Next.js admin tabs, RBAC-aware API routes, and seeds/tests covering the reviewer/admin workflow).
+
+## 2025-10-19
+
+- [x] TODO "pgvector GUC Bootstrap" — completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
+- [x] TODO "Version Parity Automation" — completed 2025-10-19 (release 0.8.0 ships `scripts/check_version_parity.py`, Makefile wiring, and docs).
+- [x] TODO "Uncertain Chat Validation Flow" — completed 2025-10-19 (release 0.8.0 captures low-confidence chats, follow-up prompts, admin drawer UX, and audit events).
+- [x] TODO "Dictionary (Glossary) Update Semantics" — completed 2025-10-19 (release 0.8.0 adds POST upsert/PUT updates, inline editing, and rag event auditing).

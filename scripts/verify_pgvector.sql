@@ -86,6 +86,21 @@ BEGIN
   END IF;
 END$$;
 
+-- Confirm the ANN GUC matches the configured value for deterministic planner behaviour.
+DO $$
+DECLARE
+  configured TEXT;
+  expected TEXT := :expected_pgvector_lists::TEXT;
+BEGIN
+  configured := current_setting('app.pgvector_lists', true);
+  IF configured IS NULL THEN
+    RAISE EXCEPTION 'app.pgvector_lists GUC not configured';
+  END IF;
+  IF trim(configured) <> trim(expected) THEN
+    RAISE EXCEPTION 'app.pgvector_lists is %, expected %', configured, expected;
+  END IF;
+END$$;
+
 -- Confirm metadata defaults are applied so ingestion can omit the column explicitly.
 DO $$
 DECLARE

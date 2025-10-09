@@ -111,7 +111,8 @@ describe("/api/glossary route RBAC", () => {
   it("allows admins to create glossary entries", async () => {
     mockGetServerAuthSession.mockResolvedValue(buildSession(Role.ADMIN));
     const createdAt = new Date("2024-07-01T08:30:00Z");
-    const create = vi.fn().mockResolvedValue({
+    const findFirst = vi.fn().mockResolvedValue(null);
+    const upsert = vi.fn().mockResolvedValue({
       id: "entry-2",
       term: "Proactive Maintenance",
       definition: "Predictive device upkeep",
@@ -125,11 +126,14 @@ describe("/api/glossary route RBAC", () => {
       updatedBy: { id: "user-admin", email: "admin@atticus.dev", name: "Admin" },
       reviewer: null,
     });
+    const ragEventCreate = vi.fn();
     mockWithRlsContext.mockImplementation(async (_session, callback) =>
       callback({
         glossaryEntry: {
-          create,
+          findFirst,
+          upsert,
         },
+        ragEvent: { create: ragEventCreate },
       } as never)
     );
 
@@ -149,7 +153,56 @@ describe("/api/glossary route RBAC", () => {
     expect(response.status).toBe(201);
     const payload = await response.json();
     expect(payload).toMatchObject({ term: "Proactive Maintenance", status: GlossaryStatus.PENDING });
-    expect(create).toHaveBeenCalledTimes(1);
+    expect(findFirst).toHaveBeenCalledWith({ where: { orgId: "org-atticus", term: "Proactive Maintenance" } });
+    expect(upsert).toHaveBeenCalledTimes(1);
+    expect(ragEventCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it("upserts existing terms when POST is reused", async () => {
+    mockGetServerAuthSession.mockResolvedValue(buildSession(Role.ADMIN));
+    const existing = {
+      id: "entry-2",
+      term: "Proactive Maintenance",
+      definition: "Predictive device upkeep",
+      synonyms: ["Preventative maintenance"],
+      status: GlossaryStatus.PENDING,
+      reviewNotes: null,
+      createdAt: new Date("2024-07-01T08:30:00Z"),
+      updatedAt: new Date("2024-07-01T08:30:00Z"),
+    };
+    const findFirst = vi.fn().mockResolvedValue(existing);
+    const upsert = vi.fn().mockResolvedValue({
+      ...existing,
+      definition: "Predictive device upkeep for fleets",
+      updatedAt: new Date("2024-07-02T08:00:00Z"),
+      author: null,
+      updatedBy: null,
+      reviewer: null,
+    });
+    const ragEventCreate = vi.fn();
+    mockWithRlsContext.mockImplementation(async (_session, callback) =>
+      callback({
+        glossaryEntry: { findFirst, upsert },
+        ragEvent: { create: ragEventCreate },
+      } as never)
+    );
+
+    const { POST } = await import("@/app/api/glossary/route");
+    const request = new Request("http://localhost/api/glossary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        term: "Proactive Maintenance",
+        definition: "Predictive device upkeep for fleets",
+        synonyms: ["Preventative maintenance"],
+        status: "pending",
+      }),
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(200);
+    expect(upsert).toHaveBeenCalledTimes(1);
+    expect(ragEventCreate).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -157,14 +210,14 @@ describe("/api/glossary/[id] route RBAC", () => {
   it("prevents reviewers from updating glossary entries", async () => {
     mockGetServerAuthSession.mockResolvedValue(buildSession(Role.REVIEWER));
 
-    const { PATCH } = await import("@/app/api/glossary/[id]/route");
+    const { PUT } = await import("@/app/api/glossary/[id]/route");
     const request = new Request("http://localhost/api/glossary/entry-1", {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "approved" }),
+      body: JSON.stringify({ status: "approved", definition: "Updated" }),
     });
 
-    const response = await PATCH(request, { params: { id: "entry-1" } });
+    const response = await PUT(request, { params: { id: "entry-1" } });
     expect(response.status).toBe(403);
     const payload = await response.json();
     expect(payload).toMatchObject({ error: "forbidden" });
@@ -174,6 +227,14 @@ describe("/api/glossary/[id] route RBAC", () => {
   it("allows admins to approve entries and stamps reviewer metadata", async () => {
     const session = buildSession(Role.ADMIN);
     mockGetServerAuthSession.mockResolvedValue(session);
+    const findUnique = vi.fn().mockResolvedValue({
+      id: "entry-1",
+      term: "Managed Print Services",
+      definition: "Full printer fleet management.",
+      synonyms: ["MPS"],
+      status: GlossaryStatus.PENDING,
+      reviewNotes: null,
+    });
     const updatedAt = new Date("2024-07-02T09:00:00Z");
     const update = vi.fn().mockResolvedValue({
       id: "entry-1",
@@ -189,22 +250,25 @@ describe("/api/glossary/[id] route RBAC", () => {
       updatedBy: { id: session.user.id, email: session.user.email, name: session.user.name },
       reviewer: { id: session.user.id, email: session.user.email, name: session.user.name },
     });
+    const ragEventCreate = vi.fn();
     mockWithRlsContext.mockImplementation(async (_session, callback) =>
       callback({
         glossaryEntry: {
+          findUnique,
           update,
         },
+        ragEvent: { create: ragEventCreate },
       } as never)
     );
 
-    const { PATCH } = await import("@/app/api/glossary/[id]/route");
+    const { PUT } = await import("@/app/api/glossary/[id]/route");
     const request = new Request("http://localhost/api/glossary/entry-1", {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "approved", reviewNotes: "Cleared" }),
+      body: JSON.stringify({ status: "approved", reviewNotes: "Cleared", definition: "Full printer fleet management." }),
     });
 
-    const response = await PATCH(request, { params: { id: "entry-1" } });
+    const response = await PUT(request, { params: { id: "entry-1" } });
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload).toMatchObject({
@@ -213,5 +277,7 @@ describe("/api/glossary/[id] route RBAC", () => {
       reviewNotes: "Cleared",
     });
     expect(update).toHaveBeenCalledTimes(1);
+    expect(findUnique).toHaveBeenCalledTimes(1);
+    expect(ragEventCreate).toHaveBeenCalledTimes(1);
   });
 });
