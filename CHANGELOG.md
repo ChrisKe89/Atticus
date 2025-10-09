@@ -14,6 +14,7 @@ The newest entries appear first.
 
 ---
 
+
 ## [0.7.7] — 2025-10-11
 
 ### Changed
@@ -26,6 +27,7 @@ The newest entries appear first.
 - Documentation-only change; no automated tests were run.
 
 ---
+
 
 ## [0.7.6] — 2025-10-10
 
