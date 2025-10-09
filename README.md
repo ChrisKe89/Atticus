@@ -125,7 +125,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
     make quality
     ```
 
-    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Next.js lint/typecheck/build, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
 
@@ -189,6 +189,15 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 8. **Git**
    - Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene
     - Use `pre-commit run --all-files` to verify manually.
+
+---
+
+## Frontend design system
+
+- Shared primitives built on shadcn/ui live under [`components/ui`](components/ui). Compose new surfaces with these building blocks instead of bespoke Tailwind markup to keep typography, spacing, and focus states consistent.
+- Cards (`Card`, `CardHeader`, `CardContent`, etc.) wrap dashboard panels, admin glossaries, and contact forms with rounded borders and responsive padding.
+- Badges (`Badge`) expose semantic variants (`default`, `success`, `warning`, `destructive`, etc.) for status chips, streaming indicators, and keyboard shortcut callouts.
+- Buttons now support the `asChild` pattern for wrapping Next.js `Link` components, ensuring consistent styling for navigation pills and in-form actions.
 
 ---
 
