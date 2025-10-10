@@ -24,6 +24,7 @@ interface ChatMessage {
   status?: "pending" | "complete" | "error";
   response?: AskResponse;
   error?: string;
+  question?: string;
 }
 
 const shortcuts = [
@@ -36,8 +37,8 @@ function createId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function formatConfidence(confidence: number | undefined) {
-  if (confidence === undefined || Number.isNaN(confidence)) {
+function formatConfidence(confidence: number | null | undefined) {
+  if (confidence === null || confidence === undefined || Number.isNaN(confidence)) {
     return "—";
   }
   return `${Math.round(confidence * 100)}%`;
@@ -80,7 +81,8 @@ export function ChatPanel() {
       id: createId(),
       role: "assistant",
       status: "pending",
-      content: "Atticus is thinking…",
+      content: "Atticus is thinking...",
+      question: trimmed,
     };
 
     setMessages((prev) => [...prev, userMessage, placeholder]);
@@ -89,7 +91,7 @@ export function ChatPanel() {
 
     try {
       await streamAsk(
-        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined },
+        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined, models: undefined },
         {
           onEvent: (event: AskStreamEvent) => {
             if (event.type === "answer") {
@@ -105,7 +107,7 @@ export function ChatPanel() {
                     ? {
                         ...message,
                         status: "complete",
-                        content: response.answer,
+                        content: response.answer ?? response.clarification?.message ?? "",
                         response,
                       }
                     : message
@@ -137,6 +139,81 @@ export function ChatPanel() {
     }
   }
 
+  async function handleClarificationChoice(messageId: string, models: string[]) {
+    if (!models.length || isStreaming) {
+      return;
+    }
+    const target = messages.find((message) => message.id === messageId);
+    if (!target?.question) {
+      return;
+    }
+    setError(null);
+    setIsStreaming(true);
+    setMessages((prev) =>
+      prev.map((message) =>
+        message.id === messageId
+          ? {
+              ...message,
+              status: "pending",
+              content: "Atticus is thinking...",
+              response: message.response ? { ...message.response, clarification: undefined } : message.response,
+            }
+          : message
+      )
+    );
+
+    try {
+      await streamAsk(
+        {
+          question: target.question,
+          models,
+          filters: undefined,
+          contextHints: undefined,
+          topK: undefined,
+        },
+        {
+          onEvent: (event: AskStreamEvent) => {
+            if (event.type === "answer") {
+              const response = event.payload;
+              setMessages((prev) =>
+                prev.map((message) =>
+                  message.id === messageId
+                    ? {
+                        ...message,
+                        status: "complete",
+                        content: response.answer ?? response.clarification?.message ?? "",
+                        response,
+                      }
+                    : message
+                )
+              );
+            }
+            if (event.type === "end") {
+              setIsStreaming(false);
+            }
+          },
+        }
+      );
+    } catch (err) {
+      const messageError = err instanceof Error ? err.message : "Something went wrong.";
+      setError(messageError);
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                status: "error",
+                content: "Unable to generate a response. Try again in a few moments.",
+                error: messageError,
+              }
+            : message
+        )
+      );
+    } finally {
+      setIsStreaming(false);
+    }
+  }
+
   return (
     <section className="flex w-full justify-center">
       <Card className="flex w-full max-w-3xl flex-col">
@@ -144,7 +221,7 @@ export function ChatPanel() {
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="text-base">Live conversation</CardTitle>
             <Badge variant={isStreaming ? "default" : "success"}>
-              {isStreaming ? "Streaming…" : "Connected"}
+              {isStreaming ? "Streaming..." : "Connected"}
             </Badge>
           </div>
           <CardDescription>
@@ -172,7 +249,12 @@ export function ChatPanel() {
                   }
                 >
                   {message.role === "assistant" ? (
-                    <AnswerRenderer text={message.content} />
+                    <AnswerRenderer
+                      text={message.content}
+                      response={message.response}
+                      disabled={isStreaming}
+                      onClarify={(models) => handleClarificationChoice(message.id, models)}
+                    />
                   ) : (
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   )}
@@ -202,12 +284,14 @@ export function ChatPanel() {
                     <footer className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                       <span>Confidence: {formatConfidence(message.response.confidence)}</span>
                       <span>
-                        Escalate: {" "}
-                        {message.response.should_escalate ? (
-                          <span className="font-semibold text-rose-600">Yes</span>
-                        ) : (
-                          "No"
-                        )}
+                        Escalate:{" "}
+                        {message.response.should_escalate === undefined
+                          ? "-"
+                          : message.response.should_escalate ? (
+                              <span className="font-semibold text-rose-600">Yes</span>
+                            ) : (
+                              "No"
+                            )}
                       </span>
                       <span className="truncate">Request ID: {message.response.request_id}</span>
                     </footer>
@@ -238,7 +322,7 @@ export function ChatPanel() {
                   value={composer}
                   onChange={(event) => setComposer(event.target.value)}
                   rows={3}
-                  placeholder="Message Atticus…"
+                  placeholder="Message Atticus..."
                   className="max-h-[160px] min-h-[72px]"
                 />
               </div>
@@ -248,7 +332,7 @@ export function ChatPanel() {
                 ) : (
                   <Send className="h-4 w-4" aria-hidden="true" />
                 )}
-                <span>{isStreaming ? "Sending…" : "Send"}</span>
+                <span>{isStreaming ? "Sending..." : "Send"}</span>
               </Button>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
@@ -271,3 +355,5 @@ export function ChatPanel() {
     </section>
   );
 }
+
+

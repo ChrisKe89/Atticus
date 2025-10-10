@@ -1,0 +1,70 @@
+{
+  "families": [
+    {
+      "id": "C7070",
+      "label": "Apeos C7070 range",
+      "aliases": [
+        "Apeos C7070 range",
+        "Apeos C7070 series",
+        "C7070 range",
+        "C7070 series",
+        "Apeos C7070 family"
+      ],
+      "models": [
+        {
+          "canonical": "Apeos C7070",
+          "aliases": ["Apeos C7070", "C7070", "7070"]
+        },
+        {
+          "canonical": "Apeos C6570",
+          "aliases": ["Apeos C6570", "C6570", "6570"]
+        },
+        {
+          "canonical": "Apeos C5570",
+          "aliases": ["Apeos C5570", "C5570", "5570"]
+        },
+        {
+          "canonical": "Apeos C4570",
+          "aliases": ["Apeos C4570", "C4570", "4570"]
+        },
+        {
+          "canonical": "Apeos C3570",
+          "aliases": ["Apeos C3570", "C3570", "3570"]
+        },
+        {
+          "canonical": "Apeos C3070",
+          "aliases": ["Apeos C3070", "C3070", "3070"]
+        },
+        {
+          "canonical": "Apeos C2570",
+          "aliases": ["Apeos C2570", "C2570", "2570"]
+        }
+      ]
+    },
+    {
+      "id": "C8180",
+      "label": "Apeos C8180 series",
+      "aliases": [
+        "Apeos C8180 series",
+        "Apeos C8180 range",
+        "C8180 series",
+        "C8180 range",
+        "Apeos C8180 family"
+      ],
+      "models": [
+        {
+          "canonical": "Apeos C8180",
+          "aliases": ["Apeos C8180", "C8180", "8180"]
+        },
+        {
+          "canonical": "Apeos C7580",
+          "aliases": ["Apeos C7580", "C7580", "7580"]
+        },
+        {
+          "canonical": "Apeos C6580",
+          "aliases": ["Apeos C6580", "C6580", "6580"]
+        }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,12 @@ The newest entries appear first.
 
 ## [Unreleased]
 
+### Added
+
+- Introduced the model catalog, parser, and resolver to support explicit family scoping, multi-answer payloads, and `/api/ask` clarifications when the model is unknown.
+- Added clarification handling in the Next.js UI: the chat panel now renders family selection buttons, resubmits follow-up requests with `models`, and formats multi-model answers with per-answer citations.
+- Tagged ingested chunks with `product_family` and `models` metadata, copied the Apeos C8180 series CED into the active corpus, and expanded `eval/gold_set.csv` with cross-family scenarios.
+
 ### Changed
 
 - Consolidated the active backlog into `TODO.md`, updated cross-references, and recorded completed tasks in `TODO_COMPLETE.md`.
