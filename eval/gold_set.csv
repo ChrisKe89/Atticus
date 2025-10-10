@@ -116,3 +116,11 @@ What file systems are supported for USB storage?,Apeos C7070-C6570-C5570-C4570-C
 What is the USB storage capacity limit?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,128 GB,Store to USB Limitations
 Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Yes, only via Print Utility",Printing using Wi‑Fi Direct Limitations
 How many devices can connect via Wi‑Fi Direct concurrently?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Up to 3 devices,Printing using Wi‑Fi Direct Limitations
+What is the minimum AMPV for the Apeos C4570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"11,000 pages",Monthly Print Volume Range
+What is the duty cycle for the Apeos C6580?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"342,000 impressions per month",Monthly Print Volume Range
+What is the maximum AMPV for the Apeos C7580?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"70,000 pages",Monthly Print Volume Range
+What is the rated print speed of the Apeos C8180?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"81 ppm colour and mono (A4 LEF)",Monthly Print Volume Range
+What is the machine life for the Apeos C3070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"1.5 million impressions",Monthly Print Volume Range
+What is the rated print speed for the Apeos printer?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","Clarification prompt listing Apeos C7070 range and Apeos C8180 series","Unclear question should trigger clarification"
+Compare the rated print speeds of the Apeos C4570 and Apeos C6580?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","C4570: 45 ppm (colour/mono); C6580: 65 ppm (colour/mono)","Multi-model speed comparison"
+What are the duty cycles for the Apeos C2570 and Apeos C7580?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","C2570: 107,000 impressions per month; C7580: 422,000 impressions per month","Multi-model duty cycle comparison"

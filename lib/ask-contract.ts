@@ -8,12 +8,34 @@ const askSourceSchema = z.object({
   score: z.number().nullable().optional(),
 });
 
-export const askResponseSchema = z.object({
+const clarificationOptionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+});
+
+const clarificationPayloadSchema = z.object({
+  message: z.string(),
+  options: z.array(clarificationOptionSchema),
+});
+
+const askAnswerSchema = z.object({
   answer: z.string(),
   confidence: z.number(),
   should_escalate: z.boolean(),
-  request_id: z.string(),
+  model: z.string().nullable().optional(),
+  family: z.string().nullable().optional(),
+  family_label: z.string().nullable().optional(),
   sources: z.array(askSourceSchema),
+});
+
+export const askResponseSchema = z.object({
+  answer: z.string().optional().nullable(),
+  confidence: z.number().optional().nullable(),
+  should_escalate: z.boolean().optional().nullable(),
+  request_id: z.string(),
+  sources: z.array(askSourceSchema).optional(),
+  answers: z.array(askAnswerSchema).optional(),
+  clarification: clarificationPayloadSchema.optional(),
 });
 
 export const askRequestSchema = z.object({
@@ -33,8 +55,14 @@ export const askRequestSchema = z.object({
     .max(32)
     .nullish()
     .transform((value) => value ?? undefined),
+  models: z
+    .array(z.string().min(1))
+    .nullish()
+    .transform((value) => (value && value.length ? value : undefined)),
 });
 
 export type AskResponse = z.infer<typeof askResponseSchema>;
 export type AskRequest = z.infer<typeof askRequestSchema>;
 export type AskSource = z.infer<typeof askSourceSchema>;
+export type AskAnswer = z.infer<typeof askAnswerSchema>;
+export type ClarificationPayload = z.infer<typeof clarificationPayloadSchema>;

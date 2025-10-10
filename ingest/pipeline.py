@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import time
 from collections.abc import Sequence
@@ -14,9 +15,10 @@ from atticus.embeddings import EmbeddingClient
 from atticus.logging import configure_logging, log_event
 from atticus.utils import sha256_file, sha256_text
 from atticus.vector_db import PgVectorRepository, StoredChunk, save_metadata
+from retriever.models import extract_models, load_model_catalog, ModelCatalog
 
 from .chunker import chunk_document
-from .models import ParsedDocument
+from .models import ParsedDocument, Chunk as ParsedChunk
 from .parsers import discover_documents, parse_document
 
 
@@ -38,6 +40,71 @@ class IngestionSummary:
     ingested_at: str
     embedding_model: str
     embedding_model_version: str
+
+
+def _build_document_scope(documents: Sequence[ParsedDocument], catalog: ModelCatalog) -> dict[str, dict[str, set[str]]]:
+    scope: dict[str, dict[str, set[str]]] = {}
+    for document in documents:
+        texts: list[str] = [document.source_path.name]
+        for section in document.sections[:5]:
+            if section.heading:
+                texts.append(section.heading)
+            texts.append(section.text)
+        models: set[str] = set()
+        families: set[str] = set()
+        for text in texts:
+            if not text:
+                continue
+            extraction = extract_models(text, catalog=catalog)
+            models.update(extraction.models)
+            families.update(extraction.families)
+        scope[document.document_id] = {"models": models, "families": families}
+    return scope
+
+
+def _annotate_chunk_with_catalog(
+    chunk: StoredChunk | "Chunk",
+    catalog: ModelCatalog,
+    document_scope: dict[str, dict[str, set[str]]],
+) -> None:
+    texts = [
+        getattr(chunk, "text", "") or "",
+        chunk.extra.get("breadcrumbs", ""),
+        getattr(chunk, "source_path", "") or "",
+    ]
+    models: set[str] = set()
+    families: set[str] = set()
+    for text in texts:
+        if not text:
+            continue
+        extraction = extract_models(text, catalog=catalog)
+        models.update(extraction.models)
+        families.update(extraction.families)
+
+    defaults = document_scope.get(chunk.document_id)
+    if defaults:
+        models.update(defaults.get("models", set()))
+        families.update(defaults.get("families", set()))
+
+    if not families and models:
+        for model in models:
+            ident = catalog.match_model(model)
+            if ident:
+                families.add(ident.family_id)
+
+    if families:
+        family_ids = sorted(families)
+        chunk.extra["product_family"] = ",".join(family_ids)
+        labels = {
+            catalog.families[family_id].label
+            for family_id in family_ids
+            if family_id in catalog.families
+        }
+        if labels:
+            chunk.extra["product_family_label"] = ", ".join(sorted(labels))
+
+    if models:
+        chunk.extra["models"] = json.dumps(sorted(models))
 
 
 def _snapshot_directory(settings: AppSettings, timestamp: str) -> Path:
@@ -110,6 +177,12 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     new_parsed_chunks = []
     for document in new_documents:
         new_parsed_chunks.extend(chunk_document(document, settings))
+
+    document_scope = _build_document_scope(new_documents, catalog)
+    for chunk in new_parsed_chunks:
+        _annotate_chunk_with_catalog(chunk, catalog, document_scope)
+    for chunk in reused_chunks:
+        _annotate_chunk_with_catalog(chunk, catalog, document_scope)
 
     embed_client = EmbeddingClient(settings, logger=logger)
     embeddings = embed_client.embed_texts(chunk.text for chunk in new_parsed_chunks)
@@ -273,3 +346,5 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     )
 
     return summary
+
+

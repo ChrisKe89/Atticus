@@ -15,8 +15,8 @@ function parseConfidenceThreshold(): number {
   return parsed;
 }
 
-function serializeSources(sources: AskResponse["sources"]): Prisma.JsonArray {
-  return sources
+function serializeSources(sources: AskResponse["sources"] | undefined): Prisma.JsonArray {
+  return (sources ?? [])
     .map((source) => ({
       path: source.path,
       page: source.page ?? null,
@@ -33,8 +33,54 @@ type CaptureArgs = {
 };
 
 export async function captureLowConfidenceChat({ question, response }: CaptureArgs): Promise<void> {
+  if (response.clarification) {
+    return;
+  }
+
+  const answers =
+    response.answers && response.answers.length > 0
+      ? response.answers
+      : response.answer
+        ? [
+            {
+              answer: response.answer,
+              confidence: response.confidence ?? 0,
+              should_escalate: response.should_escalate ?? false,
+              model: undefined,
+              family: undefined,
+              family_label: undefined,
+              sources: response.sources ?? [],
+            },
+          ]
+        : [];
+
+  if (answers.length === 0) {
+    return;
+  }
+
+  const aggregatedConfidence =
+    response.confidence ??
+    (answers.length
+      ? answers.reduce((acc, item) => Math.min(acc, item.confidence ?? 0), 1)
+      : 0);
+  const aggregatedEscalate =
+    response.should_escalate ?? answers.some((item) => item.should_escalate);
+  const aggregatedSources =
+    response.sources && response.sources.length > 0
+      ? response.sources
+      : answers.flatMap((item) => item.sources ?? []);
+
+  const aggregatedAnswer = answers
+    .map((item) => {
+      const metadata = [item.model, item.family_label ?? item.family].filter(Boolean).join(" · ");
+      const heading = metadata ? `### ${metadata}\n\n` : "";
+      return `${heading}${item.answer}`.trim();
+    })
+    .filter(Boolean)
+    .join("\n\n");
+
   const threshold = parseConfidenceThreshold();
-  if (!response.should_escalate && response.confidence >= threshold) {
+  if (!aggregatedEscalate && aggregatedConfidence >= threshold) {
     return;
   }
 
@@ -50,7 +96,7 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
         {
           action: "captured",
           at: now.toISOString(),
-          confidence: response.confidence,
+          confidence: aggregatedConfidence,
           requestId: response.request_id,
         },
       ];
@@ -60,11 +106,11 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
           orgId: session.user.orgId,
           userId: session.user.id,
           question,
-          answer: response.answer,
-          confidence: response.confidence,
+          answer: aggregatedAnswer,
+          confidence: aggregatedConfidence,
           status: "pending_review",
           requestId: response.request_id,
-          topSources: serializeSources(response.sources),
+          topSources: serializeSources(aggregatedSources),
           auditLog,
         },
         select: { id: true },
@@ -81,7 +127,7 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
           requestId: response.request_id,
           after: {
             status: "pending_review",
-            confidence: response.confidence,
+            confidence: aggregatedConfidence,
             requestId: response.request_id,
           },
         },

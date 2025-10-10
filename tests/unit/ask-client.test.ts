@@ -30,11 +30,13 @@ describe("askRequestSchema", () => {
       filters: null,
       contextHints: ["  product A  "],
       topK: null,
+      models: null,
     });
     expect(parsed.question).toBe("hello");
     expect(parsed.filters).toBeUndefined();
     expect(parsed.contextHints).toEqual(["  product A  "]);
     expect(parsed.topK).toBeUndefined();
+    expect(parsed.models).toBeUndefined();
   });
 });
 
@@ -61,6 +63,7 @@ describe("streamAsk", () => {
       filters: undefined,
       contextHints: undefined,
       topK: undefined,
+      models: undefined,
     });
     expect(response).toEqual(payload);
   });
@@ -85,6 +88,7 @@ describe("streamAsk", () => {
       filters: undefined,
       contextHints: undefined,
       topK: undefined,
+      models: undefined,
     });
     expect(response).toEqual(askResponseSchema.parse(payload));
   });

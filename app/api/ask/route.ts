@@ -106,6 +106,7 @@ export async function POST(request: Request) {
         filters: parsed.filters ?? undefined,
         contextHints: parsed.contextHints ?? undefined,
         topK: parsed.topK ?? undefined,
+        models: parsed.models ?? undefined,
       }),
     });
   } catch (error) {

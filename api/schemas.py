@@ -58,6 +58,10 @@ class AskRequest(BaseModel):
         alias="topK",
         description="Override for the retrieval top-k window",
     )
+    models: list[str] | None = Field(
+        default=None,
+        description="Optional explicit models or families selected by the user",
+    )
 
 
 class AskSource(BaseModel):
@@ -73,11 +77,33 @@ class AskSource(BaseModel):
 
 
 class AskResponse(BaseModel):
+    answer: str | None = None
+    confidence: float | None = None
+    should_escalate: bool | None = None
+    request_id: str
+    sources: list[AskSource] | None = None
+    answers: list["AskAnswer"] | None = None
+    clarification: "ClarificationPayload" | None = None
+
+
+class AskAnswer(BaseModel):
     answer: str
     confidence: float
     should_escalate: bool
-    request_id: str
+    model: str | None = None
+    family: str | None = None
+    family_label: str | None = None
     sources: list[AskSource]
+
+
+class ClarificationOption(BaseModel):
+    id: str
+    label: str
+
+
+class ClarificationPayload(BaseModel):
+    message: str
+    options: list[ClarificationOption]
 
 
 class EvalResponse(BaseModel):
@@ -142,3 +168,6 @@ class MetricsDashboard(BaseModel):
     histogram: list[MetricsHistogram]
     recent_trace_ids: list[str]
     rate_limit: dict[str, int] | None = None
+
+
+AskResponse.model_rebuild()

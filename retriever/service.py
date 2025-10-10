@@ -65,12 +65,18 @@ def answer_question(
     *,
     top_k: int | None = None,
     context_hints: list[str] | None = None,
+    product_family: str | None = None,
+    family_label: str | None = None,
+    model: str | None = None,
 ) -> Answer:
     settings = settings or load_settings()
     logger = logger or configure_logging(settings)
     store = VectorStore(settings, logger)
     window = top_k or settings.top_k
-    results = store.search(question, top_k=window, filters=filters, hybrid=True)
+    merged_filters = dict(filters or {})
+    if product_family:
+        merged_filters["product_family"] = product_family
+    results = store.search(question, top_k=window, filters=merged_filters, hybrid=True)
 
     if not results:
         response = "I don't have enough information in the current index to answer this."
@@ -82,9 +88,17 @@ def answer_question(
             citations=[],
             confidence=confidence,
             should_escalate=should_escalate,
+            model=model,
+            family=product_family,
+            family_label=family_label,
         )
         log_event(
-            logger, "answer_generated", confidence=confidence, citations=0, escalate=should_escalate
+            logger,
+            "answer_generated",
+            confidence=confidence,
+            citations=0,
+            escalate=should_escalate,
+            filters=merged_filters,
         )
         return answer
 
@@ -122,6 +136,9 @@ def answer_question(
         citations=citations,
         confidence=confidence,
         should_escalate=should_escalate,
+        model=model,
+        family=product_family,
+        family_label=family_label,
     )
 
     log_event(
@@ -130,5 +147,6 @@ def answer_question(
         confidence=confidence,
         citations=len(citations),
         escalate=should_escalate,
+        filters=merged_filters,
     )
     return answer
