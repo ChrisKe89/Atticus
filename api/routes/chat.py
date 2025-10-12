@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -11,6 +12,9 @@ from atticus.logging import log_event
 from atticus.tokenization import count_tokens
 from retriever import answer_question
 from retriever.resolver import ModelResolution, ModelScope, resolve_models
+
+if TYPE_CHECKING:
+    from retriever.models import Citation
 
 from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import (
@@ -25,9 +29,7 @@ from ..schemas import (
 router = APIRouter()
 _Q_PLACEHOLDERS = {"string", "test", "example"}
 _Q_MIN_LEN = 4
-_CLARIFICATION_MESSAGE = (
-    "Which model are you referring to? If you like, I can provide a list of product families that I can assist with."
-)
+_CLARIFICATION_MESSAGE = "Which model are you referring to? If you like, I can provide a list of product families that I can assist with."
 
 
 def _format_sources(citations: Iterable[AskSource]) -> list[str]:
@@ -42,7 +44,7 @@ def _format_sources(citations: Iterable[AskSource]) -> list[str]:
     return sources
 
 
-def _convert_citations(citations) -> list[AskSource]:
+def _convert_citations(citations: Iterable[Citation]) -> list[AskSource]:
     return [
         AskSource(
             chunkId=item.chunk_id,
@@ -82,9 +84,9 @@ def _build_answer_payloads(
                 answer=answer.response,
                 confidence=answer.confidence,
                 should_escalate=answer.should_escalate,
-                model=answer.model,
-                family=answer.family,
-                family_label=answer.family_label,
+                model=getattr(answer, "model", scope.model),
+                family=getattr(answer, "family", scope.family_id or None),
+                family_label=getattr(answer, "family_label", scope.family_label or None),
                 sources=ask_sources,
             )
         )
@@ -110,7 +112,14 @@ def _clarification_response(resolution: ModelResolution, request_id: str) -> Ask
         for option in resolution.clarification_options
     ]
     clarification = ClarificationPayload(message=_CLARIFICATION_MESSAGE, options=options)
-    return AskResponse(request_id=request_id, clarification=clarification)
+    return AskResponse(
+        request_id=request_id,
+        clarification=clarification,
+        sources=[],
+        answers=[],
+        confidence=0.0,
+        should_escalate=False,
+    )
 
 
 @router.post("/ask", response_model=AskResponse)

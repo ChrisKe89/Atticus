@@ -42,7 +42,13 @@ def _resolve_explicit_models(
     for raw in requested_models:
         ident: ModelIdentifier | None = catalog.match_model(raw)
         if ident:
-            scopes.append(ModelScope(family_id=ident.family_id, family_label=ident.family_label, model=ident.canonical))
+            scopes.append(
+                ModelScope(
+                    family_id=ident.family_id,
+                    family_label=ident.family_label,
+                    model=ident.canonical,
+                )
+            )
             continue
         family = catalog.match_family(raw)
         if family:

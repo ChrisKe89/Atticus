@@ -38,7 +38,8 @@
     "clsx",
     "react-markdown",
     "remark-gfm",
-    "zod"
+    "zod",
+    "tailwind-merge"
   ],
   "ignore": [
     "archive/legacy-ui/**",

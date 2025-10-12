@@ -1,5 +1,18 @@
-import pytest
+import asyncio
+from types import SimpleNamespace
 from typing import Any
+
+import pytest
+
+from api.routes.chat import ask_endpoint
+from api.schemas import AskRequest
+from retriever.models import Answer, Citation, FamilyOption
+from retriever.resolver import ModelResolution, ModelScope
+
+
+class _DummyLogger:
+    def info(self, *args, **kwargs):
+        pass
 
 
 def test_chat_route_or_skip() -> None:
@@ -81,3 +94,106 @@ def test_chat_route_rate_limit(monkeypatch) -> None:
     data = second.json()
     assert data["error"] == "rate_limited"
     assert "request_id" in data
+
+
+def test_ask_endpoint_returns_clarification(monkeypatch: pytest.MonkeyPatch) -> None:
+    options = [
+        FamilyOption(id="C7070", label="Apeos C7070 range"),
+        FamilyOption(id="C8180", label="Apeos C8180 series"),
+    ]
+
+    def fake_resolve_models(*args, **kwargs) -> ModelResolution:
+        return ModelResolution(
+            scopes=[], confidence=0.0, needs_clarification=True, clarification_options=options
+        )
+
+    monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
+    monkeypatch.setattr(
+        "api.routes.chat.answer_question",
+        lambda *args, **kwargs: pytest.fail(
+            "answer_question should not be called when clarification is needed"
+        ),
+    )
+
+    payload = AskRequest(question="Can the printer handle glossy stock?")
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-clarify"))
+    settings = SimpleNamespace(verbose_logging=False, trace_logging=False, openai_api_key=None)
+
+    response = asyncio.run(ask_endpoint(payload, request, settings, _DummyLogger()))
+
+    assert response.clarification is not None
+    assert response.clarification.message
+    assert {option.id for option in response.clarification.options} == {"C7070", "C8180"}
+    assert response.answers == []
+    assert response.sources == []
+    assert response.confidence == 0.0
+    assert response.should_escalate is False
+
+
+def test_ask_endpoint_fans_out_answers(monkeypatch: pytest.MonkeyPatch) -> None:
+    options = [
+        FamilyOption(id="C7070", label="Apeos C7070 range"),
+        FamilyOption(id="C8180", label="Apeos C8180 series"),
+    ]
+    scopes = [
+        ModelScope(family_id="C7070", family_label="Apeos C7070 range", model="Apeos C4570"),
+        ModelScope(family_id="C8180", family_label="Apeos C8180 series", model="Apeos C6580"),
+    ]
+
+    def fake_resolve_models(*args, **kwargs) -> ModelResolution:
+        return ModelResolution(
+            scopes=list(scopes),
+            confidence=0.9,
+            needs_clarification=False,
+            clarification_options=options,
+        )
+
+    calls = []
+
+    def fake_answer_question(
+        question: str,
+        *,
+        product_family: str | None = None,
+        family_label: str | None = None,
+        model: str | None = None,
+        **kwargs,
+    ) -> Answer:
+        calls.append((product_family, model))
+        citation = Citation(
+            chunk_id=f"{model}-chunk",
+            source_path=f"content/{product_family}.pdf",
+            page_number=5,
+            heading=f"{model} Specs",
+            score=0.88,
+        )
+        return Answer(
+            question=question,
+            response=f"{model} capabilities summary.",
+            citations=[citation],
+            confidence=0.92,
+            should_escalate=False,
+            model=model,
+            family=product_family,
+            family_label=family_label,
+        )
+
+    monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
+    monkeypatch.setattr("api.routes.chat.answer_question", fake_answer_question)
+
+    payload = AskRequest(question="Compare the Apeos C4570 and C6580 models.", top_k=2)
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-multi"))
+    settings = SimpleNamespace(verbose_logging=False, trace_logging=False, openai_api_key=None)
+
+    response = asyncio.run(ask_endpoint(payload, request, settings, _DummyLogger()))
+
+    assert len(calls) == 2
+    assert ("C7070", "Apeos C4570") in calls
+    assert ("C8180", "Apeos C6580") in calls
+
+    assert response.answers is not None
+    assert len(response.answers) == 2
+    assert {answer.model for answer in response.answers} == {"Apeos C4570", "Apeos C6580"}
+    assert all(answer.sources for answer in response.answers)
+    assert response.should_escalate is False
+    assert response.confidence is not None and response.confidence >= 0.0
+    assert "###" in (response.answer or "")

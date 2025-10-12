@@ -82,8 +82,8 @@ class AskResponse(BaseModel):
     should_escalate: bool | None = None
     request_id: str
     sources: list[AskSource] | None = None
-    answers: list["AskAnswer"] | None = None
-    clarification: "ClarificationPayload" | None = None
+    answers: list[AskAnswer] | None = None
+    clarification: ClarificationPayload | None = None
 
 
 class AskAnswer(BaseModel):

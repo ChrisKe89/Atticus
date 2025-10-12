@@ -43,7 +43,9 @@ def test_ask_endpoint_emits_verbose_logs(monkeypatch: pytest.MonkeyPatch) -> Non
     monkeypatch.setattr("api.routes.chat.log_event", fake_log_event)
     monkeypatch.setattr("api.routes.chat.count_tokens", fake_count_tokens)
 
-    payload = AskRequest(question="Explain the workflow", filters={"family": "C7070"}, top_k=3)
+    payload = AskRequest(
+        question="Explain the workflow", filters={"family": "C7070"}, top_k=3, models=["C7070"]
+    )
     request = SimpleNamespace(state=SimpleNamespace(request_id="req-001"))
     settings = SimpleNamespace(verbose_logging=True, trace_logging=True, openai_api_key=None)
 
@@ -51,6 +53,9 @@ def test_ask_endpoint_emits_verbose_logs(monkeypatch: pytest.MonkeyPatch) -> Non
 
     assert response.answer == "All systems operational."
     assert response.sources[0].path == "content/manuals/guide.pdf"
+    assert response.answers is not None and len(response.answers) == 1
+    first_answer = response.answers[0]
+    assert first_answer.model in (None, "Apeos C7070")
 
     # Two log events: completion + verbose chat turn
     assert {event for event, _ in log_calls} == {"ask_endpoint_complete", "chat_turn"}
