@@ -74,12 +74,12 @@ class VectorStore:
             return False
         family_filter = filters.get("product_family")
         if family_filter:
-            allowed = {part.strip().lower() for part in str(family_filter).split(",") if part.strip()}
+            allowed = {
+                part.strip().lower() for part in str(family_filter).split(",") if part.strip()
+            }
             if allowed:
                 chunk_family = (
-                    chunk.extra.get("product_family")
-                    or manifest_entry.get("product_family")
-                    or ""
+                    chunk.extra.get("product_family") or manifest_entry.get("product_family") or ""
                 )
                 if str(chunk_family).lower() not in allowed:
                     return False

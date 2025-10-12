@@ -161,6 +161,13 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 - Retrieve (vector + filters) → Compose context → Generate → Cite → Log
 - Confidence threshold → **Escalation** (email), or answer with caveats
 
+#### Model Disambiguation Contract
+
+- When the question clearly names a specific model (e.g., “Apeos C4570”), scope retrieval to that model’s family and emit a single answer with family-scoped citations.
+- When the model cannot be inferred confidently, the API must return a `clarification` payload listing the available families (“Apeos C7070 range”, “Apeos C8180 series”). The UI renders the clarification card and resubmits the original question with the selected `models` array.
+- When multiple models are detected or supplied, fan out retrieval per model, return `answers[]` with `{ model, family, sources[] }`, and keep the aggregated `sources` in the response for compatibility with downstream tooling.
+- Capture low confidence turns only after a full answer is generated—skip collection on clarification-only responses.
+
 ### Security
 
 - Role‑based UI and API; **Row‑Level Security (RLS)** in Postgres for org isolation

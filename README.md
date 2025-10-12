@@ -6,6 +6,13 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 > **Release 0.7.10** – Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
 
+## Model Disambiguation Flows
+
+- **Direct hit** — when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
+- **Unclear** — if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
+- **Multi-model** — if several models are detected or supplied, Atticus fans out retrieval per model and responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
+- **Testing** — `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
+
 ---
 
 ## Quick Start

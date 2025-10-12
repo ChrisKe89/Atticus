@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 from atticus.config import load_settings
 
@@ -108,10 +108,13 @@ def _load_catalog_path(path: str | Path | None = None) -> Path:
     return (settings.indices_dir / "model_catalog.json").resolve()
 
 
-def _load_catalog_json(path: Path) -> dict:
+def _load_catalog_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(f"Model catalog not found at {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Model catalog must be a JSON object at the top level.")
+    return payload
 
 
 def _entry_aliases(raw_aliases: Iterable[str], canonical: str) -> set[str]:
@@ -119,11 +122,11 @@ def _entry_aliases(raw_aliases: Iterable[str], canonical: str) -> set[str]:
     aliases.update(raw_aliases)
     normalized: set[str] = set()
     for alias in aliases:
-        alias = alias.strip()
-        if not alias:
+        cleaned_alias = alias.strip()
+        if not cleaned_alias:
             continue
-        normalized.add(alias)
-        compact = _compact(alias)
+        normalized.add(cleaned_alias)
+        compact = _compact(cleaned_alias)
         # Ensure we have single-token shorthand for values such as "Apeos C 7070"
         if len(compact) > 3:
             normalized.add(compact.upper())
@@ -165,7 +168,9 @@ def load_model_catalog(path: str | Path | None = None) -> ModelCatalog:
             canonical = str(model_entry.get("canonical", "")).strip()
             if not canonical:
                 continue
-            identifier = ModelIdentifier(canonical=canonical, family_id=family_id, family_label=label)
+            identifier = ModelIdentifier(
+                canonical=canonical, family_id=family_id, family_label=label
+            )
             aliases = _entry_aliases(model_entry.get("aliases", []) or [], canonical)
             for alias in aliases:
                 normalized_alias = _normalize(alias)

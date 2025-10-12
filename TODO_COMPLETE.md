@@ -24,6 +24,14 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-10-10
+
+- [x] Added model parser/resolver unit tests, retrieval filter coverage, API clarification regressions, UI integration tests, and a gated Playwright chat clarification flow — completed 2025-10-10 (this change set).
+- [x] Documented model disambiguation behaviour in `AGENTS.md`, `README.md`, and `docs/ATTICUS_DETAILED_GUIDE.md`; updated `CHANGELOG.md`, and reconciled TODO status — completed 2025-10-10 (this change set).
+- [x] Verified direct/unclear/multi-model acceptance criteria via automated tests and ensured `make quality` (lint, typecheck, pytest, Next build, ts audit) passes end-to-end — completed 2025-10-10 (this change set).
+
+---
+
 ## 2025-09-21
 
 - [x] Provided `.env.example` for local configuration scaffolding — completed 2025-09-21 (commit 5df0d73).

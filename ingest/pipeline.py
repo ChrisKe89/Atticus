@@ -15,10 +15,11 @@ from atticus.embeddings import EmbeddingClient
 from atticus.logging import configure_logging, log_event
 from atticus.utils import sha256_file, sha256_text
 from atticus.vector_db import PgVectorRepository, StoredChunk, save_metadata
-from retriever.models import extract_models, load_model_catalog, ModelCatalog
+from retriever.models import ModelCatalog, extract_models, load_model_catalog
 
 from .chunker import chunk_document
-from .models import ParsedDocument, Chunk as ParsedChunk
+from .models import Chunk as ParsedChunk
+from .models import ParsedDocument
 from .parsers import discover_documents, parse_document
 
 
@@ -42,7 +43,9 @@ class IngestionSummary:
     embedding_model_version: str
 
 
-def _build_document_scope(documents: Sequence[ParsedDocument], catalog: ModelCatalog) -> dict[str, dict[str, set[str]]]:
+def _build_document_scope(
+    documents: Sequence[ParsedDocument], catalog: ModelCatalog
+) -> dict[str, dict[str, set[str]]]:
     scope: dict[str, dict[str, set[str]]] = {}
     for document in documents:
         texts: list[str] = [document.source_path.name]
@@ -63,7 +66,7 @@ def _build_document_scope(documents: Sequence[ParsedDocument], catalog: ModelCat
 
 
 def _annotate_chunk_with_catalog(
-    chunk: StoredChunk | "Chunk",
+    chunk: StoredChunk | ParsedChunk,
     catalog: ModelCatalog,
     document_scope: dict[str, dict[str, set[str]]],
 ) -> None:
@@ -121,6 +124,7 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     options = options or IngestionOptions()
     settings.ensure_directories()
     logger = configure_logging(settings)
+    catalog = load_model_catalog()
 
     if not settings.database_url:
         raise ValueError("DATABASE_URL must be configured before running ingestion")
@@ -152,11 +156,13 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         if manifest_entry and manifest_entry.get("sha256") == file_hash:
             existing_chunks = repo.fetch_chunks_for_source(str(file_path))
             if existing_chunks:
-                for chunk in existing_chunks:
-                    chunk.extra["embedding_model"] = settings.embed_model
-                    chunk.extra["embedding_model_version"] = settings.embedding_model_version
-                    chunk.extra["ingested_at"] = ingest_time
-                    chunk.extra.setdefault("chunk_sha", chunk.sha256)
+                for existing_chunk in existing_chunks:
+                    existing_chunk.extra["embedding_model"] = settings.embed_model
+                    existing_chunk.extra["embedding_model_version"] = (
+                        settings.embedding_model_version
+                    )
+                    existing_chunk.extra["ingested_at"] = ingest_time
+                    existing_chunk.extra.setdefault("chunk_sha", existing_chunk.sha256)
                 reused_chunks.extend(existing_chunks)
                 first = existing_chunks[0]
                 reused_documents[first.document_id] = {
@@ -174,15 +180,15 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         new_documents.append(document)
         document_lookup[str(document.source_path)] = document.source_type
 
-    new_parsed_chunks = []
+    new_parsed_chunks: list[ParsedChunk] = []
     for document in new_documents:
         new_parsed_chunks.extend(chunk_document(document, settings))
 
     document_scope = _build_document_scope(new_documents, catalog)
-    for chunk in new_parsed_chunks:
-        _annotate_chunk_with_catalog(chunk, catalog, document_scope)
-    for chunk in reused_chunks:
-        _annotate_chunk_with_catalog(chunk, catalog, document_scope)
+    for parsed_chunk in new_parsed_chunks:
+        _annotate_chunk_with_catalog(parsed_chunk, catalog, document_scope)
+    for reused_chunk in reused_chunks:
+        _annotate_chunk_with_catalog(reused_chunk, catalog, document_scope)
 
     embed_client = EmbeddingClient(settings, logger=logger)
     embeddings = embed_client.embed_texts(chunk.text for chunk in new_parsed_chunks)
@@ -346,5 +352,3 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     )
 
     return summary
-
-

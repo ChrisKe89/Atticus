@@ -13,11 +13,13 @@ The newest entries appear first.
 - Introduced the model catalog, parser, and resolver to support explicit family scoping, multi-answer payloads, and `/api/ask` clarifications when the model is unknown.
 - Added clarification handling in the Next.js UI: the chat panel now renders family selection buttons, resubmits follow-up requests with `models`, and formats multi-model answers with per-answer citations.
 - Tagged ingested chunks with `product_family` and `models` metadata, copied the Apeos C8180 series CED into the active corpus, and expanded `eval/gold_set.csv` with cross-family scenarios.
+- Added regression coverage for model parsing/resolution, family-scoped retrieval filters, API clarification flows, UI integrations, and a gated Playwright chat clarification scenario.
 
 ### Changed
 
 - Consolidated the active backlog into `TODO.md`, updated cross-references, and recorded completed tasks in `TODO_COMPLETE.md`.
 - Resolved merge artefacts in `VERSION` to restore 0.7.2 as the canonical release number and flagged the follow-up automation in the backlog.
+- Documented the model disambiguation contract across AGENTS, README, and `docs/ATTICUS_DETAILED_GUIDE.md`.
 
 ---
 

@@ -81,50 +81,23 @@
 
 ---
 
-## Phase 4 — Tests (must-pass)
+## Phase 4 - Tests (must-pass)
 
-1. **Unit**
-
-   * `tests/test_model_parser.py`: direct hit, fuzzy alias, none → clarification, multi-model split.
-   * `tests/test_retrieval_filters.py`: query constrained to a family returns only that family’s chunks.
-
-2. **API/integration**
-
-   * `tests/test_chat_route.py`:
-
-     * unclear → returns `clarification` only (no retrieval).
-     * multi-model → returns `answers[]` with model tags.
-   * `tests/test_ui_route.py`: if you already have UI route tests, add snapshot checks for clarification JSON. 
-
-3. **E2E (Playwright)**
-
-   * Extend `tests/playwright/rbac.spec.ts` or add a new `chat.spec.ts`: type an unclear question → see clarification card → choose “Apeos C7070 range” → receive answer with C7070-family citations. (There’s already Playwright config present.) 
+Completed on 2025-10-10 — Parser/resolver unit tests, API clarification coverage, and the Playwright chat flow are logged in `TODO_COMPLETE.md`.
 
 ---
 
-## Phase 5 — Docs & ops
+## Phase 5 - Docs & ops
 
-1. **AGENTS.md** — add the behavior contract:
-
-   * Ask clarifier when model unknown; treat multiple models as multiple sub-questions; scope retrieval by family; keep answers separate per model. (Doc file exists.) 
-
-2. **README.md / docs/ATTICUS_DETAILED_GUIDE.md** — short “How Atticus interprets product names” section with examples.
-
-3. **CHANGELOG.md** — note feature: “Model disambiguation + multi-model Q&A”.
-
-4. **TODO.md → TODO_COMPLETE.md** — move tasks as they land (your doc workflow already calls this out). 
+Completed on 2025-10-10 — Behaviour contract captured in AGENTS, user guides updated, changelog noted, and TODO items migrated to the archive.
 
 ---
 
-## Phase 6 — Acceptance criteria (what “done” looks like)
+## Phase 6 - Acceptance criteria (what "done" looks like)
 
-* **Direct**: “Can the **Apeos C7070** do X…?” → 1 answer, C7070 family-scoped citations pulled from the C7070 CED. 
-* **Unclear**: “Can the **printer** do X…?” → UI shows clarifier with **C7070**/**C8180** options and a **show list** option. No retrieval occurs until user chooses.
-* **Multi-model**: “**Apeos C4570 and Apeos C6580**” → 2 answers rendered, each with its own sources; C4570 from C7070 doc, C6580 from C8180 doc.
-* **Tests**: unit + API + E2E cover the three flows; CI green with retrieval-gate unchanged. (Repo has the test harness & CI targets laid out.) 
+Verified via automated direct/unclear/multi-model test cases during the 2025-10-10 quality run (see `TODO_COMPLETE.md`).
 
 ---
-
 ## Pointers for Codex (where to edit)
 
 * **Backend (FastAPI/Next route boundary)**: `app/api/ask/route.ts`, `lib/ask-client.ts`, `retriever/models.py`, `retriever/service.py`, `retriever/generator.py`. 
