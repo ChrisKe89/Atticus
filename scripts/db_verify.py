@@ -8,6 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from urllib.parse import urlsplit, urlunsplit
 
 
 def _load_env_from_file(env_path: Path) -> None:
@@ -64,6 +65,8 @@ def main() -> int:
 
     compose_base: list[str] | None = None
 
+    adjusted_database_url = database_url
+
     if psql_path:
         command_prefix: list[str] = [psql_path]
         sql_arg = str(tmp_path)
@@ -86,10 +89,28 @@ def main() -> int:
         sql_arg = remote_path
         extra_cleanup.append([*compose_base, "exec", "-T", "postgres", "rm", "-f", remote_path])
 
+        parsed = urlsplit(database_url)
+        host_port = os.environ.get("POSTGRES_PORT")
+        try:
+            host_port_int = int(host_port) if host_port else None
+        except ValueError:
+            host_port_int = None
+
+        if parsed.hostname in {"localhost", "127.0.0.1"} and host_port_int is not None:
+            if parsed.port == host_port_int:
+                userinfo = ""
+                if parsed.username:
+                    userinfo = parsed.username
+                    if parsed.password:
+                        userinfo = f"{userinfo}:{parsed.password}"
+                    userinfo = f"{userinfo}@"
+                netloc = f"{userinfo}{parsed.hostname}:5432"
+                adjusted_database_url = urlunsplit(parsed._replace(netloc=netloc))
+
     cmd: list[str] = [
         *command_prefix,
         "--dbname",
-        database_url,
+        adjusted_database_url,
         "-v",
         f"expected_pgvector_dimension={dimension}",
         "-v",

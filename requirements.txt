@@ -54,7 +54,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 execnet==2.1.1
     # via pytest-xdist
-fastapi==0.118.2
+fastapi==0.119.0
     # via -r requirements.in
 h11==0.16.0
     # via
@@ -62,7 +62,7 @@ h11==0.16.0
     #   uvicorn
 httpcore==1.0.9
     # via httpx
-httptools==0.6.4
+httptools==0.7.1
     # via -r requirements.in
 httpx==0.28.1
     # via
@@ -95,7 +95,7 @@ numpy==2.2.6
     #   scikit-learn
     #   scipy
     #   tabula-py
-openai==2.2.0
+openai==2.3.0
     # via -r requirements.in
 opencv-python-headless==4.12.0.88
     # via camelot-py
@@ -150,7 +150,7 @@ pydantic-settings==2.11.0
     # via -r requirements.in
 pygments==2.19.2
     # via pytest
-pymupdf==1.26.4
+pymupdf==1.26.5
     # via -r requirements.in
 pypdf==5.9.0
     # via camelot-py

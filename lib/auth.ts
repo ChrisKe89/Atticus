@@ -203,6 +203,30 @@ export const __test = {
   persistMagicLink,
 };
 
-export function getServerAuthSession(): Promise<Session | null> {
-  return getServerSession(authOptions);
+export async function getServerAuthSession(): Promise<Session | null> {
+  const session = await getServerSession(authOptions);
+  if (session?.user) {
+    const needsRole = !(session.user as any).role;
+    const needsOrg = !(session.user as any).orgId;
+    const needsId = !(session.user as any).id;
+    if (needsRole || needsOrg || needsId) {
+      const email = session.user.email?.toLowerCase();
+      if (email) {
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true, role: true, orgId: true },
+          });
+          if (user) {
+            (session.user as any).id = user.id;
+            (session.user as any).role = user.role;
+            (session.user as any).orgId = user.orgId ?? (session.user as any).orgId;
+          }
+        } catch {
+          // If DB is unavailable, return the base session
+        }
+      }
+    }
+  }
+  return session;
 }

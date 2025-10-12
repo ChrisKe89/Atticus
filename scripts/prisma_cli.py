@@ -1,0 +1,101 @@
+"""Wrapper to run Prisma CLI commands with deterministic environment loading."""
+
+from __future__ import annotations
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Iterable
+
+
+def _load_env(env_path: Path, *, overwrite: bool = False) -> None:
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, sep, value = line.partition("=")
+        if not sep:
+            continue
+        key = key.strip()
+        if not key:
+            continue
+        cleaned = value.strip()
+        if (cleaned.startswith('"') and cleaned.endswith('"')) or (
+            cleaned.startswith("'") and cleaned.endswith("'")
+        ):
+            cleaned = cleaned[1:-1]
+        if overwrite or key not in os.environ or not os.environ[key]:
+            os.environ[key] = cleaned
+
+
+def _build_command(args: Iterable[str]) -> list[str]:
+    command = [str(part) for part in args if part is not None]
+    return command
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Run Prisma CLI with .env variables overriding existing values.",
+        allow_abbrev=False,
+    )
+    parser.add_argument(
+        "--env-file",
+        default=".env",
+        help="Path to the .env file to load before invoking Prisma (default: %(default)s).",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Echo the Prisma command before execution.",
+    )
+    parser.add_argument(
+        "prisma_args",
+        nargs=argparse.REMAINDER,
+        help="Arguments to forward to `npx prisma ...`.",
+    )
+
+    args = parser.parse_args(argv)
+    if not args.prisma_args:
+        parser.error("No Prisma arguments supplied.")
+
+    env_path = Path(args.env_file)
+    _load_env(env_path, overwrite=True)
+
+    npx_path = shutil.which("npx")
+    if npx_path:
+        command = _build_command([npx_path, "prisma", *args.prisma_args])
+    else:
+        npm_path = shutil.which("npm")
+        if not npm_path:
+            print(
+                "Neither npx nor npm were found on PATH. Install Node.js before running Prisma commands.",
+                file=sys.stderr,
+            )
+            return 1
+        command = _build_command([npm_path, "exec", "--", "prisma", *args.prisma_args])
+
+    if args.verbose:
+        print(f"Executing: {' '.join(command)}", file=sys.stderr)
+        print(f"Using env file: {env_path}", file=sys.stderr)
+
+    try:
+        subprocess.run(command, check=True)
+    except FileNotFoundError as exc:
+        print(
+            f"Failed to execute {' '.join(command)}: {exc}. Ensure Node.js and Prisma CLI are installed.",
+            file=sys.stderr,
+        )
+        return 1
+    except subprocess.CalledProcessError as exc:
+        return exc.returncode
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

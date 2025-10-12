@@ -203,9 +203,9 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
     <>
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList>
-          <TabsTrigger value="uncertain">Uncertain ({pendingCount})</TabsTrigger>
-          <TabsTrigger value="tickets">Tickets ({ticketCount})</TabsTrigger>
-          <TabsTrigger value="glossary">Glossary</TabsTrigger>
+          <TabsTrigger aria-label="Uncertain" value="uncertain">Uncertain ({pendingCount})</TabsTrigger>
+          <TabsTrigger aria-label="Tickets" value="tickets">Tickets ({ticketCount})</TabsTrigger>
+          <TabsTrigger aria-label="Glossary" value="glossary">Glossary</TabsTrigger>
       </TabsList>
       {feedback ? (
         <Badge variant="subtle" className="normal-case">

@@ -196,7 +196,7 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 **Windows‑friendly examples (`.env.local`)**
 
 ```dotenv
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/atticus?schema=public"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5433/atticus?schema=public"
 NEXTAUTH_SECRET="dev-secret"
 EMAIL_SERVER="smtp://localhost:1025"
 EMAIL_FROM="atticus@localhost"
