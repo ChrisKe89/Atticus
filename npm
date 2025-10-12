@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+python_cmd="python"
+if [[ -x "${script_dir}/.venv/bin/python" ]]; then
+  python_cmd="${script_dir}/.venv/bin/python"
+fi
+
+if [[ $# -ge 2 && "$1" == "run" && "$2" == "db:seed" ]]; then
+  shift 2
+  exec "$python_cmd" -m scripts.db_seed "$@"
+fi
+
+if command -v npm >/dev/null 2>&1; then
+  real_npm="$(command -v npm)"
+  if [[ "$real_npm" != "${script_dir}/npm" ]]; then
+    exec "$real_npm" "$@"
+  fi
+fi
+
+echo "npm command not available for arguments: $*" >&2
+exit 1
