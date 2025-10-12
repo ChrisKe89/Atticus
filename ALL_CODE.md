@@ -1,198 +1,422 @@
-# Combined Code Bundle
-
-Generated: 2025-10-09 09:28:05 UTC
-Root: C:\Dev\Atticus
-Files: 183
+# All Code
 
 ## Index
-- `.eslintrc.json`
-- `.github/workflows/auto-fix-ruff.yml`
-- `.github/workflows/eval-gate.yml`
-- `.github/workflows/lint-test.yml`
-- `.github/workflows/release.yml`
-- `.markdownlint-cli2.yaml`
-- `.pre-commit-config.yaml`
-- `.prettierrc.json`
-- `.vscode/extensions.json`
-- `LICENSE`
-- `Makefile`
-- `api/Dockerfile`
-- `api/__init__.py`
-- `api/dependencies.py`
-- `api/errors.py`
-- `api/main.py`
-- `api/middleware.py`
-- `api/rate_limit.py`
-- `api/routes/__init__.py`
-- `api/routes/admin.py`
-- `api/routes/chat.py`
-- `api/routes/contact.py`
-- `api/routes/eval.py`
-- `api/routes/health.py`
-- `api/routes/ingest.py`
-- `api/schemas.py`
-- `api/utils.py`
-- `app/admin/page.tsx`
-- `app/api/admin/uncertain/[id]/approve/route.ts`
-- `app/api/admin/uncertain/[id]/ask-followup/route.ts`
-- `app/api/admin/uncertain/[id]/escalate/route.ts`
-- `app/api/admin/uncertain/route.ts`
-- `app/api/ask/route.ts`
-- `app/api/auth/[...nextauth]/route.ts`
-- `app/api/glossary/[id]/route.ts`
-- `app/api/glossary/route.ts`
-- `app/api/glossary/utils.ts`
-- `app/apps/page.tsx`
-- `app/contact/page.tsx`
-- `app/globals.css`
-- `app/layout.tsx`
-- `app/page.tsx`
-- `app/providers.tsx`
-- `app/settings/page.tsx`
-- `app/signin/page.tsx`
-- `app/signin/verify/page.tsx`
-- `atticus/__init__.py`
-- `atticus/config.py`
-- `atticus/embeddings.py`
-- `atticus/logging.py`
-- `atticus/logging_utils.py`
-- `atticus/metrics.py`
-- `atticus/notify/__init__.py`
-- `atticus/notify/mailer.py`
-- `atticus/tokenization.py`
-- `atticus/utils/__init__.py`
-- `atticus/utils/hashing.py`
-- `atticus/vector_db.py`
-- `components/AnswerRenderer.tsx`
-- `components/admin/admin-ops-console.tsx`
-- `components/auth/sign-in-form.tsx`
-- `components/chat/chat-panel.tsx`
-- `components/glossary/admin-panel.tsx`
-- `components/page-header.tsx`
-- `components/site-footer.tsx`
-- `components/site-header.tsx`
-- `components/ui/badge.tsx`
-- `components/ui/button.tsx`
-- `components/ui/card.tsx`
-- `components/ui/drawer.tsx`
-- `components/ui/input.tsx`
-- `components/ui/label.tsx`
-- `components/ui/select.tsx`
-- `components/ui/table.tsx`
-- `components/ui/tabs.tsx`
-- `components/ui/textarea.tsx`
-- `config.yaml`
-- `docker-compose.yml`
-- `docs/api/openapi.json`
-- `eval/__init__.py`
-- `eval/baseline.json`
-- `eval/harness/__init__.py`
-- `eval/harness/test_eval.py`
-- `eval/harness/test_ui.py`
-- `eval/runner.py`
-- `eval/runs/20251008/metrics.html`
-- `eval/runs/20251008/summary.json`
-- `eval/runs/ci/summary.json`
-- `eval/runs/manual/summary.json`
-- `ingest/__init__.py`
-- `ingest/chunker.py`
-- `ingest/models.py`
-- `ingest/parsers/__init__.py`
-- `ingest/parsers/docx.py`
-- `ingest/parsers/html.py`
-- `ingest/parsers/image.py`
-- `ingest/parsers/pdf.py`
-- `ingest/parsers/text.py`
-- `ingest/parsers/xlsx.py`
-- `ingest/pipeline.py`
-- `knip.json`
-- `lib/ask-client.ts`
-- `lib/ask-contract.ts`
-- `lib/auth.ts`
-- `lib/chat-capture.ts`
-- `lib/prisma.ts`
-- `lib/rbac.ts`
-- `lib/rls.ts`
-- `lib/utils.ts`
-- `middleware.ts`
-- `next-auth.d.ts`
-- `next-env.d.ts`
-- `next.config.js`
-- `nginx/Dockerfile`
-- `package-lock.json`
-- `package.json`
-- `playwright.config.ts`
-- `postcss.config.js`
-- `prisma/migrations/20240702120000_auth_rbac/migration.sql`
-- `prisma/migrations/20240708123000_pgvector_schema/migration.sql`
-- `prisma/migrations/20240709150000_glossary_review_workflow/migration.sql`
-- `prisma/migrations/20250201090000_fix_updated_at_trigger/migration.sql`
-- `prisma/migrations/20251008090000_pgvector_bootstrap/migration.sql`
-- `prisma/migrations/20251018090000_admin_ops_console/migration.sql`
-- `prisma/migrations/20251019090000_pgvector_lists_guc/migration.sql`
-- `prisma/migrations/20251019090500_rag_events_audit/migration.sql`
-- `prisma/schema.prisma`
-- `prisma/seed.ts`
-- `pyproject.toml`
-- `requirements.in`
-- `requirements.txt`
-- `retriever/__init__.py`
-- `retriever/answer_format.py`
-- `retriever/citation_utils.py`
-- `retriever/generator.py`
-- `retriever/models.py`
-- `retriever/service.py`
-- `retriever/vector_store.py`
-- `scripts/atticus_cli.py`
-- `scripts/audit_unused.py`
-- `scripts/check_version_parity.py`
-- `scripts/chunk_ced.py`
-- `scripts/db_verify.py`
-- `scripts/debug_env.py`
-- `scripts/e2e_smoke.py`
-- `scripts/eval_qa.py`
-- `scripts/eval_run.py`
-- `scripts/generate_api_docs.py`
-- `scripts/generate_env.py`
-- `scripts/icon-audit.mjs`
-- `scripts/ingest_cli.py`
-- `scripts/list_make_targets.py`
-- `scripts/make_seed.py`
-- `scripts/rollback.py`
-- `scripts/route-audit.mjs`
-- `scripts/run_ingestion.py`
-- `scripts/smtp_test.py`
-- `scripts/test_health.py`
-- `scripts/verify_pgvector.sql`
-- `seeds/seed_manifest.json`
-- `tailwind.config.js`
-- `tests/playwright/rbac.spec.ts`
-- `tests/test_admin_route.py`
-- `tests/test_api_version.py`
-- `tests/test_chat_route.py`
-- `tests/test_chunker.py`
-- `tests/test_citation_dedupe.py`
-- `tests/test_config_reload.py`
-- `tests/test_contact_route.py`
-- `tests/test_environment_diagnostics.py`
-- `tests/test_error_schema.py`
-- `tests/test_eval_runner.py`
-- `tests/test_hashing.py`
-- `tests/test_ingestion_retrieval_integration.py`
-- `tests/test_mailer.py`
-- `tests/test_seed_manifest.py`
-- `tests/test_ui_route.py`
-- `tests/unit/admin-uncertain-route.test.ts`
-- `tests/unit/ask-client.test.ts`
-- `tests/unit/glossary-route.test.ts`
-- `tests/unit/rbac.test.ts`
-- `tsconfig.json`
-- `vitest.config.ts`
+- [.editorconfig](#editorconfig)
+- [.env](#env)
+- [.env.example](#env-example)
+- [.eslintrc.json](#eslintrc-json)
+- [.github/workflows/auto-fix-ruff.yml](#github-workflows-auto-fix-ruff-yml)
+- [.github/workflows/eval-gate.yml](#github-workflows-eval-gate-yml)
+- [.github/workflows/lint-test.yml](#github-workflows-lint-test-yml)
+- [.github/workflows/release.yml](#github-workflows-release-yml)
+- [.markdownlint-cli2.yaml](#markdownlint-cli2-yaml)
+- [.pre-commit-config.yaml](#pre-commit-config-yaml)
+- [.prettierrc.json](#prettierrc-json)
+- [.vscode/extensions.json](#vscode-extensions-json)
+- [.vscode/settings.json](#vscode-settings-json)
+- [api/__init__.py](#api-init-py)
+- [api/dependencies.py](#api-dependencies-py)
+- [api/Dockerfile](#api-dockerfile)
+- [api/errors.py](#api-errors-py)
+- [api/main.py](#api-main-py)
+- [api/middleware.py](#api-middleware-py)
+- [api/rate_limit.py](#api-rate-limit-py)
+- [api/routes/__init__.py](#api-routes-init-py)
+- [api/routes/admin.py](#api-routes-admin-py)
+- [api/routes/chat.py](#api-routes-chat-py)
+- [api/routes/contact.py](#api-routes-contact-py)
+- [api/routes/eval.py](#api-routes-eval-py)
+- [api/routes/health.py](#api-routes-health-py)
+- [api/routes/ingest.py](#api-routes-ingest-py)
+- [api/routes/ui.py](#api-routes-ui-py)
+- [api/schemas.py](#api-schemas-py)
+- [api/utils.py](#api-utils-py)
+- [app/admin/page.tsx](#app-admin-page-tsx)
+- [app/api/admin/uncertain/[id]/approve/route.ts](#app-api-admin-uncertain-id-approve-route-ts)
+- [app/api/admin/uncertain/[id]/ask-followup/route.ts](#app-api-admin-uncertain-id-ask-followup-route-ts)
+- [app/api/admin/uncertain/[id]/escalate/route.ts](#app-api-admin-uncertain-id-escalate-route-ts)
+- [app/api/admin/uncertain/route.ts](#app-api-admin-uncertain-route-ts)
+- [app/api/ask/route.ts](#app-api-ask-route-ts)
+- [app/api/auth/[...nextauth]/route.ts](#app-api-auth-nextauth-route-ts)
+- [app/api/glossary/[id]/route.ts](#app-api-glossary-id-route-ts)
+- [app/api/glossary/route.ts](#app-api-glossary-route-ts)
+- [app/api/glossary/utils.ts](#app-api-glossary-utils-ts)
+- [app/apps/page.tsx](#app-apps-page-tsx)
+- [app/components.json](#app-components-json)
+- [app/contact/page.tsx](#app-contact-page-tsx)
+- [app/eslint.config.mjs](#app-eslint-config-mjs)
+- [app/globals.css](#app-globals-css)
+- [app/layout.tsx](#app-layout-tsx)
+- [app/next.config.ts](#app-next-config-ts)
+- [app/package.json](#app-package-json)
+- [app/page.tsx](#app-page-tsx)
+- [app/pnpm-lock.yaml](#app-pnpm-lock-yaml)
+- [app/postcss.config.js](#app-postcss-config-js)
+- [app/providers.tsx](#app-providers-tsx)
+- [app/settings/page.tsx](#app-settings-page-tsx)
+- [app/signin/page.tsx](#app-signin-page-tsx)
+- [app/signin/verify/page.tsx](#app-signin-verify-page-tsx)
+- [app/src/app/globals.css](#app-src-app-globals-css)
+- [app/src/app/layout.tsx](#app-src-app-layout-tsx)
+- [app/src/app/page.tsx](#app-src-app-page-tsx)
+- [app/tailwind.config.ts](#app-tailwind-config-ts)
+- [app/tsconfig.json](#app-tsconfig-json)
+- [archive/legacy-ui/static/admin.html](#archive-legacy-ui-static-admin-html)
+- [archive/legacy-ui/static/contact.html](#archive-legacy-ui-static-contact-html)
+- [archive/legacy-ui/static/css/style.css](#archive-legacy-ui-static-css-style-css)
+- [archive/legacy-ui/static/index.html](#archive-legacy-ui-static-index-html)
+- [archive/legacy-ui/static/js/script.js](#archive-legacy-ui-static-js-script-js)
+- [atticus/__init__.py](#atticus-init-py)
+- [atticus/config.py](#atticus-config-py)
+- [atticus/embeddings.py](#atticus-embeddings-py)
+- [atticus/logging.py](#atticus-logging-py)
+- [atticus/logging_utils.py](#atticus-logging-utils-py)
+- [atticus/metrics.py](#atticus-metrics-py)
+- [atticus/notify/__init__.py](#atticus-notify-init-py)
+- [atticus/notify/mailer.py](#atticus-notify-mailer-py)
+- [atticus/tokenization.py](#atticus-tokenization-py)
+- [atticus/utils/__init__.py](#atticus-utils-init-py)
+- [atticus/utils/hashing.py](#atticus-utils-hashing-py)
+- [atticus/vector_db.py](#atticus-vector-db-py)
+- [atticus.egg-info/dependency_links.txt](#atticus-egg-info-dependency-links-txt)
+- [atticus.egg-info/requires.txt](#atticus-egg-info-requires-txt)
+- [atticus.egg-info/SOURCES.txt](#atticus-egg-info-sources-txt)
+- [atticus.egg-info/top_level.txt](#atticus-egg-info-top-level-txt)
+- [components/admin/admin-ops-console.tsx](#components-admin-admin-ops-console-tsx)
+- [components/AnswerRenderer.tsx](#components-answerrenderer-tsx)
+- [components/auth/sign-in-form.tsx](#components-auth-sign-in-form-tsx)
+- [components/chat/chat-panel.tsx](#components-chat-chat-panel-tsx)
+- [components/glossary/admin-panel.tsx](#components-glossary-admin-panel-tsx)
+- [components/page-header.tsx](#components-page-header-tsx)
+- [components/site-footer.tsx](#components-site-footer-tsx)
+- [components/site-header.tsx](#components-site-header-tsx)
+- [components/ui/badge.tsx](#components-ui-badge-tsx)
+- [components/ui/button.tsx](#components-ui-button-tsx)
+- [components/ui/card.tsx](#components-ui-card-tsx)
+- [components/ui/dialog.tsx](#components-ui-dialog-tsx)
+- [components/ui/drawer.tsx](#components-ui-drawer-tsx)
+- [components/ui/input.tsx](#components-ui-input-tsx)
+- [components/ui/label.tsx](#components-ui-label-tsx)
+- [components/ui/select.tsx](#components-ui-select-tsx)
+- [components/ui/table.tsx](#components-ui-table-tsx)
+- [components/ui/tabs.tsx](#components-ui-tabs-tsx)
+- [components/ui/textarea.tsx](#components-ui-textarea-tsx)
+- [config.yaml](#config-yaml)
+- [content/catalog/capabilities.txt](#content-catalog-capabilities-txt)
+- [content/catalog/spec.txt](#content-catalog-spec-txt)
+- [docker-compose.yml](#docker-compose-yml)
+- [docs/api/openapi.json](#docs-api-openapi-json)
+- [eval/__init__.py](#eval-init-py)
+- [eval/baseline.json](#eval-baseline-json)
+- [eval/ced-362-smoke.csv](#eval-ced-362-smoke-csv)
+- [eval/gold_set.csv](#eval-gold-set-csv)
+- [eval/harness/__init__.py](#eval-harness-init-py)
+- [eval/harness/test_eval.py](#eval-harness-test-eval-py)
+- [eval/harness/test_ui.py](#eval-harness-test-ui-py)
+- [eval/runner.py](#eval-runner-py)
+- [eval/runs/20251008/metrics.csv](#eval-runs-20251008-metrics-csv)
+- [eval/runs/20251008/metrics.html](#eval-runs-20251008-metrics-html)
+- [eval/runs/20251008/summary.json](#eval-runs-20251008-summary-json)
+- [eval/runs/ci/metrics.csv](#eval-runs-ci-metrics-csv)
+- [eval/runs/ci/summary.json](#eval-runs-ci-summary-json)
+- [eval/runs/manual/metrics.csv](#eval-runs-manual-metrics-csv)
+- [eval/runs/manual/summary.json](#eval-runs-manual-summary-json)
+- [ingest/__init__.py](#ingest-init-py)
+- [ingest/chunker.py](#ingest-chunker-py)
+- [ingest/models.py](#ingest-models-py)
+- [ingest/parsers/__init__.py](#ingest-parsers-init-py)
+- [ingest/parsers/docx.py](#ingest-parsers-docx-py)
+- [ingest/parsers/html.py](#ingest-parsers-html-py)
+- [ingest/parsers/image.py](#ingest-parsers-image-py)
+- [ingest/parsers/pdf.py](#ingest-parsers-pdf-py)
+- [ingest/parsers/text.py](#ingest-parsers-text-py)
+- [ingest/parsers/xlsx.py](#ingest-parsers-xlsx-py)
+- [ingest/pipeline.py](#ingest-pipeline-py)
+- [knip.json](#knip-json)
+- [lib/ask-client.ts](#lib-ask-client-ts)
+- [lib/ask-contract.ts](#lib-ask-contract-ts)
+- [lib/auth.ts](#lib-auth-ts)
+- [lib/chat-capture.ts](#lib-chat-capture-ts)
+- [lib/prisma.ts](#lib-prisma-ts)
+- [lib/rbac.ts](#lib-rbac-ts)
+- [lib/rls.ts](#lib-rls-ts)
+- [lib/utils.ts](#lib-utils-ts)
+- [LICENSE](#license)
+- [Makefile](#makefile)
+- [middleware.ts](#middleware-ts)
+- [next-auth.d.ts](#next-auth-d-ts)
+- [next-env.d.ts](#next-env-d-ts)
+- [next.config.js](#next-config-js)
+- [nginx/Dockerfile](#nginx-dockerfile)
+- [nginx/nginx.conf](#nginx-nginx-conf)
+- [package-lock.json](#package-lock-json)
+- [package.json](#package-json)
+- [playwright.config.cjs](#playwright-config-cjs)
+- [postcss.config.js](#postcss-config-js)
+- [prisma/migrations/20240702120000_auth_rbac/migration.sql](#prisma-migrations-20240702120000-auth-rbac-migration-sql)
+- [prisma/migrations/20240708123000_pgvector_schema/migration.sql](#prisma-migrations-20240708123000-pgvector-schema-migration-sql)
+- [prisma/migrations/20240709150000_glossary_review_workflow/migration.sql](#prisma-migrations-20240709150000-glossary-review-workflow-migration-sql)
+- [prisma/migrations/20250201090000_fix_updated_at_trigger/migration.sql](#prisma-migrations-20250201090000-fix-updated-at-trigger-migration-sql)
+- [prisma/migrations/20251008090000_pgvector_bootstrap/migration.sql](#prisma-migrations-20251008090000-pgvector-bootstrap-migration-sql)
+- [prisma/migrations/20251018090000_admin_ops_console/migration.sql](#prisma-migrations-20251018090000-admin-ops-console-migration-sql)
+- [prisma/migrations/20251019090000_pgvector_lists_guc/migration.sql](#prisma-migrations-20251019090000-pgvector-lists-guc-migration-sql)
+- [prisma/migrations/20251019090500_rag_events_audit/migration.sql](#prisma-migrations-20251019090500-rag-events-audit-migration-sql)
+- [prisma/schema.prisma](#prisma-schema-prisma)
+- [prisma/seed.ts](#prisma-seed-ts)
+- [pyproject.toml](#pyproject-toml)
+- [requirements.in](#requirements-in)
+- [requirements.txt](#requirements-txt)
+- [retriever/__init__.py](#retriever-init-py)
+- [retriever/answer_format.py](#retriever-answer-format-py)
+- [retriever/citation_utils.py](#retriever-citation-utils-py)
+- [retriever/generator.py](#retriever-generator-py)
+- [retriever/models.py](#retriever-models-py)
+- [retriever/resolver.py](#retriever-resolver-py)
+- [retriever/service.py](#retriever-service-py)
+- [retriever/vector_store.py](#retriever-vector-store-py)
+- [scripts/atticus_cli.py](#scripts-atticus-cli-py)
+- [scripts/audit_unused.py](#scripts-audit-unused-py)
+- [scripts/check_version_parity.py](#scripts-check-version-parity-py)
+- [scripts/chunk_ced.py](#scripts-chunk-ced-py)
+- [scripts/db_verify.py](#scripts-db-verify-py)
+- [scripts/debug_env.py](#scripts-debug-env-py)
+- [scripts/e2e_smoke.py](#scripts-e2e-smoke-py)
+- [scripts/eval_qa.py](#scripts-eval-qa-py)
+- [scripts/eval_run.py](#scripts-eval-run-py)
+- [scripts/generate_api_docs.py](#scripts-generate-api-docs-py)
+- [scripts/generate_env.py](#scripts-generate-env-py)
+- [scripts/icon-audit.mjs](#scripts-icon-audit-mjs)
+- [scripts/ingest_cli.py](#scripts-ingest-cli-py)
+- [scripts/list_make_targets.py](#scripts-list-make-targets-py)
+- [scripts/make_seed.py](#scripts-make-seed-py)
+- [scripts/rollback.py](#scripts-rollback-py)
+- [scripts/route-audit.mjs](#scripts-route-audit-mjs)
+- [scripts/run_ingestion.py](#scripts-run-ingestion-py)
+- [scripts/smtp_test.py](#scripts-smtp-test-py)
+- [scripts/test_health.py](#scripts-test-health-py)
+- [scripts/verify_pgvector.sql](#scripts-verify-pgvector-sql)
+- [seeds/seed_manifest.json](#seeds-seed-manifest-json)
+- [tailwind.config.js](#tailwind-config-js)
+- [tests/playwright/chat.spec.ts](#tests-playwright-chat-spec-ts)
+- [tests/playwright/rbac.spec.ts](#tests-playwright-rbac-spec-ts)
+- [tests/test_admin_route.py](#tests-test-admin-route-py)
+- [tests/test_answer_format.py](#tests-test-answer-format-py)
+- [tests/test_api_errors.py](#tests-test-api-errors-py)
+- [tests/test_api_version.py](#tests-test-api-version-py)
+- [tests/test_chat_route.py](#tests-test-chat-route-py)
+- [tests/test_chat_verbose.py](#tests-test-chat-verbose-py)
+- [tests/test_chunker.py](#tests-test-chunker-py)
+- [tests/test_citation_dedupe.py](#tests-test-citation-dedupe-py)
+- [tests/test_citation_utils_extra.py](#tests-test-citation-utils-extra-py)
+- [tests/test_config_reload.py](#tests-test-config-reload-py)
+- [tests/test_contact_route.py](#tests-test-contact-route-py)
+- [tests/test_contact_route_trace.py](#tests-test-contact-route-trace-py)
+- [tests/test_environment_diagnostics.py](#tests-test-environment-diagnostics-py)
+- [tests/test_error_schema.py](#tests-test-error-schema-py)
+- [tests/test_eval_runner.py](#tests-test-eval-runner-py)
+- [tests/test_hashing.py](#tests-test-hashing-py)
+- [tests/test_ingestion_retrieval_integration.py](#tests-test-ingestion-retrieval-integration-py)
+- [tests/test_logging_utils.py](#tests-test-logging-utils-py)
+- [tests/test_mailer.py](#tests-test-mailer-py)
+- [tests/test_model_parser.py](#tests-test-model-parser-py)
+- [tests/test_rate_limit.py](#tests-test-rate-limit-py)
+- [tests/test_retrieval_filters.py](#tests-test-retrieval-filters-py)
+- [tests/test_seed_manifest.py](#tests-test-seed-manifest-py)
+- [tests/test_ui_route.py](#tests-test-ui-route-py)
+- [tests/unit/admin-uncertain-route.test.ts](#tests-unit-admin-uncertain-route-test-ts)
+- [tests/unit/ask-client.test.ts](#tests-unit-ask-client-test-ts)
+- [tests/unit/auth-magic-link.test.ts](#tests-unit-auth-magic-link-test-ts)
+- [tests/unit/glossary-route.test.ts](#tests-unit-glossary-route-test-ts)
+- [tests/unit/rbac.test.ts](#tests-unit-rbac-test-ts)
+- [tsconfig.json](#tsconfig-json)
+- [VERSION](#version)
+- [vitest.config.ts](#vitest-config-ts)
 
+## .editorconfig
 
----
+```
+root = true
 
-### .eslintrc.json
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{yml,yaml,json,md}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+indent_size = 4
+```
+
+## .env
+
+```
+# Core models
+OPENAI_API_KEY=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
+EMBED_MODEL=text-embedding-3-large
+EMBEDDING_MODEL_VERSION=text-embedding-3-large@2025-01-15
+GEN_MODEL=gpt-4.1
+CONFIDENCE_THRESHOLD=0.70
+CHUNK_TARGET_TOKENS=512
+CHUNK_MIN_TOKENS=256
+CHUNK_OVERLAP_TOKENS=100
+MAX_CONTEXT_CHUNKS=10
+ENABLE_RERANKER=0
+TOP_K=20
+EVAL_REGRESSION_THRESHOLD=3.0
+
+# Paths & storage
+CONTENT_ROOT=./content
+INDICES_DIR=./indices
+LOG_PATH=./logs/app.jsonl
+ERROR_LOG_PATH=./logs/errors.jsonl
+DICTIONARY_PATH=./indices/dictionary.json
+
+# Database
+DATABASE_URL=postgresql://atticus:atticus@localhost:5432/atticus
+POSTGRES_DB=atticus
+POSTGRES_USER=atticus
+POSTGRES_PASSWORD=atticus
+PGVECTOR_LISTS=100
+PGVECTOR_PROBES=4
+
+# Logging & observability
+LOG_LEVEL=INFO
+LOG_VERBOSE=0
+LOG_TRACE=0
+LOG_FORMAT=json
+TIMEZONE=UTC
+
+# Rate limiting
+RATE_LIMIT_REQUESTS=5
+RATE_LIMIT_WINDOW_SECONDS=60
+
+# Notifications & escalation
+CONTACT_EMAIL=atticus-escalations@agentk.fyi
+SMTP_HOST=email-smtp.ap-southeast-2.amazonaws.com
+SMTP_PORT=587
+SMTP_USER=AKIAYICNIZRRCJVJE6JR
+SMTP_PASS=BK1RljdsXXNjzGpYARokeDTzvUI1EeWjqaFqIp6fd85H
+SMTP_FROM=atticus-escalations@agentk.fyi
+SMTP_TO=c.kent89@live.com
+SMTP_DRY_RUN=0
+EMAIL_SANDBOX=true
+SMTP_ALLOW_LIST=
+
+# Auth & admin
+AUTH_SECRET=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+NEXTAUTH_SECRET=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
+DEFAULT_ORG_ID=org-atticus
+DEFAULT_ORG_NAME=Atticus Default
+ADMIN_EMAIL=admin@atticus.local
+ADMIN_NAME=Atticus Admin
+ADMIN_API_TOKEN=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+AUTH_DEBUG_MAILBOX_DIR=./logs/mailbox
+
+# Local email sandbox (MailHog / SMTP debug)
+# EMAIL_SERVER_HOST=localhost
+# EMAIL_SERVER_PORT=1025
+# EMAIL_SERVER_USER=
+# EMAIL_SERVER_PASSWORD=
+# EMAIL_FROM=no-reply@atticus.local
+EMAIL_SERVER_HOST=email-smtp.ap-southeast-2.amazonaws.com
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER=AKIAYICNIZRRCJVJE6JR
+EMAIL_SERVER_PASSWORD=BK1RljdsXXNjzGpYARokeDTzvUI1EeWjqaFqIp6fd85H
+EMAIL_FROM=atticus-escalations@agentk.fyi
+
+# Frontend/API integration
+RAG_SERVICE_URL=http://localhost:8000
+ASK_SERVICE_URL=http://localhost:8000
+```
+
+## .env.example
+
+```
+# Core models
+OPENAI_API_KEY=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
+EMBED_MODEL=text-embedding-3-large
+EMBEDDING_MODEL_VERSION=text-embedding-3-large@2025-01-15
+GEN_MODEL=gpt-4.1
+CONFIDENCE_THRESHOLD=0.70
+CHUNK_TARGET_TOKENS=512
+CHUNK_MIN_TOKENS=256
+CHUNK_OVERLAP_TOKENS=100
+MAX_CONTEXT_CHUNKS=10
+ENABLE_RERANKER=0
+TOP_K=20
+EVAL_REGRESSION_THRESHOLD=3.0
+
+# Paths & storage
+CONTENT_ROOT=./content
+INDICES_DIR=./indices
+LOG_PATH=./logs/app.jsonl
+ERROR_LOG_PATH=./logs/errors.jsonl
+DICTIONARY_PATH=./indices/dictionary.json
+
+# Database
+DATABASE_URL=postgresql://atticus:atticus@localhost:5432/atticus
+POSTGRES_DB=atticus
+POSTGRES_USER=atticus
+POSTGRES_PASSWORD=atticus
+PGVECTOR_LISTS=100
+PGVECTOR_PROBES=4
+
+# Logging & observability
+LOG_LEVEL=INFO
+LOG_VERBOSE=0
+LOG_TRACE=0
+LOG_FORMAT=json
+TIMEZONE=UTC
+
+# Rate limiting
+RATE_LIMIT_REQUESTS=5
+RATE_LIMIT_WINDOW_SECONDS=60
+
+# Notifications & escalation
+CONTACT_EMAIL=atticus-escalations@agentk.fyi
+SMTP_HOST=email-smtp.ap-southeast-2.amazonaws.com
+SMTP_PORT=587
+SMTP_USER=atticus-escalations
+SMTP_PASS=Pay641-Prove-Possible-stop-Cry
+SMTP_FROM=atticus-escalations@agentk.fyi
+SMTP_TO=c.kent89@live.com
+SMTP_DRY_RUN=1
+EMAIL_SANDBOX=true
+SMTP_ALLOW_LIST=
+
+# Auth & admin
+AUTH_SECRET=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+NEXTAUTH_SECRET=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
+DEFAULT_ORG_ID=org-atticus
+DEFAULT_ORG_NAME=Atticus Default
+ADMIN_EMAIL=admin@atticus.local
+ADMIN_NAME=Atticus Admin
+ADMIN_API_TOKEN=sk_4vPzK7Q9wJ2xTgN8rY5cL1uFh3aSd6mE
+AUTH_DEBUG_MAILBOX_DIR=./logs/mailbox
+
+# Local email sandbox (MailHog / SMTP debug)
+EMAIL_SERVER_HOST=localhost
+EMAIL_SERVER_PORT=1025
+EMAIL_SERVER_USER=
+EMAIL_SERVER_PASSWORD=
+EMAIL_FROM=no-reply@atticus.local
+
+# Frontend/API integration
+RAG_SERVICE_URL=http://localhost:8000
+ASK_SERVICE_URL=http://localhost:8000
+```
+
+## .eslintrc.json
 
 ```json
 {
@@ -210,12 +434,9 @@ Files: 183
     "tailwindcss/classnames-order": "off"
   }
 }
-
 ```
 
----
-
-### .github/workflows/auto-fix-ruff.yml
+## .github/workflows/auto-fix-ruff.yml
 
 ```yaml
 name: Auto-fix Ruff
@@ -261,12 +482,9 @@ jobs:
         with:
           commit_message: "chore: apply ruff auto-fixes"
           branch: ${{ github.head_ref }}
-
 ```
 
----
-
-### .github/workflows/eval-gate.yml
+## .github/workflows/eval-gate.yml
 
 ```yaml
 name: Evaluation Gate
@@ -303,12 +521,9 @@ jobs:
         with:
           name: evaluation-ci
           path: eval/runs/ci
-
 ```
 
----
-
-### .github/workflows/lint-test.yml
+## .github/workflows/lint-test.yml
 
 ```yaml
 name: Lint and Test
@@ -488,12 +703,9 @@ jobs:
 
       - name: Verify pgvector schema
         run: make db.verify
-
 ```
 
----
-
-### .github/workflows/release.yml
+## .github/workflows/release.yml
 
 ```yaml
 name: Release
@@ -571,12 +783,9 @@ jobs:
             eval/runs/release/summary.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 ```
 
----
-
-### .markdownlint-cli2.yaml
+## .markdownlint-cli2.yaml
 
 ```yaml
 config:
@@ -618,12 +827,9 @@ ignores:
   - ".archive/**"
   - "tests/**"
   - "EXAMPLES_ONLY/**"
-
 ```
 
----
-
-### .pre-commit-config.yaml
+## .pre-commit-config.yaml
 
 ```yaml
 repos:
@@ -696,12 +902,9 @@ repos:
                 print('Forbidden tmp files found:\n' + '\n'.join(bad))
                 sys.exit(1)
             sys.exit(0)
-
 ```
 
----
-
-### .prettierrc.json
+## .prettierrc.json
 
 ```json
 {
@@ -712,12 +915,9 @@ repos:
   "trailingComma": "es5",
   "plugins": ["prettier-plugin-tailwindcss"]
 }
-
 ```
 
----
-
-### .vscode/extensions.json
+## .vscode/extensions.json
 
 ```json
 {
@@ -728,226 +928,17 @@ repos:
     "DavidAnson.vscode-markdownlint"
   ]
 }
-
 ```
 
----
+## .vscode/settings.json
 
-### LICENSE
-
-```text
-SPDX-License-Identifier: MIT
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+```json
+{
+    "python.terminal.useEnvFile": true
+}
 ```
 
----
-
-### Makefile
-
-```make
-# Makefile — Atticus
-.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
-        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit
-
-PYTHON ?= python
-XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
-PYTEST_PARALLEL := $(if $(filter 1,$(XDIST_AVAILABLE)),-n auto,)
-
-DB_SERVICE ?= postgres
-PGVECTOR_DIMENSION ?= 3072
-PGVECTOR_LISTS ?= 100
-
-env:
-	$(PYTHON) scripts/generate_env.py
-
-smtp-test:
-	$(PYTHON) scripts/smtp_test.py
-
-help:
-	@echo "Available targets:"
-	@python scripts/list_make_targets.py $(MAKEFILE_LIST)
-
-api:
-	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
-
-
-web-dev:
-	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
-	npm run dev
-
-app-dev:
-	@echo "Alias for web-dev; launching Next.js UI"
-	$(MAKE) web-dev
-
-db.up:
-	docker compose up -d $(DB_SERVICE)
-
-db.down:
-	docker compose stop $(DB_SERVICE)
-
-db.migrate:
-	npm run prisma:generate
-	npm run db:migrate
-
-db.verify:
-	$(PYTHON) scripts/db_verify.py
-
-db.seed:
-	npm run db:seed
-
-ingest:
-	$(PYTHON) scripts/ingest_cli.py
-
-seed:
-	$(PYTHON) scripts/make_seed.py
-
-eval:
-	$(PYTHON) scripts/eval_run.py
-
-openapi:
-	$(PYTHON) scripts/generate_api_docs.py
-
-# Unified CLI dispatcher
-atticus:
-	$(PYTHON) scripts/atticus_cli.py --help
-
-smoke:
-	$(PYTHON) scripts/test_health.py
-
-test.unit:
-	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-	tests/test_hashing.py \
-	tests/test_config_reload.py \
-	tests/test_mailer.py \
-	tests/test_chunker.py \
-	tests/test_seed_manifest.py \
-	tests/test_eval_runner.py
-
-test.api:
-        $(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-               tests/test_chat_route.py \
-               tests/test_contact_route.py \
-               tests/test_error_schema.py \
-               tests/test_api_version.py \
-               tests/test_ui_route.py
-
-test:
-	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
-	       --cov=atticus --cov=api --cov=retriever \
-	       --cov-report=term-missing --cov-fail-under=90
-
-web-test:
-	npm run test:unit
-
-web-e2e:
-	npm run test:e2e
-
-e2e: env ingest eval
-	$(PYTHON) scripts/e2e_smoke.py
-
-# Local quality gates (mirror CI)
-lint:
-	ruff check .
-	ruff format --check .
-
-format:
-	ruff format .
-	ruff check . --fix
-
-typecheck:
-	mypy atticus api ingest retriever eval
-
-quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e
-
-# Full verification pass for CI / release
-verify:
-	@echo "Running full integration checks..."
-	make env
-	make lint
-	make typecheck
-	make test.unit
-	make test.api
-	make version-check
-	make web-lint
-	make web-typecheck
-	make web-build
-	make web-audit
-	@echo "✅ All checks passed."
-web-build:
-	npm run build
-
-web-start:
-	npm run start
-
-web-lint:
-	npm run lint
-
-web-typecheck:
-	npm run typecheck
-
-web-audit:
-	npm run audit:ts
-	npm run audit:icons
-	npm run audit:routes
-	npm run audit:py
-
-# Ensure VERSION and package.json are aligned
-version-check:
-	@$(PYTHON) scripts/check_version_parity.py
-
-```
-
----
-
-### api/Dockerfile
-
-```dockerfile
-FROM python:3.12-slim AS base
-
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential curl \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 8000
-
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-```
-
----
-
-### api/__init__.py
+## api/__init__.py
 
 ```python
 """FastAPI application factory for Atticus."""
@@ -955,12 +946,9 @@ CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 from .main import app
 
 __all__ = ["app"]
-
 ```
 
----
-
-### api/dependencies.py
+## api/dependencies.py
 
 ```python
 """Shared FastAPI dependencies."""
@@ -1023,12 +1011,34 @@ def require_admin_token(request: Request, settings: SettingsDep) -> None:
 
 
 AdminGuard = Annotated[None, Depends(require_admin_token)]
-
 ```
 
----
+## api/Dockerfile
 
-### api/errors.py
+```
+FROM python:3.12-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+## api/errors.py
 
 ```python
 """Custom exception handlers returning the shared JSON error schema."""
@@ -1165,12 +1175,9 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
         error="internal_error",
         detail=detail,
     )
-
 ```
 
----
-
-### api/main.py
+## api/main.py
 
 ```python
 """FastAPI application for Atticus."""
@@ -1196,7 +1203,7 @@ from .errors import (
 )
 from .middleware import RequestContextMiddleware
 from .rate_limit import RateLimiter
-from .routes import admin, chat, contact, eval, health, ingest
+from .routes import admin, chat, contact, eval, health, ingest, ui
 
 
 @asynccontextmanager
@@ -1251,12 +1258,10 @@ app.include_router(chat.router)
 app.include_router(admin.router)
 app.include_router(eval.router)
 app.include_router(contact.router)
-
+app.include_router(ui.router)
 ```
 
----
-
-### api/middleware.py
+## api/middleware.py
 
 ```python
 """Custom middleware for request IDs and logging."""
@@ -1272,7 +1277,10 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
+from atticus.config import load_settings
 from atticus.logging import log_event
+
+from .rate_limit import RateLimiter
 
 
 class RequestContextMiddleware(BaseHTTPMiddleware):
@@ -1291,7 +1299,19 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         logger = getattr(request.app.state, "logger", None)
 
         limiter = getattr(request.app.state, "rate_limiter", None)
-        if limiter and request.url.path == "/ask":
+        if request.url.path == "/ask":
+            settings = load_settings()
+            if (
+                limiter is None
+                or limiter.limit != settings.rate_limit_requests
+                or limiter.window_seconds != settings.rate_limit_window_seconds
+            ):
+                limiter = RateLimiter(
+                    limit=settings.rate_limit_requests,
+                    window_seconds=settings.rate_limit_window_seconds,
+                )
+                request.app.state.rate_limiter = limiter
+            request.app.state.settings = settings
             identifier = (
                 request.headers.get("X-User-ID")
                 or request.headers.get("X-Forwarded-For")
@@ -1361,12 +1381,9 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
             )
 
         return response
-
 ```
 
----
-
-### api/rate_limit.py
+## api/rate_limit.py
 
 ```python
 """Simple in-memory rate limiter for API requests."""
@@ -1409,25 +1426,19 @@ class RateLimiter:
     def reset(self) -> None:
         self.blocked = 0
         self._buckets.clear()
-
 ```
 
----
-
-### api/routes/__init__.py
+## api/routes/__init__.py
 
 ```python
 """Route modules for Atticus API."""
 
-from . import admin, chat, eval, health, ingest
+from . import admin, chat, eval, health, ingest, ui
 
-__all__ = ["admin", "chat", "eval", "health", "ingest"]
-
+__all__ = ["admin", "chat", "eval", "health", "ingest", "ui"]
 ```
 
----
-
-### api/routes/admin.py
+## api/routes/admin.py
 
 ```python
 """Admin endpoints for dictionary and error logs."""
@@ -1583,12 +1594,9 @@ async def get_metrics_dashboard(
         recent_trace_ids=list(data.get("recent_trace_ids", [])),
         rate_limit=rate_limit,
     )
-
 ```
 
----
-
-### api/routes/chat.py
+## api/routes/chat.py
 
 ```python
 """Unified chat route returning the canonical ask response contract."""
@@ -1596,20 +1604,33 @@ async def get_metrics_dashboard(
 from __future__ import annotations
 
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, HTTPException, Request
 
 from atticus.logging import log_event
 from atticus.tokenization import count_tokens
 from retriever import answer_question
+from retriever.resolver import ModelResolution, ModelScope, resolve_models
+
+if TYPE_CHECKING:
+    from retriever.models import Citation
 
 from ..dependencies import LoggerDep, SettingsDep
-from ..schemas import AskRequest, AskResponse, AskSource
+from ..schemas import (
+    AskAnswer,
+    AskRequest,
+    AskResponse,
+    AskSource,
+    ClarificationOption,
+    ClarificationPayload,
+)
 
 router = APIRouter()
 _Q_PLACEHOLDERS = {"string", "test", "example"}
 _Q_MIN_LEN = 4
+_CLARIFICATION_MESSAGE = "Which model are you referring to? If you like, I can provide a list of product families that I can assist with."
 
 
 def _format_sources(citations: Iterable[AskSource]) -> list[str]:
@@ -1622,6 +1643,84 @@ def _format_sources(citations: Iterable[AskSource]) -> list[str]:
             desc += f" - {citation.heading}"
         sources.append(desc)
     return sources
+
+
+def _convert_citations(citations: Iterable[Citation]) -> list[AskSource]:
+    return [
+        AskSource(
+            chunkId=item.chunk_id,
+            path=item.source_path,
+            page=item.page_number,
+            heading=item.heading,
+            score=item.score,
+        )
+        for item in citations
+    ]
+
+
+def _build_answer_payloads(
+    question: str,
+    scopes: Sequence[ModelScope],
+    payload: AskRequest,
+    settings: SettingsDep,
+    logger: LoggerDep,
+) -> list[AskAnswer]:
+    answers: list[AskAnswer] = []
+    for scope in scopes:
+        filters = dict(payload.filters or {})
+        answer = answer_question(
+            question,
+            settings=settings,
+            filters=filters,
+            logger=logger,
+            top_k=payload.top_k,
+            context_hints=payload.context_hints,
+            product_family=scope.family_id or None,
+            family_label=scope.family_label or None,
+            model=scope.model,
+        )
+        ask_sources = _convert_citations(answer.citations)
+        answers.append(
+            AskAnswer(
+                answer=answer.response,
+                confidence=answer.confidence,
+                should_escalate=answer.should_escalate,
+                model=getattr(answer, "model", scope.model),
+                family=getattr(answer, "family", scope.family_id or None),
+                family_label=getattr(answer, "family_label", scope.family_label or None),
+                sources=ask_sources,
+            )
+        )
+    return answers
+
+
+def _aggregate_answer_text(answers: Sequence[AskAnswer]) -> str:
+    segments: list[str] = []
+    for entry in answers:
+        header_parts = [entry.model, entry.family_label or entry.family]
+        header = " · ".join(part for part in header_parts if part)
+        body = entry.answer.strip()
+        if header:
+            segments.append(f"### {header}\n\n{body}")
+        else:
+            segments.append(body)
+    return "\n\n".join(segment for segment in segments if segment).strip()
+
+
+def _clarification_response(resolution: ModelResolution, request_id: str) -> AskResponse:
+    options = [
+        ClarificationOption(id=option.id, label=option.label)
+        for option in resolution.clarification_options
+    ]
+    clarification = ClarificationPayload(message=_CLARIFICATION_MESSAGE, options=options)
+    return AskResponse(
+        request_id=request_id,
+        clarification=clarification,
+        sources=[],
+        answers=[],
+        confidence=0.0,
+        should_escalate=False,
+    )
 
 
 @router.post("/ask", response_model=AskResponse)
@@ -1639,47 +1738,77 @@ async def ask_endpoint(
             detail="Provide a real question (not a placeholder like 'string')",
         )
 
-    answer = answer_question(
-        question,
-        settings=settings,
-        filters=payload.filters,
-        logger=logger,
-        top_k=payload.top_k,
-        context_hints=payload.context_hints,
-    )
+    resolution = resolve_models(question, payload.models)
 
     request_id = getattr(request.state, "request_id", "unknown")
-    request.state.confidence = answer.confidence
-    request.state.escalate = answer.should_escalate
+
+    if resolution.needs_clarification:
+        response = _clarification_response(resolution, request_id)
+        request.state.confidence = 0.0
+        request.state.escalate = False
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        log_event(
+            logger,
+            "ask_endpoint_clarification",
+            request_id=request_id,
+            latency_ms=round(elapsed_ms, 2),
+        )
+        return response
+
+    scopes: Sequence[ModelScope]
+    if resolution.scopes:
+        scopes = resolution.scopes
+    else:
+        scopes = [ModelScope(family_id="", family_label="", model=None)]
+
+    answers = _build_answer_payloads(
+        question=question,
+        scopes=scopes,
+        payload=payload,
+        settings=settings,
+        logger=logger,
+    )
+
+    confidence_values = [entry.confidence for entry in answers if entry.confidence is not None]
+    aggregated_confidence = min(confidence_values) if confidence_values else 0.0
+    aggregated_escalation = any(entry.should_escalate for entry in answers)
+    flattened_sources = [source for entry in answers for source in entry.sources]
+    aggregated_answer = _aggregate_answer_text(answers)
+
+    request.state.confidence = aggregated_confidence
+    request.state.escalate = aggregated_escalation
+
     elapsed_ms = (time.perf_counter() - start) * 1000
 
-    sources = [
-        AskSource(
-            chunkId=item.chunk_id,
-            path=item.source_path,
-            page=item.page_number,
-            heading=item.heading,
-            score=item.score,
+    if len(answers) == 1:
+        primary = answers[0]
+        response = AskResponse(
+            answer=primary.answer,
+            confidence=primary.confidence,
+            should_escalate=primary.should_escalate,
+            request_id=request_id,
+            sources=primary.sources,
+            answers=list(answers),
         )
-        for item in answer.citations
-    ]
-
-    response = AskResponse(
-        answer=answer.response,
-        confidence=answer.confidence,
-        should_escalate=answer.should_escalate,
-        request_id=request_id,
-        sources=sources,
-    )
+    else:
+        response = AskResponse(
+            answer=aggregated_answer,
+            confidence=aggregated_confidence,
+            should_escalate=aggregated_escalation,
+            request_id=request_id,
+            sources=flattened_sources,
+            answers=list(answers),
+        )
 
     log_event(
         logger,
         "ask_endpoint_complete",
         request_id=request_id,
-        confidence=answer.confidence,
-        escalate=answer.should_escalate,
+        confidence=aggregated_confidence,
+        escalate=aggregated_escalation,
         latency_ms=round(elapsed_ms, 2),
         filters=payload.filters or {},
+        models=payload.models or [],
     )
 
     if getattr(settings, "verbose_logging", False):
@@ -1688,7 +1817,7 @@ async def ask_endpoint(
         except Exception:  # pragma: no cover - diagnostics only
             user_tokens = None
         try:
-            answer_tokens = count_tokens(answer.response or "")
+            answer_tokens = count_tokens(aggregated_answer or "")
         except Exception:  # pragma: no cover - diagnostics only
             answer_tokens = None
 
@@ -1696,9 +1825,9 @@ async def ask_endpoint(
         if getattr(settings, "trace_logging", False):
             trace = [
                 "received_question",
-                f"retrieved_citations={len(answer.citations)}",
-                f"confidence={float(answer.confidence):.3f}",
-                "escalate=true" if answer.should_escalate else "escalate=false",
+                f"resolved_scopes={len(scopes)}",
+                f"confidence={float(aggregated_confidence):.3f}",
+                "escalate=true" if aggregated_escalation else "escalate=false",
             ]
 
         log_event(
@@ -1706,9 +1835,9 @@ async def ask_endpoint(
             "chat_turn",
             request_id=request_id,
             question=question,
-            answer=answer.response,
-            sources=_format_sources(sources),
-            confidence=float(answer.confidence),
+            answer=aggregated_answer,
+            sources=_format_sources(flattened_sources),
+            confidence=float(aggregated_confidence),
             tokens={
                 "question": user_tokens,
                 "answer": answer_tokens,
@@ -1719,12 +1848,9 @@ async def ask_endpoint(
         )
 
     return response
-
 ```
 
----
-
-### api/routes/contact.py
+## api/routes/contact.py
 
 ```python
 """Contact escalation endpoint.
@@ -1828,12 +1954,9 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
         trace_id=trace_id or request_id,
     )
     return {"status": "accepted"}
-
 ```
 
----
-
-### api/routes/eval.py
+## api/routes/eval.py
 
 ```python
 """Evaluation API endpoint."""
@@ -1867,12 +1990,9 @@ async def run_eval(settings: SettingsDep, logger: LoggerDep) -> EvalResponse:
         summary_json=str(result.summary_json),
         summary_html=str(result.summary_html),
     )
-
 ```
 
----
-
-### api/routes/health.py
+## api/routes/health.py
 
 ```python
 """Health endpoints."""
@@ -1902,12 +2022,9 @@ async def health(settings: SettingsDep) -> HealthResponse:
             manifest.embedding_model_version if manifest else settings.embedding_model_version
         ),
     )
-
 ```
 
----
-
-### api/routes/ingest.py
+## api/routes/ingest.py
 
 ```python
 from __future__ import annotations
@@ -1950,12 +2067,58 @@ async def trigger_ingestion(
         embedding_model=summary.embedding_model,
         embedding_model_version=summary.embedding_model_version,
     )
-
 ```
 
----
+## api/routes/ui.py
 
-### api/schemas.py
+```python
+"""Lightweight HTML shell for test and health checks."""
+
+from __future__ import annotations
+
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
+
+router = APIRouter()
+
+_HTML_RESPONSE = """<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Atticus Admin Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 2rem;
+        line-height: 1.5;
+      }
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+      }
+      p {
+        margin: 0;
+        color: #475569;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Atticus</h1>
+    <p>The Atticus API is running. Use the Next.js frontend for the full experience.</p>
+  </body>
+</html>
+"""
+
+
+@router.get("/ui", response_class=HTMLResponse, include_in_schema=False)
+async def ui_landing() -> str:
+    """Serve a minimal HTML response that confirms the API is available."""
+
+    return _HTML_RESPONSE
+```
+
+## api/schemas.py
 
 ```python
 """Pydantic models for API payloads."""
@@ -2018,6 +2181,10 @@ class AskRequest(BaseModel):
         alias="topK",
         description="Override for the retrieval top-k window",
     )
+    models: list[str] | None = Field(
+        default=None,
+        description="Optional explicit models or families selected by the user",
+    )
 
 
 class AskSource(BaseModel):
@@ -2033,11 +2200,33 @@ class AskSource(BaseModel):
 
 
 class AskResponse(BaseModel):
+    answer: str | None = None
+    confidence: float | None = None
+    should_escalate: bool | None = None
+    request_id: str
+    sources: list[AskSource] | None = None
+    answers: list[AskAnswer] | None = None
+    clarification: ClarificationPayload | None = None
+
+
+class AskAnswer(BaseModel):
     answer: str
     confidence: float
     should_escalate: bool
-    request_id: str
+    model: str | None = None
+    family: str | None = None
+    family_label: str | None = None
     sources: list[AskSource]
+
+
+class ClarificationOption(BaseModel):
+    id: str
+    label: str
+
+
+class ClarificationPayload(BaseModel):
+    message: str
+    options: list[ClarificationOption]
 
 
 class EvalResponse(BaseModel):
@@ -2103,11 +2292,11 @@ class MetricsDashboard(BaseModel):
     recent_trace_ids: list[str]
     rate_limit: dict[str, int] | None = None
 
+
+AskResponse.model_rebuild()
 ```
 
----
-
-### api/utils.py
+## api/utils.py
 
 ```python
 """Utility helpers for API operations."""
@@ -2192,12 +2381,9 @@ def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:  # n
                 break
     sessions.reverse()
     return sessions
-
 ```
 
----
-
-### app/admin/page.tsx
+## app/admin/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -2380,12 +2566,9 @@ export default async function AdminPage() {
     </div>
   );
 }
-
 ```
 
----
-
-### app/api/admin/uncertain/[id]/approve/route.ts
+## app/api/admin/uncertain/[id]/approve/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -2498,12 +2681,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
 }
-
 ```
 
----
-
-### app/api/admin/uncertain/[id]/ask-followup/route.ts
+## app/api/admin/uncertain/[id]/ask-followup/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -2605,12 +2785,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
     auditLog: result.auditLog ?? [],
   });
 }
-
 ```
 
----
-
-### app/api/admin/uncertain/[id]/escalate/route.ts
+## app/api/admin/uncertain/[id]/escalate/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -2753,12 +2930,9 @@ export async function POST(request: Request, { params }: { params: { id: string 
     summary: result.summary ?? summary ?? null,
   });
 }
-
 ```
 
----
-
-### app/api/admin/uncertain/route.ts
+## app/api/admin/uncertain/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -2847,12 +3021,9 @@ function normalizeSources(value: Prisma.JsonValue | null): Array<Record<string, 
   }
   return normalized;
 }
-
 ```
 
----
-
-### app/api/ask/route.ts
+## app/api/ask/route.ts
 
 ```ts
 import { randomUUID } from "node:crypto";
@@ -2963,6 +3134,7 @@ export async function POST(request: Request) {
         filters: parsed.filters ?? undefined,
         contextHints: parsed.contextHints ?? undefined,
         topK: parsed.topK ?? undefined,
+        models: parsed.models ?? undefined,
       }),
     });
   } catch (error) {
@@ -3100,12 +3272,9 @@ export async function POST(request: Request) {
     },
   });
 }
-
 ```
 
----
-
-### app/api/auth/[...nextauth]/route.ts
+## app/api/auth/[...nextauth]/route.ts
 
 ```ts
 import NextAuth from "next-auth/next";
@@ -3114,12 +3283,9 @@ import { authOptions } from "@/lib/auth";
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
 ```
 
----
-
-### app/api/glossary/[id]/route.ts
+## app/api/glossary/[id]/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -3259,12 +3425,9 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
     return handleGlossaryError(error);
   }
 }
-
 ```
 
----
-
-### app/api/glossary/route.ts
+## app/api/glossary/route.ts
 
 ```ts
 import { NextResponse } from "next/server";
@@ -3388,12 +3551,9 @@ export async function POST(request: Request) {
     return handleGlossaryError(error);
   }
 }
-
 ```
 
----
-
-### app/api/glossary/utils.ts
+## app/api/glossary/utils.ts
 
 ```ts
 import { randomUUID } from "node:crypto";
@@ -3516,12 +3676,9 @@ export function handleGlossaryError(error: unknown) {
   }
   return buildError(500, "internal_error", "An internal error occurred.");
 }
-
 ```
 
----
-
-### app/apps/page.tsx
+## app/apps/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3603,12 +3760,33 @@ export default function AppsPage() {
     </div>
   );
 }
-
 ```
 
----
+## app/components.json
 
-### app/contact/page.tsx
+```json
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "radii": {
+    "default": "0.5rem",
+    "sm": "0.375rem",
+    "lg": "0.75rem"
+  },
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/app/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
+}
+```
+
+## app/contact/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3687,12 +3865,39 @@ export default function ContactPage() {
     </div>
   );
 }
-
 ```
 
----
+## app/eslint.config.mjs
 
-### app/globals.css
+```javascript
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
+];
+
+export default eslintConfig;
+```
+
+## app/globals.css
 
 ```css
 @tailwind base;
@@ -3718,12 +3923,9 @@ button {
 ::selection {
   @apply bg-indigo-500 text-white;
 }
-
 ```
 
----
-
-### app/layout.tsx
+## app/layout.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3757,12 +3959,61 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     </html>
   );
 }
-
 ```
 
----
+## app/next.config.ts
 
-### app/page.tsx
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default nextConfig;
+```
+
+## app/package.json
+
+```json
+{
+  "name": "app",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.2",
+    "autoprefixer": "^10.4.21",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.545.0",
+    "next": "15.5.4",
+    "postcss": "^8.5.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.4.15",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20.19.20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5"
+  }
+}
+```
+
+## app/page.tsx
 
 ```tsx
 import { PageHeader } from "@/components/page-header";
@@ -3781,12 +4032,4045 @@ export default function HomePage() {
     </div>
   );
 }
-
 ```
 
----
+## app/pnpm-lock.yaml
 
-### app/providers.tsx
+```yaml
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.90.2
+        version: 5.90.2(react@19.1.0)
+      autoprefixer:
+        specifier: ^10.4.21
+        version: 10.4.21(postcss@8.5.6)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      lucide-react:
+        specifier: ^0.545.0
+        version: 0.545.0(react@19.1.0)
+      next:
+        specifier: 15.5.4
+        version: 15.5.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.3.1
+      tailwindcss:
+        specifier: ^3.4.15
+        version: 3.4.15
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.15)
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
+    devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3
+        version: 3.3.1
+      '@types/node':
+        specifier: ^20.19.20
+        version: 20.19.20
+      '@types/react':
+        specifier: ^19
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.1(@types/react@19.2.2)
+      eslint:
+        specifier: ^9
+        version: 9.37.0(jiti@2.6.1)
+      eslint-config-next:
+        specifier: 15.5.4
+        version: 15.5.4(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+packages:
+
+  '@alloc/quick-lru@5.2.0':
+    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
+    engines: {node: '>=10'}
+
+  '@emnapi/core@1.5.0':
+    resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
+
+  '@emnapi/runtime@1.5.0':
+    resolution: {integrity: sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==}
+
+  '@emnapi/wasi-threads@1.1.0':
+    resolution: {integrity: sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==}
+
+  '@eslint-community/eslint-utils@4.9.0':
+    resolution: {integrity: sha512-ayVFHdtZ+hsq1t2Dy24wCmGXGe4q9Gu3smhLYALJrr473ZH27MsnSL+LKUlimp4BWJqMDMLmPpx/Q9R3OAlL4g==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+
+  '@eslint-community/regexpp@4.12.1':
+    resolution: {integrity: sha512-CCZCDJuduB9OUkFkY2IgppNZMi2lBQgD2qzwXkEia16cge2pijY/aXi96CJMquDMn3nJdlPV1A5KrJEXwfLNzQ==}
+    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+
+  '@eslint/config-array@0.21.0':
+    resolution: {integrity: sha512-ENIdc4iLu0d93HeYirvKmrzshzofPw6VkZRKQGe9Nv46ZnWUzcF1xV01dcvEg/1wXUR61OmmlSfyeyO7EvjLxQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/config-helpers@0.4.0':
+    resolution: {integrity: sha512-WUFvV4WoIwW8Bv0KeKCIIEgdSiFOsulyN0xrMu+7z43q/hkOLXjvb5u7UC9jDxvRzcrbEmuZBX5yJZz1741jog==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/core@0.16.0':
+    resolution: {integrity: sha512-nmC8/totwobIiFcGkDza3GIKfAw1+hLiYVrh3I1nIomQ8PEr5cxg34jnkmGawul/ep52wGRAcyeDCNtWKSOj4Q==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/eslintrc@3.3.1':
+    resolution: {integrity: sha512-gtF186CXhIl1p4pJNGZw8Yc6RlshoePRvE0X91oPGb3vZ8pM3qOS9W9NGPat9LziaBV7XrJWGylNQXkGcnM3IQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.37.0':
+    resolution: {integrity: sha512-jaS+NJ+hximswBG6pjNX0uEJZkrT0zwpVi3BA3vX22aFGjJjmgSTSmPpZCRKmoBL5VY/M6p0xsSJx7rk7sy5gg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/object-schema@2.1.6':
+    resolution: {integrity: sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/plugin-kit@0.4.0':
+    resolution: {integrity: sha512-sB5uyeq+dwCWyPi31B2gQlVlo+j5brPlWx4yZBrEaRo/nhdDE8Xke1gsGgtiBdaBTxuTkceLVuVt/pclrasb0A==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@humanfs/core@0.19.1':
+    resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
+    engines: {node: '>=18.18.0'}
+
+  '@humanfs/node@0.16.7':
+    resolution: {integrity: sha512-/zUx+yOsIrG4Y43Eh2peDeKCxlRt/gET6aHfaKpuq267qXdYDFViVHfMaLyygZOnl0kGWxFIgsBy8QFuTLUXEQ==}
+    engines: {node: '>=18.18.0'}
+
+  '@humanwhocodes/module-importer@1.0.1':
+    resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
+    engines: {node: '>=12.22'}
+
+  '@humanwhocodes/retry@0.4.3':
+    resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
+    engines: {node: '>=18.18'}
+
+  '@img/colour@1.0.0':
+    resolution: {integrity: sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw==}
+    engines: {node: '>=18'}
+
+  '@img/sharp-darwin-arm64@0.34.4':
+    resolution: {integrity: sha512-sitdlPzDVyvmINUdJle3TNHl+AG9QcwiAMsXmccqsCOMZNIdW2/7S26w0LyU8euiLVzFBL3dXPwVCq/ODnf2vA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@img/sharp-darwin-x64@0.34.4':
+    resolution: {integrity: sha512-rZheupWIoa3+SOdF/IcUe1ah4ZDpKBGWcsPX6MT0lYniH9micvIU7HQkYTfrx5Xi8u+YqwLtxC/3vl8TQN6rMg==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [x64]
+    os: [darwin]
+
+  '@img/sharp-libvips-darwin-arm64@1.2.3':
+    resolution: {integrity: sha512-QzWAKo7kpHxbuHqUC28DZ9pIKpSi2ts2OJnoIGI26+HMgq92ZZ4vk8iJd4XsxN+tYfNJxzH6W62X5eTcsBymHw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@img/sharp-libvips-darwin-x64@1.2.3':
+    resolution: {integrity: sha512-Ju+g2xn1E2AKO6YBhxjj+ACcsPQRHT0bhpglxcEf+3uyPY+/gL8veniKoo96335ZaPo03bdDXMv0t+BBFAbmRA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@img/sharp-libvips-linux-arm64@1.2.3':
+    resolution: {integrity: sha512-I4RxkXU90cpufazhGPyVujYwfIm9Nk1QDEmiIsaPwdnm013F7RIceaCc87kAH+oUB1ezqEvC6ga4m7MSlqsJvQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@img/sharp-libvips-linux-arm@1.2.3':
+    resolution: {integrity: sha512-x1uE93lyP6wEwGvgAIV0gP6zmaL/a0tGzJs/BIDDG0zeBhMnuUPm7ptxGhUbcGs4okDJrk4nxgrmxpib9g6HpA==}
+    cpu: [arm]
+    os: [linux]
+
+  '@img/sharp-libvips-linux-ppc64@1.2.3':
+    resolution: {integrity: sha512-Y2T7IsQvJLMCBM+pmPbM3bKT/yYJvVtLJGfCs4Sp95SjvnFIjynbjzsa7dY1fRJX45FTSfDksbTp6AGWudiyCg==}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@img/sharp-libvips-linux-s390x@1.2.3':
+    resolution: {integrity: sha512-RgWrs/gVU7f+K7P+KeHFaBAJlNkD1nIZuVXdQv6S+fNA6syCcoboNjsV2Pou7zNlVdNQoQUpQTk8SWDHUA3y/w==}
+    cpu: [s390x]
+    os: [linux]
+
+  '@img/sharp-libvips-linux-x64@1.2.3':
+    resolution: {integrity: sha512-3JU7LmR85K6bBiRzSUc/Ff9JBVIFVvq6bomKE0e63UXGeRw2HPVEjoJke1Yx+iU4rL7/7kUjES4dZ/81Qjhyxg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@img/sharp-libvips-linuxmusl-arm64@1.2.3':
+    resolution: {integrity: sha512-F9q83RZ8yaCwENw1GieztSfj5msz7GGykG/BA+MOUefvER69K/ubgFHNeSyUu64amHIYKGDs4sRCMzXVj8sEyw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@img/sharp-libvips-linuxmusl-x64@1.2.3':
+    resolution: {integrity: sha512-U5PUY5jbc45ANM6tSJpsgqmBF/VsL6LnxJmIf11kB7J5DctHgqm0SkuXzVWtIY90GnJxKnC/JT251TDnk1fu/g==}
+    cpu: [x64]
+    os: [linux]
+
+  '@img/sharp-linux-arm64@0.34.4':
+    resolution: {integrity: sha512-YXU1F/mN/Wu786tl72CyJjP/Ngl8mGHN1hST4BGl+hiW5jhCnV2uRVTNOcaYPs73NeT/H8Upm3y9582JVuZHrQ==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm64]
+    os: [linux]
+
+  '@img/sharp-linux-arm@0.34.4':
+    resolution: {integrity: sha512-Xyam4mlqM0KkTHYVSuc6wXRmM7LGN0P12li03jAnZ3EJWZqj83+hi8Y9UxZUbxsgsK1qOEwg7O0Bc0LjqQVtxA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm]
+    os: [linux]
+
+  '@img/sharp-linux-ppc64@0.34.4':
+    resolution: {integrity: sha512-F4PDtF4Cy8L8hXA2p3TO6s4aDt93v+LKmpcYFLAVdkkD3hSxZzee0rh6/+94FpAynsuMpLX5h+LRsSG3rIciUQ==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@img/sharp-linux-s390x@0.34.4':
+    resolution: {integrity: sha512-qVrZKE9Bsnzy+myf7lFKvng6bQzhNUAYcVORq2P7bDlvmF6u2sCmK2KyEQEBdYk+u3T01pVsPrkj943T1aJAsw==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [s390x]
+    os: [linux]
+
+  '@img/sharp-linux-x64@0.34.4':
+    resolution: {integrity: sha512-ZfGtcp2xS51iG79c6Vhw9CWqQC8l2Ot8dygxoDoIQPTat/Ov3qAa8qpxSrtAEAJW+UjTXc4yxCjNfxm4h6Xm2A==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [x64]
+    os: [linux]
+
+  '@img/sharp-linuxmusl-arm64@0.34.4':
+    resolution: {integrity: sha512-8hDVvW9eu4yHWnjaOOR8kHVrew1iIX+MUgwxSuH2XyYeNRtLUe4VNioSqbNkB7ZYQJj9rUTT4PyRscyk2PXFKA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm64]
+    os: [linux]
+
+  '@img/sharp-linuxmusl-x64@0.34.4':
+    resolution: {integrity: sha512-lU0aA5L8QTlfKjpDCEFOZsTYGn3AEiO6db8W5aQDxj0nQkVrZWmN3ZP9sYKWJdtq3PWPhUNlqehWyXpYDcI9Sg==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [x64]
+    os: [linux]
+
+  '@img/sharp-wasm32@0.34.4':
+    resolution: {integrity: sha512-33QL6ZO/qpRyG7woB/HUALz28WnTMI2W1jgX3Nu2bypqLIKx/QKMILLJzJjI+SIbvXdG9fUnmrxR7vbi1sTBeA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [wasm32]
+
+  '@img/sharp-win32-arm64@0.34.4':
+    resolution: {integrity: sha512-2Q250do/5WXTwxW3zjsEuMSv5sUU4Tq9VThWKlU2EYLm4MB7ZeMwF+SFJutldYODXF6jzc6YEOC+VfX0SZQPqA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm64]
+    os: [win32]
+
+  '@img/sharp-win32-ia32@0.34.4':
+    resolution: {integrity: sha512-3ZeLue5V82dT92CNL6rsal6I2weKw1cYu+rGKm8fOCCtJTR2gYeUfY3FqUnIJsMUPIH68oS5jmZ0NiJ508YpEw==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [ia32]
+    os: [win32]
+
+  '@img/sharp-win32-x64@0.34.4':
+    resolution: {integrity: sha512-xIyj4wpYs8J18sVN3mSQjwrw7fKUqRw+Z5rnHNCy5fYTxigBz81u5mOMPmFumwjcn8+ld1ppptMBCLic1nz6ig==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [x64]
+    os: [win32]
+
+  '@isaacs/cliui@8.0.2':
+    resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
+    engines: {node: '>=12'}
+
+  '@jridgewell/gen-mapping@0.3.13':
+    resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
+
+  '@jridgewell/resolve-uri@3.1.2':
+    resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
+    engines: {node: '>=6.0.0'}
+
+  '@jridgewell/sourcemap-codec@1.5.5':
+    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+
+  '@jridgewell/trace-mapping@0.3.31':
+    resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@napi-rs/wasm-runtime@0.2.12':
+    resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
+
+  '@next/env@15.5.4':
+    resolution: {integrity: sha512-27SQhYp5QryzIT5uO8hq99C69eLQ7qkzkDPsk3N+GuS2XgOgoYEeOav7Pf8Tn4drECOVDsDg8oj+/DVy8qQL2A==}
+
+  '@next/eslint-plugin-next@15.5.4':
+    resolution: {integrity: sha512-SR1vhXNNg16T4zffhJ4TS7Xn7eq4NfKfcOsRwea7RIAHrjRpI9ALYbamqIJqkAhowLlERffiwk0FMvTLNdnVtw==}
+
+  '@next/swc-darwin-arm64@15.5.4':
+    resolution: {integrity: sha512-nopqz+Ov6uvorej8ndRX6HlxCYWCO3AHLfKK2TYvxoSB2scETOcfm/HSS3piPqc3A+MUgyHoqE6je4wnkjfrOA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@next/swc-darwin-x64@15.5.4':
+    resolution: {integrity: sha512-QOTCFq8b09ghfjRJKfb68kU9k2K+2wsC4A67psOiMn849K9ZXgCSRQr0oVHfmKnoqCbEmQWG1f2h1T2vtJJ9mA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@next/swc-linux-arm64-gnu@15.5.4':
+    resolution: {integrity: sha512-eRD5zkts6jS3VfE/J0Kt1VxdFqTnMc3QgO5lFE5GKN3KDI/uUpSyK3CjQHmfEkYR4wCOl0R0XrsjpxfWEA++XA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@next/swc-linux-arm64-musl@15.5.4':
+    resolution: {integrity: sha512-TOK7iTxmXFc45UrtKqWdZ1shfxuL4tnVAOuuJK4S88rX3oyVV4ZkLjtMT85wQkfBrOOvU55aLty+MV8xmcJR8A==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@next/swc-linux-x64-gnu@15.5.4':
+    resolution: {integrity: sha512-7HKolaj+481FSW/5lL0BcTkA4Ueam9SPYWyN/ib/WGAFZf0DGAN8frNpNZYFHtM4ZstrHZS3LY3vrwlIQfsiMA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@next/swc-linux-x64-musl@15.5.4':
+    resolution: {integrity: sha512-nlQQ6nfgN0nCO/KuyEUwwOdwQIGjOs4WNMjEUtpIQJPR2NUfmGpW2wkJln1d4nJ7oUzd1g4GivH5GoEPBgfsdw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@next/swc-win32-arm64-msvc@15.5.4':
+    resolution: {integrity: sha512-PcR2bN7FlM32XM6eumklmyWLLbu2vs+D7nJX8OAIoWy69Kef8mfiN4e8TUv2KohprwifdpFKPzIP1njuCjD0YA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@next/swc-win32-x64-msvc@15.5.4':
+    resolution: {integrity: sha512-1ur2tSHZj8Px/KMAthmuI9FMp/YFusMMGoRNJaRZMOlSkgvLjzosSdQI0cJAKogdHl3qXUQKL9MGaYvKwA7DXg==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@nodelib/fs.scandir@2.1.5':
+    resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
+    engines: {node: '>= 8'}
+
+  '@nodelib/fs.stat@2.0.5':
+    resolution: {integrity: sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==}
+    engines: {node: '>= 8'}
+
+  '@nodelib/fs.walk@1.2.8':
+    resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
+    engines: {node: '>= 8'}
+
+  '@nolyfill/is-core-module@1.0.39':
+    resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
+    engines: {node: '>=12.4.0'}
+
+  '@pkgjs/parseargs@0.11.0':
+    resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
+    engines: {node: '>=14'}
+
+  '@rtsao/scc@1.1.0':
+    resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
+
+  '@rushstack/eslint-patch@1.13.0':
+    resolution: {integrity: sha512-2ih5qGw5SZJ+2fLZxP6Lr6Na2NTIgPRL/7Kmyuw0uIyBQnuhQ8fi8fzUTd38eIQmqp+GYLC00cI6WgtqHxBwmw==}
+
+  '@swc/helpers@0.5.15':
+    resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@tanstack/query-core@5.90.2':
+    resolution: {integrity: sha512-k/TcR3YalnzibscALLwxeiLUub6jN5EDLwKDiO7q5f4ICEoptJ+n9+7vcEFy5/x/i6Q+Lb/tXrsKCggf5uQJXQ==}
+
+  '@tanstack/react-query@5.90.2':
+    resolution: {integrity: sha512-CLABiR+h5PYfOWr/z+vWFt5VsOA2ekQeRQBFSKlcoW6Ndx/f8rfyVmq4LbgOM4GG2qtxAxjLYLOpCNTYm4uKzw==}
+    peerDependencies:
+      react: ^18 || ^19
+
+  '@tybys/wasm-util@0.10.1':
+    resolution: {integrity: sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==}
+
+  '@types/estree@1.0.8':
+    resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+
+  '@types/json-schema@7.0.15':
+    resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/json5@0.0.29':
+    resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/node@20.19.20':
+    resolution: {integrity: sha512-2Q7WS25j4pS1cS8yw3d6buNCVJukOTeQ39bAnwR6sOJbaxvyCGebzTMypDFN82CxBLnl+lSWVdCCWbRY6y9yZQ==}
+
+  '@types/react-dom@19.2.1':
+    resolution: {integrity: sha512-/EEvYBdT3BflCWvTMO7YkYBHVE9Ci6XdqZciZANQgKpaiDRGOLIlRo91jbTNRQjgPFWVaRxcYc0luVNFitz57A==}
+    peerDependencies:
+      '@types/react': ^19.2.0
+
+  '@types/react@19.2.2':
+    resolution: {integrity: sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==}
+
+  '@typescript-eslint/eslint-plugin@8.46.0':
+    resolution: {integrity: sha512-hA8gxBq4ukonVXPy0OKhiaUh/68D0E88GSmtC1iAEnGaieuDi38LhS7jdCHRLi6ErJBNDGCzvh5EnzdPwUc0DA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      '@typescript-eslint/parser': ^8.46.0
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/parser@8.46.0':
+    resolution: {integrity: sha512-n1H6IcDhmmUEG7TNVSspGmiHHutt7iVKtZwRppD7e04wha5MrkV1h3pti9xQLcCMt6YWsncpoT0HMjkH1FNwWQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/project-service@8.46.0':
+    resolution: {integrity: sha512-OEhec0mH+U5Je2NZOeK1AbVCdm0ChyapAyTeXVIYTPXDJ3F07+cu87PPXcGoYqZ7M9YJVvFnfpGg1UmCIqM+QQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/scope-manager@8.46.0':
+    resolution: {integrity: sha512-lWETPa9XGcBes4jqAMYD9fW0j4n6hrPtTJwWDmtqgFO/4HF4jmdH/Q6wggTw5qIT5TXjKzbt7GsZUBnWoO3dqw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/tsconfig-utils@8.46.0':
+    resolution: {integrity: sha512-WrYXKGAHY836/N7zoK/kzi6p8tXFhasHh8ocFL9VZSAkvH956gfeRfcnhs3xzRy8qQ/dq3q44v1jvQieMFg2cw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/type-utils@8.46.0':
+    resolution: {integrity: sha512-hy+lvYV1lZpVs2jRaEYvgCblZxUoJiPyCemwbQZ+NGulWkQRy0HRPYAoef/CNSzaLt+MLvMptZsHXHlkEilaeg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/types@8.46.0':
+    resolution: {integrity: sha512-bHGGJyVjSE4dJJIO5yyEWt/cHyNwga/zXGJbJJ8TiO01aVREK6gCTu3L+5wrkb1FbDkQ+TKjMNe9R/QQQP9+rA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.46.0':
+    resolution: {integrity: sha512-ekDCUfVpAKWJbRfm8T1YRrCot1KFxZn21oV76v5Fj4tr7ELyk84OS+ouvYdcDAwZL89WpEkEj2DKQ+qg//+ucg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/utils@8.46.0':
+    resolution: {integrity: sha512-nD6yGWPj1xiOm4Gk0k6hLSZz2XkNXhuYmyIrOWcHoPuAhjT9i5bAG+xbWPgFeNR8HPHHtpNKdYUXJl/D3x7f5g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/visitor-keys@8.46.0':
+    resolution: {integrity: sha512-FrvMpAK+hTbFy7vH5j1+tMYHMSKLE6RzluFJlkFNKD0p9YsUT75JlBSmr5so3QRzvMwU5/bIEdeNrxm8du8l3Q==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@unrs/resolver-binding-android-arm-eabi@1.11.1':
+    resolution: {integrity: sha512-ppLRUgHVaGRWUx0R0Ut06Mjo9gBaBkg3v/8AxusGLhsIotbBLuRk51rAzqLC8gq6NyyAojEXglNjzf6R948DNw==}
+    cpu: [arm]
+    os: [android]
+
+  '@unrs/resolver-binding-android-arm64@1.11.1':
+    resolution: {integrity: sha512-lCxkVtb4wp1v+EoN+HjIG9cIIzPkX5OtM03pQYkG+U5O/wL53LC4QbIeazgiKqluGeVEeBlZahHalCaBvU1a2g==}
+    cpu: [arm64]
+    os: [android]
+
+  '@unrs/resolver-binding-darwin-arm64@1.11.1':
+    resolution: {integrity: sha512-gPVA1UjRu1Y/IsB/dQEsp2V1pm44Of6+LWvbLc9SDk1c2KhhDRDBUkQCYVWe6f26uJb3fOK8saWMgtX8IrMk3g==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@unrs/resolver-binding-darwin-x64@1.11.1':
+    resolution: {integrity: sha512-cFzP7rWKd3lZaCsDze07QX1SC24lO8mPty9vdP+YVa3MGdVgPmFc59317b2ioXtgCMKGiCLxJ4HQs62oz6GfRQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@unrs/resolver-binding-freebsd-x64@1.11.1':
+    resolution: {integrity: sha512-fqtGgak3zX4DCB6PFpsH5+Kmt/8CIi4Bry4rb1ho6Av2QHTREM+47y282Uqiu3ZRF5IQioJQ5qWRV6jduA+iGw==}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@unrs/resolver-binding-linux-arm-gnueabihf@1.11.1':
+    resolution: {integrity: sha512-u92mvlcYtp9MRKmP+ZvMmtPN34+/3lMHlyMj7wXJDeXxuM0Vgzz0+PPJNsro1m3IZPYChIkn944wW8TYgGKFHw==}
+    cpu: [arm]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-arm-musleabihf@1.11.1':
+    resolution: {integrity: sha512-cINaoY2z7LVCrfHkIcmvj7osTOtm6VVT16b5oQdS4beibX2SYBwgYLmqhBjA1t51CarSaBuX5YNsWLjsqfW5Cw==}
+    cpu: [arm]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-arm64-gnu@1.11.1':
+    resolution: {integrity: sha512-34gw7PjDGB9JgePJEmhEqBhWvCiiWCuXsL9hYphDF7crW7UgI05gyBAi6MF58uGcMOiOqSJ2ybEeCvHcq0BCmQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-arm64-musl@1.11.1':
+    resolution: {integrity: sha512-RyMIx6Uf53hhOtJDIamSbTskA99sPHS96wxVE/bJtePJJtpdKGXO1wY90oRdXuYOGOTuqjT8ACccMc4K6QmT3w==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-ppc64-gnu@1.11.1':
+    resolution: {integrity: sha512-D8Vae74A4/a+mZH0FbOkFJL9DSK2R6TFPC9M+jCWYia/q2einCubX10pecpDiTmkJVUH+y8K3BZClycD8nCShA==}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-riscv64-gnu@1.11.1':
+    resolution: {integrity: sha512-frxL4OrzOWVVsOc96+V3aqTIQl1O2TjgExV4EKgRY09AJ9leZpEg8Ak9phadbuX0BA4k8U5qtvMSQQGGmaJqcQ==}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-riscv64-musl@1.11.1':
+    resolution: {integrity: sha512-mJ5vuDaIZ+l/acv01sHoXfpnyrNKOk/3aDoEdLO/Xtn9HuZlDD6jKxHlkN8ZhWyLJsRBxfv9GYM2utQ1SChKew==}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-s390x-gnu@1.11.1':
+    resolution: {integrity: sha512-kELo8ebBVtb9sA7rMe1Cph4QHreByhaZ2QEADd9NzIQsYNQpt9UkM9iqr2lhGr5afh885d/cB5QeTXSbZHTYPg==}
+    cpu: [s390x]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-x64-gnu@1.11.1':
+    resolution: {integrity: sha512-C3ZAHugKgovV5YvAMsxhq0gtXuwESUKc5MhEtjBpLoHPLYM+iuwSj3lflFwK3DPm68660rZ7G8BMcwSro7hD5w==}
+    cpu: [x64]
+    os: [linux]
+
+  '@unrs/resolver-binding-linux-x64-musl@1.11.1':
+    resolution: {integrity: sha512-rV0YSoyhK2nZ4vEswT/QwqzqQXw5I6CjoaYMOX0TqBlWhojUf8P94mvI7nuJTeaCkkds3QE4+zS8Ko+GdXuZtA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@unrs/resolver-binding-wasm32-wasi@1.11.1':
+    resolution: {integrity: sha512-5u4RkfxJm+Ng7IWgkzi3qrFOvLvQYnPBmjmZQ8+szTK/b31fQCnleNl1GgEt7nIsZRIf5PLhPwT0WM+q45x/UQ==}
+    engines: {node: '>=14.0.0'}
+    cpu: [wasm32]
+
+  '@unrs/resolver-binding-win32-arm64-msvc@1.11.1':
+    resolution: {integrity: sha512-nRcz5Il4ln0kMhfL8S3hLkxI85BXs3o8EYoattsJNdsX4YUU89iOkVn7g0VHSRxFuVMdM4Q1jEpIId1Ihim/Uw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@unrs/resolver-binding-win32-ia32-msvc@1.11.1':
+    resolution: {integrity: sha512-DCEI6t5i1NmAZp6pFonpD5m7i6aFrpofcp4LA2i8IIq60Jyo28hamKBxNrZcyOwVOZkgsRp9O2sXWBWP8MnvIQ==}
+    cpu: [ia32]
+    os: [win32]
+
+  '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
+    resolution: {integrity: sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==}
+    cpu: [x64]
+    os: [win32]
+
+  acorn-jsx@5.3.2:
+    resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
+    peerDependencies:
+      acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
+
+  acorn@8.15.0:
+    resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  ajv@6.12.6:
+    resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
+
+  ansi-regex@5.0.1:
+    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
+    engines: {node: '>=8'}
+
+  ansi-regex@6.2.2:
+    resolution: {integrity: sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg==}
+    engines: {node: '>=12'}
+
+  ansi-styles@4.3.0:
+    resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
+    engines: {node: '>=8'}
+
+  ansi-styles@6.2.3:
+    resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
+    engines: {node: '>=12'}
+
+  any-promise@1.3.0:
+    resolution: {integrity: sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==}
+
+  anymatch@3.1.3:
+    resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
+    engines: {node: '>= 8'}
+
+  arg@5.0.2:
+    resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
+
+  argparse@2.0.1:
+    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  aria-query@5.3.2:
+    resolution: {integrity: sha512-COROpnaoap1E2F000S62r6A60uHZnmlvomhfyT2DlTcrY1OrBKn2UhH7qn5wTC9zMvD0AY7csdPSNwKP+7WiQw==}
+    engines: {node: '>= 0.4'}
+
+  array-buffer-byte-length@1.0.2:
+    resolution: {integrity: sha512-LHE+8BuR7RYGDKvnrmcuSq3tDcKv9OFEXQt/HpbZhY7V6h0zlUXutnAD82GiFx9rdieCMjkvtcsPqBwgUl1Iiw==}
+    engines: {node: '>= 0.4'}
+
+  array-includes@3.1.9:
+    resolution: {integrity: sha512-FmeCCAenzH0KH381SPT5FZmiA/TmpndpcaShhfgEN9eCVjnFBqq3l1xrI42y8+PPLI6hypzou4GXw00WHmPBLQ==}
+    engines: {node: '>= 0.4'}
+
+  array.prototype.findlast@1.2.5:
+    resolution: {integrity: sha512-CVvd6FHg1Z3POpBLxO6E6zr+rSKEQ9L6rZHAaY7lLfhKsWYUBBOuMs0e9o24oopj6H+geRCX0YJ+TJLBK2eHyQ==}
+    engines: {node: '>= 0.4'}
+
+  array.prototype.findlastindex@1.2.6:
+    resolution: {integrity: sha512-F/TKATkzseUExPlfvmwQKGITM3DGTK+vkAsCZoDc5daVygbJBnjEUCbgkAvVFsgfXfX4YIqZ/27G3k3tdXrTxQ==}
+    engines: {node: '>= 0.4'}
+
+  array.prototype.flat@1.3.3:
+    resolution: {integrity: sha512-rwG/ja1neyLqCuGZ5YYrznA62D4mZXg0i1cIskIUKSiqF3Cje9/wXAls9B9s1Wa2fomMsIv8czB8jZcPmxCXFg==}
+    engines: {node: '>= 0.4'}
+
+  array.prototype.flatmap@1.3.3:
+    resolution: {integrity: sha512-Y7Wt51eKJSyi80hFrJCePGGNo5ktJCslFuboqJsbf57CCPcm5zztluPlc4/aD8sWsKvlwatezpV4U1efk8kpjg==}
+    engines: {node: '>= 0.4'}
+
+  array.prototype.tosorted@1.1.4:
+    resolution: {integrity: sha512-p6Fx8B7b7ZhL/gmUsAy0D15WhvDccw3mnGNbZpi3pmeJdxtWsj2jEaI4Y6oo3XiHfzuSgPwKc04MYt6KgvC/wA==}
+    engines: {node: '>= 0.4'}
+
+  arraybuffer.prototype.slice@1.0.4:
+    resolution: {integrity: sha512-BNoCY6SXXPQ7gF2opIP4GBE+Xw7U+pHMYKuzjgCN3GwiaIR09UUeKfheyIry77QtrCBlC0KK0q5/TER/tYh3PQ==}
+    engines: {node: '>= 0.4'}
+
+  ast-types-flow@0.0.8:
+    resolution: {integrity: sha512-OH/2E5Fg20h2aPrbe+QL8JZQFko0YZaF+j4mnQ7BGhfavO7OpSLa8a0y9sBwomHdSbkhTS8TQNayBfnW5DwbvQ==}
+
+  async-function@1.0.0:
+    resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
+    engines: {node: '>= 0.4'}
+
+  autoprefixer@10.4.21:
+    resolution: {integrity: sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==}
+    engines: {node: ^10 || ^12 || >=14}
+    hasBin: true
+    peerDependencies:
+      postcss: ^8.1.0
+
+  available-typed-arrays@1.0.7:
+    resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
+    engines: {node: '>= 0.4'}
+
+  axe-core@4.11.0:
+    resolution: {integrity: sha512-ilYanEU8vxxBexpJd8cWM4ElSQq4QctCLKih0TSfjIfCQTeyH/6zVrmIJfLPrKTKJRbiG+cfnZbQIjAlJmF1jQ==}
+    engines: {node: '>=4'}
+
+  axobject-query@4.1.0:
+    resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
+    engines: {node: '>= 0.4'}
+
+  balanced-match@1.0.2:
+    resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+
+  baseline-browser-mapping@2.8.15:
+    resolution: {integrity: sha512-qsJ8/X+UypqxHXN75M7dF88jNK37dLBRW7LeUzCPz+TNs37G8cfWy9nWzS+LS//g600zrt2le9KuXt0rWfDz5Q==}
+    hasBin: true
+
+  binary-extensions@2.3.0:
+    resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
+    engines: {node: '>=8'}
+
+  brace-expansion@1.1.12:
+    resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
+
+  brace-expansion@2.0.2:
+    resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
+
+  braces@3.0.3:
+    resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
+    engines: {node: '>=8'}
+
+  browserslist@4.26.3:
+    resolution: {integrity: sha512-lAUU+02RFBuCKQPj/P6NgjlbCnLBMp4UtgTx7vNHd3XSIJF87s9a5rA3aH2yw3GS9DqZAUbOtZdCCiZeVRqt0w==}
+    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
+    hasBin: true
+
+  call-bind-apply-helpers@1.0.2:
+    resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
+    engines: {node: '>= 0.4'}
+
+  call-bind@1.0.8:
+    resolution: {integrity: sha512-oKlSFMcMwpUg2ednkhQ454wfWiU/ul3CkJe/PEHcTKuiX6RpbehUiFMXu13HalGZxfUwCQzZG747YXBn1im9ww==}
+    engines: {node: '>= 0.4'}
+
+  call-bound@1.0.4:
+    resolution: {integrity: sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==}
+    engines: {node: '>= 0.4'}
+
+  callsites@3.1.0:
+    resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
+    engines: {node: '>=6'}
+
+  camelcase-css@2.0.1:
+    resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
+    engines: {node: '>= 6'}
+
+  caniuse-lite@1.0.30001749:
+    resolution: {integrity: sha512-0rw2fJOmLfnzCRbkm8EyHL8SvI2Apu5UbnQuTsJ0ClgrH8hcwFooJ1s5R0EP8o8aVrFu8++ae29Kt9/gZAZp/Q==}
+
+  chalk@4.1.2:
+    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+    engines: {node: '>=10'}
+
+  chokidar@3.6.0:
+    resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
+    engines: {node: '>= 8.10.0'}
+
+  client-only@0.0.1:
+    resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
+
+  clsx@2.1.1:
+    resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
+    engines: {node: '>=6'}
+
+  color-convert@2.0.1:
+    resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
+    engines: {node: '>=7.0.0'}
+
+  color-name@1.1.4:
+    resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  commander@4.1.1:
+    resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
+    engines: {node: '>= 6'}
+
+  concat-map@0.0.1:
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  cross-spawn@7.0.6:
+    resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
+    engines: {node: '>= 8'}
+
+  cssesc@3.0.0:
+    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
+    engines: {node: '>=4'}
+    hasBin: true
+
+  csstype@3.1.3:
+    resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  damerau-levenshtein@1.0.8:
+    resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
+
+  data-view-buffer@1.0.2:
+    resolution: {integrity: sha512-EmKO5V3OLXh1rtK2wgXRansaK1/mtVdTUEiEI0W8RkvgT05kfxaH29PliLnpLP73yYO6142Q72QNa8Wx/A5CqQ==}
+    engines: {node: '>= 0.4'}
+
+  data-view-byte-length@1.0.2:
+    resolution: {integrity: sha512-tuhGbE6CfTM9+5ANGf+oQb72Ky/0+s3xKUpHvShfiz2RxMFgFPjsXuRLBVMtvMs15awe45SRb83D6wH4ew6wlQ==}
+    engines: {node: '>= 0.4'}
+
+  data-view-byte-offset@1.0.1:
+    resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
+    engines: {node: '>= 0.4'}
+
+  debug@3.2.7:
+    resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
+  debug@4.4.3:
+    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
+  deep-is@0.1.4:
+    resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+
+  define-data-property@1.1.4:
+    resolution: {integrity: sha512-rBMvIzlpA8v6E+SJZoo++HAYqsLrkg7MSfIinMPFhmkorw7X+dOXVJQs+QT69zGkzMyfDnIMN2Wid1+NbL3T+A==}
+    engines: {node: '>= 0.4'}
+
+  define-properties@1.2.1:
+    resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
+    engines: {node: '>= 0.4'}
+
+  detect-libc@2.1.2:
+    resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
+    engines: {node: '>=8'}
+
+  didyoumean@1.2.2:
+    resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
+
+  dlv@1.1.3:
+    resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
+
+  doctrine@2.1.0:
+    resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
+    engines: {node: '>=0.10.0'}
+
+  dunder-proto@1.0.1:
+    resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
+    engines: {node: '>= 0.4'}
+
+  eastasianwidth@0.2.0:
+    resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+
+  electron-to-chromium@1.5.234:
+    resolution: {integrity: sha512-RXfEp2x+VRYn8jbKfQlRImzoJU01kyDvVPBmG39eU2iuRVhuS6vQNocB8J0/8GrIMLnPzgz4eW6WiRnJkTuNWg==}
+
+  emoji-regex@8.0.0:
+    resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
+
+  emoji-regex@9.2.2:
+    resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+
+  es-abstract@1.24.0:
+    resolution: {integrity: sha512-WSzPgsdLtTcQwm4CROfS5ju2Wa1QQcVeT37jFjYzdFz1r9ahadC8B8/a4qxJxM+09F18iumCdRmlr96ZYkQvEg==}
+    engines: {node: '>= 0.4'}
+
+  es-define-property@1.0.1:
+    resolution: {integrity: sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==}
+    engines: {node: '>= 0.4'}
+
+  es-errors@1.3.0:
+    resolution: {integrity: sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==}
+    engines: {node: '>= 0.4'}
+
+  es-iterator-helpers@1.2.1:
+    resolution: {integrity: sha512-uDn+FE1yrDzyC0pCo961B2IHbdM8y/ACZsKD4dG6WqrjV53BADjwa7D+1aom2rsNVfLyDgU/eigvlJGJ08OQ4w==}
+    engines: {node: '>= 0.4'}
+
+  es-object-atoms@1.1.1:
+    resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
+    engines: {node: '>= 0.4'}
+
+  es-set-tostringtag@2.1.0:
+    resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
+    engines: {node: '>= 0.4'}
+
+  es-shim-unscopables@1.1.0:
+    resolution: {integrity: sha512-d9T8ucsEhh8Bi1woXCf+TIKDIROLG5WCkxg8geBCbvk22kzwC5G2OnXVMO6FUsvQlgUUXQ2itephWDLqDzbeCw==}
+    engines: {node: '>= 0.4'}
+
+  es-to-primitive@1.3.0:
+    resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
+    engines: {node: '>= 0.4'}
+
+  escalade@3.2.0:
+    resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
+    engines: {node: '>=6'}
+
+  escape-string-regexp@4.0.0:
+    resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
+    engines: {node: '>=10'}
+
+  eslint-config-next@15.5.4:
+    resolution: {integrity: sha512-BzgVVuT3kfJes8i2GHenC1SRJ+W3BTML11lAOYFOOPzrk2xp66jBOAGEFRw+3LkYCln5UzvFsLhojrshb5Zfaw==}
+    peerDependencies:
+      eslint: ^7.23.0 || ^8.0.0 || ^9.0.0
+      typescript: '>=3.3.1'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  eslint-import-resolver-node@0.3.9:
+    resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
+
+  eslint-import-resolver-typescript@3.10.1:
+    resolution: {integrity: sha512-A1rHYb06zjMGAxdLSkN2fXPBwuSaQ0iO5M/hdyS0Ajj1VBaRp0sPD3dn1FhME3c/JluGFbwSxyCfqdSbtQLAHQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      eslint: '*'
+      eslint-plugin-import: '*'
+      eslint-plugin-import-x: '*'
+    peerDependenciesMeta:
+      eslint-plugin-import:
+        optional: true
+      eslint-plugin-import-x:
+        optional: true
+
+  eslint-module-utils@2.12.1:
+    resolution: {integrity: sha512-L8jSWTze7K2mTg0vos/RuLRS5soomksDPoJLXIslC7c8Wmut3bx7CPpJijDcBZtxQ5lrbUdM+s0OlNbz0DCDNw==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      '@typescript-eslint/parser': '*'
+      eslint: '*'
+      eslint-import-resolver-node: '*'
+      eslint-import-resolver-typescript: '*'
+      eslint-import-resolver-webpack: '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
+      eslint:
+        optional: true
+      eslint-import-resolver-node:
+        optional: true
+      eslint-import-resolver-typescript:
+        optional: true
+      eslint-import-resolver-webpack:
+        optional: true
+
+  eslint-plugin-import@2.32.0:
+    resolution: {integrity: sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      '@typescript-eslint/parser': '*'
+      eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9
+    peerDependenciesMeta:
+      '@typescript-eslint/parser':
+        optional: true
+
+  eslint-plugin-jsx-a11y@6.10.2:
+    resolution: {integrity: sha512-scB3nz4WmG75pV8+3eRUQOHZlNSUhFNq37xnpgRkCCELU3XMvXAxLk1eqWWyE22Ki4Q01Fnsw9BA3cJHDPgn2Q==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
+
+  eslint-plugin-react-hooks@5.2.0:
+    resolution: {integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
+
+  eslint-plugin-react@7.37.5:
+    resolution: {integrity: sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
+
+  eslint-scope@8.4.0:
+    resolution: {integrity: sha512-sNXOfKCn74rt8RICKMvJS7XKV/Xk9kA7DyJr8mJik3S7Cwgy3qlkkmyS2uQB3jiJg6VNdZd/pDBJu0nvG2NlTg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  eslint-visitor-keys@3.4.3:
+    resolution: {integrity: sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  eslint-visitor-keys@4.2.1:
+    resolution: {integrity: sha512-Uhdk5sfqcee/9H/rCOJikYz67o0a2Tw2hGRPOG2Y1R2dg7brRe1uG0yaNQDHu+TO/uQPF/5eCapvYSmHUjt7JQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  eslint@9.37.0:
+    resolution: {integrity: sha512-XyLmROnACWqSxiGYArdef1fItQd47weqB7iwtfr9JHwRrqIXZdcFMvvEcL9xHCmL0SNsOvF0c42lWyM1U5dgig==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    hasBin: true
+    peerDependencies:
+      jiti: '*'
+    peerDependenciesMeta:
+      jiti:
+        optional: true
+
+  espree@10.4.0:
+    resolution: {integrity: sha512-j6PAQ2uUr79PZhBjP5C5fhl8e39FmRnOjsD5lGnWrFU8i2G776tBK7+nP8KuQUTTyAZUwfQqXAgrVH5MbH9CYQ==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  esquery@1.6.0:
+    resolution: {integrity: sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==}
+    engines: {node: '>=0.10'}
+
+  esrecurse@4.3.0:
+    resolution: {integrity: sha512-KmfKL3b6G+RXvP8N1vr3Tq1kL/oCFgn2NYXEtqP8/L3pKapUA4G8cFVaoF3SU323CD4XypR/ffioHmkti6/Tag==}
+    engines: {node: '>=4.0'}
+
+  estraverse@5.3.0:
+    resolution: {integrity: sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==}
+    engines: {node: '>=4.0'}
+
+  esutils@2.0.3:
+    resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
+    engines: {node: '>=0.10.0'}
+
+  fast-deep-equal@3.1.3:
+    resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
+
+  fast-glob@3.3.1:
+    resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
+    engines: {node: '>=8.6.0'}
+
+  fast-glob@3.3.3:
+    resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
+    engines: {node: '>=8.6.0'}
+
+  fast-json-stable-stringify@2.1.0:
+    resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
+
+  fast-levenshtein@2.0.6:
+    resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  fastq@1.19.1:
+    resolution: {integrity: sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ==}
+
+  fdir@6.5.0:
+    resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
+
+  file-entry-cache@8.0.0:
+    resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
+    engines: {node: '>=16.0.0'}
+
+  fill-range@7.1.1:
+    resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
+    engines: {node: '>=8'}
+
+  find-up@5.0.0:
+    resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
+    engines: {node: '>=10'}
+
+  flat-cache@4.0.1:
+    resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
+    engines: {node: '>=16'}
+
+  flatted@3.3.3:
+    resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
+
+  for-each@0.3.5:
+    resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
+    engines: {node: '>= 0.4'}
+
+  foreground-child@3.3.1:
+    resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
+    engines: {node: '>=14'}
+
+  fraction.js@4.3.7:
+    resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
+
+  fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
+  function-bind@1.1.2:
+    resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  function.prototype.name@1.1.8:
+    resolution: {integrity: sha512-e5iwyodOHhbMr/yNrc7fDYG4qlbIvI5gajyzPnb5TCwyhjApznQh1BMFou9b30SevY43gCJKXycoCBjMbsuW0Q==}
+    engines: {node: '>= 0.4'}
+
+  functions-have-names@1.2.3:
+    resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
+
+  generator-function@2.0.1:
+    resolution: {integrity: sha512-SFdFmIJi+ybC0vjlHN0ZGVGHc3lgE0DxPAT0djjVg+kjOnSqclqmj0KQ7ykTOLP6YxoqOvuAODGdcHJn+43q3g==}
+    engines: {node: '>= 0.4'}
+
+  get-intrinsic@1.3.0:
+    resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
+    engines: {node: '>= 0.4'}
+
+  get-proto@1.0.1:
+    resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
+    engines: {node: '>= 0.4'}
+
+  get-symbol-description@1.1.0:
+    resolution: {integrity: sha512-w9UMqWwJxHNOvoNzSJ2oPF5wvYcvP7jUvYzhp67yEhTi17ZDBBC1z9pTdGuzjD+EFIqLSYRweZjqfiPzQ06Ebg==}
+    engines: {node: '>= 0.4'}
+
+  get-tsconfig@4.12.0:
+    resolution: {integrity: sha512-LScr2aNr2FbjAjZh2C6X6BxRx1/x+aTDExct/xyq2XKbYOiG5c0aK7pMsSuyc0brz3ibr/lbQiHD9jzt4lccJw==}
+
+  glob-parent@5.1.2:
+    resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
+    engines: {node: '>= 6'}
+
+  glob-parent@6.0.2:
+    resolution: {integrity: sha512-XxwI8EOhVQgWp6iDL+3b0r86f4d6AX6zSU55HfB4ydCEuXLXc5FcYeOu+nnGftS4TEju/11rt4KJPTMgbfmv4A==}
+    engines: {node: '>=10.13.0'}
+
+  glob@10.4.5:
+    resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    hasBin: true
+
+  globals@14.0.0:
+    resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
+    engines: {node: '>=18'}
+
+  globalthis@1.0.4:
+    resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
+    engines: {node: '>= 0.4'}
+
+  gopd@1.2.0:
+    resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
+    engines: {node: '>= 0.4'}
+
+  graphemer@1.4.0:
+    resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  has-bigints@1.1.0:
+    resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
+    engines: {node: '>= 0.4'}
+
+  has-flag@4.0.0:
+    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+    engines: {node: '>=8'}
+
+  has-property-descriptors@1.0.2:
+    resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
+
+  has-proto@1.2.0:
+    resolution: {integrity: sha512-KIL7eQPfHQRC8+XluaIw7BHUwwqL19bQn4hzNgdr+1wXoU0KKj6rufu47lhY7KbJR2C6T6+PfyN0Ea7wkSS+qQ==}
+    engines: {node: '>= 0.4'}
+
+  has-symbols@1.1.0:
+    resolution: {integrity: sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==}
+    engines: {node: '>= 0.4'}
+
+  has-tostringtag@1.0.2:
+    resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
+    engines: {node: '>= 0.4'}
+
+  hasown@2.0.2:
+    resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+    engines: {node: '>= 0.4'}
+
+  ignore@5.3.2:
+    resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
+    engines: {node: '>= 4'}
+
+  ignore@7.0.5:
+    resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
+    engines: {node: '>= 4'}
+
+  import-fresh@3.3.1:
+    resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
+    engines: {node: '>=6'}
+
+  imurmurhash@0.1.4:
+    resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
+    engines: {node: '>=0.8.19'}
+
+  internal-slot@1.1.0:
+    resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
+    engines: {node: '>= 0.4'}
+
+  is-array-buffer@3.0.5:
+    resolution: {integrity: sha512-DDfANUiiG2wC1qawP66qlTugJeL5HyzMpfr8lLK+jMQirGzNod0B12cFB/9q838Ru27sBwfw78/rdoU7RERz6A==}
+    engines: {node: '>= 0.4'}
+
+  is-async-function@2.1.1:
+    resolution: {integrity: sha512-9dgM/cZBnNvjzaMYHVoxxfPj2QXt22Ev7SuuPrs+xav0ukGB0S6d4ydZdEiM48kLx5kDV+QBPrpVnFyefL8kkQ==}
+    engines: {node: '>= 0.4'}
+
+  is-bigint@1.1.0:
+    resolution: {integrity: sha512-n4ZT37wG78iz03xPRKJrHTdZbe3IicyucEtdRsV5yglwc3GyUfbAfpSeD0FJ41NbUNSt5wbhqfp1fS+BgnvDFQ==}
+    engines: {node: '>= 0.4'}
+
+  is-binary-path@2.1.0:
+    resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
+    engines: {node: '>=8'}
+
+  is-boolean-object@1.2.2:
+    resolution: {integrity: sha512-wa56o2/ElJMYqjCjGkXri7it5FbebW5usLw/nPmCMs5DeZ7eziSYZhSmPRn0txqeW4LnAmQQU7FgqLpsEFKM4A==}
+    engines: {node: '>= 0.4'}
+
+  is-bun-module@2.0.0:
+    resolution: {integrity: sha512-gNCGbnnnnFAUGKeZ9PdbyeGYJqewpmc2aKHUEMO5nQPWU9lOmv7jcmQIv+qHD8fXW6W7qfuCwX4rY9LNRjXrkQ==}
+
+  is-callable@1.2.7:
+    resolution: {integrity: sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==}
+    engines: {node: '>= 0.4'}
+
+  is-core-module@2.16.1:
+    resolution: {integrity: sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w==}
+    engines: {node: '>= 0.4'}
+
+  is-data-view@1.0.2:
+    resolution: {integrity: sha512-RKtWF8pGmS87i2D6gqQu/l7EYRlVdfzemCJN/P3UOs//x1QE7mfhvzHIApBTRf7axvT6DMGwSwBXYCT0nfB9xw==}
+    engines: {node: '>= 0.4'}
+
+  is-date-object@1.1.0:
+    resolution: {integrity: sha512-PwwhEakHVKTdRNVOw+/Gyh0+MzlCl4R6qKvkhuvLtPMggI1WAHt9sOwZxQLSGpUaDnrdyDsomoRgNnCfKNSXXg==}
+    engines: {node: '>= 0.4'}
+
+  is-extglob@2.1.1:
+    resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
+    engines: {node: '>=0.10.0'}
+
+  is-finalizationregistry@1.1.1:
+    resolution: {integrity: sha512-1pC6N8qWJbWoPtEjgcL2xyhQOP491EQjeUo3qTKcmV8YSDDJrOepfG8pcC7h/QgnQHYSv0mJ3Z/ZWxmatVrysg==}
+    engines: {node: '>= 0.4'}
+
+  is-fullwidth-code-point@3.0.0:
+    resolution: {integrity: sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==}
+    engines: {node: '>=8'}
+
+  is-generator-function@1.1.2:
+    resolution: {integrity: sha512-upqt1SkGkODW9tsGNG5mtXTXtECizwtS2kA161M+gJPc1xdb/Ax629af6YrTwcOeQHbewrPNlE5Dx7kzvXTizA==}
+    engines: {node: '>= 0.4'}
+
+  is-glob@4.0.3:
+    resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
+    engines: {node: '>=0.10.0'}
+
+  is-map@2.0.3:
+    resolution: {integrity: sha512-1Qed0/Hr2m+YqxnM09CjA2d/i6YZNfF6R2oRAOj36eUdS6qIV/huPJNSEpKbupewFs+ZsJlxsjjPbc0/afW6Lw==}
+    engines: {node: '>= 0.4'}
+
+  is-negative-zero@2.0.3:
+    resolution: {integrity: sha512-5KoIu2Ngpyek75jXodFvnafB6DJgr3u8uuK0LEZJjrU19DrMD3EVERaR8sjz8CCGgpZvxPl9SuE1GMVPFHx1mw==}
+    engines: {node: '>= 0.4'}
+
+  is-number-object@1.1.1:
+    resolution: {integrity: sha512-lZhclumE1G6VYD8VHe35wFaIif+CTy5SJIi5+3y4psDgWu4wPDoBhF8NxUOinEc7pHgiTsT6MaBb92rKhhD+Xw==}
+    engines: {node: '>= 0.4'}
+
+  is-number@7.0.0:
+    resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
+    engines: {node: '>=0.12.0'}
+
+  is-regex@1.2.1:
+    resolution: {integrity: sha512-MjYsKHO5O7mCsmRGxWcLWheFqN9DJ/2TmngvjKXihe6efViPqc274+Fx/4fYj/r03+ESvBdTXK0V6tA3rgez1g==}
+    engines: {node: '>= 0.4'}
+
+  is-set@2.0.3:
+    resolution: {integrity: sha512-iPAjerrse27/ygGLxw+EBR9agv9Y6uLeYVJMu+QNCoouJ1/1ri0mGrcWpfCqFZuzzx3WjtwxG098X+n4OuRkPg==}
+    engines: {node: '>= 0.4'}
+
+  is-shared-array-buffer@1.0.4:
+    resolution: {integrity: sha512-ISWac8drv4ZGfwKl5slpHG9OwPNty4jOWPRIhBpxOoD+hqITiwuipOQ2bNthAzwA3B4fIjO4Nln74N0S9byq8A==}
+    engines: {node: '>= 0.4'}
+
+  is-string@1.1.1:
+    resolution: {integrity: sha512-BtEeSsoaQjlSPBemMQIrY1MY0uM6vnS1g5fmufYOtnxLGUZM2178PKbhsk7Ffv58IX+ZtcvoGwccYsh0PglkAA==}
+    engines: {node: '>= 0.4'}
+
+  is-symbol@1.1.1:
+    resolution: {integrity: sha512-9gGx6GTtCQM73BgmHQXfDmLtfjjTUDSyoxTCbp5WtoixAhfgsDirWIcVQ/IHpvI5Vgd5i/J5F7B9cN/WlVbC/w==}
+    engines: {node: '>= 0.4'}
+
+  is-typed-array@1.1.15:
+    resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
+    engines: {node: '>= 0.4'}
+
+  is-weakmap@2.0.2:
+    resolution: {integrity: sha512-K5pXYOm9wqY1RgjpL3YTkF39tni1XajUIkawTLUo9EZEVUFga5gSQJF8nNS7ZwJQ02y+1YCNYcMh+HIf1ZqE+w==}
+    engines: {node: '>= 0.4'}
+
+  is-weakref@1.1.1:
+    resolution: {integrity: sha512-6i9mGWSlqzNMEqpCp93KwRS1uUOodk2OJ6b+sq7ZPDSy2WuI5NFIxp/254TytR8ftefexkWn5xNiHUNpPOfSew==}
+    engines: {node: '>= 0.4'}
+
+  is-weakset@2.0.4:
+    resolution: {integrity: sha512-mfcwb6IzQyOKTs84CQMrOwW4gQcaTOAWJ0zzJCl2WSPDrWk/OzDaImWFH3djXhb24g4eudZfLRozAvPGw4d9hQ==}
+    engines: {node: '>= 0.4'}
+
+  isarray@2.0.5:
+    resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
+
+  isexe@2.0.0:
+    resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  iterator.prototype@1.1.5:
+    resolution: {integrity: sha512-H0dkQoCa3b2VEeKQBOxFph+JAbcrQdE7KC0UkqwpLmv2EC4P41QXP+rqo9wYodACiG5/WM5s9oDApTU8utwj9g==}
+    engines: {node: '>= 0.4'}
+
+  jackspeak@3.4.3:
+    resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
+
+  jiti@1.21.7:
+    resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
+    hasBin: true
+
+  jiti@2.6.1:
+    resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
+    hasBin: true
+
+  js-tokens@4.0.0:
+    resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  js-yaml@4.1.0:
+    resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
+    hasBin: true
+
+  json-buffer@3.0.1:
+    resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
+
+  json-schema-traverse@0.4.1:
+    resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+
+  json-stable-stringify-without-jsonify@1.0.1:
+    resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
+
+  json5@1.0.2:
+    resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
+    hasBin: true
+
+  jsx-ast-utils@3.3.5:
+    resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
+    engines: {node: '>=4.0'}
+
+  keyv@4.5.4:
+    resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
+
+  language-subtag-registry@0.3.23:
+    resolution: {integrity: sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ==}
+
+  language-tags@1.0.9:
+    resolution: {integrity: sha512-MbjN408fEndfiQXbFQ1vnd+1NoLDsnQW41410oQBXiyXDMYH5z505juWa4KUE1LqxRC7DgOgZDbKLxHIwm27hA==}
+    engines: {node: '>=0.10'}
+
+  levn@0.4.1:
+    resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
+    engines: {node: '>= 0.8.0'}
+
+  lilconfig@2.1.0:
+    resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
+    engines: {node: '>=10'}
+
+  lilconfig@3.1.3:
+    resolution: {integrity: sha512-/vlFKAoH5Cgt3Ie+JLhRbwOsCQePABiU3tJ1egGvyQ+33R/vcwM2Zl2QR/LzjsBeItPt3oSVXapn+m4nQDvpzw==}
+    engines: {node: '>=14'}
+
+  lines-and-columns@1.2.4:
+    resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+
+  locate-path@6.0.0:
+    resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
+    engines: {node: '>=10'}
+
+  lodash.merge@4.6.2:
+    resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  loose-envify@1.4.0:
+    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
+
+  lru-cache@10.4.3:
+    resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
+
+  lucide-react@0.545.0:
+    resolution: {integrity: sha512-7r1/yUuflQDSt4f1bpn5ZAocyIxcTyVyBBChSVtBKn5M+392cPmI5YJMWOJKk/HUWGm5wg83chlAZtCcGbEZtw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  math-intrinsics@1.1.0:
+    resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
+    engines: {node: '>= 0.4'}
+
+  merge2@1.4.1:
+    resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
+    engines: {node: '>= 8'}
+
+  micromatch@4.0.8:
+    resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
+    engines: {node: '>=8.6'}
+
+  minimatch@3.1.2:
+    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+
+  minimatch@9.0.5:
+    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
+  minimist@1.2.8:
+    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
+
+  minipass@7.1.2:
+    resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
+  ms@2.1.3:
+    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
+
+  mz@2.7.0:
+    resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
+
+  nanoid@3.3.11:
+    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  napi-postinstall@0.3.4:
+    resolution: {integrity: sha512-PHI5f1O0EP5xJ9gQmFGMS6IZcrVvTjpXjz7Na41gTE7eE2hK11lg04CECCYEEjdc17EV4DO+fkGEtt7TpTaTiQ==}
+    engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
+    hasBin: true
+
+  natural-compare@1.4.0:
+    resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  next@15.5.4:
+    resolution: {integrity: sha512-xH4Yjhb82sFYQfY3vbkJfgSDgXvBB6a8xPs9i35k6oZJRoQRihZH+4s9Yo2qsWpzBmZ3lPXaJ2KPXLfkvW4LnA==}
+    engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': ^1.1.0
+      '@playwright/test': ^1.51.1
+      babel-plugin-react-compiler: '*'
+      react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+      react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+      sass: ^1.3.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@playwright/test':
+        optional: true
+      babel-plugin-react-compiler:
+        optional: true
+      sass:
+        optional: true
+
+  node-releases@2.0.23:
+    resolution: {integrity: sha512-cCmFDMSm26S6tQSDpBCg/NR8NENrVPhAJSf+XbxBG4rPFaaonlEoE9wHQmun+cls499TQGSb7ZyPBRlzgKfpeg==}
+
+  normalize-path@3.0.0:
+    resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
+    engines: {node: '>=0.10.0'}
+
+  normalize-range@0.1.2:
+    resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
+    engines: {node: '>=0.10.0'}
+
+  object-assign@4.1.1:
+    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
+    engines: {node: '>=0.10.0'}
+
+  object-hash@3.0.0:
+    resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
+    engines: {node: '>= 6'}
+
+  object-inspect@1.13.4:
+    resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
+    engines: {node: '>= 0.4'}
+
+  object-keys@1.1.1:
+    resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
+    engines: {node: '>= 0.4'}
+
+  object.assign@4.1.7:
+    resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
+    engines: {node: '>= 0.4'}
+
+  object.entries@1.1.9:
+    resolution: {integrity: sha512-8u/hfXFRBD1O0hPUjioLhoWFHRmt6tKA4/vZPyckBr18l1KE9uHrFaFaUi8MDRTpi4uak2goyPTSNJLXX2k2Hw==}
+    engines: {node: '>= 0.4'}
+
+  object.fromentries@2.0.8:
+    resolution: {integrity: sha512-k6E21FzySsSK5a21KRADBd/NGneRegFO5pLHfdQLpRDETUNJueLXs3WCzyQ3tFRDYgbq3KHGXfTbi2bs8WQ6rQ==}
+    engines: {node: '>= 0.4'}
+
+  object.groupby@1.0.3:
+    resolution: {integrity: sha512-+Lhy3TQTuzXI5hevh8sBGqbmurHbbIjAi0Z4S63nthVLmLxfbj4T54a4CfZrXIrt9iP4mVAPYMo/v99taj3wjQ==}
+    engines: {node: '>= 0.4'}
+
+  object.values@1.2.1:
+    resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
+    engines: {node: '>= 0.4'}
+
+  optionator@0.9.4:
+    resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
+    engines: {node: '>= 0.8.0'}
+
+  own-keys@1.0.1:
+    resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
+    engines: {node: '>= 0.4'}
+
+  p-limit@3.1.0:
+    resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
+    engines: {node: '>=10'}
+
+  p-locate@5.0.0:
+    resolution: {integrity: sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==}
+    engines: {node: '>=10'}
+
+  package-json-from-dist@1.0.1:
+    resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
+
+  parent-module@1.0.1:
+    resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
+    engines: {node: '>=6'}
+
+  path-exists@4.0.0:
+    resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
+    engines: {node: '>=8'}
+
+  path-key@3.1.1:
+    resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
+    engines: {node: '>=8'}
+
+  path-parse@1.0.7:
+    resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
+
+  path-scurry@1.11.1:
+    resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
+    engines: {node: '>=16 || 14 >=14.18'}
+
+  picocolors@1.1.1:
+    resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
+
+  picomatch@2.3.1:
+    resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
+    engines: {node: '>=8.6'}
+
+  picomatch@4.0.3:
+    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
+    engines: {node: '>=12'}
+
+  pify@2.3.0:
+    resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
+    engines: {node: '>=0.10.0'}
+
+  pirates@4.0.7:
+    resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
+    engines: {node: '>= 6'}
+
+  possible-typed-array-names@1.1.0:
+    resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
+    engines: {node: '>= 0.4'}
+
+  postcss-import@15.1.0:
+    resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      postcss: ^8.0.0
+
+  postcss-js@4.1.0:
+    resolution: {integrity: sha512-oIAOTqgIo7q2EOwbhb8UalYePMvYoIeRY2YKntdpFQXNosSu3vLrniGgmH9OKs/qAkfoj5oB3le/7mINW1LCfw==}
+    engines: {node: ^12 || ^14 || >= 16}
+    peerDependencies:
+      postcss: ^8.4.21
+
+  postcss-load-config@4.0.2:
+    resolution: {integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      postcss: '>=8.0.9'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      ts-node:
+        optional: true
+
+  postcss-nested@6.2.0:
+    resolution: {integrity: sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.2.14
+
+  postcss-selector-parser@6.1.2:
+    resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
+    engines: {node: '>=4'}
+
+  postcss-value-parser@4.2.0:
+    resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
+
+  postcss@8.4.31:
+    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.5.6:
+    resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  prelude-ls@1.2.1:
+    resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
+    engines: {node: '>= 0.8.0'}
+
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  prop-types@15.8.1:
+    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+
+  punycode@2.3.1:
+    resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
+    engines: {node: '>=6'}
+
+  queue-microtask@1.2.3:
+    resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  react-dom@19.1.0:
+    resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
+    peerDependencies:
+      react: ^19.1.0
+
+  react-is@16.13.1:
+    resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react@19.1.0:
+    resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
+    engines: {node: '>=0.10.0'}
+
+  read-cache@1.0.0:
+    resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
+
+  readdirp@3.6.0:
+    resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
+    engines: {node: '>=8.10.0'}
+
+  reflect.getprototypeof@1.0.10:
+    resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
+    engines: {node: '>= 0.4'}
+
+  regexp.prototype.flags@1.5.4:
+    resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
+    engines: {node: '>= 0.4'}
+
+  resolve-from@4.0.0:
+    resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
+    engines: {node: '>=4'}
+
+  resolve-pkg-maps@1.0.0:
+    resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
+  resolve@1.22.10:
+    resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
+    engines: {node: '>= 0.4'}
+    hasBin: true
+
+  resolve@2.0.0-next.5:
+    resolution: {integrity: sha512-U7WjGVG9sH8tvjW5SmGbQuui75FiyjAX72HX15DwBBwF9dNiQZRQAg9nnPhYy+TUnE0+VcrttuvNI8oSxZcocA==}
+    hasBin: true
+
+  reusify@1.1.0:
+    resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
+    engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
+
+  run-parallel@1.2.0:
+    resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
+
+  safe-array-concat@1.1.3:
+    resolution: {integrity: sha512-AURm5f0jYEOydBj7VQlVvDrjeFgthDdEF5H1dP+6mNpoXOMo1quQqJ4wvJDyRZ9+pO3kGWoOdmV08cSv2aJV6Q==}
+    engines: {node: '>=0.4'}
+
+  safe-push-apply@1.0.0:
+    resolution: {integrity: sha512-iKE9w/Z7xCzUMIZqdBsp6pEQvwuEebH4vdpjcDWnyzaI6yl6O9FHvVpmGelvEHNsoY6wGblkxR6Zty/h00WiSA==}
+    engines: {node: '>= 0.4'}
+
+  safe-regex-test@1.1.0:
+    resolution: {integrity: sha512-x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw==}
+    engines: {node: '>= 0.4'}
+
+  scheduler@0.26.0:
+    resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
+
+  semver@6.3.1:
+    resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
+    hasBin: true
+
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  set-function-length@1.2.2:
+    resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
+    engines: {node: '>= 0.4'}
+
+  set-function-name@2.0.2:
+    resolution: {integrity: sha512-7PGFlmtwsEADb0WYyvCMa1t+yke6daIG4Wirafur5kcf+MhUnPms1UeR0CKQdTZD81yESwMHbtn+TR+dMviakQ==}
+    engines: {node: '>= 0.4'}
+
+  set-proto@1.0.0:
+    resolution: {integrity: sha512-RJRdvCo6IAnPdsvP/7m6bsQqNnn1FCBX5ZNtFL98MmFF/4xAIJTIg1YbHW5DC2W5SKZanrC6i4HsJqlajw/dZw==}
+    engines: {node: '>= 0.4'}
+
+  sharp@0.34.4:
+    resolution: {integrity: sha512-FUH39xp3SBPnxWvd5iib1X8XY7J0K0X7d93sie9CJg2PO8/7gmg89Nve6OjItK53/MlAushNNxteBYfM6DEuoA==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+
+  shebang-command@2.0.0:
+    resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
+    engines: {node: '>=8'}
+
+  shebang-regex@3.0.0:
+    resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+    engines: {node: '>=8'}
+
+  side-channel-list@1.0.0:
+    resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
+    engines: {node: '>= 0.4'}
+
+  side-channel-map@1.0.1:
+    resolution: {integrity: sha512-VCjCNfgMsby3tTdo02nbjtM/ewra6jPHmpThenkTYh8pG9ucZ/1P8So4u4FGBek/BjpOVsDCMoLA/iuBKIFXRA==}
+    engines: {node: '>= 0.4'}
+
+  side-channel-weakmap@1.0.2:
+    resolution: {integrity: sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A==}
+    engines: {node: '>= 0.4'}
+
+  side-channel@1.1.0:
+    resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
+    engines: {node: '>= 0.4'}
+
+  signal-exit@4.1.0:
+    resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
+    engines: {node: '>=14'}
+
+  source-map-js@1.2.1:
+    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+    engines: {node: '>=0.10.0'}
+
+  stable-hash@0.0.5:
+    resolution: {integrity: sha512-+L3ccpzibovGXFK+Ap/f8LOS0ahMrHTf3xu7mMLSpEGU0EO9ucaysSylKo9eRDFNhWve/y275iPmIZ4z39a9iA==}
+
+  stop-iteration-iterator@1.1.0:
+    resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
+    engines: {node: '>= 0.4'}
+
+  string-width@4.2.3:
+    resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
+    engines: {node: '>=8'}
+
+  string-width@5.1.2:
+    resolution: {integrity: sha512-HnLOCR3vjcY8beoNLtcjZ5/nxn2afmME6lhrDrebokqMap+XbeW8n9TXpPDOqdGK5qcI3oT0GKTW6wC7EMiVqA==}
+    engines: {node: '>=12'}
+
+  string.prototype.includes@2.0.1:
+    resolution: {integrity: sha512-o7+c9bW6zpAdJHTtujeePODAhkuicdAryFsfVKwA+wGw89wJ4GTY484WTucM9hLtDEOpOvI+aHnzqnC5lHp4Rg==}
+    engines: {node: '>= 0.4'}
+
+  string.prototype.matchall@4.0.12:
+    resolution: {integrity: sha512-6CC9uyBL+/48dYizRf7H7VAYCMCNTBeM78x/VTUe9bFEaxBepPJDa1Ow99LqI/1yF7kuy7Q3cQsYMrcjGUcskA==}
+    engines: {node: '>= 0.4'}
+
+  string.prototype.repeat@1.0.0:
+    resolution: {integrity: sha512-0u/TldDbKD8bFCQ/4f5+mNRrXwZ8hg2w7ZR8wa16e8z9XpePWl3eGEcUD0OXpEH/VJH/2G3gjUtR3ZOiBe2S/w==}
+
+  string.prototype.trim@1.2.10:
+    resolution: {integrity: sha512-Rs66F0P/1kedk5lyYyH9uBzuiI/kNRmwJAR9quK6VOtIpZ2G+hMZd+HQbbv25MgCA6gEffoMZYxlTod4WcdrKA==}
+    engines: {node: '>= 0.4'}
+
+  string.prototype.trimend@1.0.9:
+    resolution: {integrity: sha512-G7Ok5C6E/j4SGfyLCloXTrngQIQU3PWtXGst3yM7Bea9FRURf1S42ZHlZZtsNque2FN2PoUhfZXYLNWwEr4dLQ==}
+    engines: {node: '>= 0.4'}
+
+  string.prototype.trimstart@1.0.8:
+    resolution: {integrity: sha512-UXSH262CSZY1tfu3G3Secr6uGLCFVPMhIqHjlgCUtCCcgihYc/xKs9djMTMUOb2j1mVSeU8EU6NWc/iQKU6Gfg==}
+    engines: {node: '>= 0.4'}
+
+  strip-ansi@6.0.1:
+    resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
+    engines: {node: '>=8'}
+
+  strip-ansi@7.1.2:
+    resolution: {integrity: sha512-gmBGslpoQJtgnMAvOVqGZpEz9dyoKTCzy2nfz/n8aIFhN/jCE/rCmcxabB6jOOHV+0WNnylOxaxBQPSvcWklhA==}
+    engines: {node: '>=12'}
+
+  strip-bom@3.0.0:
+    resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
+    engines: {node: '>=4'}
+
+  strip-json-comments@3.1.1:
+    resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
+    engines: {node: '>=8'}
+
+  styled-jsx@5.1.6:
+    resolution: {integrity: sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+
+  sucrase@3.35.0:
+    resolution: {integrity: sha512-8EbVDiu9iN/nESwxeSxDKe0dunta1GOlHufmSSXxMD2z2/tMZpDMpvXQGsc+ajGo8y2uYUmixaSRUc/QPoQ0GA==}
+    engines: {node: '>=16 || 14 >=14.17'}
+    hasBin: true
+
+  supports-color@7.2.0:
+    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+    engines: {node: '>=8'}
+
+  supports-preserve-symlinks-flag@1.0.0:
+    resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
+    engines: {node: '>= 0.4'}
+
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
+
+  tailwindcss-animate@1.0.7:
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+
+  tailwindcss@3.4.15:
+    resolution: {integrity: sha512-r4MeXnfBmSOuKUWmXe6h2CcyfzJCEk4F0pptO5jlnYSIViUkVmsawj80N5h2lO3gwcmSb4n3PuN+e+GC1Guylw==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+
+  thenify-all@1.6.0:
+    resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
+    engines: {node: '>=0.8'}
+
+  thenify@3.3.1:
+    resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
+
+  tinyglobby@0.2.15:
+    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
+    engines: {node: '>=12.0.0'}
+
+  to-regex-range@5.0.1:
+    resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
+    engines: {node: '>=8.0'}
+
+  ts-api-utils@2.1.0:
+    resolution: {integrity: sha512-CUgTZL1irw8u29bzrOD/nH85jqyc74D6SshFgujOIA7osm2Rz7dYH77agkx7H4FBNxDq7Cjf+IjaX/8zwFW+ZQ==}
+    engines: {node: '>=18.12'}
+    peerDependencies:
+      typescript: '>=4.8.4'
+
+  ts-interface-checker@0.1.13:
+    resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+
+  tsconfig-paths@3.15.0:
+    resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
+  type-check@0.4.0:
+    resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
+    engines: {node: '>= 0.8.0'}
+
+  typed-array-buffer@1.0.3:
+    resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
+    engines: {node: '>= 0.4'}
+
+  typed-array-byte-length@1.0.3:
+    resolution: {integrity: sha512-BaXgOuIxz8n8pIq3e7Atg/7s+DpiYrxn4vdot3w9KbnBhcRQq6o3xemQdIfynqSeXeDrF32x+WvfzmOjPiY9lg==}
+    engines: {node: '>= 0.4'}
+
+  typed-array-byte-offset@1.0.4:
+    resolution: {integrity: sha512-bTlAFB/FBYMcuX81gbL4OcpH5PmlFHqlCCpAl8AlEzMz5k53oNDvN8p1PNOWLEmI2x4orp3raOFB51tv9X+MFQ==}
+    engines: {node: '>= 0.4'}
+
+  typed-array-length@1.0.7:
+    resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
+    engines: {node: '>= 0.4'}
+
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
+  unbox-primitive@1.1.0:
+    resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
+    engines: {node: '>= 0.4'}
+
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+  unrs-resolver@1.11.1:
+    resolution: {integrity: sha512-bSjt9pjaEBnNiGgc9rUiHGKv5l4/TGzDmYw3RhnkJGtLhbnnA/5qJj7x3dNDCRx/PJxu774LlH8lCOlB4hEfKg==}
+
+  update-browserslist-db@1.1.3:
+    resolution: {integrity: sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==}
+    hasBin: true
+    peerDependencies:
+      browserslist: '>= 4.21.0'
+
+  uri-js@4.4.1:
+    resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  util-deprecate@1.0.2:
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  which-boxed-primitive@1.1.1:
+    resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
+    engines: {node: '>= 0.4'}
+
+  which-builtin-type@1.2.1:
+    resolution: {integrity: sha512-6iBczoX+kDQ7a3+YJBnh3T+KZRxM/iYNPXicqk66/Qfm1b93iu+yOImkg0zHbj5LNOcNv1TEADiZ0xa34B4q6Q==}
+    engines: {node: '>= 0.4'}
+
+  which-collection@1.0.2:
+    resolution: {integrity: sha512-K4jVyjnBdgvc86Y6BkaLZEN933SwYOuBFkdmBu9ZfkcAbdVbpITnDmjvZ/aQjRXQrv5EPkTnD1s39GiiqbngCw==}
+    engines: {node: '>= 0.4'}
+
+  which-typed-array@1.1.19:
+    resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
+    engines: {node: '>= 0.4'}
+
+  which@2.0.2:
+    resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
+    engines: {node: '>= 8'}
+    hasBin: true
+
+  word-wrap@1.2.5:
+    resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
+    engines: {node: '>=0.10.0'}
+
+  wrap-ansi@7.0.0:
+    resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
+    engines: {node: '>=10'}
+
+  wrap-ansi@8.1.0:
+    resolution: {integrity: sha512-si7QWI6zUMq56bESFvagtmzMdGOtoxfR+Sez11Mobfc7tm+VkUckk9bW2UeffTGVUbOksxmSw0AA2gs8g71NCQ==}
+    engines: {node: '>=12'}
+
+  yaml@2.8.1:
+    resolution: {integrity: sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
+
+  yocto-queue@0.1.0:
+    resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
+    engines: {node: '>=10'}
+
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
+snapshots:
+
+  '@alloc/quick-lru@5.2.0': {}
+
+  '@emnapi/core@1.5.0':
+    dependencies:
+      '@emnapi/wasi-threads': 1.1.0
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/runtime@1.5.0':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  '@emnapi/wasi-threads@1.1.0':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  '@eslint-community/eslint-utils@4.9.0(eslint@9.37.0(jiti@2.6.1))':
+    dependencies:
+      eslint: 9.37.0(jiti@2.6.1)
+      eslint-visitor-keys: 3.4.3
+
+  '@eslint-community/regexpp@4.12.1': {}
+
+  '@eslint/config-array@0.21.0':
+    dependencies:
+      '@eslint/object-schema': 2.1.6
+      debug: 4.4.3
+      minimatch: 3.1.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@eslint/config-helpers@0.4.0':
+    dependencies:
+      '@eslint/core': 0.16.0
+
+  '@eslint/core@0.16.0':
+    dependencies:
+      '@types/json-schema': 7.0.15
+
+  '@eslint/eslintrc@3.3.1':
+    dependencies:
+      ajv: 6.12.6
+      debug: 4.4.3
+      espree: 10.4.0
+      globals: 14.0.0
+      ignore: 5.3.2
+      import-fresh: 3.3.1
+      js-yaml: 4.1.0
+      minimatch: 3.1.2
+      strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@eslint/js@9.37.0': {}
+
+  '@eslint/object-schema@2.1.6': {}
+
+  '@eslint/plugin-kit@0.4.0':
+    dependencies:
+      '@eslint/core': 0.16.0
+      levn: 0.4.1
+
+  '@humanfs/core@0.19.1': {}
+
+  '@humanfs/node@0.16.7':
+    dependencies:
+      '@humanfs/core': 0.19.1
+      '@humanwhocodes/retry': 0.4.3
+
+  '@humanwhocodes/module-importer@1.0.1': {}
+
+  '@humanwhocodes/retry@0.4.3': {}
+
+  '@img/colour@1.0.0':
+    optional: true
+
+  '@img/sharp-darwin-arm64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-darwin-arm64': 1.2.3
+    optional: true
+
+  '@img/sharp-darwin-x64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-darwin-x64': 1.2.3
+    optional: true
+
+  '@img/sharp-libvips-darwin-arm64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-darwin-x64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linux-arm64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linux-arm@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linux-ppc64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linux-s390x@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linux-x64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linuxmusl-arm64@1.2.3':
+    optional: true
+
+  '@img/sharp-libvips-linuxmusl-x64@1.2.3':
+    optional: true
+
+  '@img/sharp-linux-arm64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linux-arm64': 1.2.3
+    optional: true
+
+  '@img/sharp-linux-arm@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linux-arm': 1.2.3
+    optional: true
+
+  '@img/sharp-linux-ppc64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linux-ppc64': 1.2.3
+    optional: true
+
+  '@img/sharp-linux-s390x@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linux-s390x': 1.2.3
+    optional: true
+
+  '@img/sharp-linux-x64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linux-x64': 1.2.3
+    optional: true
+
+  '@img/sharp-linuxmusl-arm64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linuxmusl-arm64': 1.2.3
+    optional: true
+
+  '@img/sharp-linuxmusl-x64@0.34.4':
+    optionalDependencies:
+      '@img/sharp-libvips-linuxmusl-x64': 1.2.3
+    optional: true
+
+  '@img/sharp-wasm32@0.34.4':
+    dependencies:
+      '@emnapi/runtime': 1.5.0
+    optional: true
+
+  '@img/sharp-win32-arm64@0.34.4':
+    optional: true
+
+  '@img/sharp-win32-ia32@0.34.4':
+    optional: true
+
+  '@img/sharp-win32-x64@0.34.4':
+    optional: true
+
+  '@isaacs/cliui@8.0.2':
+    dependencies:
+      string-width: 5.1.2
+      string-width-cjs: string-width@4.2.3
+      strip-ansi: 7.1.2
+      strip-ansi-cjs: strip-ansi@6.0.1
+      wrap-ansi: 8.1.0
+      wrap-ansi-cjs: wrap-ansi@7.0.0
+
+  '@jridgewell/gen-mapping@0.3.13':
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/trace-mapping': 0.3.31
+
+  '@jridgewell/resolve-uri@3.1.2': {}
+
+  '@jridgewell/sourcemap-codec@1.5.5': {}
+
+  '@jridgewell/trace-mapping@0.3.31':
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.2
+      '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@napi-rs/wasm-runtime@0.2.12':
+    dependencies:
+      '@emnapi/core': 1.5.0
+      '@emnapi/runtime': 1.5.0
+      '@tybys/wasm-util': 0.10.1
+    optional: true
+
+  '@next/env@15.5.4': {}
+
+  '@next/eslint-plugin-next@15.5.4':
+    dependencies:
+      fast-glob: 3.3.1
+
+  '@next/swc-darwin-arm64@15.5.4':
+    optional: true
+
+  '@next/swc-darwin-x64@15.5.4':
+    optional: true
+
+  '@next/swc-linux-arm64-gnu@15.5.4':
+    optional: true
+
+  '@next/swc-linux-arm64-musl@15.5.4':
+    optional: true
+
+  '@next/swc-linux-x64-gnu@15.5.4':
+    optional: true
+
+  '@next/swc-linux-x64-musl@15.5.4':
+    optional: true
+
+  '@next/swc-win32-arm64-msvc@15.5.4':
+    optional: true
+
+  '@next/swc-win32-x64-msvc@15.5.4':
+    optional: true
+
+  '@nodelib/fs.scandir@2.1.5':
+    dependencies:
+      '@nodelib/fs.stat': 2.0.5
+      run-parallel: 1.2.0
+
+  '@nodelib/fs.stat@2.0.5': {}
+
+  '@nodelib/fs.walk@1.2.8':
+    dependencies:
+      '@nodelib/fs.scandir': 2.1.5
+      fastq: 1.19.1
+
+  '@nolyfill/is-core-module@1.0.39': {}
+
+  '@pkgjs/parseargs@0.11.0':
+    optional: true
+
+  '@rtsao/scc@1.1.0': {}
+
+  '@rushstack/eslint-patch@1.13.0': {}
+
+  '@swc/helpers@0.5.15':
+    dependencies:
+      tslib: 2.8.1
+
+  '@tanstack/query-core@5.90.2': {}
+
+  '@tanstack/react-query@5.90.2(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 5.90.2
+      react: 19.1.0
+
+  '@tybys/wasm-util@0.10.1':
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  '@types/estree@1.0.8': {}
+
+  '@types/json-schema@7.0.15': {}
+
+  '@types/json5@0.0.29': {}
+
+  '@types/node@20.19.20':
+    dependencies:
+      undici-types: 6.21.0
+
+  '@types/react-dom@19.2.1(@types/react@19.2.2)':
+    dependencies:
+      '@types/react': 19.2.2
+
+  '@types/react@19.2.2':
+    dependencies:
+      csstype: 3.1.3
+
+  '@typescript-eslint/eslint-plugin@8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@eslint-community/regexpp': 4.12.1
+      '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/scope-manager': 8.46.0
+      '@typescript-eslint/type-utils': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.46.0
+      eslint: 9.37.0(jiti@2.6.1)
+      graphemer: 1.4.0
+      ignore: 7.0.5
+      natural-compare: 1.4.0
+      ts-api-utils: 2.1.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/scope-manager': 8.46.0
+      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/typescript-estree': 8.46.0(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.46.0
+      debug: 4.4.3
+      eslint: 9.37.0(jiti@2.6.1)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/project-service@8.46.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/tsconfig-utils': 8.46.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.46.0
+      debug: 4.4.3
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/scope-manager@8.46.0':
+    dependencies:
+      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/visitor-keys': 8.46.0
+
+  '@typescript-eslint/tsconfig-utils@8.46.0(typescript@5.9.3)':
+    dependencies:
+      typescript: 5.9.3
+
+  '@typescript-eslint/type-utils@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/typescript-estree': 8.46.0(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      debug: 4.4.3
+      eslint: 9.37.0(jiti@2.6.1)
+      ts-api-utils: 2.1.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/types@8.46.0': {}
+
+  '@typescript-eslint/typescript-estree@8.46.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/project-service': 8.46.0(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.46.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/visitor-keys': 8.46.0
+      debug: 4.4.3
+      fast-glob: 3.3.3
+      is-glob: 4.0.3
+      minimatch: 9.0.5
+      semver: 7.7.3
+      ts-api-utils: 2.1.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/utils@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.37.0(jiti@2.6.1))
+      '@typescript-eslint/scope-manager': 8.46.0
+      '@typescript-eslint/types': 8.46.0
+      '@typescript-eslint/typescript-estree': 8.46.0(typescript@5.9.3)
+      eslint: 9.37.0(jiti@2.6.1)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/visitor-keys@8.46.0':
+    dependencies:
+      '@typescript-eslint/types': 8.46.0
+      eslint-visitor-keys: 4.2.1
+
+  '@unrs/resolver-binding-android-arm-eabi@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-android-arm64@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-darwin-arm64@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-darwin-x64@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-freebsd-x64@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-arm-gnueabihf@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-arm-musleabihf@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-arm64-gnu@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-arm64-musl@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-ppc64-gnu@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-riscv64-gnu@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-riscv64-musl@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-s390x-gnu@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-x64-gnu@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-linux-x64-musl@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-wasm32-wasi@1.11.1':
+    dependencies:
+      '@napi-rs/wasm-runtime': 0.2.12
+    optional: true
+
+  '@unrs/resolver-binding-win32-arm64-msvc@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-win32-ia32-msvc@1.11.1':
+    optional: true
+
+  '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
+    optional: true
+
+  acorn-jsx@5.3.2(acorn@8.15.0):
+    dependencies:
+      acorn: 8.15.0
+
+  acorn@8.15.0: {}
+
+  ajv@6.12.6:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-json-stable-stringify: 2.1.0
+      json-schema-traverse: 0.4.1
+      uri-js: 4.4.1
+
+  ansi-regex@5.0.1: {}
+
+  ansi-regex@6.2.2: {}
+
+  ansi-styles@4.3.0:
+    dependencies:
+      color-convert: 2.0.1
+
+  ansi-styles@6.2.3: {}
+
+  any-promise@1.3.0: {}
+
+  anymatch@3.1.3:
+    dependencies:
+      normalize-path: 3.0.0
+      picomatch: 2.3.1
+
+  arg@5.0.2: {}
+
+  argparse@2.0.1: {}
+
+  aria-query@5.3.2: {}
+
+  array-buffer-byte-length@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      is-array-buffer: 3.0.5
+
+  array-includes@3.1.9:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-object-atoms: 1.1.1
+      get-intrinsic: 1.3.0
+      is-string: 1.1.1
+      math-intrinsics: 1.1.0
+
+  array.prototype.findlast@1.2.5:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      es-shim-unscopables: 1.1.0
+
+  array.prototype.findlastindex@1.2.6:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      es-shim-unscopables: 1.1.0
+
+  array.prototype.flat@1.3.3:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-shim-unscopables: 1.1.0
+
+  array.prototype.flatmap@1.3.3:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-shim-unscopables: 1.1.0
+
+  array.prototype.tosorted@1.1.4:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-shim-unscopables: 1.1.0
+
+  arraybuffer.prototype.slice@1.0.4:
+    dependencies:
+      array-buffer-byte-length: 1.0.2
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      is-array-buffer: 3.0.5
+
+  ast-types-flow@0.0.8: {}
+
+  async-function@1.0.0: {}
+
+  autoprefixer@10.4.21(postcss@8.5.6):
+    dependencies:
+      browserslist: 4.26.3
+      caniuse-lite: 1.0.30001749
+      fraction.js: 4.3.7
+      normalize-range: 0.1.2
+      picocolors: 1.1.1
+      postcss: 8.5.6
+      postcss-value-parser: 4.2.0
+
+  available-typed-arrays@1.0.7:
+    dependencies:
+      possible-typed-array-names: 1.1.0
+
+  axe-core@4.11.0: {}
+
+  axobject-query@4.1.0: {}
+
+  balanced-match@1.0.2: {}
+
+  baseline-browser-mapping@2.8.15: {}
+
+  binary-extensions@2.3.0: {}
+
+  brace-expansion@1.1.12:
+    dependencies:
+      balanced-match: 1.0.2
+      concat-map: 0.0.1
+
+  brace-expansion@2.0.2:
+    dependencies:
+      balanced-match: 1.0.2
+
+  braces@3.0.3:
+    dependencies:
+      fill-range: 7.1.1
+
+  browserslist@4.26.3:
+    dependencies:
+      baseline-browser-mapping: 2.8.15
+      caniuse-lite: 1.0.30001749
+      electron-to-chromium: 1.5.234
+      node-releases: 2.0.23
+      update-browserslist-db: 1.1.3(browserslist@4.26.3)
+
+  call-bind-apply-helpers@1.0.2:
+    dependencies:
+      es-errors: 1.3.0
+      function-bind: 1.1.2
+
+  call-bind@1.0.8:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      es-define-property: 1.0.1
+      get-intrinsic: 1.3.0
+      set-function-length: 1.2.2
+
+  call-bound@1.0.4:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      get-intrinsic: 1.3.0
+
+  callsites@3.1.0: {}
+
+  camelcase-css@2.0.1: {}
+
+  caniuse-lite@1.0.30001749: {}
+
+  chalk@4.1.2:
+    dependencies:
+      ansi-styles: 4.3.0
+      supports-color: 7.2.0
+
+  chokidar@3.6.0:
+    dependencies:
+      anymatch: 3.1.3
+      braces: 3.0.3
+      glob-parent: 5.1.2
+      is-binary-path: 2.1.0
+      is-glob: 4.0.3
+      normalize-path: 3.0.0
+      readdirp: 3.6.0
+    optionalDependencies:
+      fsevents: 2.3.3
+
+  client-only@0.0.1: {}
+
+  clsx@2.1.1: {}
+
+  color-convert@2.0.1:
+    dependencies:
+      color-name: 1.1.4
+
+  color-name@1.1.4: {}
+
+  commander@4.1.1: {}
+
+  concat-map@0.0.1: {}
+
+  cross-spawn@7.0.6:
+    dependencies:
+      path-key: 3.1.1
+      shebang-command: 2.0.0
+      which: 2.0.2
+
+  cssesc@3.0.0: {}
+
+  csstype@3.1.3: {}
+
+  damerau-levenshtein@1.0.8: {}
+
+  data-view-buffer@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      is-data-view: 1.0.2
+
+  data-view-byte-length@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      is-data-view: 1.0.2
+
+  data-view-byte-offset@1.0.1:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      is-data-view: 1.0.2
+
+  debug@3.2.7:
+    dependencies:
+      ms: 2.1.3
+
+  debug@4.4.3:
+    dependencies:
+      ms: 2.1.3
+
+  deep-is@0.1.4: {}
+
+  define-data-property@1.1.4:
+    dependencies:
+      es-define-property: 1.0.1
+      es-errors: 1.3.0
+      gopd: 1.2.0
+
+  define-properties@1.2.1:
+    dependencies:
+      define-data-property: 1.1.4
+      has-property-descriptors: 1.0.2
+      object-keys: 1.1.1
+
+  detect-libc@2.1.2:
+    optional: true
+
+  didyoumean@1.2.2: {}
+
+  dlv@1.1.3: {}
+
+  doctrine@2.1.0:
+    dependencies:
+      esutils: 2.0.3
+
+  dunder-proto@1.0.1:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      es-errors: 1.3.0
+      gopd: 1.2.0
+
+  eastasianwidth@0.2.0: {}
+
+  electron-to-chromium@1.5.234: {}
+
+  emoji-regex@8.0.0: {}
+
+  emoji-regex@9.2.2: {}
+
+  es-abstract@1.24.0:
+    dependencies:
+      array-buffer-byte-length: 1.0.2
+      arraybuffer.prototype.slice: 1.0.4
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      data-view-buffer: 1.0.2
+      data-view-byte-length: 1.0.2
+      data-view-byte-offset: 1.0.1
+      es-define-property: 1.0.1
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      es-set-tostringtag: 2.1.0
+      es-to-primitive: 1.3.0
+      function.prototype.name: 1.1.8
+      get-intrinsic: 1.3.0
+      get-proto: 1.0.1
+      get-symbol-description: 1.1.0
+      globalthis: 1.0.4
+      gopd: 1.2.0
+      has-property-descriptors: 1.0.2
+      has-proto: 1.2.0
+      has-symbols: 1.1.0
+      hasown: 2.0.2
+      internal-slot: 1.1.0
+      is-array-buffer: 3.0.5
+      is-callable: 1.2.7
+      is-data-view: 1.0.2
+      is-negative-zero: 2.0.3
+      is-regex: 1.2.1
+      is-set: 2.0.3
+      is-shared-array-buffer: 1.0.4
+      is-string: 1.1.1
+      is-typed-array: 1.1.15
+      is-weakref: 1.1.1
+      math-intrinsics: 1.1.0
+      object-inspect: 1.13.4
+      object-keys: 1.1.1
+      object.assign: 4.1.7
+      own-keys: 1.0.1
+      regexp.prototype.flags: 1.5.4
+      safe-array-concat: 1.1.3
+      safe-push-apply: 1.0.0
+      safe-regex-test: 1.1.0
+      set-proto: 1.0.0
+      stop-iteration-iterator: 1.1.0
+      string.prototype.trim: 1.2.10
+      string.prototype.trimend: 1.0.9
+      string.prototype.trimstart: 1.0.8
+      typed-array-buffer: 1.0.3
+      typed-array-byte-length: 1.0.3
+      typed-array-byte-offset: 1.0.4
+      typed-array-length: 1.0.7
+      unbox-primitive: 1.1.0
+      which-typed-array: 1.1.19
+
+  es-define-property@1.0.1: {}
+
+  es-errors@1.3.0: {}
+
+  es-iterator-helpers@1.2.1:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-set-tostringtag: 2.1.0
+      function-bind: 1.1.2
+      get-intrinsic: 1.3.0
+      globalthis: 1.0.4
+      gopd: 1.2.0
+      has-property-descriptors: 1.0.2
+      has-proto: 1.2.0
+      has-symbols: 1.1.0
+      internal-slot: 1.1.0
+      iterator.prototype: 1.1.5
+      safe-array-concat: 1.1.3
+
+  es-object-atoms@1.1.1:
+    dependencies:
+      es-errors: 1.3.0
+
+  es-set-tostringtag@2.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      has-tostringtag: 1.0.2
+      hasown: 2.0.2
+
+  es-shim-unscopables@1.1.0:
+    dependencies:
+      hasown: 2.0.2
+
+  es-to-primitive@1.3.0:
+    dependencies:
+      is-callable: 1.2.7
+      is-date-object: 1.1.0
+      is-symbol: 1.1.1
+
+  escalade@3.2.0: {}
+
+  escape-string-regexp@4.0.0: {}
+
+  eslint-config-next@15.5.4(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3):
+    dependencies:
+      '@next/eslint-plugin-next': 15.5.4
+      '@rushstack/eslint-patch': 1.13.0
+      '@typescript-eslint/eslint-plugin': 8.46.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.37.0(jiti@2.6.1)
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-jsx-a11y: 6.10.2(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-react: 7.37.5(eslint@9.37.0(jiti@2.6.1))
+      eslint-plugin-react-hooks: 5.2.0(eslint@9.37.0(jiti@2.6.1))
+    optionalDependencies:
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - eslint-import-resolver-webpack
+      - eslint-plugin-import-x
+      - supports-color
+
+  eslint-import-resolver-node@0.3.9:
+    dependencies:
+      debug: 3.2.7
+      is-core-module: 2.16.1
+      resolve: 1.22.10
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      '@nolyfill/is-core-module': 1.0.39
+      debug: 4.4.3
+      eslint: 9.37.0(jiti@2.6.1)
+      get-tsconfig: 4.12.0
+      is-bun-module: 2.0.0
+      stable-hash: 0.0.5
+      tinyglobby: 0.2.15
+      unrs-resolver: 1.11.1
+    optionalDependencies:
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1))
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      debug: 3.2.7
+    optionalDependencies:
+      '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.37.0(jiti@2.6.1)
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.37.0(jiti@2.6.1))
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      '@rtsao/scc': 1.1.0
+      array-includes: 3.1.9
+      array.prototype.findlastindex: 1.2.6
+      array.prototype.flat: 1.3.3
+      array.prototype.flatmap: 1.3.3
+      debug: 3.2.7
+      doctrine: 2.1.0
+      eslint: 9.37.0(jiti@2.6.1)
+      eslint-import-resolver-node: 0.3.9
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.37.0(jiti@2.6.1))
+      hasown: 2.0.2
+      is-core-module: 2.16.1
+      is-glob: 4.0.3
+      minimatch: 3.1.2
+      object.fromentries: 2.0.8
+      object.groupby: 1.0.3
+      object.values: 1.2.1
+      semver: 6.3.1
+      string.prototype.trimend: 1.0.9
+      tsconfig-paths: 3.15.0
+    optionalDependencies:
+      '@typescript-eslint/parser': 8.46.0(eslint@9.37.0(jiti@2.6.1))(typescript@5.9.3)
+    transitivePeerDependencies:
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - supports-color
+
+  eslint-plugin-jsx-a11y@6.10.2(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      aria-query: 5.3.2
+      array-includes: 3.1.9
+      array.prototype.flatmap: 1.3.3
+      ast-types-flow: 0.0.8
+      axe-core: 4.11.0
+      axobject-query: 4.1.0
+      damerau-levenshtein: 1.0.8
+      emoji-regex: 9.2.2
+      eslint: 9.37.0(jiti@2.6.1)
+      hasown: 2.0.2
+      jsx-ast-utils: 3.3.5
+      language-tags: 1.0.9
+      minimatch: 3.1.2
+      object.fromentries: 2.0.8
+      safe-regex-test: 1.1.0
+      string.prototype.includes: 2.0.1
+
+  eslint-plugin-react-hooks@5.2.0(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      eslint: 9.37.0(jiti@2.6.1)
+
+  eslint-plugin-react@7.37.5(eslint@9.37.0(jiti@2.6.1)):
+    dependencies:
+      array-includes: 3.1.9
+      array.prototype.findlast: 1.2.5
+      array.prototype.flatmap: 1.3.3
+      array.prototype.tosorted: 1.1.4
+      doctrine: 2.1.0
+      es-iterator-helpers: 1.2.1
+      eslint: 9.37.0(jiti@2.6.1)
+      estraverse: 5.3.0
+      hasown: 2.0.2
+      jsx-ast-utils: 3.3.5
+      minimatch: 3.1.2
+      object.entries: 1.1.9
+      object.fromentries: 2.0.8
+      object.values: 1.2.1
+      prop-types: 15.8.1
+      resolve: 2.0.0-next.5
+      semver: 6.3.1
+      string.prototype.matchall: 4.0.12
+      string.prototype.repeat: 1.0.0
+
+  eslint-scope@8.4.0:
+    dependencies:
+      esrecurse: 4.3.0
+      estraverse: 5.3.0
+
+  eslint-visitor-keys@3.4.3: {}
+
+  eslint-visitor-keys@4.2.1: {}
+
+  eslint@9.37.0(jiti@2.6.1):
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.37.0(jiti@2.6.1))
+      '@eslint-community/regexpp': 4.12.1
+      '@eslint/config-array': 0.21.0
+      '@eslint/config-helpers': 0.4.0
+      '@eslint/core': 0.16.0
+      '@eslint/eslintrc': 3.3.1
+      '@eslint/js': 9.37.0
+      '@eslint/plugin-kit': 0.4.0
+      '@humanfs/node': 0.16.7
+      '@humanwhocodes/module-importer': 1.0.1
+      '@humanwhocodes/retry': 0.4.3
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      ajv: 6.12.6
+      chalk: 4.1.2
+      cross-spawn: 7.0.6
+      debug: 4.4.3
+      escape-string-regexp: 4.0.0
+      eslint-scope: 8.4.0
+      eslint-visitor-keys: 4.2.1
+      espree: 10.4.0
+      esquery: 1.6.0
+      esutils: 2.0.3
+      fast-deep-equal: 3.1.3
+      file-entry-cache: 8.0.0
+      find-up: 5.0.0
+      glob-parent: 6.0.2
+      ignore: 5.3.2
+      imurmurhash: 0.1.4
+      is-glob: 4.0.3
+      json-stable-stringify-without-jsonify: 1.0.1
+      lodash.merge: 4.6.2
+      minimatch: 3.1.2
+      natural-compare: 1.4.0
+      optionator: 0.9.4
+    optionalDependencies:
+      jiti: 2.6.1
+    transitivePeerDependencies:
+      - supports-color
+
+  espree@10.4.0:
+    dependencies:
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
+      eslint-visitor-keys: 4.2.1
+
+  esquery@1.6.0:
+    dependencies:
+      estraverse: 5.3.0
+
+  esrecurse@4.3.0:
+    dependencies:
+      estraverse: 5.3.0
+
+  estraverse@5.3.0: {}
+
+  esutils@2.0.3: {}
+
+  fast-deep-equal@3.1.3: {}
+
+  fast-glob@3.3.1:
+    dependencies:
+      '@nodelib/fs.stat': 2.0.5
+      '@nodelib/fs.walk': 1.2.8
+      glob-parent: 5.1.2
+      merge2: 1.4.1
+      micromatch: 4.0.8
+
+  fast-glob@3.3.3:
+    dependencies:
+      '@nodelib/fs.stat': 2.0.5
+      '@nodelib/fs.walk': 1.2.8
+      glob-parent: 5.1.2
+      merge2: 1.4.1
+      micromatch: 4.0.8
+
+  fast-json-stable-stringify@2.1.0: {}
+
+  fast-levenshtein@2.0.6: {}
+
+  fastq@1.19.1:
+    dependencies:
+      reusify: 1.1.0
+
+  fdir@6.5.0(picomatch@4.0.3):
+    optionalDependencies:
+      picomatch: 4.0.3
+
+  file-entry-cache@8.0.0:
+    dependencies:
+      flat-cache: 4.0.1
+
+  fill-range@7.1.1:
+    dependencies:
+      to-regex-range: 5.0.1
+
+  find-up@5.0.0:
+    dependencies:
+      locate-path: 6.0.0
+      path-exists: 4.0.0
+
+  flat-cache@4.0.1:
+    dependencies:
+      flatted: 3.3.3
+      keyv: 4.5.4
+
+  flatted@3.3.3: {}
+
+  for-each@0.3.5:
+    dependencies:
+      is-callable: 1.2.7
+
+  foreground-child@3.3.1:
+    dependencies:
+      cross-spawn: 7.0.6
+      signal-exit: 4.1.0
+
+  fraction.js@4.3.7: {}
+
+  fsevents@2.3.3:
+    optional: true
+
+  function-bind@1.1.2: {}
+
+  function.prototype.name@1.1.8:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      functions-have-names: 1.2.3
+      hasown: 2.0.2
+      is-callable: 1.2.7
+
+  functions-have-names@1.2.3: {}
+
+  generator-function@2.0.1: {}
+
+  get-intrinsic@1.3.0:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      es-define-property: 1.0.1
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      function-bind: 1.1.2
+      get-proto: 1.0.1
+      gopd: 1.2.0
+      has-symbols: 1.1.0
+      hasown: 2.0.2
+      math-intrinsics: 1.1.0
+
+  get-proto@1.0.1:
+    dependencies:
+      dunder-proto: 1.0.1
+      es-object-atoms: 1.1.1
+
+  get-symbol-description@1.1.0:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+
+  get-tsconfig@4.12.0:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+
+  glob-parent@5.1.2:
+    dependencies:
+      is-glob: 4.0.3
+
+  glob-parent@6.0.2:
+    dependencies:
+      is-glob: 4.0.3
+
+  glob@10.4.5:
+    dependencies:
+      foreground-child: 3.3.1
+      jackspeak: 3.4.3
+      minimatch: 9.0.5
+      minipass: 7.1.2
+      package-json-from-dist: 1.0.1
+      path-scurry: 1.11.1
+
+  globals@14.0.0: {}
+
+  globalthis@1.0.4:
+    dependencies:
+      define-properties: 1.2.1
+      gopd: 1.2.0
+
+  gopd@1.2.0: {}
+
+  graphemer@1.4.0: {}
+
+  has-bigints@1.1.0: {}
+
+  has-flag@4.0.0: {}
+
+  has-property-descriptors@1.0.2:
+    dependencies:
+      es-define-property: 1.0.1
+
+  has-proto@1.2.0:
+    dependencies:
+      dunder-proto: 1.0.1
+
+  has-symbols@1.1.0: {}
+
+  has-tostringtag@1.0.2:
+    dependencies:
+      has-symbols: 1.1.0
+
+  hasown@2.0.2:
+    dependencies:
+      function-bind: 1.1.2
+
+  ignore@5.3.2: {}
+
+  ignore@7.0.5: {}
+
+  import-fresh@3.3.1:
+    dependencies:
+      parent-module: 1.0.1
+      resolve-from: 4.0.0
+
+  imurmurhash@0.1.4: {}
+
+  internal-slot@1.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      hasown: 2.0.2
+      side-channel: 1.1.0
+
+  is-array-buffer@3.0.5:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      get-intrinsic: 1.3.0
+
+  is-async-function@2.1.1:
+    dependencies:
+      async-function: 1.0.0
+      call-bound: 1.0.4
+      get-proto: 1.0.1
+      has-tostringtag: 1.0.2
+      safe-regex-test: 1.1.0
+
+  is-bigint@1.1.0:
+    dependencies:
+      has-bigints: 1.1.0
+
+  is-binary-path@2.1.0:
+    dependencies:
+      binary-extensions: 2.3.0
+
+  is-boolean-object@1.2.2:
+    dependencies:
+      call-bound: 1.0.4
+      has-tostringtag: 1.0.2
+
+  is-bun-module@2.0.0:
+    dependencies:
+      semver: 7.7.3
+
+  is-callable@1.2.7: {}
+
+  is-core-module@2.16.1:
+    dependencies:
+      hasown: 2.0.2
+
+  is-data-view@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      get-intrinsic: 1.3.0
+      is-typed-array: 1.1.15
+
+  is-date-object@1.1.0:
+    dependencies:
+      call-bound: 1.0.4
+      has-tostringtag: 1.0.2
+
+  is-extglob@2.1.1: {}
+
+  is-finalizationregistry@1.1.1:
+    dependencies:
+      call-bound: 1.0.4
+
+  is-fullwidth-code-point@3.0.0: {}
+
+  is-generator-function@1.1.2:
+    dependencies:
+      call-bound: 1.0.4
+      generator-function: 2.0.1
+      get-proto: 1.0.1
+      has-tostringtag: 1.0.2
+      safe-regex-test: 1.1.0
+
+  is-glob@4.0.3:
+    dependencies:
+      is-extglob: 2.1.1
+
+  is-map@2.0.3: {}
+
+  is-negative-zero@2.0.3: {}
+
+  is-number-object@1.1.1:
+    dependencies:
+      call-bound: 1.0.4
+      has-tostringtag: 1.0.2
+
+  is-number@7.0.0: {}
+
+  is-regex@1.2.1:
+    dependencies:
+      call-bound: 1.0.4
+      gopd: 1.2.0
+      has-tostringtag: 1.0.2
+      hasown: 2.0.2
+
+  is-set@2.0.3: {}
+
+  is-shared-array-buffer@1.0.4:
+    dependencies:
+      call-bound: 1.0.4
+
+  is-string@1.1.1:
+    dependencies:
+      call-bound: 1.0.4
+      has-tostringtag: 1.0.2
+
+  is-symbol@1.1.1:
+    dependencies:
+      call-bound: 1.0.4
+      has-symbols: 1.1.0
+      safe-regex-test: 1.1.0
+
+  is-typed-array@1.1.15:
+    dependencies:
+      which-typed-array: 1.1.19
+
+  is-weakmap@2.0.2: {}
+
+  is-weakref@1.1.1:
+    dependencies:
+      call-bound: 1.0.4
+
+  is-weakset@2.0.4:
+    dependencies:
+      call-bound: 1.0.4
+      get-intrinsic: 1.3.0
+
+  isarray@2.0.5: {}
+
+  isexe@2.0.0: {}
+
+  iterator.prototype@1.1.5:
+    dependencies:
+      define-data-property: 1.1.4
+      es-object-atoms: 1.1.1
+      get-intrinsic: 1.3.0
+      get-proto: 1.0.1
+      has-symbols: 1.1.0
+      set-function-name: 2.0.2
+
+  jackspeak@3.4.3:
+    dependencies:
+      '@isaacs/cliui': 8.0.2
+    optionalDependencies:
+      '@pkgjs/parseargs': 0.11.0
+
+  jiti@1.21.7: {}
+
+  jiti@2.6.1:
+    optional: true
+
+  js-tokens@4.0.0: {}
+
+  js-yaml@4.1.0:
+    dependencies:
+      argparse: 2.0.1
+
+  json-buffer@3.0.1: {}
+
+  json-schema-traverse@0.4.1: {}
+
+  json-stable-stringify-without-jsonify@1.0.1: {}
+
+  json5@1.0.2:
+    dependencies:
+      minimist: 1.2.8
+
+  jsx-ast-utils@3.3.5:
+    dependencies:
+      array-includes: 3.1.9
+      array.prototype.flat: 1.3.3
+      object.assign: 4.1.7
+      object.values: 1.2.1
+
+  keyv@4.5.4:
+    dependencies:
+      json-buffer: 3.0.1
+
+  language-subtag-registry@0.3.23: {}
+
+  language-tags@1.0.9:
+    dependencies:
+      language-subtag-registry: 0.3.23
+
+  levn@0.4.1:
+    dependencies:
+      prelude-ls: 1.2.1
+      type-check: 0.4.0
+
+  lilconfig@2.1.0: {}
+
+  lilconfig@3.1.3: {}
+
+  lines-and-columns@1.2.4: {}
+
+  locate-path@6.0.0:
+    dependencies:
+      p-locate: 5.0.0
+
+  lodash.merge@4.6.2: {}
+
+  loose-envify@1.4.0:
+    dependencies:
+      js-tokens: 4.0.0
+
+  lru-cache@10.4.3: {}
+
+  lucide-react@0.545.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
+  math-intrinsics@1.1.0: {}
+
+  merge2@1.4.1: {}
+
+  micromatch@4.0.8:
+    dependencies:
+      braces: 3.0.3
+      picomatch: 2.3.1
+
+  minimatch@3.1.2:
+    dependencies:
+      brace-expansion: 1.1.12
+
+  minimatch@9.0.5:
+    dependencies:
+      brace-expansion: 2.0.2
+
+  minimist@1.2.8: {}
+
+  minipass@7.1.2: {}
+
+  ms@2.1.3: {}
+
+  mz@2.7.0:
+    dependencies:
+      any-promise: 1.3.0
+      object-assign: 4.1.1
+      thenify-all: 1.6.0
+
+  nanoid@3.3.11: {}
+
+  napi-postinstall@0.3.4: {}
+
+  natural-compare@1.4.0: {}
+
+  next@15.5.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      '@next/env': 15.5.4
+      '@swc/helpers': 0.5.15
+      caniuse-lite: 1.0.30001749
+      postcss: 8.4.31
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      styled-jsx: 5.1.6(react@19.1.0)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 15.5.4
+      '@next/swc-darwin-x64': 15.5.4
+      '@next/swc-linux-arm64-gnu': 15.5.4
+      '@next/swc-linux-arm64-musl': 15.5.4
+      '@next/swc-linux-x64-gnu': 15.5.4
+      '@next/swc-linux-x64-musl': 15.5.4
+      '@next/swc-win32-arm64-msvc': 15.5.4
+      '@next/swc-win32-x64-msvc': 15.5.4
+      sharp: 0.34.4
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
+  node-releases@2.0.23: {}
+
+  normalize-path@3.0.0: {}
+
+  normalize-range@0.1.2: {}
+
+  object-assign@4.1.1: {}
+
+  object-hash@3.0.0: {}
+
+  object-inspect@1.13.4: {}
+
+  object-keys@1.1.1: {}
+
+  object.assign@4.1.7:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-object-atoms: 1.1.1
+      has-symbols: 1.1.0
+      object-keys: 1.1.1
+
+  object.entries@1.1.9:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-object-atoms: 1.1.1
+
+  object.fromentries@2.0.8:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-object-atoms: 1.1.1
+
+  object.groupby@1.0.3:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+
+  object.values@1.2.1:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-object-atoms: 1.1.1
+
+  optionator@0.9.4:
+    dependencies:
+      deep-is: 0.1.4
+      fast-levenshtein: 2.0.6
+      levn: 0.4.1
+      prelude-ls: 1.2.1
+      type-check: 0.4.0
+      word-wrap: 1.2.5
+
+  own-keys@1.0.1:
+    dependencies:
+      get-intrinsic: 1.3.0
+      object-keys: 1.1.1
+      safe-push-apply: 1.0.0
+
+  p-limit@3.1.0:
+    dependencies:
+      yocto-queue: 0.1.0
+
+  p-locate@5.0.0:
+    dependencies:
+      p-limit: 3.1.0
+
+  package-json-from-dist@1.0.1: {}
+
+  parent-module@1.0.1:
+    dependencies:
+      callsites: 3.1.0
+
+  path-exists@4.0.0: {}
+
+  path-key@3.1.1: {}
+
+  path-parse@1.0.7: {}
+
+  path-scurry@1.11.1:
+    dependencies:
+      lru-cache: 10.4.3
+      minipass: 7.1.2
+
+  picocolors@1.1.1: {}
+
+  picomatch@2.3.1: {}
+
+  picomatch@4.0.3: {}
+
+  pify@2.3.0: {}
+
+  pirates@4.0.7: {}
+
+  possible-typed-array-names@1.1.0: {}
+
+  postcss-import@15.1.0(postcss@8.5.6):
+    dependencies:
+      postcss: 8.5.6
+      postcss-value-parser: 4.2.0
+      read-cache: 1.0.0
+      resolve: 1.22.10
+
+  postcss-js@4.1.0(postcss@8.5.6):
+    dependencies:
+      camelcase-css: 2.0.1
+      postcss: 8.5.6
+
+  postcss-load-config@4.0.2(postcss@8.5.6):
+    dependencies:
+      lilconfig: 3.1.3
+      yaml: 2.8.1
+    optionalDependencies:
+      postcss: 8.5.6
+
+  postcss-nested@6.2.0(postcss@8.5.6):
+    dependencies:
+      postcss: 8.5.6
+      postcss-selector-parser: 6.1.2
+
+  postcss-selector-parser@6.1.2:
+    dependencies:
+      cssesc: 3.0.0
+      util-deprecate: 1.0.2
+
+  postcss-value-parser@4.2.0: {}
+
+  postcss@8.4.31:
+    dependencies:
+      nanoid: 3.3.11
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  postcss@8.5.6:
+    dependencies:
+      nanoid: 3.3.11
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
+
+  prelude-ls@1.2.1: {}
+
+  prettier@3.6.2: {}
+
+  prop-types@15.8.1:
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+
+  punycode@2.3.1: {}
+
+  queue-microtask@1.2.3: {}
+
+  react-dom@19.1.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      scheduler: 0.26.0
+
+  react-is@16.13.1: {}
+
+  react@19.1.0: {}
+
+  read-cache@1.0.0:
+    dependencies:
+      pify: 2.3.0
+
+  readdirp@3.6.0:
+    dependencies:
+      picomatch: 2.3.1
+
+  reflect.getprototypeof@1.0.10:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      get-intrinsic: 1.3.0
+      get-proto: 1.0.1
+      which-builtin-type: 1.2.1
+
+  regexp.prototype.flags@1.5.4:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-errors: 1.3.0
+      get-proto: 1.0.1
+      gopd: 1.2.0
+      set-function-name: 2.0.2
+
+  resolve-from@4.0.0: {}
+
+  resolve-pkg-maps@1.0.0: {}
+
+  resolve@1.22.10:
+    dependencies:
+      is-core-module: 2.16.1
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+
+  resolve@2.0.0-next.5:
+    dependencies:
+      is-core-module: 2.16.1
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+
+  reusify@1.1.0: {}
+
+  run-parallel@1.2.0:
+    dependencies:
+      queue-microtask: 1.2.3
+
+  safe-array-concat@1.1.3:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      get-intrinsic: 1.3.0
+      has-symbols: 1.1.0
+      isarray: 2.0.5
+
+  safe-push-apply@1.0.0:
+    dependencies:
+      es-errors: 1.3.0
+      isarray: 2.0.5
+
+  safe-regex-test@1.1.0:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      is-regex: 1.2.1
+
+  scheduler@0.26.0: {}
+
+  semver@6.3.1: {}
+
+  semver@7.7.3: {}
+
+  set-function-length@1.2.2:
+    dependencies:
+      define-data-property: 1.1.4
+      es-errors: 1.3.0
+      function-bind: 1.1.2
+      get-intrinsic: 1.3.0
+      gopd: 1.2.0
+      has-property-descriptors: 1.0.2
+
+  set-function-name@2.0.2:
+    dependencies:
+      define-data-property: 1.1.4
+      es-errors: 1.3.0
+      functions-have-names: 1.2.3
+      has-property-descriptors: 1.0.2
+
+  set-proto@1.0.0:
+    dependencies:
+      dunder-proto: 1.0.1
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+
+  sharp@0.34.4:
+    dependencies:
+      '@img/colour': 1.0.0
+      detect-libc: 2.1.2
+      semver: 7.7.3
+    optionalDependencies:
+      '@img/sharp-darwin-arm64': 0.34.4
+      '@img/sharp-darwin-x64': 0.34.4
+      '@img/sharp-libvips-darwin-arm64': 1.2.3
+      '@img/sharp-libvips-darwin-x64': 1.2.3
+      '@img/sharp-libvips-linux-arm': 1.2.3
+      '@img/sharp-libvips-linux-arm64': 1.2.3
+      '@img/sharp-libvips-linux-ppc64': 1.2.3
+      '@img/sharp-libvips-linux-s390x': 1.2.3
+      '@img/sharp-libvips-linux-x64': 1.2.3
+      '@img/sharp-libvips-linuxmusl-arm64': 1.2.3
+      '@img/sharp-libvips-linuxmusl-x64': 1.2.3
+      '@img/sharp-linux-arm': 0.34.4
+      '@img/sharp-linux-arm64': 0.34.4
+      '@img/sharp-linux-ppc64': 0.34.4
+      '@img/sharp-linux-s390x': 0.34.4
+      '@img/sharp-linux-x64': 0.34.4
+      '@img/sharp-linuxmusl-arm64': 0.34.4
+      '@img/sharp-linuxmusl-x64': 0.34.4
+      '@img/sharp-wasm32': 0.34.4
+      '@img/sharp-win32-arm64': 0.34.4
+      '@img/sharp-win32-ia32': 0.34.4
+      '@img/sharp-win32-x64': 0.34.4
+    optional: true
+
+  shebang-command@2.0.0:
+    dependencies:
+      shebang-regex: 3.0.0
+
+  shebang-regex@3.0.0: {}
+
+  side-channel-list@1.0.0:
+    dependencies:
+      es-errors: 1.3.0
+      object-inspect: 1.13.4
+
+  side-channel-map@1.0.1:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      object-inspect: 1.13.4
+
+  side-channel-weakmap@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      object-inspect: 1.13.4
+      side-channel-map: 1.0.1
+
+  side-channel@1.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      object-inspect: 1.13.4
+      side-channel-list: 1.0.0
+      side-channel-map: 1.0.1
+      side-channel-weakmap: 1.0.2
+
+  signal-exit@4.1.0: {}
+
+  source-map-js@1.2.1: {}
+
+  stable-hash@0.0.5: {}
+
+  stop-iteration-iterator@1.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      internal-slot: 1.1.0
+
+  string-width@4.2.3:
+    dependencies:
+      emoji-regex: 8.0.0
+      is-fullwidth-code-point: 3.0.0
+      strip-ansi: 6.0.1
+
+  string-width@5.1.2:
+    dependencies:
+      eastasianwidth: 0.2.0
+      emoji-regex: 9.2.2
+      strip-ansi: 7.1.2
+
+  string.prototype.includes@2.0.1:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+
+  string.prototype.matchall@4.0.12:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      get-intrinsic: 1.3.0
+      gopd: 1.2.0
+      has-symbols: 1.1.0
+      internal-slot: 1.1.0
+      regexp.prototype.flags: 1.5.4
+      set-function-name: 2.0.2
+      side-channel: 1.1.0
+
+  string.prototype.repeat@1.0.0:
+    dependencies:
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+
+  string.prototype.trim@1.2.10:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-data-property: 1.1.4
+      define-properties: 1.2.1
+      es-abstract: 1.24.0
+      es-object-atoms: 1.1.1
+      has-property-descriptors: 1.0.2
+
+  string.prototype.trimend@1.0.9:
+    dependencies:
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      define-properties: 1.2.1
+      es-object-atoms: 1.1.1
+
+  string.prototype.trimstart@1.0.8:
+    dependencies:
+      call-bind: 1.0.8
+      define-properties: 1.2.1
+      es-object-atoms: 1.1.1
+
+  strip-ansi@6.0.1:
+    dependencies:
+      ansi-regex: 5.0.1
+
+  strip-ansi@7.1.2:
+    dependencies:
+      ansi-regex: 6.2.2
+
+  strip-bom@3.0.0: {}
+
+  strip-json-comments@3.1.1: {}
+
+  styled-jsx@5.1.6(react@19.1.0):
+    dependencies:
+      client-only: 0.0.1
+      react: 19.1.0
+
+  sucrase@3.35.0:
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.13
+      commander: 4.1.1
+      glob: 10.4.5
+      lines-and-columns: 1.2.4
+      mz: 2.7.0
+      pirates: 4.0.7
+      ts-interface-checker: 0.1.13
+
+  supports-color@7.2.0:
+    dependencies:
+      has-flag: 4.0.0
+
+  supports-preserve-symlinks-flag@1.0.0: {}
+
+  tailwind-merge@3.3.1: {}
+
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.15):
+    dependencies:
+      tailwindcss: 3.4.15
+
+  tailwindcss@3.4.15:
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      arg: 5.0.2
+      chokidar: 3.6.0
+      didyoumean: 1.2.2
+      dlv: 1.1.3
+      fast-glob: 3.3.3
+      glob-parent: 6.0.2
+      is-glob: 4.0.3
+      jiti: 1.21.7
+      lilconfig: 2.1.0
+      micromatch: 4.0.8
+      normalize-path: 3.0.0
+      object-hash: 3.0.0
+      picocolors: 1.1.1
+      postcss: 8.5.6
+      postcss-import: 15.1.0(postcss@8.5.6)
+      postcss-js: 4.1.0(postcss@8.5.6)
+      postcss-load-config: 4.0.2(postcss@8.5.6)
+      postcss-nested: 6.2.0(postcss@8.5.6)
+      postcss-selector-parser: 6.1.2
+      resolve: 1.22.10
+      sucrase: 3.35.0
+    transitivePeerDependencies:
+      - ts-node
+
+  thenify-all@1.6.0:
+    dependencies:
+      thenify: 3.3.1
+
+  thenify@3.3.1:
+    dependencies:
+      any-promise: 1.3.0
+
+  tinyglobby@0.2.15:
+    dependencies:
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+
+  to-regex-range@5.0.1:
+    dependencies:
+      is-number: 7.0.0
+
+  ts-api-utils@2.1.0(typescript@5.9.3):
+    dependencies:
+      typescript: 5.9.3
+
+  ts-interface-checker@0.1.13: {}
+
+  tsconfig-paths@3.15.0:
+    dependencies:
+      '@types/json5': 0.0.29
+      json5: 1.0.2
+      minimist: 1.2.8
+      strip-bom: 3.0.0
+
+  tslib@2.8.1: {}
+
+  type-check@0.4.0:
+    dependencies:
+      prelude-ls: 1.2.1
+
+  typed-array-buffer@1.0.3:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      is-typed-array: 1.1.15
+
+  typed-array-byte-length@1.0.3:
+    dependencies:
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      has-proto: 1.2.0
+      is-typed-array: 1.1.15
+
+  typed-array-byte-offset@1.0.4:
+    dependencies:
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      has-proto: 1.2.0
+      is-typed-array: 1.1.15
+      reflect.getprototypeof: 1.0.10
+
+  typed-array-length@1.0.7:
+    dependencies:
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      is-typed-array: 1.1.15
+      possible-typed-array-names: 1.1.0
+      reflect.getprototypeof: 1.0.10
+
+  typescript@5.9.3: {}
+
+  unbox-primitive@1.1.0:
+    dependencies:
+      call-bound: 1.0.4
+      has-bigints: 1.1.0
+      has-symbols: 1.1.0
+      which-boxed-primitive: 1.1.1
+
+  undici-types@6.21.0: {}
+
+  unrs-resolver@1.11.1:
+    dependencies:
+      napi-postinstall: 0.3.4
+    optionalDependencies:
+      '@unrs/resolver-binding-android-arm-eabi': 1.11.1
+      '@unrs/resolver-binding-android-arm64': 1.11.1
+      '@unrs/resolver-binding-darwin-arm64': 1.11.1
+      '@unrs/resolver-binding-darwin-x64': 1.11.1
+      '@unrs/resolver-binding-freebsd-x64': 1.11.1
+      '@unrs/resolver-binding-linux-arm-gnueabihf': 1.11.1
+      '@unrs/resolver-binding-linux-arm-musleabihf': 1.11.1
+      '@unrs/resolver-binding-linux-arm64-gnu': 1.11.1
+      '@unrs/resolver-binding-linux-arm64-musl': 1.11.1
+      '@unrs/resolver-binding-linux-ppc64-gnu': 1.11.1
+      '@unrs/resolver-binding-linux-riscv64-gnu': 1.11.1
+      '@unrs/resolver-binding-linux-riscv64-musl': 1.11.1
+      '@unrs/resolver-binding-linux-s390x-gnu': 1.11.1
+      '@unrs/resolver-binding-linux-x64-gnu': 1.11.1
+      '@unrs/resolver-binding-linux-x64-musl': 1.11.1
+      '@unrs/resolver-binding-wasm32-wasi': 1.11.1
+      '@unrs/resolver-binding-win32-arm64-msvc': 1.11.1
+      '@unrs/resolver-binding-win32-ia32-msvc': 1.11.1
+      '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
+
+  update-browserslist-db@1.1.3(browserslist@4.26.3):
+    dependencies:
+      browserslist: 4.26.3
+      escalade: 3.2.0
+      picocolors: 1.1.1
+
+  uri-js@4.4.1:
+    dependencies:
+      punycode: 2.3.1
+
+  util-deprecate@1.0.2: {}
+
+  which-boxed-primitive@1.1.1:
+    dependencies:
+      is-bigint: 1.1.0
+      is-boolean-object: 1.2.2
+      is-number-object: 1.1.1
+      is-string: 1.1.1
+      is-symbol: 1.1.1
+
+  which-builtin-type@1.2.1:
+    dependencies:
+      call-bound: 1.0.4
+      function.prototype.name: 1.1.8
+      has-tostringtag: 1.0.2
+      is-async-function: 2.1.1
+      is-date-object: 1.1.0
+      is-finalizationregistry: 1.1.1
+      is-generator-function: 1.1.2
+      is-regex: 1.2.1
+      is-weakref: 1.1.1
+      isarray: 2.0.5
+      which-boxed-primitive: 1.1.1
+      which-collection: 1.0.2
+      which-typed-array: 1.1.19
+
+  which-collection@1.0.2:
+    dependencies:
+      is-map: 2.0.3
+      is-set: 2.0.3
+      is-weakmap: 2.0.2
+      is-weakset: 2.0.4
+
+  which-typed-array@1.1.19:
+    dependencies:
+      available-typed-arrays: 1.0.7
+      call-bind: 1.0.8
+      call-bound: 1.0.4
+      for-each: 0.3.5
+      get-proto: 1.0.1
+      gopd: 1.2.0
+      has-tostringtag: 1.0.2
+
+  which@2.0.2:
+    dependencies:
+      isexe: 2.0.0
+
+  word-wrap@1.2.5: {}
+
+  wrap-ansi@7.0.0:
+    dependencies:
+      ansi-styles: 4.3.0
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
+
+  wrap-ansi@8.1.0:
+    dependencies:
+      ansi-styles: 6.2.3
+      string-width: 5.1.2
+      strip-ansi: 7.1.2
+
+  yaml@2.8.1: {}
+
+  yocto-queue@0.1.0: {}
+
+  zod@4.1.12: {}
+```
+
+## app/postcss.config.js
+
+```javascript
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+## app/providers.tsx
 
 ```tsx
 "use client";
@@ -3803,12 +8087,9 @@ interface ProvidersProps {
 export function Providers({ children, session }: ProvidersProps) {
   return <SessionProvider session={session}>{children}</SessionProvider>;
 }
-
 ```
 
----
-
-### app/settings/page.tsx
+## app/settings/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3930,12 +8211,9 @@ export default function SettingsPage() {
     </div>
   );
 }
-
 ```
 
----
-
-### app/signin/page.tsx
+## app/signin/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3969,12 +8247,9 @@ export default function SignInPage() {
     </div>
   );
 }
-
 ```
 
----
-
-### app/signin/verify/page.tsx
+## app/signin/verify/page.tsx
 
 ```tsx
 import type { Metadata } from "next";
@@ -3998,12 +8273,2410 @@ export default function VerifyRequestPage() {
     </div>
   );
 }
-
 ```
 
----
+## app/src/app/globals.css
 
-### atticus/__init__.py
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 47.4% 11.2%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 210 20% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight text-foreground;
+  }
+
+  p {
+    @apply leading-relaxed text-muted-foreground;
+  }
+}
+```
+
+## app/src/app/layout.tsx
+
+```tsx
+import type { Metadata } from "next";
+import { Inter, Roboto_Mono } from "next/font/google";
+
+import { cn } from "@/lib/utils";
+
+import "./globals.css";
+
+const sans = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const mono = Roboto_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-screen bg-background text-foreground antialiased",
+          sans.variable,
+          mono.variable,
+        )}
+      >
+        <div className="font-sans">{children}</div>
+      </body>
+    </html>
+  );
+}
+```
+
+## app/src/app/page.tsx
+
+```tsx
+export default function Home() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-br from-background via-background to-secondary/40 px-6 py-12">
+      <div className="flex max-w-2xl flex-col items-center gap-4 rounded-lg border bg-card/80 p-8 text-center shadow-sm backdrop-blur">
+        <span className="inline-flex items-center rounded-full bg-primary/15 px-4 py-1 text-sm font-medium text-primary">
+          Wynstan setup complete
+        </span>
+        <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
+          GC Root-Cause Chat baseline ready
+        </h1>
+        <p className="text-base text-muted-foreground sm:text-lg">
+          Tailwind CSS utilities are active. This placeholder screen will be replaced in Stage 1 with the diagnostic workspace
+          layout.
+        </p>
+      </div>
+      <div className="flex items-center gap-3 rounded-lg border border-dashed bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+        <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden />
+        Dev server: run <code className="rounded bg-background px-2 py-1 font-mono text-xs">pnpm dev</code> and open
+        <span className="font-medium text-foreground">http://localhost:3000</span>
+      </div>
+    </main>
+  );
+}
+```
+
+## app/tailwind.config.ts
+
+```ts
+import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+const config: Config = {
+  darkMode: ["class"],
+  content: [
+    "./src/app/**/*.{ts,tsx}",
+    "./src/components/**/*.{ts,tsx}",
+    "./src/lib/**/*.{ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [animate],
+};
+
+export default config;
+```
+
+## app/tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+## archive/legacy-ui/static/admin.html
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Atticus</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+
+  <body
+    class="flex h-screen flex-col overflow-hidden bg-gray-100 transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100"
+  >
+    <header class="flex w-full items-center bg-gray-900 px-6 py-3 text-white dark:bg-gray-800">
+      <div class="text-xl font-bold">Atticus Admin</div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+      <aside
+        class="flex w-64 flex-col overflow-hidden bg-gray-900 text-white transition-all duration-300 dark:bg-gray-800"
+        id="sidebar"
+      >
+        <button id="sidebar-toggle" class="flex items-center justify-center p-2 hover:bg-gray-700">
+          <span class="material-icons">menu</span>
+        </button>
+
+        <nav class="flex flex-1 flex-col space-y-2 p-2">
+          <a href="index.html" class="menu-item">
+            <div class="icon-col"><span class="material-icons">home</span></div>
+            <span class="menu-text">Home</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="flex flex-1 flex-col">
+        <nav
+          class="flex justify-center space-x-6 border-b border-gray-300 bg-transparent py-3 font-medium text-gray-700 dark:border-gray-700 dark:text-gray-300"
+        >
+          <a href="#" class="hover:text-blue-600">Documentation</a>
+          <span class="text-gray-400">|</span>
+          <a href="#" class="hover:text-blue-600">Chat Logs</a>
+          <span class="text-gray-400">|</span>
+          <a href="#" class="hover:text-blue-600">Error Logs</a>
+          <span class="text-gray-400">|</span>
+          <a href="#" class="hover:text-blue-600">Dictionary</a>
+          <span class="text-gray-400">|</span>
+          <a href="#" class="hover:text-blue-600">Evaluation</a>
+          <span class="text-gray-400">|</span>
+          <a href="#" class="hover:text-blue-600">Tests</a>
+        </nav>
+
+        <div class="flex-1 p-6">
+          <h1 class="mb-4 text-2xl font-bold">Admin Dashboard</h1>
+          <p class="text-gray-600 dark:text-gray-300">
+            Select a section from the menu above to get started.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
+```
+
+## archive/legacy-ui/static/contact.html
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Atticus Team</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+
+  <body
+    data-api-base=""
+    class="min-h-screen bg-gray-100 transition-colors dark:bg-gray-900 dark:text-gray-100"
+  >
+    <div class="relative flex min-h-screen flex-col">
+      <header
+        class="border-b border-gray-200 bg-white/90 px-6 py-4 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90"
+      >
+        <div class="mx-auto flex w-full max-w-3xl items-center justify-between">
+          <div>
+            <a
+              href="index.html"
+              class="flex items-center gap-2 text-sm text-blue-500 transition hover:text-blue-600"
+            >
+              <span class="material-icons text-base">arrow_back</span>
+              Back to chat
+            </a>
+            <h1 class="mt-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+              Contact escalation team
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Messages are routed using the SMTP configuration defined in your .env file.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1">
+        <section class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-10">
+          <form
+            id="contact-form"
+            class="flex flex-col gap-6 rounded-xl border border-gray-200 bg-white/95 p-8 shadow-lg backdrop-blur dark:border-gray-700 dark:bg-gray-900/95"
+          >
+            <div>
+              <label
+                for="contact-subject"
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Subject</label
+              >
+              <input
+                id="contact-subject"
+                name="contact-subject"
+                type="text"
+                placeholder="Escalation summary"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="contact-body"
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
+                >Message body</label
+              >
+              <textarea
+                id="contact-body"
+                name="contact-body"
+                rows="10"
+                placeholder="Provide context for the escalation"
+                class="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                required
+              ></textarea>
+            </div>
+            <div class="flex flex-col gap-3">
+              <button
+                id="contact-send"
+                type="submit"
+                class="w-full rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-300 disabled:cursor-not-allowed disabled:bg-blue-400"
+              >
+                Send message
+              </button>
+              <p
+                id="contact-status"
+                class="min-h-[1.5rem] text-sm text-gray-500 dark:text-gray-400"
+              ></p>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <aside
+      id="sidebar"
+      class="sidebar flex w-64 flex-col bg-gray-900 text-white shadow-xl transition-all duration-300 dark:bg-gray-800"
+    >
+      <div class="flex items-center gap-2 p-4 text-xl font-bold tracking-wide">
+        <span class="material-icons text-blue-300">auto_stories</span>
+        <span class="uppercase">Atticus</span>
+      </div>
+
+      <nav class="flex flex-1 flex-col space-y-1 p-2">
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="home"
+        >
+          <span class="material-icons">home</span>
+          <span class="menu-text">Home</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="apps"
+        >
+          <span class="material-icons">apps</span>
+          <span class="menu-text">Apps</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="favorites"
+        >
+          <span class="material-icons">star</span>
+          <span class="menu-text">Favorites</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="chat"
+        >
+          <span class="material-icons">chat</span>
+          <span class="menu-text">Chat</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="settings"
+        >
+          <span class="material-icons">settings</span>
+          <span class="menu-text">Settings</span>
+        </button>
+      </nav>
+
+      <div class="mt-auto flex flex-col space-y-1 p-2">
+        <a
+          href="admin.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">admin_panel_settings</span>
+          <span class="menu-text">Admin</span>
+        </a>
+        <a
+          href="contact.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">mail</span>
+          <span class="menu-text">Contact</span>
+        </a>
+        <button
+          id="clear-chat"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">delete</span>
+          <span class="menu-text">Clear Chat</span>
+        </button>
+        <button
+          id="dark-toggle"
+          class="menu-item mb-1 flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">dark_mode</span>
+          <span class="menu-text">Dark Mode</span>
+        </button>
+      </div>
+    </aside>
+    <script src="js/script.js"></script>
+  </body>
+</html>
+```
+
+## archive/legacy-ui/static/css/style.css
+
+```css
+*,
+::before,
+::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x:  ;
+  --tw-pan-y:  ;
+  --tw-pinch-zoom:  ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
+  --tw-ordinal:  ;
+  --tw-slashed-zero:  ;
+  --tw-numeric-figure:  ;
+  --tw-numeric-spacing:  ;
+  --tw-numeric-fraction:  ;
+  --tw-ring-inset:  ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur:  ;
+  --tw-brightness:  ;
+  --tw-contrast:  ;
+  --tw-grayscale:  ;
+  --tw-hue-rotate:  ;
+  --tw-invert:  ;
+  --tw-saturate:  ;
+  --tw-sepia:  ;
+  --tw-drop-shadow:  ;
+  --tw-backdrop-blur:  ;
+  --tw-backdrop-brightness:  ;
+  --tw-backdrop-contrast:  ;
+  --tw-backdrop-grayscale:  ;
+  --tw-backdrop-hue-rotate:  ;
+  --tw-backdrop-invert:  ;
+  --tw-backdrop-opacity:  ;
+  --tw-backdrop-saturate:  ;
+  --tw-backdrop-sepia:  ;
+  --tw-contain-size:  ;
+  --tw-contain-layout:  ;
+  --tw-contain-paint:  ;
+  --tw-contain-style:  ;
+}
+
+/*
+! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com
+*/
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: "";
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html,
+:host {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+  tab-size: 4;
+  /* 3 */
+  font-family:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  -webkit-tap-highlight-color: transparent;
+  /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0;
+  /* 1 */
+  line-height: inherit;
+  /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  /* 1 */
+  font-feature-settings: normal;
+  /* 2 */
+  font-variation-settings: normal;
+  /* 3 */
+  font-size: 1em;
+  /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  letter-spacing: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+input:where([type="button"]),
+input:where([type="reset"]),
+input:where([type="submit"]) {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.collapse {
+  visibility: collapse;
+}
+
+.static {
+  position: static;
+}
+
+.relative {
+  position: relative;
+}
+
+.sticky {
+  position: sticky;
+}
+
+.bottom-0 {
+  bottom: 0px;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.hidden {
+  display: none;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.min-h-\[1\.5rem\] {
+  min-height: 1.5rem;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.w-20 {
+  width: 5rem;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.resize-none {
+  resize: none;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.space-x-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.whitespace-pre-line {
+  white-space: pre-line;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.border-t {
+  border-top-width: 1px;
+}
+
+.border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
+}
+
+.border-gray-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+}
+
+.bg-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+}
+
+.bg-gray-900 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+
+.bg-white\/70 {
+  background-color: rgb(255 255 255 / 0.7);
+}
+
+.bg-white\/90 {
+  background-color: rgb(255 255 255 / 0.9);
+}
+
+.bg-white\/95 {
+  background-color: rgb(255 255 255 / 0.95);
+}
+
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-white {
+  --tw-gradient-from: #fff var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-gray-50 {
+  --tw-gradient-to: rgb(249 250 251 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops:
+    var(--tw-gradient-from), #f9fafb var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.to-gray-100 {
+  --tw-gradient-to: #f3f4f6 var(--tw-gradient-to-position);
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pb-8 {
+  padding-bottom: 2rem;
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.align-middle {
+  vertical-align: middle;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-\[0\.7rem\] {
+  font-size: 0.7rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.text-amber-500 {
+  --tw-text-opacity: 1;
+  color: rgb(245 158 11 / var(--tw-text-opacity, 1));
+}
+
+.text-blue-300 {
+  --tw-text-opacity: 1;
+  color: rgb(147 197 253 / var(--tw-text-opacity, 1));
+}
+
+.text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
+}
+
+.text-emerald-500 {
+  --tw-text-opacity: 1;
+  color: rgb(16 185 129 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-900 {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+}
+
+.text-rose-500 {
+  --tw-text-opacity: 1;
+  color: rgb(244 63 94 / var(--tw-text-opacity, 1));
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.shadow-\[0_-6px_20px_-15px_rgba\(0\,0\,0\,0\.45\)\] {
+  --tw-shadow: 0 -6px 20px -15px rgba(0, 0, 0, 0.45);
+  --tw-shadow-colored: 0 -6px 20px -15px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-inner {
+  --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored:
+    0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.shadow-xl {
+  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored:
+    0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.backdrop-blur {
+  --tw-backdrop-blur: blur(8px);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast)
+    var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert)
+    var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.transition {
+  transition-property:
+    color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+/* Custom layout helpers */
+
+.sidebar-collapsed .menu-text {
+  display: none !important;
+}
+
+.sidebar-collapsed .menu-item {
+  justify-content: center;
+}
+
+#chat-output {
+  max-height: calc(100vh - 240px);
+  min-height: 16rem;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+#chat-output::after {
+  content: "";
+  display: block;
+  height: 1.5rem;
+}
+
+/* Scrollbar styling */
+
+#chat-output::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-output::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+
+.hover\:bg-blue-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-gray-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-gray-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:text-blue-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity, 1));
+}
+
+.focus\:border-blue-400:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(96 165 250 / var(--tw-border-opacity, 1));
+}
+
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
+    var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width))
+    var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus\:ring-blue-200:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(191 219 254 / var(--tw-ring-opacity, 1));
+}
+
+.focus-visible\:ring:focus-visible {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
+    var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width))
+    var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-visible\:ring-blue-300:focus-visible {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(147 197 253 / var(--tw-ring-opacity, 1));
+}
+
+.focus-visible\:ring-blue-400:focus-visible {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(96 165 250 / var(--tw-ring-opacity, 1));
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed;
+}
+
+.disabled\:bg-blue-400:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:border-gray-700:is(.dark *) {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
+}
+
+.dark\:bg-gray-700:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-gray-800:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-gray-900:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+}
+
+.dark\:bg-gray-900\/60:is(.dark *) {
+  background-color: rgb(17 24 39 / 0.6);
+}
+
+.dark\:bg-gray-900\/90:is(.dark *) {
+  background-color: rgb(17 24 39 / 0.9);
+}
+
+.dark\:bg-gray-900\/95:is(.dark *) {
+  background-color: rgb(17 24 39 / 0.95);
+}
+
+.dark\:from-gray-900:is(.dark *) {
+  --tw-gradient-from: #111827 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(17 24 39 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark\:via-gray-900:is(.dark *) {
+  --tw-gradient-to: rgb(17 24 39 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops:
+    var(--tw-gradient-from), #111827 var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+.dark\:to-gray-950:is(.dark *) {
+  --tw-gradient-to: #030712 var(--tw-gradient-to-position);
+}
+
+.dark\:text-gray-100:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-200:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(229 231 235 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-300:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-400:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-50:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(249 250 251 / var(--tw-text-opacity, 1));
+}
+
+.dark\:text-gray-500:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity, 1));
+}
+
+.dark\:hover\:bg-gray-700:hover:is(.dark *) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+}
+
+@media (min-width: 640px) {
+  .sm\:flex {
+    display: flex;
+  }
+
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+
+  .sm\:items-end {
+    align-items: flex-end;
+  }
+}
+```
+
+## archive/legacy-ui/static/index.html
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atticus AI Chat</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+
+  <body
+    data-api-base=""
+    class="flex h-screen bg-gray-100 transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100"
+  >
+    <aside
+      id="sidebar"
+      class="sidebar flex w-64 flex-col bg-gray-900 text-white shadow-xl transition-all duration-300 dark:bg-gray-800"
+    >
+      <div class="flex items-center gap-2 p-4 text-xl font-bold tracking-wide">
+        <span class="material-icons text-blue-300">auto_stories</span>
+        <span class="uppercase">Atticus</span>
+      </div>
+
+      <nav class="flex flex-1 flex-col space-y-1 p-2">
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="home"
+        >
+          <span class="material-icons">home</span>
+          <span class="menu-text">Home</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="apps"
+        >
+          <span class="material-icons">apps</span>
+          <span class="menu-text">Apps</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="favorites"
+        >
+          <span class="material-icons">star</span>
+          <span class="menu-text">Favorites</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="chat"
+        >
+          <span class="material-icons">chat</span>
+          <span class="menu-text">Chat</span>
+        </button>
+        <button
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+          data-view="settings"
+        >
+          <span class="material-icons">settings</span>
+          <span class="menu-text">Settings</span>
+        </button>
+      </nav>
+
+      <div class="mt-auto flex flex-col space-y-1 p-2">
+        <a
+          href="admin.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">admin_panel_settings</span>
+          <span class="menu-text">Admin</span>
+        </a>
+        <a
+          href="contact.html"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">mail</span>
+          <span class="menu-text">Contact</span>
+        </a>
+        <button
+          id="clear-chat"
+          class="menu-item flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">delete</span>
+          <span class="menu-text">Clear Chat</span>
+        </button>
+        <button
+          id="dark-toggle"
+          class="menu-item mb-1 flex items-center justify-start gap-2 rounded px-2 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-400"
+        >
+          <span class="material-icons">dark_mode</span>
+          <span class="menu-text">Dark Mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex h-full flex-1 flex-col">
+      <header
+        class="flex items-center justify-between border-b border-gray-200 bg-white/70 px-6 py-4 dark:border-gray-700 dark:bg-gray-900/60"
+      >
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Ask Atticus</h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Grounded responses with inline citations. When confidence is low, the request escalates
+            automatically.
+          </p>
+        </div>
+        <div class="hidden items-center gap-3 text-xs text-gray-500 dark:text-gray-400 sm:flex">
+          <span class="flex items-center gap-1"
+            ><span class="material-icons text-base">info</span> Double-click the sidebar to
+            collapse</span
+          >
+        </div>
+      </header>
+
+      <section
+        class="relative flex flex-1 flex-col bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-950"
+      >
+        <div
+          id="chat-output"
+          class="chat-panel flex-1 space-y-4 overflow-y-auto px-6 pb-8 pt-6 text-sm text-gray-900 dark:text-gray-50"
+        ></div>
+
+        <div
+          id="typing-indicator"
+          class="hidden px-6 pb-2 text-sm italic text-gray-500 dark:text-gray-400"
+        >
+          <span class="flex items-center gap-2"
+            ><span class="material-icons animate-pulse text-base">pending</span>Atticus is
+            typing…</span
+          >
+        </div>
+
+        <div class="fixed bottom-6 left-0 z-50 w-full px-4">
+          <form id="chat-form" class="mx-auto flex w-full max-w-4xl flex-col gap-3">
+            <div class="flex w-full items-end gap-2 sm:flex-row">
+              <div class="flex items-center">
+                <label
+                  for="file-upload"
+                  class="cursor-pointer rounded-lg border border-gray-200 bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                >
+                  <span class="material-icons align-middle text-base">attach_file</span>
+                </label>
+                <input type="file" id="file-upload" class="hidden" />
+              </div>
+
+              <textarea
+                id="chat-input"
+                name="chat-input"
+                rows="1"
+                placeholder="Type your question and press Enter…"
+                class="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 shadow-inner transition focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              ></textarea>
+
+              <button
+                type="submit"
+                class="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-300 disabled:cursor-not-allowed disabled:bg-blue-400"
+              >
+                Send
+              </button>
+            </div>
+            <div
+              class="min-h-[1.5rem] text-xs text-gray-500 dark:text-gray-400"
+              id="file-name"
+            ></div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
+```
+
+## archive/legacy-ui/static/js/script.js
+
+```javascript
+const STORAGE_KEY = "atticus.chat.history.v1";
+const API_BASE = (() => {
+  const explicit = document.body?.dataset?.apiBase?.trim();
+  if (explicit) {
+    return explicit.replace(/\/$/, "");
+  }
+  if (typeof window.ATTICUS_API_BASE === "string" && window.ATTICUS_API_BASE.trim()) {
+    return window.ATTICUS_API_BASE.trim().replace(/\/$/, "");
+  }
+  if (window.location.port === "8081") {
+    return "http://localhost:8000";
+  }
+  return "";
+})();
+
+function resolveApi(path) {
+  if (!API_BASE) {
+    return path;
+  }
+  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function restoreDarkMode() {
+  if (localStorage.getItem("atticus.darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
+}
+
+function persistDarkMode(isDark) {
+  localStorage.setItem("atticus.darkMode", String(isDark));
+}
+
+function saveChat(chatOutput) {
+  if (chatOutput) {
+    localStorage.setItem(STORAGE_KEY, chatOutput.innerHTML);
+  }
+}
+
+function loadChat(chatOutput) {
+  if (!chatOutput) {
+    return;
+  }
+  const history = localStorage.getItem(STORAGE_KEY);
+  if (history) {
+    chatOutput.innerHTML = history;
+  }
+}
+
+function formatTimestamp(date = new Date()) {
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+  const sidebarToggle = document.getElementById("sidebar-toggle");
+
+  function setSidebarCollapsed(collapsed) {
+    if (!sidebar) {
+      return;
+    }
+    sidebar.classList.toggle("sidebar-collapsed", collapsed);
+    sidebar.classList.toggle("w-64", !collapsed);
+    sidebar.classList.toggle("w-20", collapsed);
+    document.querySelectorAll(".menu-text").forEach((el) => {
+      el.classList.toggle("hidden", collapsed);
+    });
+    document.querySelectorAll(".menu-item").forEach((el) => {
+      el.classList.toggle("justify-center", collapsed);
+      el.classList.toggle("justify-start", !collapsed);
+    });
+  }
+
+  function toggleSidebar() {
+    if (!sidebar) {
+      return;
+    }
+    const collapsed = sidebar.classList.contains("sidebar-collapsed");
+    setSidebarCollapsed(!collapsed);
+  }
+
+  if (sidebar) {
+    sidebar.addEventListener("dblclick", () => {
+      toggleSidebar();
+    });
+  }
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", () => {
+      toggleSidebar();
+    });
+  }
+
+  const darkToggle = document.getElementById("dark-toggle");
+  if (darkToggle) {
+    darkToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      persistDarkMode(document.body.classList.contains("dark"));
+    });
+  }
+  restoreDarkMode();
+
+  const chatForm = document.getElementById("chat-form");
+  const chatInput = document.getElementById("chat-input");
+  const chatOutput = document.getElementById("chat-output");
+  const typingIndicator = document.getElementById("typing-indicator");
+  const clearChatBtn = document.getElementById("clear-chat");
+  const fileUpload = document.getElementById("file-upload");
+  const fileNameDisplay = document.getElementById("file-name");
+
+  function addMessage(text, sender = "user", options = {}) {
+    if (!chatOutput) {
+      return;
+    }
+    const wrapper = document.createElement("div");
+    wrapper.className = sender === "system" ? "flex justify-center" : "flex flex-col gap-1";
+
+    const msgContainer = document.createElement("div");
+    msgContainer.className =
+      sender === "user"
+        ? "ml-auto max-w-3xl rounded-xl bg-blue-600 px-4 py-3 text-white shadow-lg animate-fadeIn"
+        : sender === "system"
+          ? "mx-auto rounded-full bg-gray-200 px-4 py-2 text-sm text-gray-700 dark:bg-gray-700 dark:text-gray-100 animate-fadeIn"
+          : "mr-auto max-w-3xl rounded-xl bg-gray-200 px-4 py-3 text-sm text-gray-900 shadow-lg animate-fadeIn dark:bg-gray-800 dark:text-gray-100";
+
+    if (options.allowHtml) {
+      msgContainer.innerHTML = text;
+    } else {
+      const content = document.createElement("div");
+      content.className = "whitespace-pre-line";
+      content.textContent = text;
+      msgContainer.appendChild(content);
+    }
+
+    if (sender !== "system") {
+      const timeEl = document.createElement("span");
+      timeEl.className = "block text-xs text-gray-300";
+      const time =
+        options.timestamp instanceof Date ? formatTimestamp(options.timestamp) : formatTimestamp();
+      timeEl.textContent = time;
+      if (sender === "user") {
+        timeEl.classList.add("text-right");
+      } else {
+        timeEl.classList.add("text-gray-400", "dark:text-gray-500");
+      }
+      wrapper.appendChild(msgContainer);
+      wrapper.appendChild(timeEl);
+    } else {
+      wrapper.appendChild(msgContainer);
+    }
+
+    if (Array.isArray(options.sources) && options.sources.length) {
+      const listWrapper = document.createElement("div");
+      listWrapper.className =
+        "mt-3 rounded-lg border border-gray-200 bg-white/70 p-3 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-300";
+      const listTitle = document.createElement("p");
+      listTitle.className =
+        "font-semibold uppercase tracking-wide text-[0.7rem] text-gray-500 dark:text-gray-400";
+      listTitle.textContent = "Sources";
+      listWrapper.appendChild(listTitle);
+
+      const list = document.createElement("ul");
+      list.className = "mt-2 space-y-1";
+      options.sources.forEach((source) => {
+        const item = document.createElement("li");
+        item.textContent = source;
+        list.appendChild(item);
+      });
+      listWrapper.appendChild(list);
+      msgContainer.appendChild(listWrapper);
+    }
+
+    if (options.metaText) {
+      const meta = document.createElement("p");
+      meta.className = "mt-2 text-xs text-gray-400 dark:text-gray-500";
+      meta.textContent = options.metaText;
+      msgContainer.appendChild(meta);
+    }
+
+    chatOutput.appendChild(wrapper);
+    chatOutput.scrollTo({ top: chatOutput.scrollHeight, behavior: "smooth" });
+    saveChat(chatOutput);
+  }
+
+  if (chatOutput) {
+    loadChat(chatOutput);
+  }
+
+  if (fileUpload && fileNameDisplay) {
+    fileUpload.addEventListener("change", () => {
+      fileNameDisplay.textContent = fileUpload.files?.[0]?.name ?? "";
+    });
+  }
+
+  if (clearChatBtn && chatOutput) {
+    clearChatBtn.addEventListener("click", () => {
+      chatOutput.innerHTML = "";
+      localStorage.removeItem(STORAGE_KEY);
+      addMessage(`Chat cleared at ${formatTimestamp()}`, "system");
+    });
+  }
+
+  let submitController = null;
+
+  async function sendToApi(query) {
+    if (submitController) {
+      submitController.abort();
+    }
+    submitController = new AbortController();
+    const payload = { query };
+    const response = await fetch(resolveApi("/ask"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: submitController.signal,
+    });
+
+    if (!response.ok && response.status !== 206) {
+      const detail = await response.text();
+      throw new Error(detail || response.statusText);
+    }
+
+    const data = await response.json();
+    return { status: response.status, data };
+  }
+
+  function normalizeCitations(citations) {
+    if (!Array.isArray(citations)) {
+      return [];
+    }
+    return citations
+      .map((citation) => {
+        if (!citation || typeof citation !== "object") {
+          return "";
+        }
+        const parts = [];
+        if (citation.source_path) {
+          parts.push(citation.source_path);
+        }
+        if (typeof citation.page_number === "number") {
+          parts.push(`page ${citation.page_number}`);
+        }
+        if (citation.heading) {
+          parts.push(citation.heading);
+        }
+        return parts.join(" · ") || "";
+      })
+      .filter(Boolean);
+  }
+
+  function renderBotReply({ answer, citations, confidence, should_escalate, ae_id, request_id }) {
+    const parts = [answer || "(No answer returned)"];
+    const metaChunks = [];
+    if (typeof confidence === "number") {
+      metaChunks.push(`Confidence: ${(confidence * 100).toFixed(0)}%`);
+    }
+    if (request_id) {
+      metaChunks.push(`Request ID: ${request_id}`);
+    }
+    const metaText = metaChunks.length ? metaChunks.join(" · ") : undefined;
+    addMessage(parts.join("\n\n"), "bot", {
+      sources: normalizeCitations(citations),
+      metaText,
+    });
+
+    if (should_escalate) {
+      const escalationMsg = ae_id
+        ? `Confidence below threshold. Escalation created (ticket ${ae_id}).`
+        : "Confidence below threshold. Escalation created.";
+      addMessage(escalationMsg, "system");
+    }
+  }
+
+  if (chatForm && chatInput && chatOutput && typingIndicator) {
+    chatForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) {
+        return;
+      }
+
+      addMessage(message, "user");
+      chatInput.value = "";
+      if (fileNameDisplay) {
+        fileNameDisplay.textContent = "";
+      }
+
+      typingIndicator.classList.remove("hidden");
+
+      try {
+        const { status, data } = await sendToApi(message);
+        renderBotReply({
+          answer: data.answer,
+          citations: data.citations ?? data.sources,
+          confidence: data.confidence,
+          should_escalate: Boolean(data.should_escalate || data.escalated || status === 206),
+          ae_id: data.ae_id,
+          request_id: data.request_id,
+        });
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        addMessage(`Something went wrong: ${detail}`, "system");
+      } finally {
+        typingIndicator.classList.add("hidden");
+        chatInput.focus();
+      }
+    });
+
+    chatInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        chatForm.requestSubmit();
+      }
+    });
+  }
+
+  const contactForm = document.getElementById("contact-form");
+  const contactSubject = document.getElementById("contact-subject");
+  const contactBody = document.getElementById("contact-body");
+  const contactStatus = document.getElementById("contact-status");
+  const contactSend = document.getElementById("contact-send");
+
+  if (contactForm && contactSubject && contactBody && contactStatus && contactSend) {
+    contactForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const subject = contactSubject.value.trim();
+      const message = contactBody.value.trim();
+      if (!subject || !message) {
+        contactStatus.textContent = "Subject and message are required.";
+        return;
+      }
+
+      contactStatus.textContent = "Sending escalation…";
+      contactSend.disabled = true;
+
+      try {
+        const response = await fetch(resolveApi("/contact"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reason: subject,
+            transcript: message,
+          }),
+        });
+
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(detail || response.statusText);
+        }
+
+        contactStatus.textContent = "Escalation sent successfully.";
+        contactSubject.value = "";
+        contactBody.value = "";
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        contactStatus.textContent = `Unable to send escalation: ${detail}`;
+      } finally {
+        contactSend.disabled = false;
+      }
+    });
+  }
+});
+```
+
+## atticus/__init__.py
 
 ```python
 """Atticus core utilities."""
@@ -4011,12 +10684,9 @@ export default function VerifyRequestPage() {
 from .config import AppSettings
 
 __all__ = ["AppSettings"]
-
 ```
 
----
-
-### atticus/config.py
+## atticus/config.py
 
 ```python
 """Configuration objects for Atticus."""
@@ -4438,12 +11108,9 @@ def environment_diagnostics() -> dict[str, Any]:
         "settings": non_secret_settings,
         "secrets": secrets_report,
     }
-
 ```
 
----
-
-### atticus/embeddings.py
+## atticus/embeddings.py
 
 ```python
 """Embedding helpers using OpenAI or deterministic fallback."""
@@ -4542,12 +11209,9 @@ class EmbeddingClient:
         if norm:
             vector /= norm
         return vector.astype(np.float32).tolist()
-
 ```
 
----
-
-### atticus/logging.py
+## atticus/logging.py
 
 ```python
 """Structured logging utilities."""
@@ -4618,12 +11282,9 @@ def log_error(logger: logging.Logger, event: str, **payload: Any) -> None:
     if "trace_id" not in payload and "request_id" in payload:
         payload["trace_id"] = payload["request_id"]
     logger.error(event, extra={"extra_payload": payload})
-
 ```
 
----
-
-### atticus/logging_utils.py
+## atticus/logging_utils.py
 
 ```python
 from __future__ import annotations
@@ -4672,12 +11333,9 @@ def get_logger(name: str = "atticus") -> BoundLogger:
     _configure_once()
     logger = structlog.get_logger(name)
     return cast(BoundLogger, logger)
-
 ```
 
----
-
-### atticus/metrics.py
+## atticus/metrics.py
 
 ```python
 """Simple metrics aggregator for Atticus."""
@@ -4806,12 +11464,9 @@ class MetricsRecorder:
         self.total_latency_ms = 0.0
         self.latency_samples.clear()
         self.recent_trace_ids.clear()
-
 ```
 
----
-
-### atticus/notify/__init__.py
+## atticus/notify/__init__.py
 
 ```python
 """Notification helpers (email escalation, etc.)."""
@@ -4819,12 +11474,9 @@ class MetricsRecorder:
 from .mailer import EscalationDeliveryError, send_escalation
 
 __all__ = ["EscalationDeliveryError", "send_escalation"]
-
 ```
 
----
-
-### atticus/notify/mailer.py
+## atticus/notify/mailer.py
 
 ```python
 """SMTP mailer for escalation emails.
@@ -5076,12 +11728,9 @@ def send_escalation(
         ) from exc
 
     return None
-
 ```
 
----
-
-### atticus/tokenization.py
+## atticus/tokenization.py
 
 ```python
 """Tokenization utilities for chunking."""
@@ -5124,12 +11773,9 @@ def split_tokens(tokens: Sequence[int], window: int, overlap: int) -> Iterable[t
         yield start, end
         if end == total:
             break
-
 ```
 
----
-
-### atticus/utils/__init__.py
+## atticus/utils/__init__.py
 
 ```python
 """Helper utilities for Atticus."""
@@ -5137,12 +11783,9 @@ def split_tokens(tokens: Sequence[int], window: int, overlap: int) -> Iterable[t
 from .hashing import sha256_file, sha256_text
 
 __all__ = ["sha256_file", "sha256_text"]
-
 ```
 
----
-
-### atticus/utils/hashing.py
+## atticus/utils/hashing.py
 
 ```python
 """Utility helpers for hashing and manifest management."""
@@ -5163,12 +11806,9 @@ def sha256_file(path: Path) -> str:
 
 def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
-
 ```
 
----
-
-### atticus/vector_db.py
+## atticus/vector_db.py
 
 ```python
 """Postgres/pgvector persistence helpers."""
@@ -5603,51 +12243,103 @@ class PgVectorRepository:
 
         with self.connection() as conn, conn.cursor() as cur:
             cur.execute("TRUNCATE atticus_chunks, atticus_documents")
+```
+
+## atticus.egg-info/dependency_links.txt
 
 ```
 
----
+```
 
-### components/AnswerRenderer.tsx
-
-```tsx
-"use client";
-import React from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
-export default function AnswerRenderer({ text }: { text: string }) {
-    return (
-        <div className="max-w-none">
-            <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                    p: ({ node, ...props }) => (
-                        <p className="my-2 leading-relaxed" {...props} />
-                    ),
-                    ul: ({ node, ...props }) => (
-                        <ul className="my-2 ml-5 list-disc" {...props} />
-                    ),
-                    ol: ({ node, ...props }) => (
-                        <ol className="my-2 ml-5 list-decimal" {...props} />
-                    ),
-                    li: ({ node, ...props }) => <li className="my-1" {...props} />,
-                    strong: ({ node, ...props }) => (
-                        <strong className="font-semibold" {...props} />
-                    ),
-                }}
-            >
-                {text}
-            </ReactMarkdown>
-        </div>
-    );
-}
+## atticus.egg-info/requires.txt
 
 ```
 
----
+[dev]
+pip-tools
+ruff>=0.5
+mypy>=1.10
+pytest>=8
+pytest-cov>=5
+pytest-sugar>=0.9.7
+pytest-xdist>=3.5
+pydantic>=2.7
+types-requests
+types-PyYAML
+vulture>=2.11
+psycopg[binary]>=3.2
+pre-commit>=3.7
+```
 
-### components/admin/admin-ops-console.tsx
+## atticus.egg-info/SOURCES.txt
+
+```
+LICENSE
+README.md
+VERSION
+pyproject.toml
+api/__init__.py
+api/dependencies.py
+api/errors.py
+api/main.py
+api/middleware.py
+api/rate_limit.py
+api/schemas.py
+api/utils.py
+atticus/__init__.py
+atticus/config.py
+atticus/embeddings.py
+atticus/logging.py
+atticus/logging_utils.py
+atticus/metrics.py
+atticus/tokenization.py
+atticus/vector_db.py
+atticus.egg-info/PKG-INFO
+atticus.egg-info/SOURCES.txt
+atticus.egg-info/dependency_links.txt
+atticus.egg-info/requires.txt
+atticus.egg-info/top_level.txt
+eval/__init__.py
+eval/runner.py
+ingest/__init__.py
+ingest/chunker.py
+ingest/models.py
+ingest/pipeline.py
+retriever/__init__.py
+retriever/answer_format.py
+retriever/citation_utils.py
+retriever/generator.py
+retriever/models.py
+retriever/service.py
+retriever/vector_store.py
+tests/test_admin_route.py
+tests/test_api_version.py
+tests/test_chat_route.py
+tests/test_chunker.py
+tests/test_citation_dedupe.py
+tests/test_config_reload.py
+tests/test_contact_route.py
+tests/test_environment_diagnostics.py
+tests/test_error_schema.py
+tests/test_eval_runner.py
+tests/test_hashing.py
+tests/test_ingestion_retrieval_integration.py
+tests/test_mailer.py
+tests/test_seed_manifest.py
+tests/test_ui_route.py
+```
+
+## atticus.egg-info/top_level.txt
+
+```
+api
+atticus
+eval
+ingest
+retriever
+```
+
+## components/admin/admin-ops-console.tsx
 
 ```tsx
 "use client";
@@ -5986,7 +12678,7 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
       </Tabs>
       <Drawer
         open={drawerChatId !== null}
-        onOpenChange={(open) => {
+        onOpenChange={(open: boolean) => {
           if (!open) {
             setDrawerChatId(null);
             setFollowUpDraft("");
@@ -6108,12 +12800,225 @@ export function AdminOpsConsole({ role, uncertain, tickets, glossaryEntries }: A
     </>
   );
 }
-
 ```
 
----
+## components/AnswerRenderer.tsx
 
-### components/auth/sign-in-form.tsx
+```tsx
+"use client";
+
+import React, { useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+import type { AskAnswer, AskResponse, AskSource } from "@/lib/ask-contract";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import catalog from "@/indices/model_catalog.json";
+
+type AnswerRendererProps = {
+  text: string;
+  response?: AskResponse;
+  disabled?: boolean;
+  onClarify?: (models: string[]) => void;
+};
+
+type CatalogModel = {
+  canonical: string;
+  aliases?: string[];
+};
+
+type CatalogFamily = {
+  id: string;
+  label: string;
+  aliases?: string[];
+  models: CatalogModel[];
+};
+
+type ModelCatalog = {
+  families: CatalogFamily[];
+};
+
+const modelCatalog = catalog as ModelCatalog;
+
+function formatConfidence(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "-";
+  }
+  return `${Math.round(value * 100)}%`;
+}
+
+function SourcesList({ sources }: { sources: AskSource[] }) {
+  if (!sources.length) {
+    return null;
+  }
+  return (
+    <div className="mt-3 space-y-1 text-xs text-slate-600 dark:text-slate-300">
+      {sources.map((source, index) => (
+        <div key={`${source.path}-${index}`} className="flex gap-2">
+          <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500" aria-hidden="true" />
+          <span>
+            {source.path}
+            {typeof source.page === "number" ? ` · page ${source.page}` : ""}
+            {source.heading ? ` · ${source.heading}` : ""}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AnswerPanel({ answer }: { answer: AskAnswer }) {
+  const title = answer.model ?? answer.family_label ?? answer.family ?? "Answer";
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
+      <header className="mb-3 flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+          {answer.family && answer.model ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400">Family {answer.family}</p>
+          ) : null}
+        </div>
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+          Confidence {formatConfidence(answer.confidence)}
+        </span>
+      </header>
+      <div className="prose prose-sm max-w-none dark:prose-invert">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            p: ({ node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
+            ul: ({ node, ...props }) => <ul className="my-2 ml-5 list-disc" {...props} />,
+            ol: ({ node, ...props }) => <ol className="my-2 ml-5 list-decimal" {...props} />,
+            li: ({ node, ...props }) => <li className="my-1" {...props} />,
+            strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
+          }}
+        >
+          {answer.answer}
+        </ReactMarkdown>
+      </div>
+      <SourcesList sources={answer.sources ?? []} />
+    </section>
+  );
+}
+
+export default function AnswerRenderer({ text, response, disabled, onClarify }: AnswerRendererProps) {
+  const families = useMemo(() => modelCatalog.families ?? [], []);
+
+  const clarificationCard = useMemo(() => {
+    if (!response?.clarification) {
+      return null;
+    }
+    return (
+      <Card className="border border-indigo-200 bg-indigo-50/60 shadow-sm dark:border-indigo-900/70 dark:bg-indigo-950/50">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold text-indigo-900 dark:text-indigo-100">Need a little more detail</CardTitle>
+          <CardDescription className="text-sm text-indigo-800 dark:text-indigo-200">
+            {response.clarification.message}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {response.clarification.options.map((option) => (
+            <Button
+              key={option.id}
+              size="sm"
+              variant="secondary"
+              disabled={disabled}
+              onClick={() => onClarify?.([option.id])}
+            >
+              {option.label}
+            </Button>
+          ))}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline" disabled={disabled}>
+                Show list of models
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Select a model family</DialogTitle>
+                <DialogDescription>
+                  Review the available families and their representative models.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="max-h-64 space-y-4 overflow-y-auto pr-1">
+                {families.map((family) => (
+                  <div
+                    key={family.id}
+                    className="rounded-lg border border-slate-200 bg-slate-50/60 p-3 dark:border-slate-700 dark:bg-slate-800/70"
+                  >
+                    <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                      {family.label}
+                    </h4>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">Models:</p>
+                    <ul className="mt-1 space-y-0.5 text-xs text-slate-600 dark:text-slate-300">
+                      {family.models.map((model) => (
+                        <li key={`${family.id}-${model.canonical}`}>{model.canonical}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="secondary">Close</Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </CardContent>
+      </Card>
+    );
+  }, [disabled, families, onClarify, response?.clarification]);
+
+  const answerSections = useMemo(() => {
+    if (!response?.answers || response.answers.length === 0) {
+      return null;
+    }
+    return (
+      <div className="space-y-4">
+        {response.answers.map((answer) => (
+          <AnswerPanel key={`${answer.model ?? answer.family ?? "answer"}-${answer.answer.slice(0, 16)}`} answer={answer} />
+        ))}
+      </div>
+    );
+  }, [response?.answers]);
+
+  const fallbackMarkdown = useMemo(() => {
+    const content = response?.answer ?? text;
+    if (!content) {
+      return null;
+    }
+    return (
+      <div className="prose prose-sm max-w-none dark:prose-invert">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            p: ({ node, ...props }) => <p className="my-2 leading-relaxed" {...props} />,
+            ul: ({ node, ...props }) => <ul className="my-2 ml-5 list-disc" {...props} />,
+            ol: ({ node, ...props }) => <ol className="my-2 ml-5 list-decimal" {...props} />,
+            li: ({ node, ...props }) => <li className="my-1" {...props} />,
+            strong: ({ node, ...props }) => <strong className="font-semibold" {...props} />,
+          }}
+        >
+          {content}
+        </ReactMarkdown>
+      </div>
+    );
+  }, [response?.answer, text]);
+
+  return (
+    <div className="space-y-4">
+      {clarificationCard}
+      {clarificationCard ? null : answerSections ?? fallbackMarkdown}
+    </div>
+  );
+}
+```
+
+## components/auth/sign-in-form.tsx
 
 ```tsx
 "use client";
@@ -6177,12 +13082,9 @@ export function SignInForm() {
     </form>
   );
 }
-
 ```
 
----
-
-### components/chat/chat-panel.tsx
+## components/chat/chat-panel.tsx
 
 ```tsx
 "use client";
@@ -6211,6 +13113,7 @@ interface ChatMessage {
   status?: "pending" | "complete" | "error";
   response?: AskResponse;
   error?: string;
+  question?: string;
 }
 
 const shortcuts = [
@@ -6223,8 +13126,8 @@ function createId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function formatConfidence(confidence: number | undefined) {
-  if (confidence === undefined || Number.isNaN(confidence)) {
+function formatConfidence(confidence: number | null | undefined) {
+  if (confidence === null || confidence === undefined || Number.isNaN(confidence)) {
     return "—";
   }
   return `${Math.round(confidence * 100)}%`;
@@ -6267,7 +13170,8 @@ export function ChatPanel() {
       id: createId(),
       role: "assistant",
       status: "pending",
-      content: "Atticus is thinking…",
+      content: "Atticus is thinking...",
+      question: trimmed,
     };
 
     setMessages((prev) => [...prev, userMessage, placeholder]);
@@ -6276,7 +13180,7 @@ export function ChatPanel() {
 
     try {
       await streamAsk(
-        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined },
+        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined, models: undefined },
         {
           onEvent: (event: AskStreamEvent) => {
             if (event.type === "answer") {
@@ -6292,7 +13196,7 @@ export function ChatPanel() {
                     ? {
                         ...message,
                         status: "complete",
-                        content: response.answer,
+                        content: response.answer ?? response.clarification?.message ?? "",
                         response,
                       }
                     : message
@@ -6324,6 +13228,81 @@ export function ChatPanel() {
     }
   }
 
+  async function handleClarificationChoice(messageId: string, models: string[]) {
+    if (!models.length || isStreaming) {
+      return;
+    }
+    const target = messages.find((message) => message.id === messageId);
+    if (!target?.question) {
+      return;
+    }
+    setError(null);
+    setIsStreaming(true);
+    setMessages((prev) =>
+      prev.map((message) =>
+        message.id === messageId
+          ? {
+              ...message,
+              status: "pending",
+              content: "Atticus is thinking...",
+              response: message.response ? { ...message.response, clarification: undefined } : message.response,
+            }
+          : message
+      )
+    );
+
+    try {
+      await streamAsk(
+        {
+          question: target.question,
+          models,
+          filters: undefined,
+          contextHints: undefined,
+          topK: undefined,
+        },
+        {
+          onEvent: (event: AskStreamEvent) => {
+            if (event.type === "answer") {
+              const response = event.payload;
+              setMessages((prev) =>
+                prev.map((message) =>
+                  message.id === messageId
+                    ? {
+                        ...message,
+                        status: "complete",
+                        content: response.answer ?? response.clarification?.message ?? "",
+                        response,
+                      }
+                    : message
+                )
+              );
+            }
+            if (event.type === "end") {
+              setIsStreaming(false);
+            }
+          },
+        }
+      );
+    } catch (err) {
+      const messageError = err instanceof Error ? err.message : "Something went wrong.";
+      setError(messageError);
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === messageId
+            ? {
+                ...message,
+                status: "error",
+                content: "Unable to generate a response. Try again in a few moments.",
+                error: messageError,
+              }
+            : message
+        )
+      );
+    } finally {
+      setIsStreaming(false);
+    }
+  }
+
   return (
     <section className="flex w-full justify-center">
       <Card className="flex w-full max-w-3xl flex-col">
@@ -6331,7 +13310,7 @@ export function ChatPanel() {
           <div className="flex items-center justify-between gap-3">
             <CardTitle className="text-base">Live conversation</CardTitle>
             <Badge variant={isStreaming ? "default" : "success"}>
-              {isStreaming ? "Streaming…" : "Connected"}
+              {isStreaming ? "Streaming..." : "Connected"}
             </Badge>
           </div>
           <CardDescription>
@@ -6359,7 +13338,12 @@ export function ChatPanel() {
                   }
                 >
                   {message.role === "assistant" ? (
-                    <AnswerRenderer text={message.content} />
+                    <AnswerRenderer
+                      text={message.content}
+                      response={message.response}
+                      disabled={isStreaming}
+                      onClarify={(models) => handleClarificationChoice(message.id, models)}
+                    />
                   ) : (
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   )}
@@ -6389,12 +13373,14 @@ export function ChatPanel() {
                     <footer className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                       <span>Confidence: {formatConfidence(message.response.confidence)}</span>
                       <span>
-                        Escalate: {" "}
-                        {message.response.should_escalate ? (
-                          <span className="font-semibold text-rose-600">Yes</span>
-                        ) : (
-                          "No"
-                        )}
+                        Escalate:{" "}
+                        {message.response.should_escalate === undefined
+                          ? "-"
+                          : message.response.should_escalate ? (
+                              <span className="font-semibold text-rose-600">Yes</span>
+                            ) : (
+                              "No"
+                            )}
                       </span>
                       <span className="truncate">Request ID: {message.response.request_id}</span>
                     </footer>
@@ -6425,7 +13411,7 @@ export function ChatPanel() {
                   value={composer}
                   onChange={(event) => setComposer(event.target.value)}
                   rows={3}
-                  placeholder="Message Atticus…"
+                  placeholder="Message Atticus..."
                   className="max-h-[160px] min-h-[72px]"
                 />
               </div>
@@ -6435,7 +13421,7 @@ export function ChatPanel() {
                 ) : (
                   <Send className="h-4 w-4" aria-hidden="true" />
                 )}
-                <span>{isStreaming ? "Sending…" : "Send"}</span>
+                <span>{isStreaming ? "Sending..." : "Send"}</span>
               </Button>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
@@ -6458,12 +13444,9 @@ export function ChatPanel() {
     </section>
   );
 }
-
 ```
 
----
-
-### components/glossary/admin-panel.tsx
+## components/glossary/admin-panel.tsx
 
 ```tsx
 "use client";
@@ -6910,12 +13893,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     </section>
   );
 }
-
 ```
 
----
-
-### components/page-header.tsx
+## components/page-header.tsx
 
 ```tsx
 import type { ReactNode } from "react";
@@ -6950,12 +13930,9 @@ export function PageHeader({ title, description, eyebrow, actions }: PageHeaderP
     </div>
   );
 }
-
 ```
 
----
-
-### components/site-footer.tsx
+## components/site-footer.tsx
 
 ```tsx
 export function SiteFooter() {
@@ -6968,12 +13945,9 @@ export function SiteFooter() {
     </footer>
   );
 }
-
 ```
 
----
-
-### components/site-header.tsx
+## components/site-header.tsx
 
 ```tsx
 "use client";
@@ -7150,12 +14124,9 @@ export function SiteHeader() {
     </header>
   );
 }
-
 ```
 
----
-
-### components/ui/badge.tsx
+## components/ui/badge.tsx
 
 ```tsx
 import * as React from "react";
@@ -7203,12 +14174,9 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(function Badg
     />
   );
 });
-
 ```
 
----
-
-### components/ui/button.tsx
+## components/ui/button.tsx
 
 ```tsx
 import * as React from "react";
@@ -7271,12 +14239,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     />
   );
 });
-
 ```
 
----
-
-### components/ui/card.tsx
+## components/ui/card.tsx
 
 ```tsx
 import * as React from "react";
@@ -7364,12 +14329,115 @@ export const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<
     );
   }
 );
-
 ```
 
----
+## components/ui/dialog.tsx
 
-### components/ui/drawer.tsx
+```tsx
+"use client";
+
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+const Dialog = DialogPrimitive.Root;
+
+const DialogTrigger = DialogPrimitive.Trigger;
+
+const DialogPortal = DialogPrimitive.Portal;
+
+const DialogClose = DialogPrimitive.Close;
+
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm",
+      className
+    )}
+    {...props}
+  />
+));
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+
+const DialogContent = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-900",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md p-1 text-slate-500 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none dark:text-slate-300 dark:hover:bg-slate-800">
+        <X className="h-4 w-4" aria-hidden="true" />
+        <span className="sr-only">Close</span>
+      </DialogPrimitive.Close>
+    </DialogPrimitive.Content>
+  </DialogPortal>
+));
+DialogContent.displayName = DialogPrimitive.Content.displayName;
+
+const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
+);
+DialogHeader.displayName = "DialogHeader";
+
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)} {...props} />
+);
+DialogFooter.displayName = "DialogFooter";
+
+const DialogTitle = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Title
+    ref={ref}
+    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+    {...props}
+  />
+));
+DialogTitle.displayName = DialogPrimitive.Title.displayName;
+
+const DialogDescription = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Description
+    ref={ref}
+    className={cn("text-sm text-slate-500 dark:text-slate-400", className)}
+    {...props}
+  />
+));
+DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+};
+```
+
+## components/ui/drawer.tsx
 
 ```tsx
 "use client";
@@ -7430,12 +14498,9 @@ export function DrawerBody({ className, ...props }: React.HTMLAttributes<HTMLDiv
 export function DrawerFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("border-t border-slate-200 p-6 dark:border-slate-800", className)} {...props} />;
 }
-
 ```
 
----
-
-### components/ui/input.tsx
+## components/ui/input.tsx
 
 ```tsx
 import * as React from "react";
@@ -7459,12 +14524,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
     />
   );
 });
-
 ```
 
----
-
-### components/ui/label.tsx
+## components/ui/label.tsx
 
 ```tsx
 import * as React from "react";
@@ -7484,12 +14546,9 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(function Lab
     />
   );
 });
-
 ```
 
----
-
-### components/ui/select.tsx
+## components/ui/select.tsx
 
 ```tsx
 import * as React from "react";
@@ -7514,12 +14573,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function 
     </select>
   );
 });
-
 ```
 
----
-
-### components/ui/table.tsx
+## components/ui/table.tsx
 
 ```tsx
 import * as React from "react";
@@ -7606,12 +14662,9 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     />
   );
 });
-
 ```
 
----
-
-### components/ui/tabs.tsx
+## components/ui/tabs.tsx
 
 ```tsx
 "use client";
@@ -7661,12 +14714,9 @@ const TabsContent = ({ className, ...props }: React.ComponentPropsWithoutRef<typ
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };
-
 ```
 
----
-
-### components/ui/textarea.tsx
+## components/ui/textarea.tsx
 
 ```tsx
 import * as React from "react";
@@ -7689,12 +14739,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
     />
   );
 });
-
 ```
 
----
-
-### config.yaml
+## config.yaml
 
 ```yaml
 # Default configuration for the Atticus RAG service.
@@ -7727,12 +14774,23 @@ evaluation_runs_dir: eval/runs
 baseline_path: eval/baseline.json
 gold_set_path: eval/gold_set.csv
 eval_regression_threshold: 3.0
-
 ```
 
----
+## content/catalog/capabilities.txt
 
-### docker-compose.yml
+```
+Atticus printers support up to 1200 x 1200 dpi resolution.
+Recommended duty cycle is 5,000 pages per month.
+```
+
+## content/catalog/spec.txt
+
+```
+Atticus printers support up to 1200 x 1200 dpi resolution.
+Recommended duty cycle is 5,000 pages per month.
+```
+
+## docker-compose.yml
 
 ```yaml
 services:
@@ -7792,12 +14850,9 @@ volumes:
   indices:
   logs:
   postgres_data:
-
 ```
 
----
-
-### docs/api/openapi.json
+## docs/api/openapi.json
 
 ```json
 {
@@ -8660,12 +15715,9 @@ volumes:
     }
   }
 }
-
 ```
 
----
-
-### eval/__init__.py
+## eval/__init__.py
 
 ```python
 """Evaluation utilities for Atticus."""
@@ -8673,12 +15725,9 @@ volumes:
 from .runner import EvaluationResult, run_evaluation
 
 __all__ = ["EvaluationResult", "run_evaluation"]
-
 ```
 
----
-
-### eval/baseline.json
+## eval/baseline.json
 
 ```json
 {
@@ -8686,21 +15735,162 @@ __all__ = ["EvaluationResult", "run_evaluation"]
   "Recall@50": 1.0,
   "MRR": 1.0
 }
-
 ```
 
----
+## eval/ced-362-smoke.csv
 
-### eval/harness/__init__.py
+```csv
+Question,Answer
+"What is the maximum standard print resolution listed for these Apeos models?","Up to 1,200 × 2,400 dpi."
+"What is the recommended maximum AMPV for the C7070?","50K impressions per month."
+"What is the recommended minimum AMPV for the C2570?","6K impressions per month."
+"Which page size enables long paper/banner printing via the Bypass Tray?","Up to 320 × 1200 mm (printable area 305 × 1194 mm)."
+"Which PDLs are supported by default for printing?","PCL5 / PCL6 (PostScript optional)."
+"What scan resolutions are available?","600×600, 400×400, 300×300, 200×200 dpi."
+"What is the system memory listed for the devices?","4 GB (shared)."
+"What is the capacity of the optional HCF B2?","2,940 sheets (80 gsm)."
+"How many sheets can the Side Tray hold?","100 sheets (up to SRA3, 52–300 gsm)."
+"What is the rated print speed (A4 LEF) for the C5570 in ppm (BW/Colour)?","55/55 ppm."
+```
+
+## eval/gold_set.csv
+
+```csv
+question,relevant_documents,expected_answer,notes
+What is the maximum print resolution of the Apeos C7070 series?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"1,200 x 2,400 dpi",Product Overview; Printer Specifications
+What is the maximum scanning resolution?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,600 x 600 dpi,Product Overview; Scan Function
+What is the minimum AMPV for the C3070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"7,000 pages",Monthly Print Volume Range
+What is the maximum AMPV for the C4570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"35,000 pages",Monthly Print Volume Range
+What is the duty cycle for the C2570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"107,000 impressions per month",Monthly Print Volume Range
+What is the machine life for the C6570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,2.7 million impressions,Monthly Print Volume Range
+What is the rated print speed of the C7070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,70 ppm colour and 70 ppm mono (A4 LEF),Copier Specifications; Printer Specifications
+What is the touch panel size?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,10.1 inch electrostatic touch panel,Product Configuration Options
+What is the standard system memory?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,4 GB shared,Product Configuration Options; Memory Configuration
+What is the standard SSD capacity?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,128 GB,Product Configuration Options; Memory Configuration
+What type of encryption is standard?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,AES 256-bit encryption,Product Configuration Options; Security
+Which kit enables data overwrite security?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Data Overwrite Kit (EC104193),Product Configuration Options; Accessories/Options
+What is the warm-up time with plug-ins enabled?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,30 seconds or less,Copier Specifications
+What is the recovery time from sleep for the C7070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,13 seconds or less,Copier Specifications
+What is the first copy output time for the C2570 (colour)?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,8.7 seconds,Copier Specifications
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,55 ppm colour and mono,Copier Specifications
+What is the maximum supported paper size in trays?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,SRA3 (320 x 450 mm),Copier Specifications; Printer Specifications
+What is the maximum bypass tray size?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,12 x 19 inches (305 x 483 mm),Printer Specifications; Paper Tray Capacity
+What is the minimum bypass tray size?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,89 x 98 mm,Printer Specifications; Paper Tray Capacity
+What is the maximum supported paper weight in trays?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,300 gsm,Copier Specifications; Paper Tray Capacity
+What is the continuous copy limit per job?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,999 sheets,Copier Specifications
+What is the reduction/enlargement range?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,25% to 400% in 1% increments,Copier Specifications
+What is the maximum print size using the bypass tray?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,320 x 1200 mm,Printer Specifications; Banner Printing
+What is the minimum print size supported?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,89 x 98 mm,Printer Specifications
+What PDLs are standard and optional?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"PCL5/PCL6 standard, Adobe PostScript 3 optional",Printer Specifications
+Which interfaces are standard?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Gigabit Ethernet and USB 3.0,Printer Specifications
+Which wireless standards are supported by the wireless kit?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,IEEE 802.11 a/b/g/n/ac,Printer Specifications; Accessories/Options
+What file systems are supported for USB printing?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"FAT12, FAT16, FAT32, VFAT",Printing from USB and camera media Limitations; Store to USB Limitations
+What operating systems are supported for PCL printing?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Windows 10/8.1, Windows Server 2012–2019, macOS 10.12–11",Printer Specifications
+What operating systems are supported for Adobe PostScript 3?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Windows 10/8.1, Windows Server 2012–2019, macOS 10.12–11",Printer Specifications
+How many fonts are included with PCL?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,83 European fonts and 43 symbol sets,Printer Specifications
+How many fonts are included with PostScript?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,136 European fonts,Printer Specifications
+What is the scanning speed of the C7070 with DADF C2-PC?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"135 spm simplex, 270 ipm duplex",Scan Function; Duplex Automatic Document Feeder C2-PC
+What is the scanning speed of the C2570 with DADF B2-PC?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"80 spm simplex, 160 ipm duplex",Scan Function; Duplex Automatic Document Feeder B2-PC
+What scanning resolutions are supported?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"600, 400, 300, 200 dpi",Scan Function
+What file formats are supported for colour scans?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"TIFF, JPEG, DocuWorks, PDF, High Compression formats",Scan Function
+What additional formats require the Advanced Scan Kit?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Searchable PDF, Microsoft Word, Microsoft Excel",Scan Function; Accessories/Options
+What fax transmission time is specified per A4 page?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,2 to 4 seconds,Fax Specifications
+What maximum fax resolution is supported?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,600 x 600 dpi,Fax Specifications
+What coding methods are supported for fax?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"MH, MR, MMR, JBIG",Fax Specifications
+What fax transmission speeds are supported?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,2.4 to 33.6 kbps (G3),Fax Specifications
+How many fax ports are supported with expansion?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Up to 3 ports,Fax Specifications; Accessories/Options
+What is the maximum duplex feeder capacity on C2-PC?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,250 sheets,Duplex Automatic Document Feeder C2-PC
+What is the maximum duplex feeder capacity on B2-PC?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,130 sheets,Duplex Automatic Document Feeder B2-PC
+Which models come standard with C2-PC?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,C7070 and C6570,Duplex Automatic Document Feeder C2-PC
+What is the standard side tray capacity?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,100 sheets,Finishing Options; Side Tray
+Which finisher is not supported on C7070/C6570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Finisher-A2,Finishing Options; Finisher-A2
+What is the maximum staple capacity of the B5-Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,50 sheets,Finishing Options; B4/B5-Finisher
+What is the maximum staple-free capacity of the B5-Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,10 sheets,Finishing Options; B4/B5-Finisher
+What is the booklet capacity of the B4/B5 Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,15 sheets per booklet,Finishing Options; B4/B5-Finisher
+What is the booklet capacity of the C4/C5 Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,20 sets,Finishing Options; C4/C5-Finisher with Booklet Maker
+What is the maximum staple capacity of the C4/C5 Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,50 sheets (65 with optional unit),Finishing Options; C4/C5-Finisher with Booklet Maker
+What is the maximum half-fold capacity on C4/C5 Finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,5 sheets,Finishing Options; C4/C5-Finisher with Booklet Maker
+What folding unit is available?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Folder Unit CD3,Finishing Options; Folder Unit CD3
+What fold types does Folder Unit CD3 support?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Z-fold and Tri-fold,Finishing Options; Folder Unit CD3
+What is the capacity of Folder Unit CD3?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,40 sheets (64 gsm),Finishing Options; Folder Unit CD3
+What is the maximum output tray capacity of the centre tray?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,250 sheets,Output Tray Capacity
+What is the maximum input tray capacity?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,520 sheets per tray,Feeding and Options; Paper Tray Capacity
+What is the tandem tray capacity?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Tray 3: 840 sheets, Tray 4: 1,230 sheets",Feeding and Options; Paper Tray Capacity
+What is the bypass tray capacity?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,90 sheets,Feeding and Options; Paper Tray Capacity
+What is the capacity of HCF-B1?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"2,000 sheets",HCF-B1 (Option)
+What is the capacity of HCF-B2?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"2,940 sheets",HCF-B2 (Option)
+What is the capacity of the envelope tray?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,50 sheets,Envelope Tray (Option)
+Which tray supports banner paper?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Bypass tray,Feeding and Options; Banner Printing
+What is the toner yield for black toner?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"36,000 impressions",Toner Cartridge Yield Rate
+What is the toner yield for cyan toner?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"21,000 impressions",Toner Cartridge Yield Rate
+What is the toner yield for magenta toner?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"21,000 impressions",Toner Cartridge Yield Rate
+What is the toner yield for yellow toner?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"21,000 impressions",Toner Cartridge Yield Rate
+What is the drum yield for C7070 mono?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"270,000 impressions",Drum Cartridge Yield Rate
+What is the drum yield for C3070 colour?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"157,000 impressions",Drum Cartridge Yield Rate
+What is the waste toner bottle yield for C6570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"83,000 impressions",Waste Toner Bottle Yield Rate
+Which consumables are considered excess?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Any usage above CED rates,Excess Consumables
+What consumables are not covered as standard?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Staples,Staple Cartridges
+What is the staple cartridge life for 50-sheet stapling?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"5,000 staples",Staple Cartridges
+What is the staple cartridge life for booklet stapling?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"2,000 staples",Staple Cartridges
+What is the staple cartridge life for 65-sheet stapling?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"5,000 staples",Staple Cartridges
+What is the EPSV kit used for?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Connect cost recovery devices,Accessories/Options; Cost Recovery
+Which kit enables searchable PDF output?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Advanced Scan Kit,Accessories/Options; Advanced Scan Kit
+Which kit enables secure watermarking?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Secure Watermark Kit,Accessories/Options; Secure Watermark Kit
+Which kit enables image logging?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Image Log Kit,Accessories/Options; Image Log Kit
+Which kit enables IP Fax (SIP)?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,IP Fax (SIP) Kit,Accessories/Options; IP Fax (SIP) Kit
+What is the maximum banner print size?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,320 x 1200 mm,Banner Printing
+What drivers are supported for banner printing?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,PCL and PostScript,Banner Printing
+What is the billing meter for colour impressions?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Total colour output regardless of size,Billing Meters
+What is the billing meter for black impressions?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Total black and white output including received faxes,Billing Meters
+What is the billing meter for colour large impressions?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Large-format colour output (≥279x400 mm),Billing Meters
+What is the billing meter for total impressions?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Combined total of colour and black,Billing Meters
+What are recommended paper storage conditions?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"20–23°C, 45–55% RH",Supported Paper Types; Storage
+Is carbonless stock supported?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, prohibited",Supported Paper Types; Carbonless Stock
+Are envelopes guaranteed for print quality?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, performance cannot be guaranteed",Supported Paper Types; Envelopes
+Is coated stock performance guaranteed?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, reliability not guaranteed",Supported Paper Types; Coated Stock
+Are labels reusable in the device?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, labels must not be reused",Supported Paper Types; Label Stock
+What is the maximum humidity for operation?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,85% RH,Installation Requirements; Temperature & Humidity
+What is the minimum operating temperature?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,10°C,Installation Requirements; Temperature & Humidity
+What is the maximum operating temperature?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,32°C,Installation Requirements; Temperature & Humidity
+What is the maximum power consumption?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,2.4 kW,Electrical Requirements; Power Consumption
+What is the TEC of the C2570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.25 kWh per week,TEC (Typical Electricity Consumption)
+What is the TEC of the C7070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,0.87 kWh per week,TEC (Typical Electricity Consumption)
+What is the noise emission of the C7070 in operation?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,59.3 dB(A),Noise Emission (Sound Pressure Level)
+What is the heat emission of the C7070 when running?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"2,400 Kcal/hr",Heat Emission (Kcal/Hr)
+What is the machine weight of the C3070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,124 kg,Machine Weights and Dimensions; Machine Weight
+What is the weight of HCF-B1?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,29 kg,Machine Weights and Dimensions; Machine Accessory Dimensions
+What is the weight of HCF-B2?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,31 kg,Machine Weights and Dimensions; Machine Accessory Dimensions
+What is the weight of the C4/C5 Finisher with Booklet Maker?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,61 kg,Machine Weights and Dimensions; Machine Weight
+What is the weight of Folder Unit CD3?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,52 kg,Machine Weights and Dimensions; Machine Weight
+What are the electrical requirements?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"220–240 V, 50/60 Hz, 10 A dedicated",Installation Requirements; Electrical Requirements
+What is the recommended clearance behind the C7070 for service?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,100 mm,Space Requirements; Service Clearance Tables
+What is the recommended clearance on the left side of C3070 for service?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,500 mm,Space Requirements; Service Clearance Tables
+What is the recommended minimum overhead clearance for all models?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"2,000 mm",Space Requirements; Service Clearance Tables
+Is duplex supported for banner printing?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, simplex only",Banner Printing (Long Paper) Limitations
+What are typical image-to-paper alignment tolerances?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"1.6 mm lead-trail, 2.1 mm side-to-side",Image Alignment Limitations
+Does duplex speed reduce when outputting to the centre tray with a finisher?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Yes, duplex speed is reduced",Duplex Speed Limitations
+Are authenticated prints supported via AirPrint?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"No, authentication not supported",AirPrint Limitations
+What file systems are supported for USB storage?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"FAT12, FAT16, FAT32, VFAT",Store to USB Limitations
+What is the USB storage capacity limit?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,128 GB,Store to USB Limitations
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"Yes, only via Print Utility",Printing using Wi‑Fi Direct Limitations
+How many devices can connect via Wi‑Fi Direct concurrently?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,Up to 3 devices,Printing using Wi‑Fi Direct Limitations
+What is the minimum AMPV for the Apeos C4570?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"11,000 pages",Monthly Print Volume Range
+What is the duty cycle for the Apeos C6580?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"342,000 impressions per month",Monthly Print Volume Range
+What is the maximum AMPV for the Apeos C7580?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"70,000 pages",Monthly Print Volume Range
+What is the rated print speed of the Apeos C8180?,Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf,"81 ppm colour and mono (A4 LEF)",Monthly Print Volume Range
+What is the machine life for the Apeos C3070?,Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf,"1.5 million impressions",Monthly Print Volume Range
+What is the rated print speed for the Apeos printer?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","Clarification prompt listing Apeos C7070 range and Apeos C8180 series","Unclear question should trigger clarification"
+Compare the rated print speeds of the Apeos C4570 and Apeos C6580?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","C4570: 45 ppm (colour/mono); C6580: 65 ppm (colour/mono)","Multi-model speed comparison"
+What are the duty cycles for the Apeos C2570 and Apeos C7580?,"Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf; Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf","C2570: 107,000 impressions per month; C7580: 422,000 impressions per month","Multi-model duty cycle comparison"
+```
+
+## eval/harness/__init__.py
 
 ```python
 """Evaluation harness package."""
-
 ```
 
----
-
-### eval/harness/test_eval.py
+## eval/harness/test_eval.py
 
 ```python
 """Evaluation metric unit tests."""
@@ -8732,12 +15922,9 @@ def test_evaluate_query_partial_match() -> None:
     assert ndcg < 1.0
     assert recall == 1.0
     assert mrr == EXPECTED_PARTIAL_MRR
-
 ```
 
----
-
-### eval/harness/test_ui.py
+## eval/harness/test_ui.py
 
 ```python
 from __future__ import annotations
@@ -8754,12 +15941,9 @@ def test_ui_served() -> None:
         res = client.get("/ui")
         assert res.status_code == HTTP_OK
         assert "Atticus" in res.text
-
 ```
 
----
-
-### eval/runner.py
+## eval/runner.py
 
 ```python
 """Evaluation harness computing nDCG@10, Recall@50, and MRR.
@@ -9089,20 +16273,139 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
+## eval/runs/20251008/metrics.csv
 
-### eval/runs/20251008/metrics.html
+```csv
+query,nDCG@10,Recall@50,MRR,top_document
+What is the maximum print resolution of the Apeos C7070 series?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum scanning resolution?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum AMPV for the C3070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum AMPV for the C4570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the duty cycle for the C2570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the machine life for the C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the rated print speed of the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the touch panel size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard system memory?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard SSD capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What type of encryption is standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables data overwrite security?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the warm-up time with plug-ins enabled?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recovery time from sleep for the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the first copy output time for the C2570 (colour)?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum supported paper size in trays?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum bypass tray size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum bypass tray size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum supported paper weight in trays?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the continuous copy limit per job?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the reduction/enlargement range?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum print size using the bypass tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum print size supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What PDLs are standard and optional?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which interfaces are standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which wireless standards are supported by the wireless kit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file systems are supported for USB printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What operating systems are supported for PCL printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What operating systems are supported for Adobe PostScript 3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fonts are included with PCL?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fonts are included with PostScript?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the scanning speed of the C7070 with DADF C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the scanning speed of the C2570 with DADF B2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What scanning resolutions are supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file formats are supported for colour scans?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What additional formats require the Advanced Scan Kit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fax transmission time is specified per A4 page?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What maximum fax resolution is supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What coding methods are supported for fax?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fax transmission speeds are supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many fax ports are supported with expansion?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on B2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which models come standard with C2-PC?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the standard side tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which finisher is not supported on C7070/C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple-free capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the booklet capacity of the B4/B5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the booklet capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum staple capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum half-fold capacity on C4/C5 Finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What folding unit is available?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What fold types does Folder Unit CD3 support?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of Folder Unit CD3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum output tray capacity of the centre tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum input tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the tandem tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the bypass tray capacity?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of HCF-B1?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of HCF-B2?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the capacity of the envelope tray?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which tray supports banner paper?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for black toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for cyan toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for magenta toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the toner yield for yellow toner?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the drum yield for C7070 mono?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the drum yield for C3070 colour?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the waste toner bottle yield for C6570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which consumables are considered excess?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What consumables are not covered as standard?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for 50-sheet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for booklet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the staple cartridge life for 65-sheet stapling?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the EPSV kit used for?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables searchable PDF output?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables secure watermarking?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables image logging?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Which kit enables IP Fax (SIP)?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum banner print size?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What drivers are supported for banner printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for colour impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for black impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for colour large impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the billing meter for total impressions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are recommended paper storage conditions?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is carbonless stock supported?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are envelopes guaranteed for print quality?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is coated stock performance guaranteed?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are labels reusable in the device?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum humidity for operation?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the minimum operating temperature?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum operating temperature?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the maximum power consumption?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the TEC of the C2570?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the TEC of the C7070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the noise emission of the C7070 in operation?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the heat emission of the C7070 when running?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the machine weight of the C3070?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of HCF-B1?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of HCF-B2?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of the C4/C5 Finisher with Booklet Maker?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the weight of Folder Unit CD3?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are the electrical requirements?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended clearance behind the C7070 for service?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended clearance on the left side of C3070 for service?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the recommended minimum overhead clearance for all models?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is duplex supported for banner printing?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What are typical image-to-paper alignment tolerances?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Does duplex speed reduce when outputting to the centre tray with a finisher?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Are authenticated prints supported via AirPrint?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What file systems are supported for USB storage?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+What is the USB storage capacity limit?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+How many devices can connect via Wi‑Fi Direct concurrently?,1.0,1.0,1.0,content/model/shobu/ac7070_qna.xlsx
+AVERAGE,1.0,1.0,1.0,
+```
+
+## eval/runs/20251008/metrics.html
 
 ```html
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Atticus Evaluation Summary</title><style>body{font-family:Inter,Arial,sans-serif;background:#0f172a;color:#e2e8f0;margin:0;padding:2rem;}h1{margin-top:0;font-size:1.75rem;}table{border-collapse:collapse;width:100%;margin-top:1.5rem;background:#1e293b;border-radius:0.5rem;overflow:hidden;}th,td{padding:0.75rem 1rem;text-align:left;border-bottom:1px solid rgba(148,163,184,0.25);}th{width:18rem;font-weight:600;}tbody tr:last-child td{border-bottom:none;}section + section{margin-top:2rem;}caption{caption-side:top;font-weight:600;font-size:1.1rem;margin-bottom:0.5rem;color:#f8fafc;}</style></head><body><h1>Atticus Evaluation Summary</h1><p>Generated at <strong>2025-10-08 12:38:37Z</strong>. Metrics compare retrieval output against the configured gold set.</p><section><table><caption>Aggregate Metrics</caption><tbody><tr><th scope="row">nDCG@10</th><td>1.0000</td></tr><tr><th scope="row">Recall@50</th><td>1.0000</td></tr><tr><th scope="row">MRR</th><td>1.0000</td></tr></tbody></table></section><section><table><caption>Per-query Breakdown</caption><thead><tr><th>Query</th><th>nDCG@10</th><th>Recall@50</th><th>MRR</th><th>Top Document</th></tr></thead><tbody><tr><td>What is the maximum print resolution of the Apeos C7070 series?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum scanning resolution?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the minimum AMPV for the C3070?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum AMPV for the C4570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the duty cycle for the C2570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the machine life for the C6570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the rated print speed of the C7070?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the touch panel size?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the standard system memory?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the standard SSD capacity?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What type of encryption is standard?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which kit enables data overwrite security?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the warm-up time with plug-ins enabled?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the recovery time from sleep for the C7070?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the first copy output time for the C2570 (colour)?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the continuous copy speed of the C5570 for A4 LEF simplex?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum supported paper size in trays?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum bypass tray size?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the minimum bypass tray size?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum supported paper weight in trays?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the continuous copy limit per job?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the reduction/enlargement range?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum print size using the bypass tray?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the minimum print size supported?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What PDLs are standard and optional?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which interfaces are standard?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which wireless standards are supported by the wireless kit?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What file systems are supported for USB printing?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What operating systems are supported for PCL printing?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What operating systems are supported for Adobe PostScript 3?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>How many fonts are included with PCL?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>How many fonts are included with PostScript?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the scanning speed of the C7070 with DADF C2-PC?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the scanning speed of the C2570 with DADF B2-PC?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What scanning resolutions are supported?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What file formats are supported for colour scans?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What additional formats require the Advanced Scan Kit?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What fax transmission time is specified per A4 page?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What maximum fax resolution is supported?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What coding methods are supported for fax?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What fax transmission speeds are supported?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>How many fax ports are supported with expansion?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum duplex feeder capacity on C2-PC?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum duplex feeder capacity on B2-PC?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which models come standard with C2-PC?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the standard side tray capacity?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which finisher is not supported on C7070/C6570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum staple capacity of the B5-Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum staple-free capacity of the B5-Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the booklet capacity of the B4/B5 Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the booklet capacity of the C4/C5 Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum staple capacity of the C4/C5 Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum half-fold capacity on C4/C5 Finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What folding unit is available?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What fold types does Folder Unit CD3 support?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the capacity of Folder Unit CD3?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum output tray capacity of the centre tray?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum input tray capacity?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the tandem tray capacity?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the bypass tray capacity?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the capacity of HCF-B1?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the capacity of HCF-B2?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the capacity of the envelope tray?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which tray supports banner paper?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the toner yield for black toner?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the toner yield for cyan toner?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the toner yield for magenta toner?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the toner yield for yellow toner?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the drum yield for C7070 mono?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the drum yield for C3070 colour?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the waste toner bottle yield for C6570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which consumables are considered excess?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What consumables are not covered as standard?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the staple cartridge life for 50-sheet stapling?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the staple cartridge life for booklet stapling?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the staple cartridge life for 65-sheet stapling?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the EPSV kit used for?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which kit enables searchable PDF output?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which kit enables secure watermarking?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which kit enables image logging?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Which kit enables IP Fax (SIP)?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum banner print size?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What drivers are supported for banner printing?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the billing meter for colour impressions?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the billing meter for black impressions?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the billing meter for colour large impressions?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the billing meter for total impressions?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What are recommended paper storage conditions?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Is carbonless stock supported?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Are envelopes guaranteed for print quality?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Is coated stock performance guaranteed?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Are labels reusable in the device?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum humidity for operation?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the minimum operating temperature?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum operating temperature?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the maximum power consumption?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the TEC of the C2570?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the TEC of the C7070?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the noise emission of the C7070 in operation?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the heat emission of the C7070 when running?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the machine weight of the C3070?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the weight of HCF-B1?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the weight of HCF-B2?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the weight of the C4/C5 Finisher with Booklet Maker?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the weight of Folder Unit CD3?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What are the electrical requirements?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the recommended clearance behind the C7070 for service?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the recommended clearance on the left side of C3070 for service?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the recommended minimum overhead clearance for all models?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Is duplex supported for banner printing?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What are typical image-to-paper alignment tolerances?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Does duplex speed reduce when outputting to the centre tray with a finisher?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Are authenticated prints supported via AirPrint?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What file systems are supported for USB storage?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>What is the USB storage capacity limit?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr><tr><td>How many devices can connect via Wi‑Fi Direct concurrently?</td><td>1.0000</td><td>1.0000</td><td>1.0000</td><td>content/model/shobu/ac7070_qna.xlsx</td></tr></tbody></table></section></body></html>
 ```
 
----
-
-### eval/runs/20251008/summary.json
+## eval/runs/20251008/summary.json
 
 ```json
 {
@@ -9110,12 +16413,133 @@ if __name__ == "__main__":
   "Recall@50": 1.0,
   "MRR": 1.0
 }
-
 ```
 
----
+## eval/runs/ci/metrics.csv
 
-### eval/runs/ci/summary.json
+```csv
+query,nDCG@10,Recall@50,MRR,top_document
+What is the maximum print resolution of the Apeos C7070 series?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum scanning resolution?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum AMPV for the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum AMPV for the C4570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the duty cycle for the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the machine life for the C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the rated print speed of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the touch panel size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard system memory?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard SSD capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What type of encryption is standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables data overwrite security?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the warm-up time with plug-ins enabled?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the recovery time from sleep for the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the first copy output time for the C2570 (colour)?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum supported paper size in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum supported paper weight in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the continuous copy limit per job?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the reduction/enlargement range?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum print size using the bypass tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum print size supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What PDLs are standard and optional?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which interfaces are standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which wireless standards are supported by the wireless kit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What file systems are supported for USB printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What operating systems are supported for PCL printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What operating systems are supported for Adobe PostScript 3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many fonts are included with PCL?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many fonts are included with PostScript?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the scanning speed of the C7070 with DADF C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the scanning speed of the C2570 with DADF B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What scanning resolutions are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What file formats are supported for colour scans?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What additional formats require the Advanced Scan Kit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What fax transmission time is specified per A4 page?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What maximum fax resolution is supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What coding methods are supported for fax?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What fax transmission speeds are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many fax ports are supported with expansion?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which models come standard with C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard side tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which finisher is not supported on C7070/C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple-free capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the booklet capacity of the B4/B5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the booklet capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum half-fold capacity on C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What folding unit is available?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What fold types does Folder Unit CD3 support?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum output tray capacity of the centre tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum input tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the tandem tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the bypass tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of the envelope tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which tray supports banner paper?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for black toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for cyan toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for magenta toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for yellow toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the drum yield for C7070 mono?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the drum yield for C3070 colour?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the waste toner bottle yield for C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which consumables are considered excess?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What consumables are not covered as standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the staple cartridge life for 50-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the staple cartridge life for booklet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the staple cartridge life for 65-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the EPSV kit used for?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables searchable PDF output?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables secure watermarking?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables image logging?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables IP Fax (SIP)?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum banner print size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What drivers are supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for colour impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for black impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for colour large impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for total impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What are recommended paper storage conditions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Is carbonless stock supported?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Are envelopes guaranteed for print quality?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Is coated stock performance guaranteed?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Are labels reusable in the device?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum humidity for operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum operating temperature?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum operating temperature?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum power consumption?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the TEC of the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the TEC of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the noise emission of the C7070 in operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the heat emission of the C7070 when running?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the machine weight of the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of the C4/C5 Finisher with Booklet Maker?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What are the electrical requirements?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the recommended clearance behind the C7070 for service?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the recommended clearance on the left side of C3070 for service?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the recommended minimum overhead clearance for all models?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Is duplex supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What are typical image-to-paper alignment tolerances?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Does duplex speed reduce when outputting to the centre tray with a finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Are authenticated prints supported via AirPrint?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What file systems are supported for USB storage?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the USB storage capacity limit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+How many devices can connect via Wi‑Fi Direct concurrently?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+AVERAGE,1.0,1.0,1.0,
+```
+
+## eval/runs/ci/summary.json
 
 ```json
 {
@@ -9123,12 +16547,133 @@ if __name__ == "__main__":
   "Recall@50": 1.0,
   "MRR": 1.0
 }
-
 ```
 
----
+## eval/runs/manual/metrics.csv
 
-### eval/runs/manual/summary.json
+```csv
+query,nDCG@10,Recall@50,MRR,top_document
+What is the maximum print resolution of the Apeos C7070 series?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum scanning resolution?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum AMPV for the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum AMPV for the C4570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the duty cycle for the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the machine life for the C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the rated print speed of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the touch panel size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard system memory?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard SSD capacity?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What type of encryption is standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables data overwrite security?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the warm-up time with plug-ins enabled?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the recovery time from sleep for the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the first copy output time for the C2570 (colour)?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the continuous copy speed of the C5570 for A4 LEF simplex?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum supported paper size in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum bypass tray size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum supported paper weight in trays?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the continuous copy limit per job?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the reduction/enlargement range?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum print size using the bypass tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum print size supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What PDLs are standard and optional?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which interfaces are standard?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Which wireless standards are supported by the wireless kit?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What file systems are supported for USB printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What operating systems are supported for PCL printing?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What operating systems are supported for Adobe PostScript 3?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+How many fonts are included with PCL?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many fonts are included with PostScript?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the scanning speed of the C7070 with DADF C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the scanning speed of the C2570 with DADF B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What scanning resolutions are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What file formats are supported for colour scans?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What additional formats require the Advanced Scan Kit?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What fax transmission time is specified per A4 page?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What maximum fax resolution is supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What coding methods are supported for fax?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What fax transmission speeds are supported?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many fax ports are supported with expansion?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum duplex feeder capacity on B2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which models come standard with C2-PC?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the standard side tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which finisher is not supported on C7070/C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple-free capacity of the B5-Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the booklet capacity of the B4/B5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the booklet capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum staple capacity of the C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum half-fold capacity on C4/C5 Finisher?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What folding unit is available?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What fold types does Folder Unit CD3 support?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum output tray capacity of the centre tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum input tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the tandem tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the bypass tray capacity?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the capacity of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the capacity of the envelope tray?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which tray supports banner paper?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for black toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for cyan toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for magenta toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the toner yield for yellow toner?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the drum yield for C7070 mono?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the drum yield for C3070 colour?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the waste toner bottle yield for C6570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which consumables are considered excess?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What consumables are not covered as standard?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the staple cartridge life for 50-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the staple cartridge life for booklet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the staple cartridge life for 65-sheet stapling?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the EPSV kit used for?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Which kit enables searchable PDF output?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables secure watermarking?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables image logging?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Which kit enables IP Fax (SIP)?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the maximum banner print size?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What drivers are supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the billing meter for colour impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for black impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for colour large impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the billing meter for total impressions?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What are recommended paper storage conditions?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Is carbonless stock supported?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Are envelopes guaranteed for print quality?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Is coated stock performance guaranteed?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Are labels reusable in the device?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum humidity for operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the minimum operating temperature?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the maximum operating temperature?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the maximum power consumption?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the TEC of the C2570?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the TEC of the C7070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the noise emission of the C7070 in operation?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the heat emission of the C7070 when running?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the machine weight of the C3070?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of HCF-B1?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the weight of HCF-B2?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the weight of the C4/C5 Finisher with Booklet Maker?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the weight of Folder Unit CD3?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What are the electrical requirements?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the recommended clearance behind the C7070 for service?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the recommended clearance on the left side of C3070 for service?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What is the recommended minimum overhead clearance for all models?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Is duplex supported for banner printing?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+What are typical image-to-paper alignment tolerances?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Does duplex speed reduce when outputting to the centre tray with a finisher?,1.0,1.0,1.0,content/model/ac7070/apeos c7070-c6570-c5570-c4570-c3570-c3070-c2570-cso-fn-ced-362.pdf
+Are authenticated prints supported via AirPrint?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What file systems are supported for USB storage?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+What is the USB storage capacity limit?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+Is Wi‑Fi Direct scanning/printing supported via FBAU Print Utility only?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+How many devices can connect via Wi‑Fi Direct concurrently?,1.0,1.0,1.0,content/model/ac7070/ac7070_qna.xlsx
+AVERAGE,1.0,1.0,1.0,
+```
+
+## eval/runs/manual/summary.json
 
 ```json
 {
@@ -9136,12 +16681,9 @@ if __name__ == "__main__":
   "Recall@50": 1.0,
   "MRR": 1.0
 }
-
 ```
 
----
-
-### ingest/__init__.py
+## ingest/__init__.py
 
 ```python
 """Ingestion pipeline entrypoints."""
@@ -9149,12 +16691,9 @@ if __name__ == "__main__":
 from .pipeline import IngestionOptions, IngestionSummary, ingest_corpus
 
 __all__ = ["IngestionOptions", "IngestionSummary", "ingest_corpus"]
-
 ```
 
----
-
-### ingest/chunker.py
+## ingest/chunker.py
 
 ```python
 """Chunking utilities implementing the CED policy."""
@@ -9400,12 +16939,9 @@ def chunk_documents(documents: Iterable[ParsedDocument], settings: AppSettings) 
     for document in documents:
         all_chunks.extend(chunker.chunk_document(document))
     return all_chunks
-
 ```
 
----
-
-### ingest/models.py
+## ingest/models.py
 
 ```python
 """Dataclasses for parsed documents and chunks."""
@@ -9452,12 +16988,9 @@ class Chunk:
     sha256: str
     extra: dict[str, str]
     breadcrumbs: list[str] = field(default_factory=list)
-
 ```
 
----
-
-### ingest/parsers/__init__.py
+## ingest/parsers/__init__.py
 
 ```python
 """Document discovery and parsing utilities."""
@@ -9504,12 +17037,9 @@ def parse_document(path: Path) -> ParsedDocument:
     if parser is None:
         raise ValueError(f"Unsupported file extension: {path.suffix}")
     return parser(path)
-
 ```
 
----
-
-### ingest/parsers/docx.py
+## ingest/parsers/docx.py
 
 ```python
 """DOCX parser."""
@@ -9561,12 +17091,9 @@ def parse_docx(path: Path) -> ParsedDocument:
         source_type="docx",
         sections=sections,
     )
-
 ```
 
----
-
-### ingest/parsers/html.py
+## ingest/parsers/html.py
 
 ```python
 """HTML parser using BeautifulSoup."""
@@ -9613,12 +17140,9 @@ def parse_html(path: Path) -> ParsedDocument:
         source_type="html",
         sections=sections,
     )
-
 ```
 
----
-
-### ingest/parsers/image.py
+## ingest/parsers/image.py
 
 ```python
 """Image OCR parser."""
@@ -9654,12 +17178,9 @@ def parse_image(path: Path) -> ParsedDocument:
         source_type="image",
         sections=[section],
     )
-
 ```
 
----
-
-### ingest/parsers/pdf.py
+## ingest/parsers/pdf.py
 
 ```python
 """PDF parsing including OCR fallback."""
@@ -9800,12 +17321,9 @@ def _extract_tables(path: Path) -> Iterable[ParsedSection]:  # noqa: PLR0912
                 extra=extra,
                 breadcrumbs=breadcrumbs,
             )
-
 ```
 
----
-
-### ingest/parsers/text.py
+## ingest/parsers/text.py
 
 ```python
 """Plain text parser."""
@@ -9825,12 +17343,9 @@ def parse_text(path: Path) -> ParsedDocument:
         source_type="text",
         sections=[section],
     )
-
 ```
 
----
-
-### ingest/parsers/xlsx.py
+## ingest/parsers/xlsx.py
 
 ```python
 """Parser for XLSX question and answer sheets."""
@@ -9841,17 +17356,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence, cast
 
-try:  # pragma: no cover - optional runtime dependency
-    from openpyxl import load_workbook as _load_workbook
-except Exception:  # pragma: no cover - graceful fallback for typing
-    _load_workbook = None  # type: ignore[assignment]
-
-load_workbook: Any = _load_workbook
-
 if TYPE_CHECKING:
+    from openpyxl import load_workbook
     from openpyxl.worksheet.worksheet import Worksheet
 else:  # pragma: no cover - runtime fallback
-    Worksheet = Any  # type: ignore[assignment]
+    try:
+        from openpyxl import load_workbook  # type: ignore[assignment]
+    except Exception:  # pragma: no cover - graceful fallback for typing
+        load_workbook = None  # type: ignore[assignment]
+    Worksheet = Any
 
 from ..models import ParsedDocument, ParsedSection
 
@@ -9989,18 +17502,16 @@ def parse_xlsx(path: Path) -> ParsedDocument:
         )
 
     return ParsedDocument(source_path=path, source_type="xlsx", sections=sections)
-
 ```
 
----
-
-### ingest/pipeline.py
+## ingest/pipeline.py
 
 ```python
 """Ingestion pipeline orchestrating parsing, chunking, and indexing."""
 
 from __future__ import annotations
 
+import json
 import shutil
 import time
 from collections.abc import Sequence
@@ -10013,8 +17524,10 @@ from atticus.embeddings import EmbeddingClient
 from atticus.logging import configure_logging, log_event
 from atticus.utils import sha256_file, sha256_text
 from atticus.vector_db import PgVectorRepository, StoredChunk, save_metadata
+from retriever.models import ModelCatalog, extract_models, load_model_catalog
 
 from .chunker import chunk_document
+from .models import Chunk as ParsedChunk
 from .models import ParsedDocument
 from .parsers import discover_documents, parse_document
 
@@ -10039,6 +17552,73 @@ class IngestionSummary:
     embedding_model_version: str
 
 
+def _build_document_scope(
+    documents: Sequence[ParsedDocument], catalog: ModelCatalog
+) -> dict[str, dict[str, set[str]]]:
+    scope: dict[str, dict[str, set[str]]] = {}
+    for document in documents:
+        texts: list[str] = [document.source_path.name]
+        for section in document.sections[:5]:
+            if section.heading:
+                texts.append(section.heading)
+            texts.append(section.text)
+        models: set[str] = set()
+        families: set[str] = set()
+        for text in texts:
+            if not text:
+                continue
+            extraction = extract_models(text, catalog=catalog)
+            models.update(extraction.models)
+            families.update(extraction.families)
+        scope[document.document_id] = {"models": models, "families": families}
+    return scope
+
+
+def _annotate_chunk_with_catalog(
+    chunk: StoredChunk | ParsedChunk,
+    catalog: ModelCatalog,
+    document_scope: dict[str, dict[str, set[str]]],
+) -> None:
+    texts = [
+        getattr(chunk, "text", "") or "",
+        chunk.extra.get("breadcrumbs", ""),
+        getattr(chunk, "source_path", "") or "",
+    ]
+    models: set[str] = set()
+    families: set[str] = set()
+    for text in texts:
+        if not text:
+            continue
+        extraction = extract_models(text, catalog=catalog)
+        models.update(extraction.models)
+        families.update(extraction.families)
+
+    defaults = document_scope.get(chunk.document_id)
+    if defaults:
+        models.update(defaults.get("models", set()))
+        families.update(defaults.get("families", set()))
+
+    if not families and models:
+        for model in models:
+            ident = catalog.match_model(model)
+            if ident:
+                families.add(ident.family_id)
+
+    if families:
+        family_ids = sorted(families)
+        chunk.extra["product_family"] = ",".join(family_ids)
+        labels = {
+            catalog.families[family_id].label
+            for family_id in family_ids
+            if family_id in catalog.families
+        }
+        if labels:
+            chunk.extra["product_family_label"] = ", ".join(sorted(labels))
+
+    if models:
+        chunk.extra["models"] = json.dumps(sorted(models))
+
+
 def _snapshot_directory(settings: AppSettings, timestamp: str) -> Path:
     safe = timestamp.replace(":", "").replace("-", "")
     snapshot_dir = settings.snapshots_dir / safe
@@ -10053,6 +17633,7 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     options = options or IngestionOptions()
     settings.ensure_directories()
     logger = configure_logging(settings)
+    catalog = load_model_catalog()
 
     if not settings.database_url:
         raise ValueError("DATABASE_URL must be configured before running ingestion")
@@ -10084,11 +17665,13 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         if manifest_entry and manifest_entry.get("sha256") == file_hash:
             existing_chunks = repo.fetch_chunks_for_source(str(file_path))
             if existing_chunks:
-                for chunk in existing_chunks:
-                    chunk.extra["embedding_model"] = settings.embed_model
-                    chunk.extra["embedding_model_version"] = settings.embedding_model_version
-                    chunk.extra["ingested_at"] = ingest_time
-                    chunk.extra.setdefault("chunk_sha", chunk.sha256)
+                for existing_chunk in existing_chunks:
+                    existing_chunk.extra["embedding_model"] = settings.embed_model
+                    existing_chunk.extra["embedding_model_version"] = (
+                        settings.embedding_model_version
+                    )
+                    existing_chunk.extra["ingested_at"] = ingest_time
+                    existing_chunk.extra.setdefault("chunk_sha", existing_chunk.sha256)
                 reused_chunks.extend(existing_chunks)
                 first = existing_chunks[0]
                 reused_documents[first.document_id] = {
@@ -10106,9 +17689,15 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
         new_documents.append(document)
         document_lookup[str(document.source_path)] = document.source_type
 
-    new_parsed_chunks = []
+    new_parsed_chunks: list[ParsedChunk] = []
     for document in new_documents:
         new_parsed_chunks.extend(chunk_document(document, settings))
+
+    document_scope = _build_document_scope(new_documents, catalog)
+    for parsed_chunk in new_parsed_chunks:
+        _annotate_chunk_with_catalog(parsed_chunk, catalog, document_scope)
+    for reused_chunk in reused_chunks:
+        _annotate_chunk_with_catalog(reused_chunk, catalog, document_scope)
 
     embed_client = EmbeddingClient(settings, logger=logger)
     embeddings = embed_client.embed_texts(chunk.text for chunk in new_parsed_chunks)
@@ -10272,12 +17861,9 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     )
 
     return summary
-
 ```
 
----
-
-### knip.json
+## knip.json
 
 ```json
 {
@@ -10299,20 +17885,39 @@ def ingest_corpus(  # noqa: PLR0915, PLR0912
     "prisma/**/*.ts"
   ],
   "paths": {
-    "@": ["."],
-    "@/components": ["components"],
-    "@/app": ["app"],
-    "@/lib": ["lib"]
+    "@": [
+      "."
+    ],
+    "@/components": [
+      "components"
+    ],
+    "@/app": [
+      "app"
+    ],
+    "@/lib": [
+      "lib"
+    ]
   },
-  "ignoreDependencies": ["@auth/prisma-adapter", "clsx", "zod"],
-  "ignore": ["archive/legacy-ui/**", "prisma/seed.ts", "scripts/route-audit.mjs"]
+  "ignoreDependencies": [
+    "@auth/prisma-adapter",
+    "@radix-ui/react-dialog",
+    "@radix-ui/react-slot",
+    "@radix-ui/react-tabs",
+    "clsx",
+    "react-markdown",
+    "remark-gfm",
+    "zod",
+    "tailwind-merge"
+  ],
+  "ignore": [
+    "archive/legacy-ui/**",
+    "prisma/seed.ts",
+    "scripts/route-audit.mjs"
+  ]
 }
-
 ```
 
----
-
-### lib/ask-client.ts
+## lib/ask-client.ts
 
 ```ts
 import {
@@ -10419,12 +18024,9 @@ export async function streamAsk(
   }
   return resolved;
 }
-
 ```
 
----
-
-### lib/ask-contract.ts
+## lib/ask-contract.ts
 
 ```ts
 import { z } from "zod";
@@ -10437,12 +18039,34 @@ const askSourceSchema = z.object({
   score: z.number().nullable().optional(),
 });
 
-export const askResponseSchema = z.object({
+const clarificationOptionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+});
+
+const clarificationPayloadSchema = z.object({
+  message: z.string(),
+  options: z.array(clarificationOptionSchema),
+});
+
+const askAnswerSchema = z.object({
   answer: z.string(),
   confidence: z.number(),
   should_escalate: z.boolean(),
-  request_id: z.string(),
+  model: z.string().nullable().optional(),
+  family: z.string().nullable().optional(),
+  family_label: z.string().nullable().optional(),
   sources: z.array(askSourceSchema),
+});
+
+export const askResponseSchema = z.object({
+  answer: z.string().optional().nullable(),
+  confidence: z.number().optional().nullable(),
+  should_escalate: z.boolean().optional().nullable(),
+  request_id: z.string(),
+  sources: z.array(askSourceSchema).optional(),
+  answers: z.array(askAnswerSchema).optional(),
+  clarification: clarificationPayloadSchema.optional(),
 });
 
 export const askRequestSchema = z.object({
@@ -10462,17 +18086,20 @@ export const askRequestSchema = z.object({
     .max(32)
     .nullish()
     .transform((value) => value ?? undefined),
+  models: z
+    .array(z.string().min(1))
+    .nullish()
+    .transform((value) => (value && value.length ? value : undefined)),
 });
 
 export type AskResponse = z.infer<typeof askResponseSchema>;
 export type AskRequest = z.infer<typeof askRequestSchema>;
 export type AskSource = z.infer<typeof askSourceSchema>;
-
+export type AskAnswer = z.infer<typeof askAnswerSchema>;
+export type ClarificationPayload = z.infer<typeof clarificationPayloadSchema>;
 ```
 
----
-
-### lib/auth.ts
+## lib/auth.ts
 
 ```ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -10488,13 +18115,26 @@ import { prisma } from "@/lib/prisma";
 
 const defaultOrgId = process.env.DEFAULT_ORG_ID ?? "org-atticus";
 const emailFrom = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? "atticus@localhost";
+const defaultMailboxDir = "./logs/mailbox";
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+function resolveMailboxDir(): string | null {
+  const configured = process.env.AUTH_DEBUG_MAILBOX_DIR;
+  if (configured === undefined) {
+    return defaultMailboxDir;
+  }
+  const trimmed = configured.trim();
+  if (!trimmed) {
+    return null;
+  }
+  return trimmed;
+}
+
 async function persistMagicLink(email: string, url: string) {
-  const mailboxDir = process.env.AUTH_DEBUG_MAILBOX_DIR;
+  const mailboxDir = resolveMailboxDir();
   if (!mailboxDir) {
     return;
   }
@@ -10590,13 +18230,19 @@ export const authOptions: NextAuthConfig = {
         const server = buildEmailServer();
         const transport = nodemailer.createTransport(server);
         const to = normalizeEmail(identifier);
-        await transport.sendMail({
-          to,
-          from: emailFrom,
-          subject: "Your Atticus magic link",
-          text: `Sign in to Atticus by opening this link:\n${url}\n`,
-          html: `<p>Sign in to Atticus by selecting the button below.</p><p><a href="${url}">Complete sign-in</a></p>`,
-        });
+        try {
+          await transport.sendMail({
+            to,
+            from: emailFrom,
+            subject: "Your Atticus magic link",
+            text: `Sign in to Atticus by opening this link:\n${url}\n`,
+            html: `<p>Sign in to Atticus by selecting the button below.</p><p><a href="${url}">Complete sign-in</a></p>`,
+          });
+        } catch (error) {
+          if (!process.env.AUTH_DEBUG_MAILBOX_DIR) {
+            throw error;
+          }
+        }
         await persistMagicLink(to, url);
       },
     }),
@@ -10655,15 +18301,18 @@ export const authOptions: NextAuthConfig = {
   },
 };
 
+export const __test = {
+  defaultMailboxDir,
+  resolveMailboxDir,
+  persistMagicLink,
+};
+
 export function getServerAuthSession(): Promise<Session | null> {
   return getServerSession(authOptions);
 }
-
 ```
 
----
-
-### lib/chat-capture.ts
+## lib/chat-capture.ts
 
 ```ts
 import { Prisma, Role } from "@prisma/client";
@@ -10683,8 +18332,8 @@ function parseConfidenceThreshold(): number {
   return parsed;
 }
 
-function serializeSources(sources: AskResponse["sources"]): Prisma.JsonArray {
-  return sources
+function serializeSources(sources: AskResponse["sources"] | undefined): Prisma.JsonArray {
+  return (sources ?? [])
     .map((source) => ({
       path: source.path,
       page: source.page ?? null,
@@ -10701,8 +18350,54 @@ type CaptureArgs = {
 };
 
 export async function captureLowConfidenceChat({ question, response }: CaptureArgs): Promise<void> {
+  if (response.clarification) {
+    return;
+  }
+
+  const answers =
+    response.answers && response.answers.length > 0
+      ? response.answers
+      : response.answer
+        ? [
+            {
+              answer: response.answer,
+              confidence: response.confidence ?? 0,
+              should_escalate: response.should_escalate ?? false,
+              model: undefined,
+              family: undefined,
+              family_label: undefined,
+              sources: response.sources ?? [],
+            },
+          ]
+        : [];
+
+  if (answers.length === 0) {
+    return;
+  }
+
+  const aggregatedConfidence =
+    response.confidence ??
+    (answers.length
+      ? answers.reduce((acc, item) => Math.min(acc, item.confidence ?? 0), 1)
+      : 0);
+  const aggregatedEscalate =
+    response.should_escalate ?? answers.some((item) => item.should_escalate);
+  const aggregatedSources =
+    response.sources && response.sources.length > 0
+      ? response.sources
+      : answers.flatMap((item) => item.sources ?? []);
+
+  const aggregatedAnswer = answers
+    .map((item) => {
+      const metadata = [item.model, item.family_label ?? item.family].filter(Boolean).join(" · ");
+      const heading = metadata ? `### ${metadata}\n\n` : "";
+      return `${heading}${item.answer}`.trim();
+    })
+    .filter(Boolean)
+    .join("\n\n");
+
   const threshold = parseConfidenceThreshold();
-  if (!response.should_escalate && response.confidence >= threshold) {
+  if (!aggregatedEscalate && aggregatedConfidence >= threshold) {
     return;
   }
 
@@ -10718,7 +18413,7 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
         {
           action: "captured",
           at: now.toISOString(),
-          confidence: response.confidence,
+          confidence: aggregatedConfidence,
           requestId: response.request_id,
         },
       ];
@@ -10728,11 +18423,11 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
           orgId: session.user.orgId,
           userId: session.user.id,
           question,
-          answer: response.answer,
-          confidence: response.confidence,
+          answer: aggregatedAnswer,
+          confidence: aggregatedConfidence,
           status: "pending_review",
           requestId: response.request_id,
-          topSources: serializeSources(response.sources),
+          topSources: serializeSources(aggregatedSources),
           auditLog,
         },
         select: { id: true },
@@ -10749,7 +18444,7 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
           requestId: response.request_id,
           after: {
             status: "pending_review",
-            confidence: response.confidence,
+            confidence: aggregatedConfidence,
             requestId: response.request_id,
           },
         },
@@ -10759,12 +18454,9 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
     console.error("Failed to capture low-confidence chat", error);
   }
 }
-
 ```
 
----
-
-### lib/prisma.ts
+## lib/prisma.ts
 
 ```ts
 import { PrismaClient, Prisma } from "@prisma/client";
@@ -10802,12 +18494,9 @@ export async function clearRlsContext(client: PrismaContextClient) {
   await client.$executeRaw`SELECT set_config('app.current_user_role', 'SERVICE', true)`;
   await client.$executeRaw`SELECT set_config('app.current_org_id', '', true)`;
 }
-
 ```
 
----
-
-### lib/rbac.ts
+## lib/rbac.ts
 
 ```ts
 import { Role } from "@prisma/client";
@@ -10849,12 +18538,9 @@ export function canReviewGlossary(session: Session | null): Session {
 export function canEditGlossary(session: Session | null): Session {
   return ensureRole(session, [Role.ADMIN]);
 }
-
 ```
 
----
-
-### lib/rls.ts
+## lib/rls.ts
 
 ```ts
 import type { Session } from "next-auth";
@@ -10883,25 +18569,200 @@ export async function withRlsContext<T>(
     }
   });
 }
-
 ```
 
----
-
-### lib/utils.ts
+## lib/utils.ts
 
 ```ts
 import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return clsx(...inputs);
+  return twMerge(clsx(...inputs));
 }
-
 ```
 
----
+## LICENSE
 
-### middleware.ts
+```
+SPDX-License-Identifier: MIT
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Makefile
+
+```
+# Makefile — Atticus
+.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
+        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit
+
+PYTHON ?= python
+XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
+PYTEST_PARALLEL := $(if $(filter 1,$(XDIST_AVAILABLE)),-n auto,)
+
+DB_SERVICE ?= postgres
+PGVECTOR_DIMENSION ?= 3072
+PGVECTOR_LISTS ?= 100
+
+env:
+	$(PYTHON) scripts/generate_env.py
+
+smtp-test:
+	$(PYTHON) scripts/smtp_test.py
+
+help:
+	@echo "Available targets:"
+	@python scripts/list_make_targets.py $(MAKEFILE_LIST)
+
+api:
+	$(PYTHON) -m uvicorn api.main:app --reload --port 8000
+
+
+web-dev:
+	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
+	npm run dev
+
+app-dev:
+	@echo "Alias for web-dev; launching Next.js UI"
+	$(MAKE) web-dev
+
+db.up:
+	docker compose up -d $(DB_SERVICE)
+
+db.down:
+	docker compose stop $(DB_SERVICE)
+
+db.migrate:
+	npm run prisma:generate
+	npm run db:migrate
+
+db.verify:
+	$(PYTHON) scripts/db_verify.py
+
+db.seed:
+	npm run db:seed
+
+ingest:
+	$(PYTHON) scripts/ingest_cli.py
+
+seed:
+	$(PYTHON) scripts/make_seed.py
+
+eval:
+	$(PYTHON) scripts/eval_run.py
+
+openapi:
+	$(PYTHON) scripts/generate_api_docs.py
+
+# Unified CLI dispatcher
+atticus:
+	$(PYTHON) scripts/atticus_cli.py --help
+
+smoke:
+	$(PYTHON) scripts/test_health.py
+
+test.unit:
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	tests/test_hashing.py \
+	tests/test_config_reload.py \
+	tests/test_mailer.py \
+	tests/test_chunker.py \
+	tests/test_seed_manifest.py \
+	tests/test_eval_runner.py
+
+test.api:
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+		tests/test_chat_route.py \
+		tests/test_contact_route.py \
+		tests/test_error_schema.py \
+		tests/test_api_version.py \
+		tests/test_ui_route.py
+
+test:
+	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
+	       --cov=atticus --cov=api --cov=retriever \
+	       --cov-report=term-missing --cov-fail-under=90
+
+web-test:
+	npm run test:unit
+
+web-e2e:
+	npm run test:e2e
+
+e2e: env ingest eval
+	$(PYTHON) scripts/e2e_smoke.py
+
+# Local quality gates (mirror CI)
+lint:
+	ruff check .
+	ruff format --check .
+
+format:
+	ruff format .
+	ruff check . --fix
+
+typecheck:
+	mypy atticus api ingest retriever eval
+
+quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e
+
+# Full verification pass for CI / release
+verify:
+	@echo "Running full integration checks..."
+	make env
+	make lint
+	make typecheck
+	make test.unit
+	make test.api
+	make version-check
+	make web-lint
+	make web-typecheck
+	make web-build
+	make web-audit
+	@echo "✅ All checks passed."
+web-build:
+	npm run build
+
+web-start:
+	npm run start
+
+web-lint:
+	npm run lint
+
+web-typecheck:
+	npm run typecheck
+
+web-audit:
+	npm run audit:ts
+	npm run audit:icons
+	npm run audit:routes
+	npm run audit:py
+
+# Ensure VERSION and package.json are aligned
+version-check:
+	@$(PYTHON) scripts/check_version_parity.py
+```
+
+## middleware.ts
 
 ```ts
 import { withAuth } from "next-auth/middleware";
@@ -10947,12 +18808,9 @@ export default withAuth(
 export const config = {
   matcher: ["/admin/:path*", "/api/glossary/:path*"],
 };
-
 ```
 
----
-
-### next-auth.d.ts
+## next-auth.d.ts
 
 ```ts
 import { DefaultSession, DefaultUser } from "next-auth";
@@ -10981,12 +18839,9 @@ declare module "next-auth/jwt" {
     orgId: string;
   }
 }
-
 ```
 
----
-
-### next-env.d.ts
+## next-env.d.ts
 
 ```ts
 /// <reference types="next" />
@@ -10994,14 +18849,11 @@ declare module "next-auth/jwt" {
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/app/building-your-application/configuring/typescript for more information.
-
 ```
 
----
+## next.config.js
 
-### next.config.js
-
-```js
+```javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -11020,36 +18872,86 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
 ```
 
----
+## nginx/Dockerfile
 
-### nginx/Dockerfile
-
-```dockerfile
+```
 FROM nginx:stable-alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Certificates are mounted at runtime from ./nginx/certs
-
 ```
 
----
+## nginx/nginx.conf
 
-### package-lock.json
+```ini
+user  nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid       /var/run/nginx.pid;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  sendfile      on;
+  keepalive_timeout  65;
+
+  gzip on;
+  gzip_types text/plain text/css application/json application/javascript application/xml;
+  client_max_body_size 64m;
+
+  map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+  }
+
+  server {
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+  }
+
+  server {
+    listen              443 ssl http2;
+    server_name         _;
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options DENY;
+    add_header Referrer-Policy no-referrer-when-downgrade;
+
+    location / {
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection $connection_upgrade;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_pass http://api:8000/;
+    }
+  }
+}
+```
+
+## package-lock.json
 
 ```json
 {
   "name": "atticus",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "atticus",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "dependencies": {
         "@auth/prisma-adapter": "^2.10.0",
         "@prisma/client": "^5.18.0",
@@ -11065,6 +18967,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
         "react-dom": "18.2.0",
         "react-markdown": "^10.1.0",
         "remark-gfm": "^4.0.1",
+        "tailwind-merge": "^2.6.0",
         "zod": "^4.1.11"
       },
       "devDependencies": {
@@ -11084,6 +18987,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
         "prettier-plugin-tailwindcss": "^0.5.14",
         "prisma": "^5.18.0",
         "tailwindcss": "3.4.10",
+        "tailwindcss-animate": "^1.0.7",
         "ts-node": "^10.9.2",
         "typescript": "5.4.5",
         "vitest": "^3.2.4"
@@ -13181,6 +21085,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-IVAh/nOJaw6W9g+RJVlIQJ6gSiER+ae6mKQ5CX1bERzQgbC1VSeBlwdvczT7pxb0GWiyrxH4TGKbMfDb4Sq/ig==",
       "devOptional": true,
       "license": "Apache-2.0",
+      "peer": true,
       "dependencies": {
         "playwright": "1.55.1"
       },
@@ -13197,6 +21102,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-M0SVXfyHnQREBKxCgyo7sffrKttwE6R8PMq330MIUF0pTwjUhLbW84pFDlf06B27XyCR++VtjugEnIHdr07SVA==",
       "hasInstallScript": true,
       "license": "Apache-2.0",
+      "peer": true,
       "engines": {
         "node": ">=16.13"
       },
@@ -14767,6 +22673,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-06OCtnTXtWOZBJlRApleWndH4JsRVs1pDCc8dLSQp+7PpUpX3ePdHyeNSFTeSe7FtKyQkrlPvHwJOW3SLd8Oyg==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "undici-types": "~5.26.4"
       }
@@ -14793,6 +22700,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "resolved": "https://registry.npmjs.org/@types/react/-/react-18.3.5.tgz",
       "integrity": "sha512-WeqMfGJLGuLCqHGYRGHxnKrXcTitc6L/nBUWfWPcTarG3t9PsquqUMuVeXZeca+mglY4Vo5GZjCi0A3Or2lnxA==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@types/prop-types": "*",
         "csstype": "^3.0.2"
@@ -14804,6 +22712,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==",
       "devOptional": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@types/react": "*"
       }
@@ -15307,6 +23216,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "bin": {
         "acorn": "bin/acorn"
       },
@@ -15798,6 +23708,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
         }
       ],
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "baseline-browser-mapping": "^2.8.3",
         "caniuse-lite": "^1.0.30001741",
@@ -16697,6 +24608,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@eslint-community/eslint-utils": "^4.2.0",
         "@eslint-community/regexpp": "^4.6.1",
@@ -16878,6 +24790,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@rtsao/scc": "^1.1.0",
         "array-includes": "^3.1.9",
@@ -18561,6 +26474,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "bin": {
         "jiti": "bin/jiti.js"
       }
@@ -19976,6 +27890,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-6.10.1.tgz",
       "integrity": "sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==",
       "license": "MIT-0",
+      "peer": true,
       "engines": {
         "node": ">=6.0.0"
       }
@@ -20539,6 +28454,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
         }
       ],
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "nanoid": "^3.3.7",
         "picocolors": "^1.0.1",
@@ -20680,6 +28596,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "resolved": "https://registry.npmjs.org/preact/-/preact-10.24.3.tgz",
       "integrity": "sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==",
       "license": "MIT",
+      "peer": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/preact"
@@ -20713,6 +28630,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "bin": {
         "prettier": "bin/prettier.cjs"
       },
@@ -20811,6 +28729,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "devOptional": true,
       "hasInstallScript": true,
       "license": "Apache-2.0",
+      "peer": true,
       "dependencies": {
         "@prisma/engines": "5.22.0"
       },
@@ -20882,6 +28801,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "resolved": "https://registry.npmjs.org/react/-/react-18.2.0.tgz",
       "integrity": "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "loose-envify": "^1.1.0"
       },
@@ -20894,6 +28814,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz",
       "integrity": "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "loose-envify": "^1.1.0",
         "scheduler": "^0.23.0"
@@ -22026,12 +29947,23 @@ COPY nginx.conf /etc/nginx/nginx.conf
         "url": "https://github.com/sponsors/ljharb"
       }
     },
+    "node_modules/tailwind-merge": {
+      "version": "2.6.0",
+      "resolved": "https://registry.npmjs.org/tailwind-merge/-/tailwind-merge-2.6.0.tgz",
+      "integrity": "sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==",
+      "license": "MIT",
+      "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/dcastil"
+      }
+    },
     "node_modules/tailwindcss": {
       "version": "3.4.10",
       "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.4.10.tgz",
       "integrity": "sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "@alloc/quick-lru": "^5.2.0",
         "arg": "^5.0.2",
@@ -22062,6 +29994,16 @@ COPY nginx.conf /etc/nginx/nginx.conf
       },
       "engines": {
         "node": ">=14.0.0"
+      }
+    },
+    "node_modules/tailwindcss-animate": {
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/tailwindcss-animate/-/tailwindcss-animate-1.0.7.tgz",
+      "integrity": "sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==",
+      "dev": true,
+      "license": "MIT",
+      "peerDependencies": {
+        "tailwindcss": ">=3.0.0 || insiders"
       }
     },
     "node_modules/tailwindcss/node_modules/lilconfig": {
@@ -22159,6 +30101,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "engines": {
         "node": ">=12"
       },
@@ -22429,6 +30372,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==",
       "dev": true,
       "license": "Apache-2.0",
+      "peer": true,
       "bin": {
         "tsc": "bin/tsc",
         "tsserver": "bin/tsserver"
@@ -22743,18 +30687,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
         "url": "https://opencollective.com/vitest"
       }
     },
-    "node_modules/vite-node/node_modules/@types/node": {
-      "version": "24.7.0",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-24.7.0.tgz",
-      "integrity": "sha512-IbKooQVqUBrlzWTi79E8Fw78l8k1RNtlDDNWsFZs7XonuQSJ8oNYfEeclhprUldXISRMLzBpILuKgPlIxm+/Yw==",
-      "dev": true,
-      "license": "MIT",
-      "optional": true,
-      "peer": true,
-      "dependencies": {
-        "undici-types": "~7.14.0"
-      }
-    },
     "node_modules/vite-node/node_modules/fdir": {
       "version": "6.5.0",
       "resolved": "https://registry.npmjs.org/fdir/-/fdir-6.5.0.tgz",
@@ -22779,6 +30711,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "engines": {
         "node": ">=12"
       },
@@ -22821,8 +30754,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==",
       "dev": true,
       "license": "MIT",
-      "optional": true,
-      "peer": true
+      "optional": true
     },
     "node_modules/vite-node/node_modules/vite": {
       "version": "7.1.8",
@@ -23023,6 +30955,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "engines": {
         "node": ">=12"
       },
@@ -23065,6 +30998,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-oBXvfSHEOL8jF+R9Am7h59Up07kVVGH1NrFGFoEG6bPDZP3tGpQhvkBpy5x7U6+E6wZCu9OihsWgJqDbQIm8LQ==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "esbuild": "^0.25.0",
         "fdir": "^6.5.0",
@@ -23393,6 +31327,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
       "integrity": "sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==",
       "dev": true,
       "license": "ISC",
+      "peer": true,
       "bin": {
         "yaml": "bin.mjs"
       },
@@ -23444,17 +31379,14 @@ COPY nginx.conf /etc/nginx/nginx.conf
     }
   }
 }
-
 ```
 
----
-
-### package.json
+## package.json
 
 ```json
 {
   "name": "atticus",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "description": "Next.js frontend for the Atticus RAG workspace.",
   "scripts": {
@@ -23491,6 +31423,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
     "react-dom": "18.2.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^2.6.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -23510,26 +31443,23 @@ COPY nginx.conf /etc/nginx/nginx.conf
     "prettier-plugin-tailwindcss": "^0.5.14",
     "prisma": "^5.18.0",
     "tailwindcss": "3.4.10",
+    "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",
     "vitest": "^3.2.4"
   }
 }
-
 ```
 
----
+## playwright.config.cjs
 
-### playwright.config.ts
-
-```ts
-import { defineConfig, devices } from "@playwright/test";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+```javascript
+const { defineConfig, devices } = require("@playwright/test");
+const path = require("node:path");
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: "tests/playwright",
   timeout: 30_000,
   expect: {
@@ -23547,31 +31477,30 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  outputDir: path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "reports/playwright-artifacts"
-  ),
+  webServer: {
+    command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
+    url: baseURL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+    stdout: "pipe",
+    stderr: "pipe",
+  },
+  outputDir: path.join(__dirname, "reports/playwright-artifacts"),
 });
-
 ```
 
----
+## postcss.config.js
 
-### postcss.config.js
-
-```js
+```javascript
 module.exports = {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 };
-
 ```
 
----
-
-### prisma/migrations/20240702120000_auth_rbac/migration.sql
+## prisma/migrations/20240702120000_auth_rbac/migration.sql
 
 ```sql
 -- Prisma migration for Auth.js + RBAC + glossary storage
@@ -23842,12 +31771,9 @@ CREATE POLICY "Glossary_admin_delete" ON "GlossaryEntry"
     )
     OR current_setting('app.current_user_role', true) = 'SERVICE'
   );
-
 ```
 
----
-
-### prisma/migrations/20240708123000_pgvector_schema/migration.sql
+## prisma/migrations/20240708123000_pgvector_schema/migration.sql
 
 ```sql
 -- Prisma migration for pgvector document + chunk storage
@@ -23954,12 +31880,9 @@ DROP TRIGGER IF EXISTS set_updated_at_atticus_chunks ON atticus_chunks;
 CREATE TRIGGER set_updated_at_atticus_chunks
 BEFORE UPDATE ON atticus_chunks
 FOR EACH ROW EXECUTE FUNCTION app_private.update_updated_at();
-
 ```
 
----
-
-### prisma/migrations/20240709150000_glossary_review_workflow/migration.sql
+## prisma/migrations/20240709150000_glossary_review_workflow/migration.sql
 
 ```sql
 -- Extend glossary entries with review metadata and synonym support.
@@ -23976,12 +31899,9 @@ ALTER TABLE "GlossaryEntry"
 
 CREATE INDEX IF NOT EXISTS "GlossaryEntry_status_reviewedAt_idx"
   ON "GlossaryEntry" ("status", "reviewedAt");
-
 ```
 
----
-
-### prisma/migrations/20250201090000_fix_updated_at_trigger/migration.sql
+## prisma/migrations/20250201090000_fix_updated_at_trigger/migration.sql
 
 ```sql
 -- Align update_updated_at trigger with snake_case and camelCase columns
@@ -24000,12 +31920,9 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 ```
 
----
-
-### prisma/migrations/20251008090000_pgvector_bootstrap/migration.sql
+## prisma/migrations/20251008090000_pgvector_bootstrap/migration.sql
 
 ```sql
 -- Ensure app.pgvector_lists is set for fresh environments.
@@ -24020,12 +31937,9 @@ BEGIN
     RAISE NOTICE 'app.pgvector_lists already set to %', current_setting('app.pgvector_lists', true);
   END IF;
 END $$;
-
 ```
 
----
-
-### prisma/migrations/20251018090000_admin_ops_console/migration.sql
+## prisma/migrations/20251018090000_admin_ops_console/migration.sql
 
 ```sql
 -- Phase 6: Admin Ops Console support tables
@@ -24080,12 +31994,9 @@ CREATE UNIQUE INDEX "Ticket_orgId_key_key" ON "Ticket" ("orgId", "key");
 CREATE INDEX "Chat_orgId_status_idx" ON "Chat" ("orgId", "status");
 CREATE INDEX "Chat_status_reviewedAt_idx" ON "Chat" ("status", "reviewedAt");
 CREATE INDEX "Ticket_status_assignee_idx" ON "Ticket" ("status", "assignee");
-
 ```
 
----
-
-### prisma/migrations/20251019090000_pgvector_lists_guc/migration.sql
+## prisma/migrations/20251019090000_pgvector_lists_guc/migration.sql
 
 ```sql
 -- Ensure the app.pgvector_lists GUC is set consistently for ANN queries.
@@ -24100,12 +32011,9 @@ BEGIN
   PERFORM set_config('app.pgvector_lists', existing, true);
   EXECUTE format('ALTER DATABASE %I SET app.pgvector_lists = %L', current_database(), existing);
 END $$;
-
 ```
 
----
-
-### prisma/migrations/20251019090500_rag_events_audit/migration.sql
+## prisma/migrations/20251019090500_rag_events_audit/migration.sql
 
 ```sql
 -- Capture glossary/chat audit events for administrator actions.
@@ -24141,12 +32049,9 @@ ALTER TABLE "RagEvent"
 ALTER TABLE "RagEvent"
   ADD CONSTRAINT "RagEvent_chatId_fkey"
   FOREIGN KEY ("chatId") REFERENCES "Chat"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
 ```
 
----
-
-### prisma/schema.prisma
+## prisma/schema.prisma
 
 ```prisma
 // Prisma schema for Atticus auth + glossary RBAC
@@ -24376,12 +32281,9 @@ model AtticusChunk {
   @@unique([documentId, sha256], map: "idx_atticus_chunks_doc_sha")
   @@map("atticus_chunks")
 }
-
 ```
 
----
-
-### prisma/seed.ts
+## prisma/seed.ts
 
 ```ts
 import { GlossaryStatus, Prisma, PrismaClient, Role } from "@prisma/client";
@@ -24834,12 +32736,9 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
 ```
 
----
-
-### pyproject.toml
+## pyproject.toml
 
 ```toml
 [project]
@@ -24973,14 +32872,11 @@ omit = [
 [tool.coverage.report]
 fail_under = 90
 show_missing = true
-
 ```
 
----
+## requirements.in
 
-### requirements.in
-
-```text
+```
 # Core runtime
 fastapi
 uvicorn
@@ -25030,14 +32926,11 @@ mypy
 types-PyYAML
 pip-tools
 vulture
-
 ```
 
----
+## requirements.txt
 
-### requirements.txt
-
-```text
+```
 #
 # This file is autogenerated by pip-compile with Python 3.12
 # by the following command:
@@ -25094,7 +32987,7 @@ et-xmlfile==2.0.0
     # via openpyxl
 execnet==2.1.1
     # via pytest-xdist
-fastapi==0.118.0
+fastapi==0.118.2
     # via -r requirements.in
 h11==0.16.0
     # via
@@ -25303,12 +33196,9 @@ wheel==0.45.1
 # The following packages are considered to be unsafe in a requirements file:
 # pip
 # setuptools
-
 ```
 
----
-
-### retriever/__init__.py
+## retriever/__init__.py
 
 ```python
 """Retriever package exports."""
@@ -25318,12 +33208,9 @@ from .service import answer_question
 from .vector_store import VectorStore
 
 __all__ = ["Answer", "Citation", "VectorStore", "answer_question"]
-
 ```
 
----
-
-### retriever/answer_format.py
+## retriever/answer_format.py
 
 ```python
 from __future__ import annotations
@@ -25452,12 +33339,9 @@ def format_answer_markdown(answer_text: str, citations: Iterable[Any]) -> str:  
     if intro:
         return f"{intro}\n\n{body}"
     return body
-
 ```
 
----
-
-### retriever/citation_utils.py
+## retriever/citation_utils.py
 
 ```python
 from __future__ import annotations
@@ -25519,12 +33403,9 @@ def dedupe_citations(items: Iterable[Any] | None) -> list[Any]:
         seen.add(key)
         result.append(item)
     return result
-
 ```
 
----
-
-### retriever/generator.py
+## retriever/generator.py
 
 ```python
 """LLM generation helpers."""
@@ -25715,19 +33596,23 @@ class GeneratorClient:
             except Exception:
                 return 0.6
         return 0.8
-
 ```
 
----
-
-### retriever/models.py
+## retriever/models.py
 
 ```python
-"""Data models for retrieval results."""
+"""Data models and catalog utilities for retrieval."""
 
 from __future__ import annotations
 
+import json
+import re
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
+from typing import Any, Iterable
+
+from atticus.config import load_settings
 
 
 @dataclass(slots=True)
@@ -25746,12 +33631,368 @@ class Answer:
     citations: list[Citation]
     confidence: float
     should_escalate: bool
+    model: str | None = None
+    family: str | None = None
+    family_label: str | None = None
 
+
+@dataclass(frozen=True, slots=True)
+class FamilyOption:
+    """Selectable family used for clarifications."""
+
+    id: str
+    label: str
+
+
+@dataclass(frozen=True, slots=True)
+class ModelIdentifier:
+    canonical: str
+    family_id: str
+    family_label: str
+
+
+@dataclass(slots=True)
+class FamilyCatalogEntry:
+    id: str
+    label: str
+    aliases: set[str]
+    models: dict[str, ModelIdentifier]
+
+
+@dataclass(slots=True)
+class ModelCatalog:
+    families: dict[str, FamilyCatalogEntry]
+    ordered_families: list[FamilyCatalogEntry]
+    alias_to_model: dict[str, ModelIdentifier]
+    compact_alias_to_model: dict[str, ModelIdentifier]
+    family_alias_to_id: dict[str, FamilyOption]
+    compact_family_alias_to_id: dict[str, FamilyOption]
+
+    def match_model(self, raw: str) -> ModelIdentifier | None:
+        norm = _normalize(raw)
+        if norm in self.alias_to_model:
+            return self.alias_to_model[norm]
+        compact = _compact(raw)
+        return self.compact_alias_to_model.get(compact)
+
+    def match_family(self, raw: str) -> FamilyOption | None:
+        norm = _normalize(raw)
+        if norm in self.family_alias_to_id:
+            return self.family_alias_to_id[norm]
+        compact = _compact(raw)
+        return self.compact_family_alias_to_id.get(compact)
+
+    def family_options(self) -> list[FamilyOption]:
+        return [FamilyOption(entry.id, entry.label) for entry in self.ordered_families]
+
+
+@dataclass(slots=True)
+class ModelExtraction:
+    models: set[str]
+    families: set[str]
+    confidence: float
+
+
+STRICT_MODEL_PATTERN = re.compile(r"\bapeos\s+c\s*(\d{4})\b", re.IGNORECASE)
+
+
+def _normalize(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
+def _compact(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", value.lower()).strip()
+
+
+def _load_catalog_path(path: str | Path | None = None) -> Path:
+    if path is not None:
+        return Path(path)
+    settings = load_settings()
+    return (settings.indices_dir / "model_catalog.json").resolve()
+
+
+def _load_catalog_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Model catalog not found at {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Model catalog must be a JSON object at the top level.")
+    return payload
+
+
+def _entry_aliases(raw_aliases: Iterable[str], canonical: str) -> set[str]:
+    aliases = {canonical}
+    aliases.update(raw_aliases)
+    normalized: set[str] = set()
+    for alias in aliases:
+        cleaned_alias = alias.strip()
+        if not cleaned_alias:
+            continue
+        normalized.add(cleaned_alias)
+        compact = _compact(cleaned_alias)
+        # Ensure we have single-token shorthand for values such as "Apeos C 7070"
+        if len(compact) > 3:
+            normalized.add(compact.upper())
+    return normalized
+
+
+@lru_cache(maxsize=2)
+def load_model_catalog(path: str | Path | None = None) -> ModelCatalog:
+    catalog_path = _load_catalog_path(path)
+    payload = _load_catalog_json(catalog_path)
+    families: dict[str, FamilyCatalogEntry] = {}
+    ordered: list[FamilyCatalogEntry] = []
+    alias_to_model: dict[str, ModelIdentifier] = {}
+    compact_alias_to_model: dict[str, ModelIdentifier] = {}
+    family_alias_to_id: dict[str, FamilyOption] = {}
+    compact_family_alias_to_id: dict[str, FamilyOption] = {}
+
+    for entry in payload.get("families", []):
+        family_id = str(entry.get("id", "")).strip()
+        label = str(entry.get("label", "")).strip() or family_id
+        if not family_id:
+            continue
+        aliases_raw = entry.get("aliases", []) or []
+        family_option = FamilyOption(family_id, label)
+        entry_aliases = {_normalize(alias) for alias in aliases_raw if alias}
+        entry_aliases.add(_normalize(label))
+        entry_aliases.add(_normalize(family_id))
+        compact_aliases = {_compact(alias) for alias in aliases_raw if alias}
+        compact_aliases.add(_compact(label))
+        compact_aliases.add(_compact(family_id))
+
+        family_alias_to_id.update({alias: family_option for alias in entry_aliases if alias})
+        compact_family_alias_to_id.update(
+            {alias: family_option for alias in compact_aliases if alias}
+        )
+
+        models_map: dict[str, ModelIdentifier] = {}
+        for model_entry in entry.get("models", []):
+            canonical = str(model_entry.get("canonical", "")).strip()
+            if not canonical:
+                continue
+            identifier = ModelIdentifier(
+                canonical=canonical, family_id=family_id, family_label=label
+            )
+            aliases = _entry_aliases(model_entry.get("aliases", []) or [], canonical)
+            for alias in aliases:
+                normalized_alias = _normalize(alias)
+                if normalized_alias:
+                    alias_to_model.setdefault(normalized_alias, identifier)
+                compact_alias = _compact(alias)
+                if compact_alias:
+                    compact_alias_to_model.setdefault(compact_alias, identifier)
+            models_map[canonical] = identifier
+
+        family_entry = FamilyCatalogEntry(
+            id=family_id,
+            label=label,
+            aliases={_normalize(alias) for alias in aliases_raw if alias},
+            models=models_map,
+        )
+        families[family_id] = family_entry
+        ordered.append(family_entry)
+
+    return ModelCatalog(
+        families=families,
+        ordered_families=ordered,
+        alias_to_model=alias_to_model,
+        compact_alias_to_model=compact_alias_to_model,
+        family_alias_to_id=family_alias_to_id,
+        compact_family_alias_to_id=compact_family_alias_to_id,
+    )
+
+
+def extract_models(question: str, catalog: ModelCatalog | None = None) -> ModelExtraction:
+    """Extract explicit model or family references from a question."""
+
+    catalog = catalog or load_model_catalog()
+    normalized_question = _normalize(question)
+    compact_question = _compact(question)
+    tokens = set(normalized_question.split())
+
+    models: set[str] = set()
+    families: set[str] = set()
+    confidences: list[float] = []
+
+    for match in STRICT_MODEL_PATTERN.finditer(question):
+        series = match.group(1)
+        candidate = f"Apeos C{series}"
+        identifier = catalog.match_model(candidate)
+        if identifier:
+            models.add(identifier.canonical)
+            families.add(identifier.family_id)
+            confidences.append(0.95)
+
+    matched_aliases: set[str] = set()
+
+    for alias, identifier in catalog.alias_to_model.items():
+        if alias in matched_aliases:
+            continue
+        if " " in alias:
+            padded = f" {alias} "
+            if padded in f" {normalized_question} ":
+                models.add(identifier.canonical)
+                families.add(identifier.family_id)
+                confidences.append(0.85)
+                matched_aliases.add(alias)
+        elif alias in tokens:
+            models.add(identifier.canonical)
+            families.add(identifier.family_id)
+            confidences.append(0.8)
+            matched_aliases.add(alias)
+        else:
+            compact_alias = _compact(alias)
+            if compact_alias and compact_alias in compact_question:
+                models.add(identifier.canonical)
+                families.add(identifier.family_id)
+                confidences.append(0.75)
+                matched_aliases.add(alias)
+
+    for alias, option in catalog.family_alias_to_id.items():
+        if alias in matched_aliases:
+            continue
+        if " " in alias:
+            if f" {alias} " in f" {normalized_question} ":
+                families.add(option.id)
+                confidences.append(0.7)
+        elif alias in tokens:
+            families.add(option.id)
+            confidences.append(0.65)
+        else:
+            compact_alias = _compact(alias)
+            if compact_alias and compact_alias in compact_question:
+                families.add(option.id)
+                confidences.append(0.6)
+
+    confidence = max(confidences) if confidences else 0.0
+    return ModelExtraction(models=models, families=families, confidence=confidence)
 ```
 
----
+## retriever/resolver.py
 
-### retriever/service.py
+```python
+"""Utilities for resolving model references into retrieval scopes."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Iterable, Sequence
+
+from .models import (
+    FamilyOption,
+    ModelCatalog,
+    ModelExtraction,
+    ModelIdentifier,
+    extract_models,
+    load_model_catalog,
+)
+
+
+@dataclass(slots=True)
+class ModelScope:
+    family_id: str
+    family_label: str
+    model: str | None = None
+
+
+@dataclass(slots=True)
+class ModelResolution:
+    scopes: list[ModelScope]
+    confidence: float
+    needs_clarification: bool
+    clarification_options: list[FamilyOption]
+
+    @property
+    def families(self) -> set[str]:
+        return {scope.family_id for scope in self.scopes if scope.family_id}
+
+
+def _resolve_explicit_models(
+    requested_models: Sequence[str],
+    catalog: ModelCatalog,
+) -> tuple[list[ModelScope], float]:
+    scopes: list[ModelScope] = []
+    for raw in requested_models:
+        ident: ModelIdentifier | None = catalog.match_model(raw)
+        if ident:
+            scopes.append(
+                ModelScope(
+                    family_id=ident.family_id,
+                    family_label=ident.family_label,
+                    model=ident.canonical,
+                )
+            )
+            continue
+        family = catalog.match_family(raw)
+        if family:
+            # Avoid duplicate family-only scopes if multiple aliases map to the same family.
+            if not any(scope.family_id == family.id and scope.model is None for scope in scopes):
+                scopes.append(ModelScope(family_id=family.id, family_label=family.label))
+    confidence = 1.0 if scopes else 0.0
+    return scopes, confidence
+
+
+def resolve_models(
+    question: str,
+    requested_models: Iterable[str] | None = None,
+    *,
+    catalog: ModelCatalog | None = None,
+    clarification_threshold: float = 0.65,
+) -> ModelResolution:
+    """Resolve models/families mentioned in a question or supplied explicitly."""
+
+    catalog = catalog or load_model_catalog()
+    options = catalog.family_options()
+    requested: Sequence[str] = list(requested_models or [])
+
+    scopes, confidence = _resolve_explicit_models(requested, catalog)
+    if scopes:
+        return ModelResolution(
+            scopes=scopes,
+            confidence=confidence,
+            needs_clarification=False,
+            clarification_options=options,
+        )
+
+    extraction: ModelExtraction = extract_models(question, catalog=catalog)
+    scopes = []
+
+    for model_name in sorted(extraction.models):
+        ident = catalog.match_model(model_name)
+        if not ident:
+            continue
+        scopes.append(
+            ModelScope(
+                family_id=ident.family_id,
+                family_label=ident.family_label,
+                model=ident.canonical,
+            )
+        )
+
+    missing_families = extraction.families - {scope.family_id for scope in scopes}
+    for family_id in sorted(missing_families):
+        family_entry = catalog.families.get(family_id)
+        if not family_entry:
+            continue
+        scopes.append(
+            ModelScope(
+                family_id=family_entry.id,
+                family_label=family_entry.label,
+            )
+        )
+
+    needs_clarification = not scopes and extraction.confidence < clarification_threshold
+
+    return ModelResolution(
+        scopes=scopes,
+        confidence=extraction.confidence,
+        needs_clarification=needs_clarification,
+        clarification_options=options,
+    )
+```
+
+## retriever/service.py
 
 ```python
 """High-level question answering orchestration."""
@@ -25821,12 +34062,18 @@ def answer_question(
     *,
     top_k: int | None = None,
     context_hints: list[str] | None = None,
+    product_family: str | None = None,
+    family_label: str | None = None,
+    model: str | None = None,
 ) -> Answer:
     settings = settings or load_settings()
     logger = logger or configure_logging(settings)
     store = VectorStore(settings, logger)
     window = top_k or settings.top_k
-    results = store.search(question, top_k=window, filters=filters, hybrid=True)
+    merged_filters = dict(filters or {})
+    if product_family:
+        merged_filters["product_family"] = product_family
+    results = store.search(question, top_k=window, filters=merged_filters, hybrid=True)
 
     if not results:
         response = "I don't have enough information in the current index to answer this."
@@ -25838,9 +34085,17 @@ def answer_question(
             citations=[],
             confidence=confidence,
             should_escalate=should_escalate,
+            model=model,
+            family=product_family,
+            family_label=family_label,
         )
         log_event(
-            logger, "answer_generated", confidence=confidence, citations=0, escalate=should_escalate
+            logger,
+            "answer_generated",
+            confidence=confidence,
+            citations=0,
+            escalate=should_escalate,
+            filters=merged_filters,
         )
         return answer
 
@@ -25878,6 +34133,9 @@ def answer_question(
         citations=citations,
         confidence=confidence,
         should_escalate=should_escalate,
+        model=model,
+        family=product_family,
+        family_label=family_label,
     )
 
     log_event(
@@ -25886,14 +34144,12 @@ def answer_question(
         confidence=confidence,
         citations=len(citations),
         escalate=should_escalate,
+        filters=merged_filters,
     )
     return answer
-
 ```
 
----
-
-### retriever/vector_store.py
+## retriever/vector_store.py
 
 ```python
 """Vector retrieval utilities for Atticus."""
@@ -25970,6 +34226,17 @@ class VectorStore:
         prefix = filters.get("path_prefix")
         if prefix and not chunk.source_path.startswith(prefix):
             return False
+        family_filter = filters.get("product_family")
+        if family_filter:
+            allowed = {
+                part.strip().lower() for part in str(family_filter).split(",") if part.strip()
+            }
+            if allowed:
+                chunk_family = (
+                    chunk.extra.get("product_family") or manifest_entry.get("product_family") or ""
+                )
+                if str(chunk_family).lower() not in allowed:
+                    return False
         return True
 
     def _tokenize(self, text: str) -> list[str]:
@@ -26162,12 +34429,9 @@ class VectorStore:
             filters=filters or {},
         )
         return results
-
 ```
 
----
-
-### scripts/atticus_cli.py
+## scripts/atticus_cli.py
 
 ```python
 #!/usr/bin/env python3
@@ -26232,12 +34496,9 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
 ```
 
----
-
-### scripts/audit_unused.py
+## scripts/audit_unused.py
 
 ```python
 #!/usr/bin/env python3
@@ -26316,12 +34577,9 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
 ```
 
----
-
-### scripts/check_version_parity.py
+## scripts/check_version_parity.py
 
 ```python
 """Ensure repository version metadata stays in sync across toolchains."""
@@ -26387,21 +34645,18 @@ def main() -> int:
 
     if mismatches:
         for mismatch in mismatches:
-            print(f"❌ {mismatch}")
+            print(f"[WARN] {mismatch}")
         return 1
 
-    print(f"✅ Version parity check passed: {repo_version}")
+    print(f"[OK] Version parity check passed: {repo_version}")
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
 ```
 
----
-
-### scripts/chunk_ced.py
+## scripts/chunk_ced.py
 
 ```python
 #!/usr/bin/env python3
@@ -26898,12 +35153,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/db_verify.py
+## scripts/db_verify.py
 
 ```python
 """Helper to invoke the pgvector verification SQL in a cross-platform way."""
@@ -27025,12 +35277,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
 ```
 
----
-
-### scripts/debug_env.py
+## scripts/debug_env.py
 
 ```python
 #!/usr/bin/env python3
@@ -27059,12 +35308,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
 ```
 
----
-
-### scripts/e2e_smoke.py
+## scripts/e2e_smoke.py
 
 ```python
 """E2E smoke checks for Atticus API and UI make targets."""
@@ -27223,12 +35469,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/eval_qa.py
+## scripts/eval_qa.py
 
 ```python
 #!/usr/bin/env python3
@@ -27385,12 +35628,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/eval_run.py
+## scripts/eval_run.py
 
 ```python
 #!/usr/bin/env python3
@@ -27490,12 +35730,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/generate_api_docs.py
+## scripts/generate_api_docs.py
 
 ```python
 """CLI to export the FastAPI OpenAPI schema to disk."""
@@ -27559,12 +35796,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/generate_env.py
+## scripts/generate_env.py
 
 ```python
 #!/usr/bin/env python3
@@ -27721,14 +35955,11 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
 ```
 
----
+## scripts/icon-audit.mjs
 
-### scripts/icon-audit.mjs
-
-```js
+```javascript
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
@@ -27794,12 +36025,9 @@ if (allViolations.length > 0) {
 }
 
 console.log("Lucide icon imports look good.");
-
 ```
 
----
-
-### scripts/ingest_cli.py
+## scripts/ingest_cli.py
 
 ```python
 #!/usr/bin/env python3
@@ -27876,12 +36104,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/list_make_targets.py
+## scripts/list_make_targets.py
 
 ```python
 """List unique make targets defined in provided makefiles."""
@@ -27917,12 +36142,9 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
 ```
 
----
-
-### scripts/make_seed.py
+## scripts/make_seed.py
 
 ```python
 """Generate a lightweight seed manifest from the current CED corpus."""
@@ -28016,12 +36238,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/rollback.py
+## scripts/rollback.py
 
 ```python
 """Restore the Atticus index to a previous snapshot."""
@@ -28156,14 +36375,11 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
+## scripts/route-audit.mjs
 
-### scripts/route-audit.mjs
-
-```js
+```javascript
 #!/usr/bin/env node
 import { readdirSync, statSync } from "node:fs";
 import path from "node:path";
@@ -28196,12 +36412,9 @@ function walkRoutes(current, prefix = "") {
 
 const routes = walkRoutes(appDir);
 console.log(JSON.stringify({ routes }, null, 2));
-
 ```
 
----
-
-### scripts/run_ingestion.py
+## scripts/run_ingestion.py
 
 ```python
 #!/usr/bin/env python3
@@ -28220,12 +36433,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/smtp_test.py
+## scripts/smtp_test.py
 
 ```python
 """Manual SMTP smoke test used by `make smtp-test`."""
@@ -28256,12 +36466,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/test_health.py
+## scripts/test_health.py
 
 ```python
 from __future__ import annotations
@@ -28287,12 +36494,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 ```
 
----
-
-### scripts/verify_pgvector.sql
+## scripts/verify_pgvector.sql
 
 ```sql
 -- Accept overrides via `psql -v expected_pgvector_dimension=1536 -v expected_pgvector_lists=50 ...`
@@ -28422,12 +36626,9 @@ BEGIN
 END$$;
 
 SELECT 'pgvector verification completed successfully.' AS status;
-
 ```
 
----
-
-### seeds/seed_manifest.json
+## seeds/seed_manifest.json
 
 ```json
 [
@@ -28798,42 +36999,122 @@ SELECT 'pgvector verification completed successfully.' AS status;
     ]
   }
 ]
-
 ```
 
----
+## tailwind.config.js
 
-### tailwind.config.js
-
-```js
+```javascript
 /** @type {import('tailwindcss').Config} */
+const animate = require("tailwindcss-animate");
+const { fontFamily } = require("tailwindcss/defaultTheme");
+
 module.exports = {
-  darkMode: "class",
+  darkMode: ["class"],
   content: [
-    "app/**/*.{ts,tsx,mdx}",
-    "components/**/*.{ts,tsx}",
-    "lib/**/*.{ts,tsx}",
-    "content/**/*.{md,mdx}",
-    "docs/**/*.{md,mdx}",
+    "./app/src/app/**/*.{ts,tsx}",
+    "./app/src/components/**/*.{ts,tsx}",
+    "./app/src/lib/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx,mdx}",
+    "./lib/**/*.{ts,tsx}",
+    "./content/**/*.{md,mdx}",
+    "./docs/**/*.{md,mdx}",
   ],
   theme: {
     extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
       fontFamily: {
-        sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui"],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
       boxShadow: {
         subtle: "0 10px 30px -15px rgba(15, 23, 42, 0.25)",
       },
     },
   },
-  plugins: [],
+  plugins: [animate],
 };
-
 ```
 
----
+## tests/playwright/chat.spec.ts
 
-### tests/playwright/rbac.spec.ts
+```ts
+import { expect, test } from "@playwright/test";
+
+const shouldRun = process.env.PLAYWRIGHT_CHAT_CLARIFICATION === "true";
+
+test.describe("chat clarification flow", () => {
+  test.skip(!shouldRun, "Enable by setting PLAYWRIGHT_CHAT_CLARIFICATION=true");
+
+  test("prompts for model selection and completes follow-up", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("textbox", { name: /message/i }).fill("Can the printer handle glossy stock?");
+    await page.getByRole("button", { name: /send/i }).click();
+
+    const clarificationCard = page.getByRole("heading", { name: /Need a little more detail/i });
+    await expect(clarificationCard).toBeVisible();
+
+    await page.getByRole("button", { name: "Apeos C7070 range" }).click();
+    await expect(page.getByText(/Apeos C7070/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Sources/i })).toBeVisible();
+  });
+});
+```
+
+## tests/playwright/rbac.spec.ts
 
 ```ts
 import { expect, test } from "@playwright/test";
@@ -28937,12 +37218,9 @@ test("allows admins to load the glossary panel after magic link sign-in", async 
   await expect(page.getByText("Entry deleted.")).toBeVisible();
   await expect(page.locator("tr", { hasText: newTerm })).toHaveCount(0);
 });
-
 ```
 
----
-
-### tests/test_admin_route.py
+## tests/test_admin_route.py
 
 ```python
 from __future__ import annotations
@@ -29025,13 +37303,144 @@ def test_admin_dictionary_rejects_invalid_token(
         response = client.get("/admin/dictionary", headers={"X-Admin-Token": "wrong-token"})
         assert response.status_code == 403
         data = response.json()
-        assert data == {"detail": "Invalid admin token."}
-
+        assert data["error"] == "forbidden"
+        assert data["detail"] == "Invalid admin token."
+        assert data["request_id"]
 ```
 
----
+## tests/test_answer_format.py
 
-### tests/test_api_version.py
+```python
+from types import SimpleNamespace
+
+from retriever import answer_format
+
+
+def test_strip_inline_citation_tails_removes_markdown() -> None:
+    text = "Finding ([source](#3)).\nAnother line (p. 2-3)."
+    cleaned = answer_format._strip_inline_citation_tails(text)
+    assert "source" not in cleaned
+    assert "(p. 2-3)" not in cleaned
+
+
+def test_strip_existing_sources_section() -> None:
+    body = "Summary\n\n---\nSources\n- doc.pdf"
+    trimmed = answer_format._strip_existing_sources_section(body)
+    assert "Sources" not in trimmed
+    assert trimmed.strip() == "Summary"
+
+
+def test_to_numbered_list_handles_inline_items() -> None:
+    text = "Here are steps 1. Turn on 2. Calibrate"
+    numbered = answer_format._to_numbered_list(text)
+    assert "1. Turn on" in numbered
+    assert "2. Calibrate" in numbered
+
+
+def test_fmt_source_line_with_page_collection() -> None:
+    citation = SimpleNamespace(source_path="content/manual.pdf", page_range=[3, 1, 3])
+    line = answer_format._fmt_source_line(citation)
+    assert line.startswith("manual.pdf")
+    assert "(p. 1, 3)" in line
+
+
+def test_format_answer_markdown_with_intro_and_bullets() -> None:
+    raw = "Intro summary: - item one - item two\n\nSources:\n- doc.pdf"
+    result = answer_format.format_answer_markdown(raw, [])
+    assert "Sources" not in result
+    assert result.startswith("Intro summary:")
+```
+
+## tests/test_api_errors.py
+
+```python
+import asyncio
+from types import SimpleNamespace
+from fastapi import status
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.requests import Request
+
+from api.errors import (
+    http_exception_handler,
+    unhandled_exception_handler,
+    validation_exception_handler,
+)
+
+
+class _Recorder:
+    def __init__(self) -> None:
+        self.info_calls: list[tuple[str, dict | None]] = []
+        self.error_calls: list[tuple[str, dict | None]] = []
+
+    def info(self, event: str, *, extra: dict | None = None) -> None:
+        self.info_calls.append((event, extra))
+
+    def error(self, event: str, *, extra: dict | None = None) -> None:
+        self.error_calls.append((event, extra))
+
+
+def _make_request(logger: _Recorder | None = None) -> Request:
+    app = SimpleNamespace(state=SimpleNamespace(logger=logger))
+    scope = {
+        "type": "http",
+        "http_version": "1.1",
+        "method": "GET",
+        "path": "/tests",
+        "headers": [],
+        "app": app,
+    }
+
+    async def _receive() -> dict:
+        return {"type": "http.request"}
+
+    request = Request(scope, _receive)
+    request.state.request_id = "req-123"
+    return request
+
+
+def test_http_exception_handler_logs_server_errors() -> None:
+    logger = _Recorder()
+    request = _make_request(logger)
+    exc = StarletteHTTPException(status_code=500, detail="boom")
+
+    response = asyncio.run(http_exception_handler(request, exc))
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert logger.error_calls
+    payload = logger.error_calls[0][1]
+    assert payload and payload["extra_payload"]["detail"] == "boom"
+
+
+def test_validation_exception_handler_collects_fields() -> None:
+    logger = _Recorder()
+    request = _make_request(logger)
+    exc = RequestValidationError(
+        [
+            {"loc": ("body", "question"), "msg": "field required"},
+            {"loc": ("body", "filters", "source"), "msg": "invalid source"},
+        ]
+    )
+
+    response = asyncio.run(validation_exception_handler(request, exc))
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    body = response.body.decode("utf-8")
+    assert '"fields"' in body
+    assert logger.error_calls  # validation errors are logged
+
+
+def test_unhandled_exception_handler_logs_error() -> None:
+    logger = _Recorder()
+    request = _make_request(logger)
+
+    response = asyncio.run(unhandled_exception_handler(request, RuntimeError("unexpected")))
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert logger.error_calls
+```
+
+## tests/test_api_version.py
 
 ```python
 """Ensure API metadata stays aligned with the repository VERSION file."""
@@ -29047,16 +37456,26 @@ def test_api_version_matches_repo_version() -> None:
     version_path = Path(__file__).resolve().parents[1] / "VERSION"
     expected = version_path.read_text(encoding="utf-8").strip()
     assert app.version == expected
-
 ```
 
----
-
-### tests/test_chat_route.py
+## tests/test_chat_route.py
 
 ```python
-import pytest
+import asyncio
+from types import SimpleNamespace
 from typing import Any
+
+import pytest
+
+from api.routes.chat import ask_endpoint
+from api.schemas import AskRequest
+from retriever.models import Answer, Citation, FamilyOption
+from retriever.resolver import ModelResolution, ModelScope
+
+
+class _DummyLogger:
+    def info(self, *args, **kwargs):
+        pass
 
 
 def test_chat_route_or_skip() -> None:
@@ -29139,11 +37558,179 @@ def test_chat_route_rate_limit(monkeypatch) -> None:
     assert data["error"] == "rate_limited"
     assert "request_id" in data
 
+
+def test_ask_endpoint_returns_clarification(monkeypatch: pytest.MonkeyPatch) -> None:
+    options = [
+        FamilyOption(id="C7070", label="Apeos C7070 range"),
+        FamilyOption(id="C8180", label="Apeos C8180 series"),
+    ]
+
+    def fake_resolve_models(*args, **kwargs) -> ModelResolution:
+        return ModelResolution(
+            scopes=[], confidence=0.0, needs_clarification=True, clarification_options=options
+        )
+
+    monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
+    monkeypatch.setattr(
+        "api.routes.chat.answer_question",
+        lambda *args, **kwargs: pytest.fail(
+            "answer_question should not be called when clarification is needed"
+        ),
+    )
+
+    payload = AskRequest(question="Can the printer handle glossy stock?")
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-clarify"))
+    settings = SimpleNamespace(verbose_logging=False, trace_logging=False, openai_api_key=None)
+
+    response = asyncio.run(ask_endpoint(payload, request, settings, _DummyLogger()))
+
+    assert response.clarification is not None
+    assert response.clarification.message
+    assert {option.id for option in response.clarification.options} == {"C7070", "C8180"}
+    assert response.answers == []
+    assert response.sources == []
+    assert response.confidence == 0.0
+    assert response.should_escalate is False
+
+
+def test_ask_endpoint_fans_out_answers(monkeypatch: pytest.MonkeyPatch) -> None:
+    options = [
+        FamilyOption(id="C7070", label="Apeos C7070 range"),
+        FamilyOption(id="C8180", label="Apeos C8180 series"),
+    ]
+    scopes = [
+        ModelScope(family_id="C7070", family_label="Apeos C7070 range", model="Apeos C4570"),
+        ModelScope(family_id="C8180", family_label="Apeos C8180 series", model="Apeos C6580"),
+    ]
+
+    def fake_resolve_models(*args, **kwargs) -> ModelResolution:
+        return ModelResolution(
+            scopes=list(scopes),
+            confidence=0.9,
+            needs_clarification=False,
+            clarification_options=options,
+        )
+
+    calls = []
+
+    def fake_answer_question(
+        question: str,
+        *,
+        product_family: str | None = None,
+        family_label: str | None = None,
+        model: str | None = None,
+        **kwargs,
+    ) -> Answer:
+        calls.append((product_family, model))
+        citation = Citation(
+            chunk_id=f"{model}-chunk",
+            source_path=f"content/{product_family}.pdf",
+            page_number=5,
+            heading=f"{model} Specs",
+            score=0.88,
+        )
+        return Answer(
+            question=question,
+            response=f"{model} capabilities summary.",
+            citations=[citation],
+            confidence=0.92,
+            should_escalate=False,
+            model=model,
+            family=product_family,
+            family_label=family_label,
+        )
+
+    monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
+    monkeypatch.setattr("api.routes.chat.answer_question", fake_answer_question)
+
+    payload = AskRequest(question="Compare the Apeos C4570 and C6580 models.", top_k=2)
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-multi"))
+    settings = SimpleNamespace(verbose_logging=False, trace_logging=False, openai_api_key=None)
+
+    response = asyncio.run(ask_endpoint(payload, request, settings, _DummyLogger()))
+
+    assert len(calls) == 2
+    assert ("C7070", "Apeos C4570") in calls
+    assert ("C8180", "Apeos C6580") in calls
+
+    assert response.answers is not None
+    assert len(response.answers) == 2
+    assert {answer.model for answer in response.answers} == {"Apeos C4570", "Apeos C6580"}
+    assert all(answer.sources for answer in response.answers)
+    assert response.should_escalate is False
+    assert response.confidence is not None and response.confidence >= 0.0
+    assert "###" in (response.answer or "")
 ```
 
----
+## tests/test_chat_verbose.py
 
-### tests/test_chunker.py
+```python
+import asyncio
+from types import SimpleNamespace
+
+import pytest
+
+from api.routes.chat import ask_endpoint
+from api.schemas import AskRequest
+
+
+class _DummyLogger:
+    def info(self, *args, **kwargs):
+        pass
+
+
+def test_ask_endpoint_emits_verbose_logs(monkeypatch: pytest.MonkeyPatch) -> None:
+    citations = [
+        SimpleNamespace(
+            chunk_id="chunk-1",
+            source_path="content/manuals/guide.pdf",
+            page_number=5,
+            heading="Overview",
+            score=0.87,
+        )
+    ]
+
+    def fake_answer_question(*args, **kwargs):
+        return SimpleNamespace(
+            response="All systems operational.",
+            confidence=0.72,
+            should_escalate=False,
+            citations=citations,
+        )
+
+    log_calls: list[tuple[str, dict]] = []
+
+    def fake_log_event(logger, event: str, **payload):
+        log_calls.append((event, payload))
+
+    def fake_count_tokens(value: str) -> int:
+        return len(value.split())
+
+    monkeypatch.setattr("api.routes.chat.answer_question", fake_answer_question)
+    monkeypatch.setattr("api.routes.chat.log_event", fake_log_event)
+    monkeypatch.setattr("api.routes.chat.count_tokens", fake_count_tokens)
+
+    payload = AskRequest(
+        question="Explain the workflow", filters={"family": "C7070"}, top_k=3, models=["C7070"]
+    )
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-001"))
+    settings = SimpleNamespace(verbose_logging=True, trace_logging=True, openai_api_key=None)
+
+    response = asyncio.run(ask_endpoint(payload, request, settings, _DummyLogger()))
+
+    assert response.answer == "All systems operational."
+    assert response.sources[0].path == "content/manuals/guide.pdf"
+    assert response.answers is not None and len(response.answers) == 1
+    first_answer = response.answers[0]
+    assert first_answer.model in (None, "Apeos C7070")
+
+    # Two log events: completion + verbose chat turn
+    assert {event for event, _ in log_calls} == {"ask_endpoint_complete", "chat_turn"}
+    chat_turn_payload = dict(log_calls)["chat_turn"]  # keys are unique in this test, safe to coerce
+    assert "Overview" in chat_turn_payload["sources"][0]
+```
+
+## tests/test_chunker.py
 
 ```python
 from pathlib import Path
@@ -29241,12 +37828,9 @@ def test_chunker_assigns_traceable_metadata() -> None:
         assert chunk.extra["chunk_sha"] == chunk.sha256
         assert "breadcrumbs" in chunk.extra
         assert chunk.extra.get("source_type") == "manual"
-
 ```
 
----
-
-### tests/test_citation_dedupe.py
+## tests/test_citation_dedupe.py
 
 ```python
 from __future__ import annotations
@@ -29284,12 +37868,50 @@ def test_dedupe_supports_objects_and_sets_pages() -> None:
     out = dedupe_citations(items)
     assert len(out) == 2
     assert isinstance(out[0], Obj)
-
 ```
 
----
+## tests/test_citation_utils_extra.py
 
-### tests/test_config_reload.py
+```python
+from types import SimpleNamespace
+
+from retriever.citation_utils import (
+    _norm_pages,
+    _norm_source_path,
+    dedupe_citations,
+)
+
+
+class BadPath:
+    def __fspath__(self):
+        raise RuntimeError("boom")
+
+
+def test_norm_source_path_handles_exceptions() -> None:
+    assert _norm_source_path(None) == ""
+    assert _norm_source_path("Content/Doc.PDF") == "doc"
+    fallback = _norm_source_path(BadPath())
+    assert fallback  # falls back to string representation
+
+
+def test_norm_pages_parses_iterables_and_strings() -> None:
+    assert _norm_pages([3, 1, 3]) == (1, 3, 3)
+    assert _norm_pages("1, 2 3") == (1, 2, 3)
+    assert _norm_pages(5) == (5,)
+
+
+def test_dedupe_citations_varied_inputs() -> None:
+    items = [
+        {"source_path": "docs/file.pdf", "page_range": [1, 2]},
+        SimpleNamespace(source_path="docs/file.pdf", pages={2, 1}),
+        {"source_path": "docs/other.pdf", "pages": "3 4"},
+        {"source_path": None, "pages": None},
+    ]
+    result = dedupe_citations(items)
+    assert len(result) == 3
+```
+
+## tests/test_config_reload.py
 
 ```python
 from pathlib import Path
@@ -29343,12 +37965,9 @@ def test_load_settings_refreshes_env(tmp_path, monkeypatch):
         os.chdir(old_cwd)
         importlib.reload(config_module)
         config_module.reset_settings_cache()
-
 ```
 
----
-
-### tests/test_contact_route.py
+## tests/test_contact_route.py
 
 ```python
 # tests/test_contact_route.py
@@ -29508,12 +38127,69 @@ def test_contact_route_handles_mailer_failure(monkeypatch, patch_smtp):
     assert data["error"] == "internal_error"
     assert "Unable to deliver" in data["detail"]
     assert data["request_id"]
-
 ```
 
----
+## tests/test_contact_route_trace.py
 
-### tests/test_environment_diagnostics.py
+```python
+import asyncio
+from types import SimpleNamespace
+
+import pytest
+
+from api.routes.contact import (
+    ContactRequest,
+    EscalationTrace,
+    TraceDocument,
+    contact,
+)
+
+
+class _Recorder:
+    def __init__(self) -> None:
+        self.info_calls: list[tuple[str, dict]] = []
+        self.error_calls: list[tuple[str, dict]] = []
+
+    def info(self, event: str, *, extra: dict | None = None) -> None:
+        self.info_calls.append((event, extra or {}))
+
+    def error(self, event: str, *, extra: dict | None = None) -> None:
+        self.error_calls.append((event, extra or {}))
+
+
+def test_contact_route_with_trace(monkeypatch: pytest.MonkeyPatch) -> None:
+    logger = _Recorder()
+    captured: dict[str, str | dict | None] = {}
+
+    monkeypatch.setattr("api.routes.contact.load_settings", lambda: SimpleNamespace())
+    monkeypatch.setattr("api.routes.contact.configure_logging", lambda settings: logger)
+
+    def fake_send_escalation(*, subject: str, body: str, trace: dict | None):
+        captured["subject"] = subject
+        captured["body"] = body
+        captured["trace"] = trace
+
+    monkeypatch.setattr("api.routes.contact.send_escalation", fake_send_escalation)
+
+    trace = EscalationTrace(
+        user_id="user-1",
+        request_id="trace-001",
+        documents=[
+            TraceDocument(chunk_id="c1", score=0.9, source_path="docs/file.pdf", page_number=2)
+        ],
+    )
+    payload = ContactRequest(reason="low_confidence", transcript="step 1", trace=trace)
+    request = SimpleNamespace(state=SimpleNamespace(request_id="req-001"))
+
+    result = asyncio.run(contact(payload, request))
+
+    assert result == {"status": "accepted"}
+    assert captured["trace"]["request_id"] == "trace-001"
+    assert "Trace Payload" in captured["body"]
+    assert logger.info_calls
+```
+
+## tests/test_environment_diagnostics.py
 
 ```python
 """Tests for environment diagnostics helper."""
@@ -29586,12 +38262,9 @@ PGVECTOR_LISTS=256
     overrides = diagnostics["overrides"]
     assert "SMTP_USER" in overrides["environment"]
     assert "DATABASE_URL" in overrides[".env"]
-
 ```
 
----
-
-### tests/test_error_schema.py
+## tests/test_error_schema.py
 
 ```python
 import pytest
@@ -29643,12 +38316,9 @@ def test_unauthorized_error_schema(app_with_settings):
     assert payload["error"] == "unauthorized"
     assert payload["detail"] == "Auth required"
     assert payload["request_id"]
-
 ```
 
----
-
-### tests/test_eval_runner.py
+## tests/test_eval_runner.py
 
 ```python
 """Tests for evaluation runner artifact generation."""
@@ -29683,12 +38353,9 @@ def test_write_outputs_creates_csv_json_and_html(tmp_path):
     assert "metrics" in html.lower()
     assert "0.8123" in html
     assert "0.9" in html
-
 ```
 
----
-
-### tests/test_hashing.py
+## tests/test_hashing.py
 
 ```python
 from pathlib import Path
@@ -29704,12 +38371,9 @@ def test_sha256_text_and_file(tmp_path: Path):
     f = tmp_path / "sample.txt"
     f.write_text(text, encoding="utf-8")
     assert sha256_file(f) == expected
-
 ```
 
----
-
-### tests/test_ingestion_retrieval_integration.py
+## tests/test_ingestion_retrieval_integration.py
 
 ```python
 """Integration coverage for pgvector-backed ingestion and retrieval."""
@@ -29940,12 +38604,44 @@ def test_retrieval_pipeline_answers_question(test_settings: AppSettings) -> None
     assert answer.response
     assert answer.confidence >= 0.4
     assert answer.should_escalate is False
-
 ```
 
----
+## tests/test_logging_utils.py
 
-### tests/test_mailer.py
+```python
+import importlib
+from typing import Any
+
+import pytest
+
+
+def _reload_logging_utils(monkeypatch: pytest.MonkeyPatch, **env: Any):
+    for key in ("LOG_LEVEL", "LOG_FORMAT"):
+        monkeypatch.delenv(key, raising=False)
+    for key, value in env.items():
+        monkeypatch.setenv(key, str(value))
+    module = importlib.import_module("atticus.logging_utils")
+    return importlib.reload(module)
+
+
+def test_get_logger_json_format(monkeypatch: pytest.MonkeyPatch) -> None:
+    logging_utils = _reload_logging_utils(monkeypatch, LOG_LEVEL="INFO", LOG_FORMAT="json")
+
+    logger = logging_utils.get_logger("atticus-tests")
+    assert hasattr(logger, "bind")
+    logging_utils.get_logger("atticus-tests")
+    assert getattr(logging_utils._configure_once, "_did", False)
+
+
+def test_get_logger_console_format(monkeypatch: pytest.MonkeyPatch) -> None:
+    logging_utils = _reload_logging_utils(monkeypatch, LOG_LEVEL="DEBUG", LOG_FORMAT="console")
+
+    logger = logging_utils.get_logger("atticus-console")
+    assert hasattr(logger, "bind")
+    assert getattr(logging_utils._configure_once, "_did", False)
+```
+
+## tests/test_mailer.py
 
 ```python
 from __future__ import annotations
@@ -30116,12 +38812,152 @@ def test_send_escalation_rejects_recipient(monkeypatch):
         mailer.send_escalation("Blocked", "body")
 
     assert excinfo.value.reason == "recipient_not_allowed"
-
 ```
 
----
+## tests/test_model_parser.py
 
-### tests/test_seed_manifest.py
+```python
+import pytest
+
+from retriever.models import extract_models, load_model_catalog
+from retriever.resolver import resolve_models
+
+
+@pytest.fixture(scope="module")
+def catalog():
+    return load_model_catalog()
+
+
+def test_extract_models_direct_hit(catalog):
+    result = extract_models("Can the Apeos C7070 handle heavy cardstock?", catalog=catalog)
+    assert "Apeos C7070" in result.models
+    assert "C7070" in result.families
+    assert result.confidence > 0.8
+
+
+def test_extract_models_alias_hit(catalog):
+    result = extract_models("Does the 6580 support stapling?", catalog=catalog)
+    assert "Apeos C6580" in result.models
+    assert "C8180" in result.families
+    assert result.confidence >= 0.6
+
+
+def test_extract_models_none_requires_clarification(catalog):
+    result = extract_models("How do I replace the toner cartridge?", catalog=catalog)
+    assert not result.models
+    assert not result.families
+    assert result.confidence == 0
+
+
+def test_resolve_models_explicit_selection(catalog):
+    resolution = resolve_models(
+        question="ignored when models are explicit",
+        requested_models=["Apeos C4570", "Apeos C6580"],
+        catalog=catalog,
+    )
+    assert not resolution.needs_clarification
+    assert {scope.family_id for scope in resolution.scopes} == {"C7070", "C8180"}
+    assert {scope.model for scope in resolution.scopes} == {"Apeos C4570", "Apeos C6580"}
+
+
+def test_resolve_models_requests_clarification(monkeypatch, catalog):
+    resolution = resolve_models(
+        "Tell me about the printer", catalog=catalog, clarification_threshold=0.9
+    )
+    assert resolution.needs_clarification
+    assert resolution.scopes == []
+    assert {option.id for option in resolution.clarification_options} >= {"C7070", "C8180"}
+```
+
+## tests/test_rate_limit.py
+
+```python
+from api.rate_limit import RateLimiter
+
+
+def test_rate_limiter_allows_and_blocks(monkeypatch) -> None:
+    times = iter([100.0, 100.2, 101.5])
+
+    def _monotonic():
+        return next(times)
+
+    limiter = RateLimiter(limit=1, window_seconds=1)
+    monkeypatch.setattr("api.rate_limit.time.monotonic", _monotonic)
+
+    allowed, remaining = limiter.allow("user")
+    assert allowed and remaining == 0
+
+    allowed_second, retry_after = limiter.allow("user")
+    assert not allowed_second and retry_after >= 1
+    assert limiter.blocked == 1
+
+    allowed_third, remaining_third = limiter.allow("user")
+    assert allowed_third and remaining_third == 0
+
+    snapshot = limiter.snapshot()
+    assert snapshot["active_keys"] == 1
+
+    # Ensure reset clears counters and buckets.
+    limiter.reset()
+    assert limiter.blocked == 0
+    assert limiter._buckets == {}
+```
+
+## tests/test_retrieval_filters.py
+
+```python
+from types import SimpleNamespace
+
+from atticus.vector_db import StoredChunk
+from retriever.vector_store import VectorStore
+
+
+def _make_chunk(product_family: str) -> StoredChunk:
+    chunk = StoredChunk(
+        chunk_id="chunk-1",
+        document_id="doc-1",
+        source_path="content/model/manual.pdf",
+        text="Example chunk text.",
+        start_token=0,
+        end_token=10,
+        page_number=1,
+        section="Overview",
+        sha256="fake",
+        extra={"product_family": product_family, "source_type": "ced"},
+    )
+    return chunk
+
+
+def _make_vector_store(manifest_overrides: dict | None = None) -> VectorStore:
+    vs: VectorStore = VectorStore.__new__(VectorStore)  # bypass __init__
+    vs.settings = SimpleNamespace()
+    vs.logger = SimpleNamespace()
+    vs.repository = SimpleNamespace()
+    vs.manifest = SimpleNamespace(
+        documents=manifest_overrides or {"content/model/manual.pdf": {"source_type": "ced"}}
+    )
+    return vs
+
+
+def test_apply_filters_allows_matching_family():
+    vs = _make_vector_store()
+    chunk = _make_chunk("C7070")
+    assert vs._apply_filters(chunk, {"product_family": "C7070"})
+
+
+def test_apply_filters_blocks_non_matching_family():
+    vs = _make_vector_store()
+    chunk = _make_chunk("C8180")
+    assert not vs._apply_filters(chunk, {"product_family": "C7070"})
+
+
+def test_apply_filters_passes_without_family_constraint():
+    vs = _make_vector_store()
+    chunk = _make_chunk("C7070")
+    assert vs._apply_filters(chunk, {"path_prefix": "content"})
+```
+
+## tests/test_seed_manifest.py
 
 ```python
 """Tests for the seed manifest generation workflow."""
@@ -30306,15 +39142,15 @@ def test_glossary_seed_entries_round_trip() -> None:
     assert ticket is not None, "Expected AE escalation ticket to be seeded"
     assert ticket[1] == "AE-1001"
     assert ticket[2] == "open"
-
 ```
 
----
-
-### tests/test_ui_route.py
+## tests/test_ui_route.py
 
 ```python
 import pytest
+
+from retriever.models import FamilyOption
+from retriever.resolver import ModelResolution
 
 
 def test_ui_route_or_skip():
@@ -30337,18 +39173,53 @@ def test_ui_route_or_skip():
     assert payload["error"] == "not_found"
     assert payload["request_id"]
 
+
+def test_ui_route_ask_returns_clarification(monkeypatch: pytest.MonkeyPatch):
+    try:
+        from api.main import app
+        from fastapi.testclient import TestClient
+    except Exception as exc:
+        pytest.skip(f"api prerequisites missing: {exc}")
+        return
+
+    options = [
+        FamilyOption(id="C7070", label="Apeos C7070 range"),
+        FamilyOption(id="C8180", label="Apeos C8180 series"),
+    ]
+
+    def fake_resolve_models(*args, **kwargs) -> ModelResolution:
+        return ModelResolution(
+            scopes=[], confidence=0.0, needs_clarification=True, clarification_options=options
+        )
+
+    monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
+    monkeypatch.setattr(
+        "api.routes.chat.answer_question",
+        lambda *args, **kwargs: pytest.fail(
+            "answer_question should not run when clarification is returned"
+        ),
+    )
+
+    client = TestClient(app)
+    response = client.post("/ask", json={"question": "Tell me about the printer."})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["clarification"]["message"]
+    assert {option["id"] for option in data["clarification"]["options"]} == {"C7070", "C8180"}
+    assert data.get("answers") == []
+    assert data.get("sources") == []
 ```
 
----
-
-### tests/unit/admin-uncertain-route.test.ts
+## tests/unit/admin-uncertain-route.test.ts
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Role } from "@prisma/client";
 import type { Session } from "next-auth";
 
-const mockGetServerAuthSession = vi.hoisted(() => vi.fn<[], Promise<Session | null>>());
+const mockGetServerAuthSession = vi.hoisted(
+  () => vi.fn<() => Promise<Session | null>>()
+);
 const mockWithRlsContext = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
@@ -30653,12 +39524,9 @@ describe("/api/admin/uncertain/:id/ask-followup POST", () => {
     expect(ragEventCreate).toHaveBeenCalledTimes(1);
   });
 });
-
 ```
 
----
-
-### tests/unit/ask-client.test.ts
+## tests/unit/ask-client.test.ts
 
 ```ts
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -30693,11 +39561,13 @@ describe("askRequestSchema", () => {
       filters: null,
       contextHints: ["  product A  "],
       topK: null,
+      models: null,
     });
     expect(parsed.question).toBe("hello");
     expect(parsed.filters).toBeUndefined();
     expect(parsed.contextHints).toEqual(["  product A  "]);
     expect(parsed.topK).toBeUndefined();
+    expect(parsed.models).toBeUndefined();
   });
 });
 
@@ -30724,6 +39594,7 @@ describe("streamAsk", () => {
       filters: undefined,
       contextHints: undefined,
       topK: undefined,
+      models: undefined,
     });
     expect(response).toEqual(payload);
   });
@@ -30748,23 +39619,90 @@ describe("streamAsk", () => {
       filters: undefined,
       contextHints: undefined,
       topK: undefined,
+      models: undefined,
     });
     expect(response).toEqual(askResponseSchema.parse(payload));
   });
 });
-
 ```
 
----
+## tests/unit/auth-magic-link.test.ts
 
-### tests/unit/glossary-route.test.ts
+```ts
+import fs from "node:fs/promises";
+import path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+
+import { __test } from "@/lib/auth";
+
+const { defaultMailboxDir, resolveMailboxDir, persistMagicLink } = __test;
+
+const envKey = "AUTH_DEBUG_MAILBOX_DIR";
+const email = "fallbacktester@example.com";
+const magicLink = "https://atticus.local/test-link";
+
+async function cleanupMailboxFile() {
+  const filePath = path.resolve(defaultMailboxDir, `${email}.txt`);
+  try {
+    await fs.unlink(filePath);
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
+describe("magic link mailbox resolution", () => {
+  const originalEnv = process.env[envKey];
+
+  beforeEach(async () => {
+    await cleanupMailboxFile();
+  });
+
+  afterEach(async () => {
+    if (originalEnv === undefined) {
+      delete process.env[envKey];
+    } else {
+      process.env[envKey] = originalEnv;
+    }
+    await cleanupMailboxFile();
+  });
+
+  it("defaults to the fallback directory when env is unset", () => {
+    delete process.env[envKey];
+    expect(resolveMailboxDir()).toBe(defaultMailboxDir);
+  });
+
+  it("respects an explicitly configured directory", () => {
+    process.env[envKey] = "./custom-mailbox";
+    expect(resolveMailboxDir()).toBe("./custom-mailbox");
+  });
+
+  it("allows disabling persistence with an empty directory env", () => {
+    process.env[envKey] = " ";
+    expect(resolveMailboxDir()).toBeNull();
+  });
+
+  it("writes magic links to the fallback directory when env is unset", async () => {
+    delete process.env[envKey];
+    await persistMagicLink(email, magicLink);
+    const filePath = path.resolve(defaultMailboxDir, `${email}.txt`);
+    const contents = await fs.readFile(filePath, "utf-8");
+    expect(contents).toContain(magicLink);
+  });
+});
+```
+
+## tests/unit/glossary-route.test.ts
 
 ```ts
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GlossaryStatus, Role } from "@prisma/client";
 import type { Session } from "next-auth";
 
-const mockGetServerAuthSession = vi.hoisted(() => vi.fn<[], Promise<Session | null>>());
+const mockGetServerAuthSession = vi.hoisted(
+  () => vi.fn<() => Promise<Session | null>>()
+);
 const mockWithRlsContext = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
@@ -31043,12 +39981,9 @@ describe("/api/glossary/[id] route RBAC", () => {
     expect(ragEventCreate).toHaveBeenCalledTimes(1);
   });
 });
-
 ```
 
----
-
-### tests/unit/rbac.test.ts
+## tests/unit/rbac.test.ts
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -31102,12 +40037,9 @@ describe("RBAC helpers", () => {
     expect(canEditGlossary(baseSession)).toBe(baseSession);
   });
 });
-
 ```
 
----
-
-### tsconfig.json
+## tsconfig.json
 
 ```json
 {
@@ -31148,12 +40080,15 @@ describe("RBAC helpers", () => {
   ],
   "exclude": ["node_modules"]
 }
-
 ```
 
----
+## VERSION
 
-### vitest.config.ts
+```
+0.8.1
+```
+
+## vitest.config.ts
 
 ```ts
 import { defineConfig } from "vitest/config";
@@ -31176,5 +40111,4 @@ export default defineConfig({
     },
   },
 });
-
 ```

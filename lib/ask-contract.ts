@@ -35,7 +35,7 @@ export const askResponseSchema = z.object({
   request_id: z.string(),
   sources: z.array(askSourceSchema).optional(),
   answers: z.array(askAnswerSchema).optional(),
-  clarification: clarificationPayloadSchema.optional(),
+  clarification: clarificationPayloadSchema.nullish(),
 });
 
 export const askRequestSchema = z.object({

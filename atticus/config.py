@@ -322,6 +322,7 @@ def reset_settings_cache() -> None:
 def load_settings() -> AppSettings:
     env_path = _resolve_env_file() or Path(".env")
     env_mtime = env_path.stat().st_mtime if env_path.exists() else -1.0
+    env_values = _parse_env_file(env_path)
     env_fingerprint = _env_variables_fingerprint()
 
     base = AppSettings()
@@ -334,10 +335,34 @@ def load_settings() -> AppSettings:
         return _SETTINGS_CACHE.settings
 
     config_data = _load_yaml_config(config_path)
+
     if config_data:
-        merged: dict[str, Any] = base.model_dump()
-        merged.update(config_data)
-        settings = AppSettings(**merged)
+        updates: dict[str, Any] = {}
+        for name, value in config_data.items():
+            field = AppSettings.model_fields.get(name)
+            if field is None:
+                updates[name] = value
+                continue
+
+            aliases = {name.upper()}
+            aliases.update(_iter_alias_strings(getattr(field, "alias", None)))
+            aliases.update(_iter_alias_strings(getattr(field, "validation_alias", None)))
+
+            if any(alias in os.environ for alias in aliases):
+                continue
+            if any(alias in env_values for alias in aliases):
+                continue
+
+            updates[name] = value
+
+        updates.setdefault("config_path", config_path)
+        # Rebuild settings with validation so YAML string paths are coerced to Path
+        # and other field types are normalized. model_copy(update=...) does not
+        # perform validation in pydantic v2, which led to str values lacking
+        # Path methods like `.mkdir()`.
+        combined: dict[str, Any] = base.model_dump()
+        combined.update(updates)
+        settings = AppSettings.model_validate(combined)
     else:
         settings = base
 

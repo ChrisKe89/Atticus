@@ -15,12 +15,12 @@
     "audit:icons": "node scripts/icon-audit.mjs",
     "audit:routes": "node scripts/route-audit.mjs",
     "audit:py": "python scripts/audit_unused.py --json",
-    "prisma:generate": "prisma generate",
-    "db:migrate": "prisma migrate deploy",
-    "db:seed": "ts-node --esm prisma/seed.ts",
+    "prisma:generate": "python -m scripts.prisma_cli generate",
+    "db:migrate": "python -m scripts.prisma_cli migrate deploy",
+    "db:seed": "python -m scripts.db_seed",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test --reporter=list"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

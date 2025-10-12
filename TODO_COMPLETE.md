@@ -134,7 +134,15 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ## 2025-10-19
 
-- [x] TODO "pgvector GUC Bootstrap" — completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
-- [x] TODO "Version Parity Automation" — completed 2025-10-19 (release 0.8.0 ships `scripts/check_version_parity.py`, Makefile wiring, and docs).
-- [x] TODO "Uncertain Chat Validation Flow" — completed 2025-10-19 (release 0.8.0 captures low-confidence chats, follow-up prompts, admin drawer UX, and audit events).
-- [x] TODO "Dictionary (Glossary) Update Semantics" — completed 2025-10-19 (release 0.8.0 adds POST upsert/PUT updates, inline editing, and rag event auditing).
+- [x] TODO "pgvector GUC Bootstrap" - completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
+- [x] TODO "Version Parity Automation" - completed 2025-10-19 (release 0.8.0 ships `scripts/check_version_parity.py`, Makefile wiring, and docs).
+- [x] TODO "Uncertain Chat Validation Flow" - completed 2025-10-19 (release 0.8.0 captures low-confidence chats, follow-up prompts, admin drawer UX, and audit events).
+- [x] TODO "Dictionary (Glossary) Update Semantics" - completed 2025-10-19 (release 0.8.0 adds POST upsert/PUT updates, inline editing, and rag event auditing).
+
+## 2025-10-30
+
+- [x] Audited `TODO.md` and confirmed no outstanding backlog items remain; updated the file to reference the completion log.
+- [x] Verified the model catalog in `indices/model_catalog.json` maps families ⇄ models/aliases as required by the backlog item.
+- [x] Confirmed disambiguation utilities (`retriever/models.py`, `retriever/resolver.py`) and scoped retrieval (`retriever/service.py`) implement the parser/resolver tasks.
+- [x] Checked the API and client flow updates in `api/routes/chat.py`, `app/api/ask/route.ts`, `lib/ask-contract.ts`, `lib/ask-client.ts`, and `components/AnswerRenderer.tsx` to ensure clarification + multi-answer behaviour is live.
+- [x] Reviewed ingestion tagging updates in `ingest/pipeline.py` and supporting docs (`docs/api/README.md`, `README.md`) covering the model-family flows.

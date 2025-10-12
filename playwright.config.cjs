@@ -1,7 +1,8 @@
 const { defineConfig, devices } = require("@playwright/test");
 const path = require("node:path");
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
+// Align with NEXTAUTH_URL host to ensure cookies are same-origin
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
 module.exports = defineConfig({
   testDir: "tests/playwright",
@@ -14,7 +15,8 @@ module.exports = defineConfig({
     trace: "on-first-retry",
     storageState: undefined,
   },
-  reporter: [["list"], ["html", { outputFolder: "reports/playwright" }]],
+  // Use a non-interactive reporter to avoid starting an HTML server
+  reporter: [["list"]],
   projects: [
     {
       name: "chromium",
@@ -22,7 +24,7 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev -- --hostname 127.0.0.1 --port 3000",
+    command: "npm run dev -- --hostname localhost --port 3000",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

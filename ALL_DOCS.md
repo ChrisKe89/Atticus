@@ -1,42 +1,39 @@
-# Combined Markdown Documents
-
-Generated: 2025-10-09 09:28:45 UTC
-Root: C:\Dev\Atticus
-Files: 25
+# All Documentation
 
 ## Index
-- `AGENTS.md`
-- `ARCHITECTURE.md`
-- `CHANGELOG.md`
-- `CONTRIBUTING.md`
-- `IMPLEMENTATION_PLAN.md`
-- `OPERATIONS.md`
-- `README.md`
-- `RELEASE.md`
-- `REPO_STRUCTURE.md`
-- `REQUIREMENTS.md`
-- `SECURITY.md`
-- `STYLEGUIDE.md`
-- `TODO.md`
-- `TODO_COMPLETE.md`
-- `TROUBLESHOOTING.md`
-- `code.md`
-- `codex_instructions.md`
-- `docs/ATTICUS_DETAILED_GUIDE.md`
-- `docs/README.md`
-- `docs/REMOTE_ACCESS.md`
-- `docs/api/README.md`
-- `docs/glossary-spec.md`
-- `docs/runbooks/auth-rbac.md`
-- `scripts/rollback.md`
-- `seeds/README.md`
+- [AGENTS.md](#agents-md)
+- [app/README.md](#app-readme-md)
+- [ARCHITECTURE.md](#architecture-md)
+- [archive/legacy-ui/README.md](#archive-legacy-ui-readme-md)
+- [CHANGELOG.md](#changelog-md)
+- [code.md](#code-md)
+- [codex_instructions.md](#codex-instructions-md)
+- [CONTRIBUTING.md](#contributing-md)
+- [docs/api/README.md](#docs-api-readme-md)
+- [docs/ATTICUS_DETAILED_GUIDE.md](#docs-atticus-detailed-guide-md)
+- [docs/glossary-spec.md](#docs-glossary-spec-md)
+- [docs/README.md](#docs-readme-md)
+- [docs/REMOTE_ACCESS.md](#docs-remote-access-md)
+- [docs/runbooks/auth-rbac.md](#docs-runbooks-auth-rbac-md)
+- [IMPLEMENTATION_PLAN.md](#implementation-plan-md)
+- [OPERATIONS.md](#operations-md)
+- [README.md](#readme-md)
+- [RELEASE.md](#release-md)
+- [REPO_STRUCTURE.md](#repo-structure-md)
+- [REPO_TREE.md](#repo-tree-md)
+- [REQUIREMENTS.md](#requirements-md)
+- [scripts/rollback.md](#scripts-rollback-md)
+- [SECURITY.md](#security-md)
+- [seeds/README.md](#seeds-readme-md)
+- [STYLEGUIDE.md](#styleguide-md)
+- [TODO.md](#todo-md)
+- [TODO_COMPLETE.md](#todo-complete-md)
+- [TROUBLESHOOTING.md](#troubleshooting-md)
 
+## AGENTS.md
 
----
+<!-- Begin file: AGENTS.md -->
 
-### AGENTS.md
-
-````md
 # AGENTS — Atticus
 
 > Single source of truth for agent behavior, pipelines, and guardrails. Target stack: **Next.js + Postgres/pgvector + Prisma + Auth.js (Email magic link first, Azure AD later)**.
@@ -199,6 +196,13 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 - Ingest → Chunk → Embed → Store
 - Retrieve (vector + filters) → Compose context → Generate → Cite → Log
 - Confidence threshold → **Escalation** (email), or answer with caveats
+
+#### Model Disambiguation Contract
+
+- When the question clearly names a specific model (e.g., “Apeos C4570”), scope retrieval to that model’s family and emit a single answer with family-scoped citations.
+- When the model cannot be inferred confidently, the API must return a `clarification` payload listing the available families (“Apeos C7070 range”, “Apeos C8180 series”). The UI renders the clarification card and resubmits the original question with the selected `models` array.
+- When multiple models are detected or supplied, fan out retrieval per model, return `answers[]` with `{ model, family, sources[] }`, and keep the aggregated `sources` in the response for compatibility with downstream tooling.
+- Capture low confidence turns only after a full answer is generated—skip collection on clarification-only responses.
 
 ### Security
 
@@ -460,13 +464,67 @@ python scripts/debug_env.py
 
 ---
 
-````
+<!-- End file: AGENTS.md -->
 
----
+## app/README.md
 
-### ARCHITECTURE.md
+<!-- Begin file: app/README.md -->
 
-```md
+# Wynstan — GC MFD Root-Cause Chat
+
+Baseline Next.js (App Router) workspace for the Wynstan diagnostics experience. Stage 0 establishes tooling so that Stage 1 can layer the UI frame, panes, and skeleton loaders described in `TODO.md`.
+
+## Prerequisites
+
+All development happens with Node.js 20+ and pnpm.
+
+```powershell
+node -v   # expect v20.x
+pnpm -v   # expect v10+
+git --version
+```
+
+If any tool is missing, install them before proceeding (see `TODO.md` for Windows-specific commands).
+
+## Getting started
+
+```powershell
+pnpm install
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to confirm the baseline Tailwind styles render. The landing screen includes a badge and status row that should reflect the Tailwind color tokens configured in `src/app/globals.css`.
+
+## Project scripts
+
+| Command       | Purpose                                |
+| ------------- | -------------------------------------- |
+| `pnpm dev`    | Start Next.js dev server (Turbopack).  |
+| `pnpm build`  | Production build.                      |
+| `pnpm start`  | Run the compiled build.                |
+| `pnpm lint`   | Lint with the Next.js ESLint config.   |
+
+## Tooling stack
+
+- **Next.js 15** (App Router, TypeScript, Turbopack).
+- **Tailwind CSS 3.4** configured via `tailwind.config.ts` with shadcn-compatible tokens.
+- **shadcn/ui** configuration via `components.json` (manual bootstrap pending CLI registry access).
+- **React Query 5** for client data fetching and caching.
+- **Zod** for runtime validation.
+- **Lucide icons** for consistent iconography.
+
+Utility helpers such as `cn` live in `src/lib/utils.ts`.
+
+## Next steps
+
+Stage 1 tasks will create the shared layout (header/nav), route placeholders, and skeleton states. Track progress and acceptance criteria in `TODO.md`.
+
+<!-- End file: app/README.md -->
+
+## ARCHITECTURE.md
+
+<!-- Begin file: ARCHITECTURE.md -->
+
 # ARCHITECTURE — Atticus
 
 This document provides a **high‑level view of the Atticus system**, showing how data flows through ingestion, retrieval, and answer generation.
@@ -541,13 +599,25 @@ The Next.js application is the canonical UI; historical static assets live under
 - [OPERATIONS.md](OPERATIONS.md) — Runbooks and evaluation metrics.
 - [README.md](README.md) — Setup instructions and Make targets.
 
-```
+<!-- End file: ARCHITECTURE.md -->
 
----
+## archive/legacy-ui/README.md
 
-### CHANGELOG.md
+<!-- Begin file: archive/legacy-ui/README.md -->
 
-```md
+# Legacy UI Archive
+
+The static HTML prototype previously served from `web/static` has been moved here for
+reference. The Next.js application under `app/` is the canonical UI. Do not deploy these
+assets; they are retained to preserve historical design notes until parity is confirmed.
+
+<!-- End file: archive/legacy-ui/README.md -->
+
+## CHANGELOG.md
+
+<!-- Begin file: CHANGELOG.md -->
+
+<<<<<<< ours
 # CHANGELOG — Atticus
 
 All notable changes to this project are documented here following **Semantic Versioning**.
@@ -557,10 +627,30 @@ The newest entries appear first.
 
 ## [Unreleased]
 
+### Added
+
+- Introduced the model catalog, parser, and resolver to support explicit family scoping, multi-answer payloads, and `/api/ask` clarifications when the model is unknown.
+- Added clarification handling in the Next.js UI: the chat panel now renders family selection buttons, resubmits follow-up requests with `models`, and formats multi-model answers with per-answer citations.
+- Tagged ingested chunks with `product_family` and `models` metadata, copied the Apeos C8180 series CED into the active corpus, and expanded `eval/gold_set.csv` with cross-family scenarios.
+- Added regression coverage for model parsing/resolution, family-scoped retrieval filters, API clarification flows, UI integrations, and a gated Playwright chat clarification scenario.
+
 ### Changed
 
 - Consolidated the active backlog into `TODO.md`, updated cross-references, and recorded completed tasks in `TODO_COMPLETE.md`.
 - Resolved merge artefacts in `VERSION` to restore 0.7.2 as the canonical release number and flagged the follow-up automation in the backlog.
+- Documented the model disambiguation contract across AGENTS, README, and `docs/ATTICUS_DETAILED_GUIDE.md`.
+
+---
+
+## [0.8.1] — 2025-10-20
+
+### Fixed
+
+- Restored Playwright RBAC flows by persisting magic links to the default `./logs/mailbox` directory whenever `AUTH_DEBUG_MAILBOX_DIR` is unset, preserving the ability to disable persistence with an empty value and documenting the fallback for operators.
+
+### Testing
+
+- `npm run test:unit`
 
 ---
 
@@ -1072,14 +1162,385 @@ The newest entries appear first.
 - Initial content taxonomy and ingestion pipeline with deterministic embeddings and JSON logging.
 - Retrieval helpers, observability metrics, and ingestion CLI.
 - Seeded evaluation harness with gold set and baseline metrics.
+=======
+# Changelog
 
+## 0.1.1 — 10-Oct-2025
+
+- Added Tailwind CSS 3.4 configuration with shadcn-compatible tokens and utilities.
+- Installed baseline UI dependencies: React Query, Zod, Lucide, clsx/tailwind-merge, and tailwindcss-animate.
+- Seeded `components.json` to mirror shadcn/ui defaults pending CLI authentication fix.
+- Replaced the starter page with a Tailwind-backed placeholder confirming style application.
+- Documented setup steps and tooling expectations in `app/README.md`.
+
+## 0.1.0 — 10-Oct-2025
+
+- Scaffolded Next.js 15 App Router project with TypeScript support.
+>>>>>>> theirs
+
+<!-- End file: CHANGELOG.md -->
+
+## code.md
+
+<!-- Begin file: code.md -->
+
+# Code Bundle Generator
+
+This file contains a single-script utility (PowerShell) to scan the repository and generate a combined Markdown bundle of all relevant code, Markdown, and JSON files. It excludes logs, build artifacts, caches, binaries, and other non-source outputs.
+
+Quick start:
+
+- From the repo root, run this in PowerShell 7+ (`pwsh`):
+  - Copy the script block below into your terminal, or
+  - Copy it into a file (e.g., `combine-code.ps1`) and run `pwsh -File combine-code.ps1`.
+
+Output:
+
+- Creates `ALL_CODE.md` at the repo root by default. You can change the output path with `-Output`.
+
+Script:
+
+```powershell
+<#
+Combine relevant source files into a single Markdown bundle.
+
+Usage examples:
+  pwsh -NoProfile -ExecutionPolicy Bypass -File ./combine-code.ps1
+  pwsh -NoProfile -ExecutionPolicy Bypass -File ./combine-code.ps1 -Output CODEBASE.md
+  pwsh -NoProfile -ExecutionPolicy Bypass -Command "& { <paste this script> }"
+
+Notes:
+- Excludes typical build/log/temp directories and non-text file types.
+- Includes common source code, Markdown, and JSON files.
+- Adds a table-of-contents and per-file fenced code blocks with language hints.
+#>
+
+param(
+  [string]$Root = (Resolve-Path .).Path,
+  [string]$Output = "ALL_CODE.md"
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+function Write-Info([string]$msg) { Write-Host "[info] $msg" }
+
+# Normalize root and output
+$Root = (Resolve-Path $Root).Path
+$Output = if ([System.IO.Path]::IsPathRooted($Output)) { $Output } else { Join-Path $Root $Output }
+
+# Ensure output is excluded from the scan (if it already exists)
+$outputRel = try { [IO.Path]::GetRelativePath($Root, $Output) } catch { '' }
+
+# Extensions to include (code + markdown + json)
+$includeExt = @(
+  '.ts','.tsx','.js','.jsx','.mjs','.cjs',
+  '.py','.sql','.prisma',
+  '.css','.scss','.sass','.html','.htm',
+  '.sh','.bash','.ps1','.psm1','.psd1',
+  '.go','.rs',
+  '.md','.markdown','.mdx',
+  '.json'
+)
+
+# Directories to exclude (typical build/log/temp/binary caches)
+$excludeDirs = @(
+  '.git','node_modules','.next','dist','build','out','coverage',
+  'logs','log','.turbo','.cache','tmp','temp','reports',
+  '__pycache__','.pytest_cache','.mypy_cache','.venv','venv',
+  '.idea','.gradle','.parcel-cache','.svelte-kit','.husky',
+  '.ds_store','.svn','.hg','archive'
+)
+
+# Files to exclude (lockfiles, maps, minified, snapshots, binaries, large assets, and our output)
+$excludeNamePatterns = @(
+  '*.log','*.jsonl','*.map','*.min.*','*.snap','*.lock',
+  'pnpm-lock.yaml','package-lock.json','yarn.lock',
+  '*.png','*.jpg','*.jpeg','*.gif','*.svg','*.ico','*.pdf',
+  '*.zip','*.gz','*.tar','*.tgz','*.7z',
+  '*.exe','*.dll','*.bin','*.dylib','*.so','*.class','*.jar','*.pyc',
+  '*.ttf','*.otf','*.woff','*.woff2'
+)
+
+if ($outputRel -and $outputRel -ne '.') { $excludeNamePatterns += [IO.Path]::GetFileName($Output) }
+
+# Build an exclude regex for directories
+$escaped = $excludeDirs | ForEach-Object { [Regex]::Escape($_) } | Where-Object { $_ -and $_.Trim() -ne '' }
+$excludeDirRegex = if ($escaped.Count -gt 0) {
+  '(?i)(^|[\\/])(' + ($escaped -join '|') + ')([\\/]|$)'
+} else {
+  $null
+}
+
+# Simple ext -> fenced language mapping
+$langMap = @{
+  '.ts'='ts'; '.tsx'='tsx'; '.js'='js'; '.jsx'='jsx'; '.mjs'='js'; '.cjs'='js';
+  '.py'='python'; '.sql'='sql'; '.prisma'='prisma';
+  '.css'='css'; '.scss'='scss'; '.sass'='sass';
+  '.html'='html'; '.htm'='html';
+  '.sh'='bash'; '.bash'='bash'; '.ps1'='powershell'; '.psm1'='powershell'; '.psd1'='powershell';
+  '.go'='go'; '.rs'='rust';
+  '.md'='md'; '.markdown'='md'; '.mdx'='mdx';
+  '.json'='json'
+}
+
+function Get-Fence([string]$text) {
+  if ($text -notmatch '```') { return '```' }
+  elseif ($text -notmatch '````') { return '````' }
+  else { return '~~~~' }
+}
+
+function Is-ExcludedFileName([string]$name) {
+  foreach ($pat in $excludeNamePatterns) {
+    if ([System.Management.Automation.WildcardPattern]::new($pat, 'IgnoreCase').IsMatch($name)) { return $true }
+  }
+  return $false
+}
+
+Write-Info "Scanning: $Root"
+
+# Gather files
+$files = Get-ChildItem -Path $Root -File -Recurse -ErrorAction SilentlyContinue |
+  Where-Object {
+    $rel = [IO.Path]::GetRelativePath($Root, $_.FullName)
+    $ext = $_.Extension.ToLowerInvariant()
+    # Exclude directories
+    if ($excludeDirRegex -and ($rel -match $excludeDirRegex)) { return $false }
+    # Include by extension or Dockerfile
+    $isDocker = ($_.Name -match '^Dockerfile(\..+)?$')
+    if (-not $isDocker -and -not ($includeExt -contains $ext)) { return $false }
+    # Exclude by name patterns
+    if (Is-ExcludedFileName $_.Name) { return $false }
+    # Size guard (skip huge files > 5MB)
+    if ($_.Length -gt 5MB) { return $false }
+    return $true
+  } |
+  Sort-Object FullName
+
+if (-not $files -or $files.Count -eq 0) {
+  Write-Warning "No files found to include. Check filters."
+  return
+}
+
+Write-Info ("Including {0} files" -f $files.Count)
+
+# Build header and index
+$lines = New-Object System.Collections.Generic.List[string]
+$lines.Add("# Combined Code Bundle")
+$lines.Add("")
+$lines.Add(("Generated: {0:yyyy-MM-dd HH:mm:ss K}" -f [DateTimeOffset]::Now))
+$lines.Add(("Root: {0}" -f $Root))
+$lines.Add(("Files: {0}" -f $files.Count))
+$lines.Add("")
+$lines.Add("## Index")
+foreach ($f in $files) {
+  $rel = [IO.Path]::GetRelativePath($Root, $f.FullName)
+  $lines.Add("- `" + $rel.Replace('`','``') + "`")
+}
+$lines.Add("")
+
+# Append each file content with fenced code blocks
+foreach ($f in $files) {
+  $rel = [IO.Path]::GetRelativePath($Root, $f.FullName)
+  $ext = $f.Extension.ToLowerInvariant()
+  $lang = if ($f.Name -match '^Dockerfile(\..+)?$') { 'dockerfile' } else { $langMap[$ext] }
+  if (-not $lang) { $lang = 'text' }
+  Write-Info "Bundling: $rel"
+
+  $content = Get-Content -Path $f.FullName -Raw -Encoding UTF8
+  $fence = Get-Fence $content
+
+  $lines.Add("\n---\n")
+  $lines.Add("### " + $rel)
+  $lines.Add("")
+  $lines.Add($fence + $lang)
+  $lines.Add($content)
+  $lines.Add($fence)
+}
+
+# Write output (UTF-8)
+$null = New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($Output)) -Force -ErrorAction SilentlyContinue
+$lines -join "`n" | Set-Content -Path $Output -Encoding utf8
+Write-Info "Wrote: $Output"
 ```
+
+Notes:
+
+- Edit the `$includeExt`, `$excludeDirs`, and `$excludeNamePatterns` lists in the script to tweak what’s included.
+- The script intentionally skips large files (> 5MB), minified assets, lockfiles, images, and binaries.
+- `.vscode/*.json` will be included (useful editor configs), while typical build outputs and caches are excluded.
+
+<!-- End file: code.md -->
+
+## codex_instructions.md
+
+<!-- Begin file: codex_instructions.md -->
+
+### Codex: Implement `TODO.md` in Phases
+
+**ROLE & GOAL**
+
+You are an implementation agent. Execute the repository’s `TODO.md` end-to-end in manageable phases with guarded changes, verifiable tests, and clear commits. Work directly in this repo. Produce code, migrations, tests, UI, and docs exactly where they belong. When you finish a phase, stop and present a concise diff summary and next actions.
+
+**GROUND TRUTH**
+
+All requirements, deliverables, and acceptance criteria come from `TODO.md`. Treat it as the single source of truth.
+
+**OPERATING RULES**
+
+1. **Branches & Commits**
+
+   * Create a feature branch per phase: `feat/todo-phase-<n>-<slug>`.
+   * Make small, logically grouped commits with meaningful messages.
+   * Keep existing project tooling (Makefile, CI, linting) intact.
+
+2. **Compatibility**
+
+   * This codebase runs on Windows dev environments—avoid bash-only assumptions. Provide PowerShell equivalents if you add scripts.
+   * Don’t remove existing scripts/targets unless the TODO explicitly requires it.
+
+3. **Tests & CI**
+
+   * Add/extend tests per acceptance criteria. Ensure `make quality` and any Playwright/API/pytest suites pass locally.
+   * If CI is configured, wire new checks into existing jobs, not ad-hoc scripts.
+
+4. **Docs**
+
+   * Update any referenced docs in the TODO (OPERATIONS.md, docs/*, README/RELEASE notes). Include rollback/reset notes where called for.
+
+5. **Visibility**
+
+   * After each phase, produce:
+
+     * A brief CHANGELOG entry,
+     * A summary of changed files,
+     * Any operator steps (e.g., DB migration commands).
 
 ---
 
-### CONTRIBUTING.md
+## PHASE PLAN
 
-````md
+### Phase 0 — Discovery & Baseline
+
+* Parse `TODO.md` and confirm repo structure (Next.js app, FastAPI backend, Prisma schema, Playwright/pytest layout, Make targets).
+* Run local verification commands (`make db.verify`, `make quality`, existing test suites).
+* Output: a short report of current pass/fail and any blockers you’ll resolve within later phases.
+
+### Phase 1 — Glossary Seed & Runbook (TODO §1)
+
+**Implement:**
+
+* Extend `prisma/seed.ts` with deterministic sample entries (`approved`, `pending`, `rejected`) with stable IDs.
+* Add `tests/test_seed_manifest.py` validating rows after `make db.seed`.
+* Update **OPERATIONS.md** (reset/rollback steps) and **docs/glossary-spec.md** (provisioning + rollback).
+  **Accept:** `make db.seed` deterministic; tests green; docs updated.
+
+### Phase 2 — Glossary UX Follow-through (TODO §2)
+
+**Implement:**
+
+* Add Mermaid sequence diagram to `docs/glossary-spec.md`.
+* Add ADR links or “Decision Notes” explaining workflow choices; list follow-ups as backlog links.
+  **Accept:** Diagram renders; decisions documented.
+
+### Phase 3 — RBAC Integration Coverage (TODO §3)
+
+**Implement:**
+
+* **Playwright:** Non-admin → `/admin` and `/api/glossary` → `403/redirect`; Admin CRUD works.
+* **API/route tests:** Next.js route handlers with mocked sessions per role; FastAPI admin endpoints reject with `401/403` when invalid/missing.
+* Wire into CI via `make quality` / frontend job.
+  **Accept:** Tests fail on RBAC regressions; CI coverage in place.
+
+### Phase 4 — pgvector GUC Bootstrap (TODO §4)
+
+**Implement:**
+
+* Add idempotent migration ensuring `set_config('app.pgvector_lists','100', true)` exists.
+* (Optional) Extend `scripts/db_verify.py` to assert/print GUC value.
+* Update **OPERATIONS.md** with rollback/override notes.
+  **Accept:** Fresh envs pass `make db.verify`.
+
+### Phase 5 — Version Parity Automation (TODO §5)
+
+**Implement:**
+
+* Create `scripts/check_version_parity.py` comparing `VERSION` ↔ `package.json.version`.
+* Add `version-check` Make target; include in `quality` (and optionally `verify`).
+* Note in `README.md` or `RELEASE.md`.
+  **Accept:** CI/local checks fail on drift.
+
+### Phase 6 — Admin Ops Console (Uncertain, Tickets, Glossary) (TODO §6)
+
+**Implement:**
+
+* **UI `/admin`** with tabs: **Uncertain**, **Tickets**, **Glossary**.
+
+  * Uncertain: table (date, user, question, confidence, top sources) + actions (**Approve**, **Ask Follow-up**, **Escalate**).
+  * Tickets: list AExxx with status, assignee, last activity.
+  * Glossary: search + inline edit (RBAC-gated).
+* **API:**
+
+  * `GET /api/admin/uncertain` returns chats with `confidence < CONFIDENCE_THRESHOLD` and `status='pending_review'`.
+  * `POST /api/admin/uncertain/:id/approve` marks reviewed (+ reviewer, timestamp).
+  * `POST /api/admin/uncertain/:id/escalate` creates/links AE ticket; logs action.
+* **DB/Prisma:**
+
+  * `chats`: add `confidence FLOAT`, `status TEXT DEFAULT 'ok'`, `reviewed_by`, `reviewed_at`.
+  * `tickets`: ensure `AE id`, `status`, `assignee`, `linked_chat_id`.
+* **RBAC:** only `admin` sees `/admin`; `reviewer` limited read/write.
+  **Accept:** Role restrictions enforced; actions emit audit events; tests cover 403s.
+
+### Phase 7 — Uncertain Chat Validation Flow (TODO §7)
+
+**Implement:**
+
+* Backend: when `confidence < CONFIDENCE_THRESHOLD`, set `chats.status='pending_review'` and persist `{question, top_k sources, request_id}`.
+* Route: `POST /api/admin/uncertain/:id/ask-followup` stores a canonical follow-up prompt.
+* UI: review drawer with question, answer, sources, `request_id`; buttons call routes.
+* **Playwright**: create low-confidence chat fixture → verify appears → approve → status flips to `reviewed`.
+  **Accept:** Flow observable; tests green.
+
+### Phase 8 — Dictionary (Glossary) Update Semantics (TODO §8)
+
+**Implement:**
+
+* API: `PUT /api/glossary/:id` (update) and `POST /api/glossary` (create), both admin-only; upsert on unique `(org_id, term)`.
+* Validation: reject empty `term`/`definition`; normalize whitespace; optional `synonyms[]`.
+* Auditing: write to `rag_events` (actor, action, glossary_id, before/after).
+* UI: inline edit row with optimistic update + toasts.
+  **Accept:** No dupes; RBAC enforced; audit row written.
+
+---
+
+## WORKFLOW PER PHASE
+
+1. Create branch `feat/todo-phase-<n>-<slug>`.
+2. Implement code/tests/migrations/docs.
+3. Run:
+
+   * `make db.migrate` (if migrations),
+   * `make db.seed` (if seeds),
+   * `make quality` (ensure all suites pass).
+4. Produce a brief end-of-phase summary:
+
+   * Files changed, commands to run, notable decisions, any follow-ups.
+5. Open a PR (or present diff) titled `TODO Phase <n>: <name>`.
+
+**STOP after each phase** and present the summary and diffs for review before proceeding.
+
+---
+
+**Begin with Phase 0 now.** When ready for Phase 1, present the short baseline report and proceed.
+
+---
+
+<!-- End file: codex_instructions.md -->
+
+## CONTRIBUTING.md
+
+<!-- Begin file: CONTRIBUTING.md -->
+
 # CONTRIBUTING — Atticus
 
 Thank you for contributing to Atticus! This guide explains how to set up your environment, maintain code quality, and keep documentation consistent.
@@ -1156,13 +1617,567 @@ This setup eliminates the need for `ruff-lsp` and ensures consistent formatting 
 
 By following this guide, you’ll help keep Atticus secure, maintainable, and easy for everyone to use.
 
-````
+<!-- End file: CONTRIBUTING.md -->
+
+## docs/api/README.md
+
+<!-- Begin file: docs/api/README.md -->
+
+# API Documentation
+
+## Generating the OpenAPI Schema
+
+Run either command to emit the latest schema:
+
+```bash
+make openapi
+```
+
+or
+
+```bash
+python scripts/generate_api_docs.py --output docs/api/openapi.json
+```
+
+The CLI loads the FastAPI application directly, so the server does not need to be running.
 
 ---
 
-### IMPLEMENTATION_PLAN.md
+## `/ask` Request & Response
 
-```md
+```jsonc
+POST /ask
+{
+  "question": "How does Atticus escalate low confidence answers?",
+  "models": ["C7070"],
+  "filters": {
+    "source_type": "runbook"
+  }
+}
+```
+
+- `question` (string, required) - Natural-language query. Alias `query` is also accepted for backwards compatibility.
+- `filters` (object, optional) - Restrict retrieval. Supported keys: `source_type`, `path_prefix`.
+- `models` (array, optional) - Explicit model or family identifiers returned from a clarification prompt. When omitted Atticus infers models from the question text.
+
+```jsonc
+200 OK
+{
+  "answer": "Atticus blends retrieval and LLM confidence...",
+  "answers": [
+    {
+      "model": "Apeos C7070",
+      "family": "C7070",
+      "family_label": "Apeos C7070 range",
+      "answer": "Atticus blends retrieval and LLM confidence...",
+      "confidence": 0.74,
+      "should_escalate": false,
+      "sources": [
+        {
+          "chunkId": "chunk-000045",
+          "path": "content/20240901_escalation_playbook_v1.pdf",
+          "page": 7,
+          "heading": "Escalation Workflow",
+          "score": 0.82
+        }
+      ]
+    }
+  ],
+  "confidence": 0.74,
+  "should_escalate": false,
+  "request_id": "9db0dd1c-...",
+  "sources": [
+    {
+      "chunkId": "chunk-000045",
+      "path": "content/20240901_escalation_playbook_v1.pdf",
+      "page": 7,
+      "heading": "Escalation Workflow",
+      "score": 0.82
+    }
+  ]
+}
+```
+
+- `answer` - Aggregate response (string). For multi-model queries each entry in `answers` contains the scoped answer.
+- `answers` - List of per-model responses surfaced when multiple models or families are requested.
+- `sources` - Aggregated supporting citations for the response (per-entry sources live under each `answers[i].sources`).
+- `confidence` - Combined retrieval plus LLM score (0-1).
+- `should_escalate` - `true` when `confidence` falls below `CONFIDENCE_THRESHOLD`.
+- `request_id` - Trace identifier surfaced in logs.
+
+When Atticus cannot confidently infer a model, the endpoint returns a clarification payload instead of an answer:
+
+```jsonc
+200 OK
+{
+  "request_id": "bcf8854e-...",
+  "clarification": {
+    "message": "Which model are you referring to? If you like, I can provide a list of product families that I can assist with.",
+    "options": [
+      { "id": "C7070", "label": "Apeos C7070 range" },
+      { "id": "C8180", "label": "Apeos C8180 series" }
+    ]
+  }
+}
+```
+
+Errors follow the JSON error schema described in [AGENTS.md](../AGENTS.md#error-handling).
+
+---
+
+## Related References
+
+- [ATTICUS_DETAILED_GUIDE.md](../ATTICUS_DETAILED_GUIDE.md)
+- [README.md](../README.md)
+- [OPERATIONS.md](../OPERATIONS.md)
+
+<!-- End file: docs/api/README.md -->
+
+## docs/ATTICUS_DETAILED_GUIDE.md
+
+<!-- Begin file: docs/ATTICUS_DETAILED_GUIDE.md -->
+
+# Atticus Detailed Guide
+
+## Model Name Disambiguation
+
+1. **Direct questions** — detect precise model mentions (for example, "Apeos C4570"), scope retrieval to the matching family, and return a single answer with citations limited to that family.
+2. **Unclear questions** — when parser confidence drops below the clarification threshold, respond with a `clarification` payload listing the available families and delay retrieval until the UI resubmits the original question with selected `models`.
+3. **Multi-model questions** — if several models are present ("C4570 and C6580"), fan out retrieval per model and return `answers[]`, ensuring each answer carries its own `sources` while preserving the aggregated `sources` array for consumers that expect it.
+4. **Follow-up flow** — UI buttons post the original prompt with `models` populated from the selected family so downstream logging and escalations have explicit model scope.
+
+See `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` for executable examples.
+
+<!-- End file: docs/ATTICUS_DETAILED_GUIDE.md -->
+
+## docs/glossary-spec.md
+
+<!-- Begin file: docs/glossary-spec.md -->
+
+# Glossary Specification
+
+The glossary module enables reviewers to propose terminology updates and administrators
+to approve or reject entries. The workflow is designed to mirror the RBAC policies in the
+Next.js admin UI and Prisma models.
+
+## Roles
+
+| Role       | Permissions                                                |
+| ---------- | ---------------------------------------------------------- |
+| `user`     | Read-only access to approved glossary entries.             |
+| `reviewer` | Submit new terms and propose edits.                        |
+| `admin`    | Approve/reject proposals, manage history, export glossary. |
+
+## Data Model
+
+```prisma
+model GlossaryEntry {
+  id           String          @id @default(cuid())
+  term         String
+  definition   String          @db.Text
+  synonyms     String[]        @default([])
+  status       GlossaryStatus  @default(PENDING)
+  orgId        String
+  org          Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  authorId     String
+  author       User            @relation("GlossaryAuthor", fields: [authorId], references: [id])
+  updatedById  String?
+  updatedBy    User?           @relation("GlossaryUpdatedBy", fields: [updatedById], references: [id])
+  reviewerId   String?
+  reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
+  reviewNotes  String?         @db.Text
+  reviewedAt   DateTime?
+  events       RagEvent[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@unique([orgId, term])
+  @@index([orgId, status])
+}
+```
+
+All mutations emit structured `RagEvent` audit rows (mirrored in `logs/app.jsonl`) including the acting user,
+the request/trace ID, and the state transition. Row-level security is enforced through
+Prisma queries executed inside `withRlsContext` and mirrored on the FastAPI admin APIs via
+the `X-Admin-Token` header.
+
+## API Contracts
+
+- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
+  author/reviewer metadata.
+- `POST /api/glossary` – admin session required; idempotent upsert keyed by `(orgId, term)` that accepts term, definition, synonyms, and status updates while recording author/reviewer metadata and request IDs.
+- `PUT /api/glossary/:id` – admin session required; updates an entry in place (definition, synonyms, status, review notes) and stamps reviewer metadata when a decision is made.
+- FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and
+  require a matching `X-Admin-Token` header; failures emit contract-compliant error
+  payloads with `request_id` for observability.
+
+## UI Flow
+
+1. Reviewer submits a new term with synonyms and rationale.
+2. Admin views pending proposals on `/admin/glossary`, edits definitions inline, captures review notes, and approves.
+3. Approved entries become available to all users and propagate via the API contract, with each change mirrored in `RagEvent` history.
+
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  participant Reviewer
+  participant Admin
+  participant System
+  Reviewer->>Admin: Submit glossary entry
+  Admin->>System: Approve/Reject
+  System-->>Reviewer: Status update + audit log
+```
+
+### Decision Notes
+
+- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
+  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
+- **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
+  changes without polling Prisma directly.
+- **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
+  period.
+
+### Follow-ups
+
+- Reviewer/admin notifications for status changes remain open in the backlog — tracked in [TODO.md §5](../TODO.md#5-uncertain-chat-validation-flow).
+- Dedicated audit UI enhancements live under [TODO.md §4](../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary) alongside the combined admin console workstream.
+
+## Seed Data & Provisioning
+
+- `make db.seed` provisions:
+  - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
+  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
+  - Three glossary rows covering the primary workflow states:
+    - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
+    - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
+    - `glossary-entry-toner-optimization` → **REJECTED** with notes capturing why it failed review.
+- Re-running the seed is idempotent: each entry is upserted by stable IDs and the reviewer/author assignments are refreshed.
+- Override defaults (organization name, admin bootstrap account, etc.) by exporting `DEFAULT_ORG_NAME`, `ADMIN_EMAIL`, and `ADMIN_NAME` before invoking the target.
+
+## Reset & Rollback
+
+- To reset the glossary to the deterministic baseline:
+  1. `make db.seed` — reruns Prisma seeding and restores the canonical entries.
+  2. Confirm via `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` (requires a reachable Postgres instance).
+- To restore production data after testing seeds:
+  1. Snapshot `GlossaryEntry` rows (e.g., `COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER`).
+  2. After validation, re-import using `COPY ... FROM STDIN` or Prisma scripts, then rerun `make db.seed` to ensure support accounts persist.
+- Rollbacks should always re-run `make db.seed` so the deterministic reviewers remain available for smoke suites.
+
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  participant Reviewer
+  participant Admin
+  participant System
+  Reviewer->>Admin: Submit glossary entry
+  Admin->>System: Approve/Reject
+  System-->>Reviewer: Status update + audit log
+```
+
+### Decision Notes
+
+- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
+  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
+- **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
+  changes without polling Prisma directly.
+- **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
+  period.
+
+### Follow-ups
+
+- Reviewer/admin notifications for status changes remain open in the backlog — tracked in [TODO.md §5](../TODO.md#5-uncertain-chat-validation-flow).
+- Dedicated audit UI enhancements live under [TODO.md §4](../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary) alongside the combined admin console workstream.
+
+## Seed Data & Provisioning
+
+- `make db.seed` provisions:
+  - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
+  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
+  - Three glossary rows covering the primary workflow states:
+    - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
+    - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
+    - `glossary-entry-toner-optimization` → **REJECTED** with notes capturing why it failed review.
+- Re-running the seed is idempotent: each entry is upserted by stable IDs and the reviewer/author assignments are refreshed.
+- Override defaults (organization name, admin bootstrap account, etc.) by exporting `DEFAULT_ORG_NAME`, `ADMIN_EMAIL`, and `ADMIN_NAME` before invoking the target.
+
+## Reset & Rollback
+
+- To reset the glossary to the deterministic baseline:
+  1. `make db.seed` — reruns Prisma seeding and restores the canonical entries.
+  2. Confirm via `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` (requires a reachable Postgres instance).
+- To restore production data after testing seeds:
+  1. Snapshot `GlossaryEntry` rows (e.g., `COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER`).
+  2. After validation, re-import using `COPY ... FROM STDIN` or Prisma scripts, then rerun `make db.seed` to ensure support accounts persist.
+- Rollbacks should always re-run `make db.seed` so the deterministic reviewers remain available for smoke suites.
+
+## CI Expectations
+
+- `make test.api` exercises glossary endpoints under auth.
+- `make quality` runs Prisma client type checks, Vitest RBAC unit tests, and Playwright admin flows to guard glossary access.
+- Seed data for glossary lives alongside the CED seed manifest (`make seed`).
+
+<!-- End file: docs/glossary-spec.md -->
+
+## docs/README.md
+
+<!-- Begin file: docs/README.md -->
+
+# Atticus Documentation
+
+## Adding New Content
+
+1. Place documents inside the `content/` tree following the taxonomy in
+   `AGENTS.md` §3.1.
+2. Name files using `YYYYMMDD_topic_version.ext` for traceability.
+3. Run `python scripts/ingest_cli.py` (or `make ingest`) to parse, chunk
+   (defaults controlled by `config.yaml` / `.env`), embed, and update the
+   index.
+4. Review the ingestion report in `logs/app.jsonl` and commit the updated index
+   snapshot plus `indices/manifest.json`.
+5. Execute the evaluation harness with
+   `python scripts/eval_run.py --json --output-dir eval/runs/manual` to confirm
+   retrieval quality before tagging a release.
+6. Regenerate API documentation with `python scripts/generate_api_docs.py` so
+   the OpenAPI schema in `docs/api/openapi.json` stays in sync with the
+   deployed code.
+
+<!-- End file: docs/README.md -->
+
+## docs/REMOTE_ACCESS.md
+
+<!-- Begin file: docs/REMOTE_ACCESS.md -->
+
+# REMOTE ACCESS - Atticus
+
+This guide explains how to reach a local Atticus instance from another PC without exposing the machine to
+the internet. It presents three supported approaches so you can choose the level of automation, security,
+and tooling that fits your environment.
+
+---
+
+## Quick Decision Matrix
+
+| Option                 | Best For                                          | Security Posture                                            | What You Need                                              |
+| ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| **Tailscale**          | Always-on secure mesh between office/home devices | Zero-trust, device-based auth, automatic key rotation       | Personal/enterprise Tailscale account (free tier works)    |
+| **Cloudflare Tunnel**  | Sharing access with vendors or short-term demos   | One-time tokens, granular routes, no inbound firewall rules | Cloudflare account with a free zone + `cloudflared` binary |
+| **SSH Reverse Tunnel** | One-off troubleshooting from a trusted jump host  | Depends on SSH key hygiene                                  | Any VPS or machine reachable from the remote PC            |
+
+---
+
+## Option 1 - Tailscale (Recommended)
+
+1. Install Tailscale on the Atticus host and the remote PC: <https://tailscale.com/download>.
+2. Authenticate each device with the same account (or organization SSO).
+3. Tag the Atticus host (optional but recommended) with `atticus-server` to simplify ACLs.
+4. Start Atticus locally:
+
+   ```bash
+   make api
+   ```
+
+5. Connect from the remote PC using the Tailscale IP shown in the admin console:
+
+   ```bash
+   # Example assuming the host advertises 100.101.102.103
+   curl http://100.101.102.103:8000/health
+   ```
+
+6. Lock down access with an ACL snippet:
+
+   ```json
+   {
+     "ACLs": [
+       {
+         "Action": "accept",
+         "Users": ["group:sales", "user:you@example.com"],
+         "Ports": ["tag:atticus-server:8000"]
+       }
+     ]
+   }
+   ```
+
+**Pros**: 2-minute setup, device-level revocation, auto-generated DNS names like
+`atticus-hostname.tailnet.ts.net`.
+
+**Cons**: Requires installing the client on every participating machine.
+
+---
+
+## Option 2 - Cloudflare Tunnel
+
+1. Install `cloudflared` on the Atticus host:
+
+   ```powershell
+   winget install Cloudflare.cloudflared
+   ```
+
+2. Authenticate and select the zone that will front your tunnel (e.g. `yourcompany.com`):
+
+   ```bash
+   cloudflared login
+   ```
+
+3. Create a dedicated tunnel:
+
+   ```bash
+   cloudflared tunnel create atticus-local
+   ```
+
+4. Route a DNS record to the tunnel:
+
+   ```bash
+   cloudflared tunnel route dns atticus-local atticus.yourcompany.com
+   ```
+
+5. Run the connector while Atticus is active:
+
+   ```bash
+   make api &
+   cloudflared tunnel run --url http://localhost:8000 atticus-local
+   ```
+
+6. Protect access with Cloudflare Access (SSO, one-time PINs, or service tokens).
+
+**Pros**: No inbound firewall rules, audited access logs, granular policies per path.
+
+**Cons**: Outbound tunnel must stay alive; run it as a service for long-lived usage.
+
+---
+
+## Option 3 - SSH Reverse Tunnel (Minimal Dependencies)
+
+1. Pick a jump host reachable from the remote PC (a lightweight VPS works).
+2. Create an SSH key for the Atticus host and add it to the jump host `authorized_keys`.
+3. Start the tunnel from the Atticus host:
+
+   ```bash
+   ssh -N -R 18080:localhost:8000 user@jump-host.example.com
+   ```
+
+4. From the remote PC, connect to the jump host and forward traffic locally:
+
+   ```bash
+   ssh -L 8000:localhost:18080 user@jump-host.example.com
+   ```
+
+5. Visit `http://localhost:8000` on the remote PC—traffic traverses the secure SSH tunnel.
+
+**Pros**: Uses built-in tooling; no extra accounts required.
+
+**Cons**: You must maintain the intermediate host and manage SSH keys carefully.
+
+---
+
+## Operational Checklist
+
+- Treat every remote-access path as production: use MFA, rotate credentials, and log access.
+- Update `.env` with `ALLOWED_ORIGINS` if you front Atticus with a different hostname (CORS).
+- Enable `LOG_VERBOSE=1` during rollout so access logs capture remote IPs.
+- Tear down tunnels when demos finish to avoid orphaned exposure.
+
+---
+
+## Related Documents
+
+- [OPERATIONS.md](OPERATIONS.md) - runbooks, evaluation workflow, and rollback steps.
+- [SECURITY.md](SECURITY.md) - IAM, SES policies, and secrets guidance.
+- [README.md](README.md) - setup instructions and Make targets.
+
+<!-- End file: docs/REMOTE_ACCESS.md -->
+
+## docs/runbooks/auth-rbac.md
+
+<!-- Begin file: docs/runbooks/auth-rbac.md -->
+
+# Auth & RBAC Runbook
+
+This runbook documents the Auth.js + Prisma deployment that powers Atticus phase 3.
+
+## Overview
+
+- **Provider**: Auth.js (NextAuth) with email magic link.
+- **Adapter**: Prisma + Postgres with row-level security (RLS) keyed by `org_id` and role.
+- **Roles**: `USER`, `REVIEWER`, `ADMIN`.
+  - Users and reviewers can read glossary entries scoped to their org.
+  - Admins can invite teammates, promote glossary entries, and manage roles.
+- **Session storage**: Database-backed sessions (`Session` table) with Prisma adapter.
+
+## Environment variables
+
+| Variable                                                                                  | Purpose                                                                         |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                                                            | Postgres connection string used by Prisma and Auth.js.                          |
+| `AUTH_SECRET`                                                                             | Random string used to sign NextAuth cookies/JWT.                                |
+| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME`                                                     | Seed organization for default tenancy.                                          |
+| `ADMIN_EMAIL` / `ADMIN_NAME`                                                              | Bootstrap admin account created by `npm run db:seed`.                           |
+| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery.                                       |
+| `EMAIL_FROM`                                                                              | From address for Auth.js email provider.                                        |
+| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). Defaults to `./logs/mailbox`. |
+
+Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible defaults. Override secrets in production.
+
+## Provisioning steps
+
+1. **Start Postgres**
+   ```bash
+   make db.up
+   ```
+2. **Apply migrations**
+   ```bash
+   make db.migrate
+   ```
+3. **Generate Prisma client**
+   ```bash
+   npm run prisma:generate
+   ```
+4. **Seed default org + admin**
+   ```bash
+   make db.seed
+   ```
+   The seed script creates (or updates) the organization referenced by `DEFAULT_ORG_ID` and promotes `ADMIN_EMAIL` to `ADMIN`.
+5. **Run the app**
+   ```bash
+   npm run dev
+   ```
+   Visit `http://localhost:3000/signin`, request a magic link for the admin email, and open the link to access `/admin`.
+
+## Testing
+
+- **Unit**: `npm run test:unit` (Vitest) covers RBAC helpers.
+- **Playwright**: `npm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`) is writable before running.
+- **Smoke**: `make web-test` + `make web-e2e` are wired into CI.
+
+## RLS behaviour
+
+- Policies enforce `org_id` scoping for users, sessions, accounts, and glossary entries.
+- Admin-only actions (`INSERT`, `UPDATE`, `DELETE` on `GlossaryEntry`) require the connection role to be `ADMIN`. Service-level operations (NextAuth adapter) run under the `SERVICE` context, set via database defaults, to bootstrap new sessions.
+- Always wrap Prisma calls that rely on user context with `withRlsContext(session, fn)` to set `app.current_user_*` settings.
+
+## Operations
+
+- **Magic link debugging**: Magic links are written to `<email>.txt` in `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`). Clear the file to invalidate previous links.
+- **Role changes**: Use Prisma Studio or a SQL client to update `User.role`. RLS allows admins to self-manage via future UI.
+- **Glossary management**: Admins manage terms in `/admin`. Reviewers will gain propose-only permissions in later phases.
+
+## Rollback
+
+1. Stop the Next.js app (`Ctrl+C`).
+2. Revert migrations by restoring the previous database snapshot or running `psql` to drop the new tables/enums if safe.
+3. Reset the workspace by checking out the prior git tag and reinstalling dependencies (`npm install`).
+4. Restore `.env` from backups and restart services.
+
+For emergency disablement, set `NEXTAUTH_SECRET` to an empty value and restart; Auth.js rejects new sessions, effectively putting the UI into maintenance mode while RBAC policies remain intact.
+
+<!-- End file: docs/runbooks/auth-rbac.md -->
+
+## IMPLEMENTATION_PLAN.md
+
+<!-- Begin file: IMPLEMENTATION_PLAN.md -->
+
 # Implementation Plan — Atticus RAG Consistency Cleanup
 
 | Phase   | Status | Notes                                                                               |
@@ -1348,14 +2363,12 @@ This plan sequences remediation work uncovered in `AUDIT_REPORT.md` and merges a
 - Phase 2 introduced the shared Ask DTOs (`lib/ask-contract.ts`), streaming proxy (`app/api/ask/route.ts`), and Vitest coverage for SSE parsing.
 - Phase 3 extended the glossary schema with synonyms/review metadata, updated the admin UI for approvals, and documented Windows-friendly auth + SSE troubleshooting.
 
+<!-- End file: IMPLEMENTATION_PLAN.md -->
 
-```
+## OPERATIONS.md
 
----
+<!-- Begin file: OPERATIONS.md -->
 
-### OPERATIONS.md
-
-````md
 # OPERATIONS — Atticus
 
 This document provides **day‑to‑day runbooks** and a detailed guide for interpreting evaluation metrics.
@@ -1715,13 +2728,12 @@ Interpretation: strong ranking and recall, with fast median latency.
 - [SECURITY.md](SECURITY.md) — secrets and IAM policy
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — quick fixes
 
-````
+<!-- End file: OPERATIONS.md -->
 
----
+## README.md
 
-### README.md
+<!-- Begin file: README.md -->
 
-````md
 # Atticus
 
 > **Atticus for Sales Enablement** accelerates tender responses, keeps Sales self-sufficient, and frees Service/Marketing from ad-hoc requests.
@@ -1729,6 +2741,13 @@ Interpretation: strong ranking and recall, with fast median latency.
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
 > **Release 0.7.10** – Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
+
+## Model Disambiguation Flows
+
+- **Direct hit** — when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
+- **Unclear** — if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
+- **Multi-model** — if several models are detected or supplied, Atticus fans out retrieval per model and responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
+- **Testing** — `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
 
 ---
 
@@ -1853,7 +2872,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 1. Authenticate with magic link
 
-    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
+    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`, which defaults to `./logs/mailbox`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
@@ -2026,13 +3045,12 @@ Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.
 
 See [LICENSE](LICENSE).
 
-````
+<!-- End file: README.md -->
 
----
+## RELEASE.md
 
-### RELEASE.md
+<!-- Begin file: RELEASE.md -->
 
-````md
 # RELEASE — Atticus
 
 This document describes the official release process for Atticus.
@@ -2145,13 +3163,12 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 - [OPERATIONS.md](OPERATIONS.md) — runbooks and evaluation metrics.
 - [SECURITY.md](SECURITY.md) — secrets management and IAM policy examples.
 
-````
+<!-- End file: RELEASE.md -->
 
----
+## REPO_STRUCTURE.md
 
-### REPO_STRUCTURE.md
+<!-- Begin file: REPO_STRUCTURE.md -->
 
-```md
 # Repository Structure Snapshot
 
 Key directories to understand when working on Atticus.
@@ -2183,13 +3200,314 @@ Key directories to understand when working on Atticus.
 
 Supporting docs live at the repository root (`README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `OPERATIONS.md`, etc.).
 
-```
+<!-- End file: REPO_STRUCTURE.md -->
 
----
+## REPO_TREE.md
 
-### REQUIREMENTS.md
+<!-- Begin file: REPO_TREE.md -->
 
-````md
+# Repository Tree
+
+Generated: 2025-10-09 07:22:24 UTC
+Root: `C:\Dev\Atticus`
+Directories: 64
+Files: 223
+
+- `/`
+  - `.github/`
+    - `workflows/`
+      - `auto-fix-ruff.yml`
+      - `eval-gate.yml`
+      - `lint-test.yml`
+      - `release.yml`
+  - `.vscode/`
+    - `extensions.json`
+  - `api/`
+    - `routes/`
+      - `__init__.py`
+      - `admin.py`
+      - `chat.py`
+      - `contact.py`
+      - `eval.py`
+      - `health.py`
+      - `ingest.py`
+    - `Dockerfile`
+    - `__init__.py`
+    - `dependencies.py`
+    - `errors.py`
+    - `main.py`
+    - `middleware.py`
+    - `rate_limit.py`
+    - `schemas.py`
+    - `utils.py`
+  - `app/`
+    - `admin/`
+      - `page.tsx`
+    - `api/`
+      - `ask/`
+        - `route.ts`
+      - `auth/`
+        - `[...nextauth]/`
+          - `route.ts`
+      - `glossary/`
+        - `[id]/`
+          - `route.ts`
+        - `route.ts`
+        - `utils.ts`
+    - `apps/`
+      - `page.tsx`
+    - `contact/`
+      - `page.tsx`
+    - `settings/`
+      - `page.tsx`
+    - `signin/`
+      - `verify/`
+        - `page.tsx`
+      - `page.tsx`
+    - `globals.css`
+    - `layout.tsx`
+    - `page.tsx`
+    - `providers.tsx`
+  - `atticus/`
+    - `notify/`
+      - `__init__.py`
+      - `mailer.py`
+    - `utils/`
+      - `__init__.py`
+      - `hashing.py`
+    - `__init__.py`
+    - `config.py`
+    - `embeddings.py`
+    - `logging.py`
+    - `logging_utils.py`
+    - `metrics.py`
+    - `tokenization.py`
+    - `vector_db.py`
+  - `components/`
+    - `auth/`
+      - `sign-in-form.tsx`
+    - `chat/`
+      - `chat-panel.tsx`
+    - `glossary/`
+      - `admin-panel.tsx`
+    - `ui/`
+      - `button.tsx`
+      - `input.tsx`
+      - `label.tsx`
+      - `select.tsx`
+      - `table.tsx`
+      - `textarea.tsx`
+    - `AnswerRenderer.tsx`
+    - `page-header.tsx`
+    - `site-footer.tsx`
+    - `site-header.tsx`
+  - `content/`
+    - `model/`
+      - `Shobu/`
+        - `Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf`
+        - `ac7070_qna.xlsx`
+  - `content_unused/`
+    - `Reiki/`
+      - `Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf`
+    - `Shobu2/`
+      - `Apeos C7071 C6571 C5571 C4571 CSO-FN-CED - 406.pdf`
+    - `Sorai/`
+      - `Advanced/`
+        - `Apeos C3567 C3067 C2567 CSO-FN-CED - 407.pdf`
+      - `Basic/`
+        - `Apeos C3061 C2561 C2061 CSO-FN-CED - 409.pdf`
+  - `docs/`
+    - `api/`
+      - `README.md`
+      - `openapi.json`
+    - `runbooks/`
+      - `auth-rbac.md`
+    - `ATTICUS_DETAILED_GUIDE.md`
+    - `README.md`
+    - `REMOTE_ACCESS.md`
+    - `glossary-spec.md`
+  - `eval/`
+    - `harness/`
+      - `__init__.py`
+      - `test_eval.py`
+      - `test_ui.py`
+    - `runs/`
+      - `20251008/`
+        - `metrics.csv`
+        - `metrics.html`
+        - `summary.json`
+      - `ci/`
+        - `metrics.csv`
+        - `summary.json`
+      - `manual/`
+        - `metrics.csv`
+        - `summary.json`
+      - `.gitkeep`
+    - `__init__.py`
+    - `baseline.json`
+    - `ced-362-smoke.csv`
+    - `gold_set.csv`
+    - `runner.py`
+  - `examples/`
+    - `dev.http`
+  - `indices/`
+    - `.gitkeep`
+  - `ingest/`
+    - `parsers/`
+      - `__init__.py`
+      - `docx.py`
+      - `html.py`
+      - `image.py`
+      - `pdf.py`
+      - `text.py`
+      - `xlsx.py`
+    - `__init__.py`
+    - `chunker.py`
+    - `models.py`
+    - `pipeline.py`
+  - `lib/`
+    - `ask-client.ts`
+    - `ask-contract.ts`
+    - `auth.ts`
+    - `prisma.ts`
+    - `rbac.ts`
+    - `rls.ts`
+    - `utils.ts`
+  - `nginx/`
+    - `certs/`
+      - `.gitkeep`
+    - `Dockerfile`
+    - `nginx.conf`
+  - `prisma/`
+    - `migrations/`
+      - `20240702120000_auth_rbac/`
+        - `migration.sql`
+      - `20240708123000_pgvector_schema/`
+        - `migration.sql`
+      - `20240709150000_glossary_review_workflow/`
+        - `migration.sql`
+      - `20250201090000_fix_updated_at_trigger/`
+        - `migration.sql`
+      - `20251008090000_pgvector_bootstrap/`
+        - `migration.sql`
+    - `schema.prisma`
+    - `seed.ts`
+  - `retriever/`
+    - `__init__.py`
+    - `answer_format.py`
+    - `citation_utils.py`
+    - `generator.py`
+    - `models.py`
+    - `service.py`
+    - `vector_store.py`
+  - `scripts/`
+    - `.gitkeep`
+    - `atticus_cli.py`
+    - `audit_unused.py`
+    - `check_version_parity.py`
+    - `chunk_ced.py`
+    - `db_verify.py`
+    - `debug_env.py`
+    - `e2e_smoke.py`
+    - `eval_qa.py`
+    - `eval_run.py`
+    - `generate_api_docs.py`
+    - `generate_env.py`
+    - `icon-audit.mjs`
+    - `ingest_cli.py`
+    - `list_make_targets.py`
+    - `make_seed.py`
+    - `rollback.md`
+    - `rollback.py`
+    - `route-audit.mjs`
+    - `run_ingestion.py`
+    - `smtp_test.py`
+    - `test_health.py`
+    - `verify_pgvector.sql`
+  - `seeds/`
+    - `README.md`
+    - `seed_manifest.json`
+  - `tests/`
+    - `playwright/`
+      - `rbac.spec.ts`
+    - `unit/`
+      - `ask-client.test.ts`
+      - `rbac.test.ts`
+    - `test_admin_route.py`
+    - `test_chat_route.py`
+    - `test_chunker.py`
+    - `test_citation_dedupe.py`
+    - `test_config_reload.py`
+    - `test_contact_route.py`
+    - `test_environment_diagnostics.py`
+    - `test_error_schema.py`
+    - `test_eval_runner.py`
+    - `test_hashing.py`
+    - `test_ingestion_retrieval_integration.py`
+    - `test_mailer.py`
+    - `test_seed_manifest.py`
+    - `test_ui_route.py`
+  - `.codex-touch`
+  - `.editorconfig`
+  - `.env.example`
+  - `.eslintrc.json`
+  - `.gitattributes`
+  - `.gitignore`
+  - `.markdownlint-cli2.yaml`
+  - `.pre-commit-config.yaml`
+  - `.prettierignore`
+  - `.prettierrc.json`
+  - `AGENTS.md`
+  - `ALL_CODE.md`
+  - `ALL_DOCS.md`
+  - `ARCHITECTURE.md`
+  - `Atticus.code-workspace`
+  - `CHANGELOG.md`
+  - `COMPILED_DOCS.md`
+  - `COMPILED_SCRIPTS.md`
+  - `CONTRIBUTING.md`
+  - `IMPLEMENTATION_PLAN.md`
+  - `LICENSE`
+  - `Makefile`
+  - `OPERATIONS.md`
+  - `README.md`
+  - `RELEASE.md`
+  - `REPO_STRUCTURE.md`
+  - `REPO_TREE.md`
+  - `REQUIREMENTS.md`
+  - `SECURITY.md`
+  - `STYLEGUIDE.md`
+  - `TODO.md`
+  - `TODO_COMPLETE.md`
+  - `TROUBLESHOOTING.md`
+  - `VERSION`
+  - `code.md`
+  - `codex_instructions.md`
+  - `combine-code.ps1`
+  - `config.yaml`
+  - `docker-compose.yml`
+  - `knip.json`
+  - `middleware.ts`
+  - `next-auth.d.ts`
+  - `next-env.d.ts`
+  - `next.config.js`
+  - `package-lock.json`
+  - `package.json`
+  - `playwright.config.ts`
+  - `postcss.config.js`
+  - `pyproject.toml`
+  - `requirements.in`
+  - `requirements.txt`
+  - `tailwind.config.js`
+  - `tsconfig.json`
+  - `vitest.config.ts`
+
+<!-- End file: REPO_TREE.md -->
+
+## REQUIREMENTS.md
+
+<!-- Begin file: REQUIREMENTS.md -->
+
 # REQUIREMENTS — Atticus
 
 This document defines the runtime and build requirements for Atticus.
@@ -2262,7 +3580,7 @@ Key variables include:
 | `NEXTAUTH_SECRET`, `NEXTAUTH_URL`                  | Auth.js session signing and callback origin                |
 | `EMAIL_SERVER`, `EMAIL_FROM`                       | Auth.js email provider configuration                       |
 | `CONTACT_EMAIL`, `SMTP_*`, `SMTP_ALLOW_LIST`       | Escalation email settings and allow-list guardrail         |
-| `AUTH_DEBUG_MAILBOX_DIR`                           | Local directory where magic-link emails are written in dev |
+| `AUTH_DEBUG_MAILBOX_DIR`                           | Local directory where magic-link emails are written in dev. Defaults to `./logs/mailbox`. |
 | `RAG_SERVICE_URL`                                  | Base URL for FastAPI retrieval service proxied by Next.js  |
 | `ENABLE_RERANKER`                                  | Toggle hybrid reranking (defaults to disabled)             |
 | `SMTP_DRY_RUN`                                     | Log escalation attempts without sending email              |
@@ -2322,13 +3640,56 @@ Local workflows must mirror CI:
 - [AGENTS.md](AGENTS.md) — agent roles and configuration.
 - [SECURITY.md](SECURITY.md) — secrets handling and IAM guidance.
 
-````
+<!-- End file: REQUIREMENTS.md -->
 
----
+## scripts/rollback.md
 
-### SECURITY.md
+<!-- Begin file: scripts/rollback.md -->
 
-````md
+# Rollback Runbook (§7)
+
+1. **Identify the prior release tag.**
+
+   ```bash
+   git fetch --tags
+   git tag --sort=-creatordate | head
+   ```
+
+2. **Checkout the previous release.**
+
+   ```bash
+   git checkout <previous-tag>
+   ```
+
+3. **Restore the matching index snapshot.**
+   - Locate the snapshot in `indexes/snapshots/` stamped with the release timestamp.
+   - Copy it over the active index:
+
+     ```bash
+     cp indexes/snapshots/<snapshot>.json indexes/atticus_index.json
+     ```
+
+4. **Re-pin configuration.**
+   - Verify `pyproject.toml` matches the target tag.
+   - Confirm embedding/LLM identifiers (`text-embedding-3-large`, `gpt-4.1`) in `atticus/config.py`.
+5. **Smoke test with gold queries.**
+
+   ```bash
+   pytest evaluation/harness -k retrieval --maxfail=1
+   ```
+
+   Review `evaluation/runs/YYYYMMDD/` outputs for the top queries (nDCG@10, Recall@50, MRR).
+
+6. **Log the rollback.**
+   - Append the action to `CHANGELOG.md`.
+   - Tag the rollback release (e.g., `v0.1.0-rollback1`) with a short summary of the trigger and outcome.
+
+<!-- End file: scripts/rollback.md -->
+
+## SECURITY.md
+
+<!-- Begin file: SECURITY.md -->
+
 # SECURITY — Atticus
 
 This guide describes how to handle secrets, protect data, and report vulnerabilities when operating Atticus.
@@ -2429,13 +3790,48 @@ We acknowledge reports within **3 business days** and coordinate a fix and discl
 - [README.md](README.md) — quick-start and environment setup.
 - [OPERATIONS.md](OPERATIONS.md) — day-to-day operations and evaluation metrics.
 
-````
+<!-- End file: SECURITY.md -->
 
----
+## seeds/README.md
 
-### STYLEGUIDE.md
+<!-- Begin file: seeds/README.md -->
 
-````md
+# Seeds
+
+The `seed_manifest.json` generated by `make seed` captures a lightweight summary of the
+current CED corpus. It records document fingerprints, chunk counts, and the first set of
+chunks (including SHA-256 hashes) so operators can bootstrap a development database
+without requiring the full ingestion pipeline.
+
+Running `make seed` will:
+
+1. Load configuration from `.env`/`config.yaml`.
+2. Parse up to 10 source documents from `content/` using the CED chunker.
+3. Write `seeds/seed_manifest.json` containing the deduplicated chunk metadata.
+
+The manifest is designed to be checked into CI as an artifact and referenced by
+deployment pipelines or smoke tests that need deterministic seed data.
+
+> **Note:** Table extraction relies on optional dependencies (`camelot`, `tabula`, OpenCV).
+> If they are unavailable the script skips table metadata gracefully; install them for
+> full fidelity in production environments.
+
+## Contributor checklist
+
+- Run `pytest tests/test_seed_manifest.py` to confirm the manifest structure and
+  chunk metadata remain deterministic for CI.
+- Execute `make seed` before opening a PR whenever documents inside `content/`
+  change; commit the refreshed `seeds/seed_manifest.json` if the diff is
+  intentional.
+- Document any new optional dependencies required for seeding inside this file
+  and `REQUIREMENTS.md` to keep onboarding clear.
+
+<!-- End file: seeds/README.md -->
+
+## STYLEGUIDE.md
+
+<!-- Begin file: STYLEGUIDE.md -->
+
 # STYLEGUIDE — Atticus
 
 Consistent style makes the codebase easier to read, review, and maintain.
@@ -2496,167 +3892,24 @@ Follow these standards for all code and documentation.
 - Strive for **clarity and minimalism** — no clever one-liners at the expense of readability.
 - Ensure code and docs are understandable by both experienced developers and newcomers.
 
-````
+<!-- End file: STYLEGUIDE.md -->
 
----
+## TODO.md
 
-### TODO.md
+<!-- Begin file: TODO.md -->
 
-```md
-# TODO — Atticus
+# TODO - Atticus
 
-1. **Define model families (authoritative).**
+All previously tracked items have been delivered and validated. See `TODO_COMPLETE.md#2025-10-30` for the detailed audit log covering implementation references.
 
-   * Create a small catalog (JSON or table) mapping names → families → aliases:
+There are no outstanding TODO entries at this time.
 
-     * **Apeos C7070 range**: C7070, C6570, C5570, C4570, C3570, C3070, C2570. 
-     * **Apeos C8180 series**: C8180, C7580, C6580. 
-   * Store file path at `indices/model_catalog.json` (or DB table `model_catalog`), include: `{ canonical:"Apeos C4570", family:"C7070", aliases:["C4570","4570","Apeos C4570"] }`.
+<!-- End file: TODO.md -->
 
-2. **Lock the API behavior (no surprises).**
+## TODO_COMPLETE.md
 
-   * Extend **/api/ask** to accept an optional `models` array and to return a new `clarification` field when model is unclear. See current API docs and contract location for `/ask`. 
-   * Add response shape examples in `docs/api/README.md` (unclear → asks; multi-model → parallel answers). 
+<!-- Begin file: TODO_COMPLETE.md -->
 
-3. **Name the three user flows (for tests & docs).**
-
-   * **Direct hit**: “Can the **Apeos C7070** do X?” → detect family C7070 → answer once.
-   * **Unclear**: “Can the **printer** do X?” → return `clarification` prompt with selectable families.
-   * **Multi-model**: “**Apeos C4570 and Apeos C6580**” → treat as two questions → answer both (C4570 ∈ C7070, C6580 ∈ C8180).
-
----
-
-# Phase 1 — Parsing & routing (backend)
-
-1. **Model mention parser (pure function).**
-
-   * New file: `retriever/models.py` (utilities already exist here; extend safely): add `extract_models(question: str) -> {models: set[str], families: set[str], confidence: float}`. Use strict patterns first (e.g., `Apeos\s+C\d{4}`), then fuzzy alias match via the catalog. (Repo has retriever pkg in place.) 
-
-2. **Family resolver.**
-
-   * New `resolver.py` in `retriever/` that maps found models → family set via the catalog (JSON or DB). Return `{ resolved_models, resolved_families, needs_clarification }`.
-
-3. **/api/ask handler update.**
-
-   * Touch `app/api/ask/route.ts` to accept `models?: string[]`. If absent, call parser. If `0` models and no strong hints → return `200` with `{ clarification: { message, options:[ "Apeos C7070 range", "Apeos C8180 series" ] }, request_id }` and **do not** trigger retrieval yet. Path exists. 
-   * If `>1` distinct models/families → **fan-out**: run retrieval+generation per model and aggregate.
-
-4. **Retrieval scoping.**
-
-   * In `retriever/service.py` or `retriever/vector_store.py`, add a filter hook `filters.product_family in (...)` to limit chunks by family metadata you already store for CEDs (use existing metadata fields; CED ingest already distinguishes model rows/series). 
-
-5. **Generator output shape (multi-answer).**
-
-   * In `retriever/generator.py` ensure we can emit `{ answers: [ { model, text, sources[] } ] }` OR a single `{ answer }`. Keep `sources` per-answer to avoid cross-contamination. (AnswerRenderer can already handle lists; if not, adjust.)
-
----
-
-# Phase 2 — UI/UX (Next.js)
-
-1. **Chat flow tweaks.**
-
-   * `components/AnswerRenderer.tsx`: render **clarification card** when `clarification` exists: copy “Which model are you referring to? If you like, I can provide a list of product families that I can assist with.” plus buttons:
-
-     * “Apeos C7070 range”
-     * “Apeos C8180 series”
-     * “Show list of models” (opens modal).
-   * If `answers[]` returned, render as collapsible sections per model with citations (you already stream sources). 
-
-2. **Client ask flow.**
-
-   * `lib/ask-client.ts`: support **follow-up POST** with selected `models` when user clicks a button in the clarification card. 
-
-3. **Settings visibility remains gated** (unchanged, but keep your earlier constraint consistent). Paths exist under `app/settings`, `components/site-header.tsx`. 
-
----
-
-# Phase 3 — Ingestion & metadata (light touch)
-
-1. **Ensure family tags exist on chunks.**
-
-   * During CED ingestion (PDFs you’ve already loaded), confirm `product_family` and `models[]` are attached for:
-
-     * C7070/C6570/C5570/C4570/C3570/C3070/C2570.
-     * C8180/C7580/C6580.
-   * If missing, add a light post-processor in `ingest/pipeline.py` that sets `product_family` from the catalog on import. (Paths for ingest modules present.) 
-
-2. **Gold set extension.**
-
-   * Add 6–10 **paired** gold questions (per family) into `eval/gold_set_improved.csv` to exercise single, unclear, and multi-model flows.
-
----
-
-# Phase 4 — Tests (must-pass)
-
-1. **Unit**
-
-   * `tests/test_model_parser.py`: direct hit, fuzzy alias, none → clarification, multi-model split.
-   * `tests/test_retrieval_filters.py`: query constrained to a family returns only that family’s chunks.
-
-2. **API/integration**
-
-   * `tests/test_chat_route.py`:
-
-     * unclear → returns `clarification` only (no retrieval).
-     * multi-model → returns `answers[]` with model tags.
-   * `tests/test_ui_route.py`: if you already have UI route tests, add snapshot checks for clarification JSON. 
-
-3. **E2E (Playwright)**
-
-   * Extend `tests/playwright/rbac.spec.ts` or add a new `chat.spec.ts`: type an unclear question → see clarification card → choose “Apeos C7070 range” → receive answer with C7070-family citations. (There’s already Playwright config present.) 
-
----
-
-# Phase 5 — Docs & ops
-
-1. **AGENTS.md** — add the behavior contract:
-
-   * Ask clarifier when model unknown; treat multiple models as multiple sub-questions; scope retrieval by family; keep answers separate per model. (Doc file exists.) 
-
-2. **README.md / docs/ATTICUS_DETAILED_GUIDE.md** — short “How Atticus interprets product names” section with examples.
-
-3. **CHANGELOG.md** — note feature: “Model disambiguation + multi-model Q&A”.
-
-4. **TODO.md → TODO_COMPLETE.md** — move tasks as they land (your doc workflow already calls this out). 
-
----
-
-# Phase 6 — Acceptance criteria (what “done” looks like)
-
-* **Direct**: “Can the **Apeos C7070** do X…?” → 1 answer, C7070 family-scoped citations pulled from the C7070 CED. 
-* **Unclear**: “Can the **printer** do X…?” → UI shows clarifier with **C7070**/**C8180** options and a **show list** option. No retrieval occurs until user chooses.
-* **Multi-model**: “**Apeos C4570 and Apeos C6580**” → 2 answers rendered, each with its own sources; C4570 from C7070 doc, C6580 from C8180 doc.
-* **Tests**: unit + API + E2E cover the three flows; CI green with retrieval-gate unchanged. (Repo has the test harness & CI targets laid out.) 
-
----
-
-# Pointers for Codex (where to edit)
-
-* **Backend (FastAPI/Next route boundary)**: `app/api/ask/route.ts`, `lib/ask-client.ts`, `retriever/models.py`, `retriever/service.py`, `retriever/generator.py`. 
-* **UI**: `components/AnswerRenderer.tsx` (clarification card & multi-answer rendering). 
-* **Ingest**: `ingest/pipeline.py` (ensure family tags) + `indices/model_catalog.json`. 
-* **Tests**: `tests/test_chat_route.py`, `tests/test_ui_route.py`, `tests/playwright/*.spec.ts`, new `tests/test_model_parser.py`. 
-* **Docs**: `AGENTS.md`, `docs/api/README.md`, `README.md`, `CHANGELOG.md`, `TODO.md`.
-
----
-
-# Guardrails & edge cases
-
-* If a user types a family name (e.g., “C7070 range”), resolve to family directly (don’t force a specific model).
-* If a user picks **“give me a list”**, show the families first, then expandables for the exact models (use the catalog).
-* If models span **different families**, **don’t merge** sources; answer independently per model.
-* If no family matches but the question is clearly **general** (e.g., “What is a DADF?”), answer generically with neutral docs; otherwise ask to pick a family.
-
----
-
-
-```
-
----
-
-### TODO_COMPLETE.md
-
-```md
 
 # TODO — Completed / Obsolete
 
@@ -2680,6 +3933,14 @@ The following items are done or no longer relevant and are recorded here for tra
 - “CONTENT_DIR → CONTENT_ROOT rename” — standardised across code/docs.
 - “Rebuild evaluator harness” — present via tests and `eval` target.
 - “Glossary API error normalisation” — implemented with `request_id`.
+
+---
+
+## 2025-10-10
+
+- [x] Added model parser/resolver unit tests, retrieval filter coverage, API clarification regressions, UI integration tests, and a gated Playwright chat clarification flow — completed 2025-10-10 (this change set).
+- [x] Documented model disambiguation behaviour in `AGENTS.md`, `README.md`, and `docs/ATTICUS_DETAILED_GUIDE.md`; updated `CHANGELOG.md`, and reconciled TODO status — completed 2025-10-10 (this change set).
+- [x] Verified direct/unclear/multi-model acceptance criteria via automated tests and ensured `make quality` (lint, typecheck, pytest, Next build, ts audit) passes end-to-end — completed 2025-10-10 (this change set).
 
 ---
 
@@ -2785,18 +4046,25 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ## 2025-10-19
 
-- [x] TODO "pgvector GUC Bootstrap" — completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
-- [x] TODO "Version Parity Automation" — completed 2025-10-19 (release 0.8.0 ships `scripts/check_version_parity.py`, Makefile wiring, and docs).
-- [x] TODO "Uncertain Chat Validation Flow" — completed 2025-10-19 (release 0.8.0 captures low-confidence chats, follow-up prompts, admin drawer UX, and audit events).
-- [x] TODO "Dictionary (Glossary) Update Semantics" — completed 2025-10-19 (release 0.8.0 adds POST upsert/PUT updates, inline editing, and rag event auditing).
+- [x] TODO "pgvector GUC Bootstrap" - completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
+- [x] TODO "Version Parity Automation" - completed 2025-10-19 (release 0.8.0 ships `scripts/check_version_parity.py`, Makefile wiring, and docs).
+- [x] TODO "Uncertain Chat Validation Flow" - completed 2025-10-19 (release 0.8.0 captures low-confidence chats, follow-up prompts, admin drawer UX, and audit events).
+- [x] TODO "Dictionary (Glossary) Update Semantics" - completed 2025-10-19 (release 0.8.0 adds POST upsert/PUT updates, inline editing, and rag event auditing).
 
-```
+## 2025-10-30
 
----
+- [x] Audited `TODO.md` and confirmed no outstanding backlog items remain; updated the file to reference the completion log.
+- [x] Verified the model catalog in `indices/model_catalog.json` maps families ⇄ models/aliases as required by the backlog item.
+- [x] Confirmed disambiguation utilities (`retriever/models.py`, `retriever/resolver.py`) and scoped retrieval (`retriever/service.py`) implement the parser/resolver tasks.
+- [x] Checked the API and client flow updates in `api/routes/chat.py`, `app/api/ask/route.ts`, `lib/ask-contract.ts`, `lib/ask-client.ts`, and `components/AnswerRenderer.tsx` to ensure clarification + multi-answer behaviour is live.
+- [x] Reviewed ingestion tagging updates in `ingest/pipeline.py` and supporting docs (`docs/api/README.md`, `README.md`) covering the model-family flows.
 
-### TROUBLESHOOTING.md
+<!-- End file: TODO_COMPLETE.md -->
 
-````md
+## TROUBLESHOOTING.md
+
+<!-- Begin file: TROUBLESHOOTING.md -->
+
 # TROUBLESHOOTING — Atticus
 
 This guide covers common setup issues, ingestion problems, and quick diagnostics for Atticus deployments.
@@ -2995,960 +4263,4 @@ If local Node tooling drifts, reinstall via `npm install` and retry.
 - [OPERATIONS.md](OPERATIONS.md) — detailed runbooks and evaluation metrics
 - [SECURITY.md](SECURITY.md) — secret handling and IAM policy examples
 
-````
-
----
-
-### code.md
-
-~~~~md
-# Code Bundle Generator
-
-This file contains a single-script utility (PowerShell) to scan the repository and generate a combined Markdown bundle of all relevant code, Markdown, and JSON files. It excludes logs, build artifacts, caches, binaries, and other non-source outputs.
-
-Quick start:
-
-- From the repo root, run this in PowerShell 7+ (`pwsh`):
-  - Copy the script block below into your terminal, or
-  - Copy it into a file (e.g., `combine-code.ps1`) and run `pwsh -File combine-code.ps1`.
-
-Output:
-
-- Creates `ALL_CODE.md` at the repo root by default. You can change the output path with `-Output`.
-
-Script:
-
-```powershell
-<#
-Combine relevant source files into a single Markdown bundle.
-
-Usage examples:
-  pwsh -NoProfile -ExecutionPolicy Bypass -File ./combine-code.ps1
-  pwsh -NoProfile -ExecutionPolicy Bypass -File ./combine-code.ps1 -Output CODEBASE.md
-  pwsh -NoProfile -ExecutionPolicy Bypass -Command "& { <paste this script> }"
-
-Notes:
-- Excludes typical build/log/temp directories and non-text file types.
-- Includes common source code, Markdown, and JSON files.
-- Adds a table-of-contents and per-file fenced code blocks with language hints.
-#>
-
-param(
-  [string]$Root = (Resolve-Path .).Path,
-  [string]$Output = "ALL_CODE.md"
-)
-
-Set-StrictMode -Version Latest
-$ErrorActionPreference = 'Stop'
-
-function Write-Info([string]$msg) { Write-Host "[info] $msg" }
-
-# Normalize root and output
-$Root = (Resolve-Path $Root).Path
-$Output = if ([System.IO.Path]::IsPathRooted($Output)) { $Output } else { Join-Path $Root $Output }
-
-# Ensure output is excluded from the scan (if it already exists)
-$outputRel = try { [IO.Path]::GetRelativePath($Root, $Output) } catch { '' }
-
-# Extensions to include (code + markdown + json)
-$includeExt = @(
-  '.ts','.tsx','.js','.jsx','.mjs','.cjs',
-  '.py','.sql','.prisma',
-  '.css','.scss','.sass','.html','.htm',
-  '.sh','.bash','.ps1','.psm1','.psd1',
-  '.go','.rs',
-  '.md','.markdown','.mdx',
-  '.json'
-)
-
-# Directories to exclude (typical build/log/temp/binary caches)
-$excludeDirs = @(
-  '.git','node_modules','.next','dist','build','out','coverage',
-  'logs','log','.turbo','.cache','tmp','temp','reports',
-  '__pycache__','.pytest_cache','.mypy_cache','.venv','venv',
-  '.idea','.gradle','.parcel-cache','.svelte-kit','.husky',
-  '.ds_store','.svn','.hg','archive'
-)
-
-# Files to exclude (lockfiles, maps, minified, snapshots, binaries, large assets, and our output)
-$excludeNamePatterns = @(
-  '*.log','*.jsonl','*.map','*.min.*','*.snap','*.lock',
-  'pnpm-lock.yaml','package-lock.json','yarn.lock',
-  '*.png','*.jpg','*.jpeg','*.gif','*.svg','*.ico','*.pdf',
-  '*.zip','*.gz','*.tar','*.tgz','*.7z',
-  '*.exe','*.dll','*.bin','*.dylib','*.so','*.class','*.jar','*.pyc',
-  '*.ttf','*.otf','*.woff','*.woff2'
-)
-
-if ($outputRel -and $outputRel -ne '.') { $excludeNamePatterns += [IO.Path]::GetFileName($Output) }
-
-# Build an exclude regex for directories
-$escaped = $excludeDirs | ForEach-Object { [Regex]::Escape($_) } | Where-Object { $_ -and $_.Trim() -ne '' }
-$excludeDirRegex = if ($escaped.Count -gt 0) {
-  '(?i)(^|[\\/])(' + ($escaped -join '|') + ')([\\/]|$)'
-} else {
-  $null
-}
-
-# Simple ext -> fenced language mapping
-$langMap = @{
-  '.ts'='ts'; '.tsx'='tsx'; '.js'='js'; '.jsx'='jsx'; '.mjs'='js'; '.cjs'='js';
-  '.py'='python'; '.sql'='sql'; '.prisma'='prisma';
-  '.css'='css'; '.scss'='scss'; '.sass'='sass';
-  '.html'='html'; '.htm'='html';
-  '.sh'='bash'; '.bash'='bash'; '.ps1'='powershell'; '.psm1'='powershell'; '.psd1'='powershell';
-  '.go'='go'; '.rs'='rust';
-  '.md'='md'; '.markdown'='md'; '.mdx'='mdx';
-  '.json'='json'
-}
-
-function Get-Fence([string]$text) {
-  if ($text -notmatch '```') { return '```' }
-  elseif ($text -notmatch '````') { return '````' }
-  else { return '~~~~' }
-}
-
-function Is-ExcludedFileName([string]$name) {
-  foreach ($pat in $excludeNamePatterns) {
-    if ([System.Management.Automation.WildcardPattern]::new($pat, 'IgnoreCase').IsMatch($name)) { return $true }
-  }
-  return $false
-}
-
-Write-Info "Scanning: $Root"
-
-# Gather files
-$files = Get-ChildItem -Path $Root -File -Recurse -ErrorAction SilentlyContinue |
-  Where-Object {
-    $rel = [IO.Path]::GetRelativePath($Root, $_.FullName)
-    $ext = $_.Extension.ToLowerInvariant()
-    # Exclude directories
-    if ($excludeDirRegex -and ($rel -match $excludeDirRegex)) { return $false }
-    # Include by extension or Dockerfile
-    $isDocker = ($_.Name -match '^Dockerfile(\..+)?$')
-    if (-not $isDocker -and -not ($includeExt -contains $ext)) { return $false }
-    # Exclude by name patterns
-    if (Is-ExcludedFileName $_.Name) { return $false }
-    # Size guard (skip huge files > 5MB)
-    if ($_.Length -gt 5MB) { return $false }
-    return $true
-  } |
-  Sort-Object FullName
-
-if (-not $files -or $files.Count -eq 0) {
-  Write-Warning "No files found to include. Check filters."
-  return
-}
-
-Write-Info ("Including {0} files" -f $files.Count)
-
-# Build header and index
-$lines = New-Object System.Collections.Generic.List[string]
-$lines.Add("# Combined Code Bundle")
-$lines.Add("")
-$lines.Add(("Generated: {0:yyyy-MM-dd HH:mm:ss K}" -f [DateTimeOffset]::Now))
-$lines.Add(("Root: {0}" -f $Root))
-$lines.Add(("Files: {0}" -f $files.Count))
-$lines.Add("")
-$lines.Add("## Index")
-foreach ($f in $files) {
-  $rel = [IO.Path]::GetRelativePath($Root, $f.FullName)
-  $lines.Add("- `" + $rel.Replace('`','``') + "`")
-}
-$lines.Add("")
-
-# Append each file content with fenced code blocks
-foreach ($f in $files) {
-  $rel = [IO.Path]::GetRelativePath($Root, $f.FullName)
-  $ext = $f.Extension.ToLowerInvariant()
-  $lang = if ($f.Name -match '^Dockerfile(\..+)?$') { 'dockerfile' } else { $langMap[$ext] }
-  if (-not $lang) { $lang = 'text' }
-  Write-Info "Bundling: $rel"
-
-  $content = Get-Content -Path $f.FullName -Raw -Encoding UTF8
-  $fence = Get-Fence $content
-
-  $lines.Add("\n---\n")
-  $lines.Add("### " + $rel)
-  $lines.Add("")
-  $lines.Add($fence + $lang)
-  $lines.Add($content)
-  $lines.Add($fence)
-}
-
-# Write output (UTF-8)
-$null = New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($Output)) -Force -ErrorAction SilentlyContinue
-$lines -join "`n" | Set-Content -Path $Output -Encoding utf8
-Write-Info "Wrote: $Output"
-```
-
-Notes:
-
-- Edit the `$includeExt`, `$excludeDirs`, and `$excludeNamePatterns` lists in the script to tweak what’s included.
-- The script intentionally skips large files (> 5MB), minified assets, lockfiles, images, and binaries.
-- `.vscode/*.json` will be included (useful editor configs), while typical build outputs and caches are excluded.
-
-
-~~~~
-
----
-
-### codex_instructions.md
-
-```md
-### Codex: Implement `TODO.md` in Phases
-
-**ROLE & GOAL**
-
-You are an implementation agent. Execute the repository’s `TODO.md` end-to-end in manageable phases with guarded changes, verifiable tests, and clear commits. Work directly in this repo. Produce code, migrations, tests, UI, and docs exactly where they belong. When you finish a phase, stop and present a concise diff summary and next actions.
-
-**GROUND TRUTH**
-
-All requirements, deliverables, and acceptance criteria come from `TODO.md`. Treat it as the single source of truth.
-
-**OPERATING RULES**
-
-1. **Branches & Commits**
-
-   * Create a feature branch per phase: `feat/todo-phase-<n>-<slug>`.
-   * Make small, logically grouped commits with meaningful messages.
-   * Keep existing project tooling (Makefile, CI, linting) intact.
-
-2. **Compatibility**
-
-   * This codebase runs on Windows dev environments—avoid bash-only assumptions. Provide PowerShell equivalents if you add scripts.
-   * Don’t remove existing scripts/targets unless the TODO explicitly requires it.
-
-3. **Tests & CI**
-
-   * Add/extend tests per acceptance criteria. Ensure `make quality` and any Playwright/API/pytest suites pass locally.
-   * If CI is configured, wire new checks into existing jobs, not ad-hoc scripts.
-
-4. **Docs**
-
-   * Update any referenced docs in the TODO (OPERATIONS.md, docs/*, README/RELEASE notes). Include rollback/reset notes where called for.
-
-5. **Visibility**
-
-   * After each phase, produce:
-
-     * A brief CHANGELOG entry,
-     * A summary of changed files,
-     * Any operator steps (e.g., DB migration commands).
-
----
-
-## PHASE PLAN
-
-### Phase 0 — Discovery & Baseline
-
-* Parse `TODO.md` and confirm repo structure (Next.js app, FastAPI backend, Prisma schema, Playwright/pytest layout, Make targets).
-* Run local verification commands (`make db.verify`, `make quality`, existing test suites).
-* Output: a short report of current pass/fail and any blockers you’ll resolve within later phases.
-
-### Phase 1 — Glossary Seed & Runbook (TODO §1)
-
-**Implement:**
-
-* Extend `prisma/seed.ts` with deterministic sample entries (`approved`, `pending`, `rejected`) with stable IDs.
-* Add `tests/test_seed_manifest.py` validating rows after `make db.seed`.
-* Update **OPERATIONS.md** (reset/rollback steps) and **docs/glossary-spec.md** (provisioning + rollback).
-  **Accept:** `make db.seed` deterministic; tests green; docs updated.
-
-### Phase 2 — Glossary UX Follow-through (TODO §2)
-
-**Implement:**
-
-* Add Mermaid sequence diagram to `docs/glossary-spec.md`.
-* Add ADR links or “Decision Notes” explaining workflow choices; list follow-ups as backlog links.
-  **Accept:** Diagram renders; decisions documented.
-
-### Phase 3 — RBAC Integration Coverage (TODO §3)
-
-**Implement:**
-
-* **Playwright:** Non-admin → `/admin` and `/api/glossary` → `403/redirect`; Admin CRUD works.
-* **API/route tests:** Next.js route handlers with mocked sessions per role; FastAPI admin endpoints reject with `401/403` when invalid/missing.
-* Wire into CI via `make quality` / frontend job.
-  **Accept:** Tests fail on RBAC regressions; CI coverage in place.
-
-### Phase 4 — pgvector GUC Bootstrap (TODO §4)
-
-**Implement:**
-
-* Add idempotent migration ensuring `set_config('app.pgvector_lists','100', true)` exists.
-* (Optional) Extend `scripts/db_verify.py` to assert/print GUC value.
-* Update **OPERATIONS.md** with rollback/override notes.
-  **Accept:** Fresh envs pass `make db.verify`.
-
-### Phase 5 — Version Parity Automation (TODO §5)
-
-**Implement:**
-
-* Create `scripts/check_version_parity.py` comparing `VERSION` ↔ `package.json.version`.
-* Add `version-check` Make target; include in `quality` (and optionally `verify`).
-* Note in `README.md` or `RELEASE.md`.
-  **Accept:** CI/local checks fail on drift.
-
-### Phase 6 — Admin Ops Console (Uncertain, Tickets, Glossary) (TODO §6)
-
-**Implement:**
-
-* **UI `/admin`** with tabs: **Uncertain**, **Tickets**, **Glossary**.
-
-  * Uncertain: table (date, user, question, confidence, top sources) + actions (**Approve**, **Ask Follow-up**, **Escalate**).
-  * Tickets: list AExxx with status, assignee, last activity.
-  * Glossary: search + inline edit (RBAC-gated).
-* **API:**
-
-  * `GET /api/admin/uncertain` returns chats with `confidence < CONFIDENCE_THRESHOLD` and `status='pending_review'`.
-  * `POST /api/admin/uncertain/:id/approve` marks reviewed (+ reviewer, timestamp).
-  * `POST /api/admin/uncertain/:id/escalate` creates/links AE ticket; logs action.
-* **DB/Prisma:**
-
-  * `chats`: add `confidence FLOAT`, `status TEXT DEFAULT 'ok'`, `reviewed_by`, `reviewed_at`.
-  * `tickets`: ensure `AE id`, `status`, `assignee`, `linked_chat_id`.
-* **RBAC:** only `admin` sees `/admin`; `reviewer` limited read/write.
-  **Accept:** Role restrictions enforced; actions emit audit events; tests cover 403s.
-
-### Phase 7 — Uncertain Chat Validation Flow (TODO §7)
-
-**Implement:**
-
-* Backend: when `confidence < CONFIDENCE_THRESHOLD`, set `chats.status='pending_review'` and persist `{question, top_k sources, request_id}`.
-* Route: `POST /api/admin/uncertain/:id/ask-followup` stores a canonical follow-up prompt.
-* UI: review drawer with question, answer, sources, `request_id`; buttons call routes.
-* **Playwright**: create low-confidence chat fixture → verify appears → approve → status flips to `reviewed`.
-  **Accept:** Flow observable; tests green.
-
-### Phase 8 — Dictionary (Glossary) Update Semantics (TODO §8)
-
-**Implement:**
-
-* API: `PUT /api/glossary/:id` (update) and `POST /api/glossary` (create), both admin-only; upsert on unique `(org_id, term)`.
-* Validation: reject empty `term`/`definition`; normalize whitespace; optional `synonyms[]`.
-* Auditing: write to `rag_events` (actor, action, glossary_id, before/after).
-* UI: inline edit row with optimistic update + toasts.
-  **Accept:** No dupes; RBAC enforced; audit row written.
-
----
-
-## WORKFLOW PER PHASE
-
-1. Create branch `feat/todo-phase-<n>-<slug>`.
-2. Implement code/tests/migrations/docs.
-3. Run:
-
-   * `make db.migrate` (if migrations),
-   * `make db.seed` (if seeds),
-   * `make quality` (ensure all suites pass).
-4. Produce a brief end-of-phase summary:
-
-   * Files changed, commands to run, notable decisions, any follow-ups.
-5. Open a PR (or present diff) titled `TODO Phase <n>: <name>`.
-
-**STOP after each phase** and present the summary and diffs for review before proceeding.
-
----
-
-**Begin with Phase 0 now.** When ready for Phase 1, present the short baseline report and proceed.
-
----
-
-```
-
----
-
-### docs/ATTICUS_DETAILED_GUIDE.md
-
-```md
-
-
-```
-
----
-
-### docs/README.md
-
-```md
-# Atticus Documentation
-
-## Adding New Content
-
-1. Place documents inside the `content/` tree following the taxonomy in
-   `AGENTS.md` §3.1.
-2. Name files using `YYYYMMDD_topic_version.ext` for traceability.
-3. Run `python scripts/ingest_cli.py` (or `make ingest`) to parse, chunk
-   (defaults controlled by `config.yaml` / `.env`), embed, and update the
-   index.
-4. Review the ingestion report in `logs/app.jsonl` and commit the updated index
-   snapshot plus `indices/manifest.json`.
-5. Execute the evaluation harness with
-   `python scripts/eval_run.py --json --output-dir eval/runs/manual` to confirm
-   retrieval quality before tagging a release.
-6. Regenerate API documentation with `python scripts/generate_api_docs.py` so
-   the OpenAPI schema in `docs/api/openapi.json` stays in sync with the
-   deployed code.
-
-```
-
----
-
-### docs/REMOTE_ACCESS.md
-
-````md
-# REMOTE ACCESS - Atticus
-
-This guide explains how to reach a local Atticus instance from another PC without exposing the machine to
-the internet. It presents three supported approaches so you can choose the level of automation, security,
-and tooling that fits your environment.
-
----
-
-## Quick Decision Matrix
-
-| Option                 | Best For                                          | Security Posture                                            | What You Need                                              |
-| ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
-| **Tailscale**          | Always-on secure mesh between office/home devices | Zero-trust, device-based auth, automatic key rotation       | Personal/enterprise Tailscale account (free tier works)    |
-| **Cloudflare Tunnel**  | Sharing access with vendors or short-term demos   | One-time tokens, granular routes, no inbound firewall rules | Cloudflare account with a free zone + `cloudflared` binary |
-| **SSH Reverse Tunnel** | One-off troubleshooting from a trusted jump host  | Depends on SSH key hygiene                                  | Any VPS or machine reachable from the remote PC            |
-
----
-
-## Option 1 - Tailscale (Recommended)
-
-1. Install Tailscale on the Atticus host and the remote PC: <https://tailscale.com/download>.
-2. Authenticate each device with the same account (or organization SSO).
-3. Tag the Atticus host (optional but recommended) with `atticus-server` to simplify ACLs.
-4. Start Atticus locally:
-
-   ```bash
-   make api
-   ```
-
-5. Connect from the remote PC using the Tailscale IP shown in the admin console:
-
-   ```bash
-   # Example assuming the host advertises 100.101.102.103
-   curl http://100.101.102.103:8000/health
-   ```
-
-6. Lock down access with an ACL snippet:
-
-   ```json
-   {
-     "ACLs": [
-       {
-         "Action": "accept",
-         "Users": ["group:sales", "user:you@example.com"],
-         "Ports": ["tag:atticus-server:8000"]
-       }
-     ]
-   }
-   ```
-
-**Pros**: 2-minute setup, device-level revocation, auto-generated DNS names like
-`atticus-hostname.tailnet.ts.net`.
-
-**Cons**: Requires installing the client on every participating machine.
-
----
-
-## Option 2 - Cloudflare Tunnel
-
-1. Install `cloudflared` on the Atticus host:
-
-   ```powershell
-   winget install Cloudflare.cloudflared
-   ```
-
-2. Authenticate and select the zone that will front your tunnel (e.g. `yourcompany.com`):
-
-   ```bash
-   cloudflared login
-   ```
-
-3. Create a dedicated tunnel:
-
-   ```bash
-   cloudflared tunnel create atticus-local
-   ```
-
-4. Route a DNS record to the tunnel:
-
-   ```bash
-   cloudflared tunnel route dns atticus-local atticus.yourcompany.com
-   ```
-
-5. Run the connector while Atticus is active:
-
-   ```bash
-   make api &
-   cloudflared tunnel run --url http://localhost:8000 atticus-local
-   ```
-
-6. Protect access with Cloudflare Access (SSO, one-time PINs, or service tokens).
-
-**Pros**: No inbound firewall rules, audited access logs, granular policies per path.
-
-**Cons**: Outbound tunnel must stay alive; run it as a service for long-lived usage.
-
----
-
-## Option 3 - SSH Reverse Tunnel (Minimal Dependencies)
-
-1. Pick a jump host reachable from the remote PC (a lightweight VPS works).
-2. Create an SSH key for the Atticus host and add it to the jump host `authorized_keys`.
-3. Start the tunnel from the Atticus host:
-
-   ```bash
-   ssh -N -R 18080:localhost:8000 user@jump-host.example.com
-   ```
-
-4. From the remote PC, connect to the jump host and forward traffic locally:
-
-   ```bash
-   ssh -L 8000:localhost:18080 user@jump-host.example.com
-   ```
-
-5. Visit `http://localhost:8000` on the remote PC—traffic traverses the secure SSH tunnel.
-
-**Pros**: Uses built-in tooling; no extra accounts required.
-
-**Cons**: You must maintain the intermediate host and manage SSH keys carefully.
-
----
-
-## Operational Checklist
-
-- Treat every remote-access path as production: use MFA, rotate credentials, and log access.
-- Update `.env` with `ALLOWED_ORIGINS` if you front Atticus with a different hostname (CORS).
-- Enable `LOG_VERBOSE=1` during rollout so access logs capture remote IPs.
-- Tear down tunnels when demos finish to avoid orphaned exposure.
-
----
-
-## Related Documents
-
-- [OPERATIONS.md](OPERATIONS.md) - runbooks, evaluation workflow, and rollback steps.
-- [SECURITY.md](SECURITY.md) - IAM, SES policies, and secrets guidance.
-- [README.md](README.md) - setup instructions and Make targets.
-
-````
-
----
-
-### docs/api/README.md
-
-````md
-# API Documentation
-
-## Generating the OpenAPI Schema
-
-Run either command to emit the latest schema:
-
-```bash
-make openapi
-```
-
-or
-
-```bash
-python scripts/generate_api_docs.py --output docs/api/openapi.json
-```
-
-The CLI loads the FastAPI application directly, so the server does not need to be running.
-
----
-
-## `/ask` Request & Response
-
-```jsonc
-POST /ask
-{
-  "question": "How does Atticus escalate low confidence answers?",
-  "filters": {
-    "source_type": "runbook"
-  }
-}
-```
-
-- `question` (string, required) - Natural-language query. Alias `query` is also accepted for backwards compatibility.
-- `filters` (object, optional) - Restrict retrieval. Supported keys: `source_type`, `path_prefix`.
-
-```jsonc
-200 OK
-{
-  "answer": "Atticus blends retrieval and LLM confidence...",
-  "citations": [
-    {
-      "chunk_id": "chunk-000045",
-      "source_path": "content/20240901_escalation_playbook_v1.pdf",
-      "page_number": 7,
-      "heading": "Escalation Workflow",
-      "score": 0.82
-    }
-  ],
-  "confidence": 0.74,
-  "should_escalate": false,
-  "request_id": "9db0dd1c-..."
-}
-```
-
-- `answer` - Grounded response including references to the supplied citations.
-- `citations` - Ordered list of supporting chunks. Each item matches `retriever.models.Citation`.
-- `confidence` - Combined retrieval plus LLM score (0-1).
-- `should_escalate` - `true` when `confidence` falls below `CONFIDENCE_THRESHOLD`.
-- `request_id` - Trace identifier surfaced in logs.
-
-Errors follow the JSON error schema described in [AGENTS.md](../AGENTS.md#error-handling).
-
----
-
-## Related References
-
-- [ATTICUS_DETAILED_GUIDE.md](../ATTICUS_DETAILED_GUIDE.md)
-- [README.md](../README.md)
-- [OPERATIONS.md](../OPERATIONS.md)
-
-````
-
----
-
-### docs/glossary-spec.md
-
-````md
-# Glossary Specification
-
-The glossary module enables reviewers to propose terminology updates and administrators
-to approve or reject entries. The workflow is designed to mirror the RBAC policies in the
-Next.js admin UI and Prisma models.
-
-## Roles
-
-| Role       | Permissions                                                |
-| ---------- | ---------------------------------------------------------- |
-| `user`     | Read-only access to approved glossary entries.             |
-| `reviewer` | Submit new terms and propose edits.                        |
-| `admin`    | Approve/reject proposals, manage history, export glossary. |
-
-## Data Model
-
-```prisma
-model GlossaryEntry {
-  id           String          @id @default(cuid())
-  term         String
-  definition   String          @db.Text
-  synonyms     String[]        @default([])
-  status       GlossaryStatus  @default(PENDING)
-  orgId        String
-  org          Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  authorId     String
-  author       User            @relation("GlossaryAuthor", fields: [authorId], references: [id])
-  updatedById  String?
-  updatedBy    User?           @relation("GlossaryUpdatedBy", fields: [updatedById], references: [id])
-  reviewerId   String?
-  reviewer     User?           @relation("GlossaryReviewer", fields: [reviewerId], references: [id])
-  reviewNotes  String?         @db.Text
-  reviewedAt   DateTime?
-  events       RagEvent[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-
-  @@unique([orgId, term])
-  @@index([orgId, status])
-}
-```
-
-All mutations emit structured `RagEvent` audit rows (mirrored in `logs/app.jsonl`) including the acting user,
-the request/trace ID, and the state transition. Row-level security is enforced through
-Prisma queries executed inside `withRlsContext` and mirrored on the FastAPI admin APIs via
-the `X-Admin-Token` header.
-
-## API Contracts
-
-- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
-  author/reviewer metadata.
-- `POST /api/glossary` – admin session required; idempotent upsert keyed by `(orgId, term)` that accepts term, definition, synonyms, and status updates while recording author/reviewer metadata and request IDs.
-- `PUT /api/glossary/:id` – admin session required; updates an entry in place (definition, synonyms, status, review notes) and stamps reviewer metadata when a decision is made.
-- FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and
-  require a matching `X-Admin-Token` header; failures emit contract-compliant error
-  payloads with `request_id` for observability.
-
-## UI Flow
-
-1. Reviewer submits a new term with synonyms and rationale.
-2. Admin views pending proposals on `/admin/glossary`, edits definitions inline, captures review notes, and approves.
-3. Approved entries become available to all users and propagate via the API contract, with each change mirrored in `RagEvent` history.
-
-### Sequence Diagram
-
-```mermaid
-sequenceDiagram
-  participant Reviewer
-  participant Admin
-  participant System
-  Reviewer->>Admin: Submit glossary entry
-  Admin->>System: Approve/Reject
-  System-->>Reviewer: Status update + audit log
-```
-
-### Decision Notes
-
-- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
-  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
-- **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
-  changes without polling Prisma directly.
-- **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
-  period.
-
-### Follow-ups
-
-- Reviewer/admin notifications for status changes remain open in the backlog — tracked in [TODO.md §5](../TODO.md#5-uncertain-chat-validation-flow).
-- Dedicated audit UI enhancements live under [TODO.md §4](../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary) alongside the combined admin console workstream.
-
-## Seed Data & Provisioning
-
-- `make db.seed` provisions:
-  - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
-  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
-  - Three glossary rows covering the primary workflow states:
-    - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
-    - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
-    - `glossary-entry-toner-optimization` → **REJECTED** with notes capturing why it failed review.
-- Re-running the seed is idempotent: each entry is upserted by stable IDs and the reviewer/author assignments are refreshed.
-- Override defaults (organization name, admin bootstrap account, etc.) by exporting `DEFAULT_ORG_NAME`, `ADMIN_EMAIL`, and `ADMIN_NAME` before invoking the target.
-
-## Reset & Rollback
-
-- To reset the glossary to the deterministic baseline:
-  1. `make db.seed` — reruns Prisma seeding and restores the canonical entries.
-  2. Confirm via `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` (requires a reachable Postgres instance).
-- To restore production data after testing seeds:
-  1. Snapshot `GlossaryEntry` rows (e.g., `COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER`).
-  2. After validation, re-import using `COPY ... FROM STDIN` or Prisma scripts, then rerun `make db.seed` to ensure support accounts persist.
-- Rollbacks should always re-run `make db.seed` so the deterministic reviewers remain available for smoke suites.
-
-### Sequence Diagram
-
-```mermaid
-sequenceDiagram
-  participant Reviewer
-  participant Admin
-  participant System
-  Reviewer->>Admin: Submit glossary entry
-  Admin->>System: Approve/Reject
-  System-->>Reviewer: Status update + audit log
-```
-
-### Decision Notes
-
-- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
-  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
-- **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
-  changes without polling Prisma directly.
-- **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
-  period.
-
-### Follow-ups
-
-- Reviewer/admin notifications for status changes remain open in the backlog — tracked in [TODO.md §5](../TODO.md#5-uncertain-chat-validation-flow).
-- Dedicated audit UI enhancements live under [TODO.md §4](../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary) alongside the combined admin console workstream.
-
-## Seed Data & Provisioning
-
-- `make db.seed` provisions:
-  - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
-  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
-  - Three glossary rows covering the primary workflow states:
-    - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
-    - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
-    - `glossary-entry-toner-optimization` → **REJECTED** with notes capturing why it failed review.
-- Re-running the seed is idempotent: each entry is upserted by stable IDs and the reviewer/author assignments are refreshed.
-- Override defaults (organization name, admin bootstrap account, etc.) by exporting `DEFAULT_ORG_NAME`, `ADMIN_EMAIL`, and `ADMIN_NAME` before invoking the target.
-
-## Reset & Rollback
-
-- To reset the glossary to the deterministic baseline:
-  1. `make db.seed` — reruns Prisma seeding and restores the canonical entries.
-  2. Confirm via `pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip` (requires a reachable Postgres instance).
-- To restore production data after testing seeds:
-  1. Snapshot `GlossaryEntry` rows (e.g., `COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER`).
-  2. After validation, re-import using `COPY ... FROM STDIN` or Prisma scripts, then rerun `make db.seed` to ensure support accounts persist.
-- Rollbacks should always re-run `make db.seed` so the deterministic reviewers remain available for smoke suites.
-
-## CI Expectations
-
-- `make test.api` exercises glossary endpoints under auth.
-- `make quality` runs Prisma client type checks, Vitest RBAC unit tests, and Playwright admin flows to guard glossary access.
-- Seed data for glossary lives alongside the CED seed manifest (`make seed`).
-
-````
-
----
-
-### docs/runbooks/auth-rbac.md
-
-````md
-# Auth & RBAC Runbook
-
-This runbook documents the Auth.js + Prisma deployment that powers Atticus phase 3.
-
-## Overview
-
-- **Provider**: Auth.js (NextAuth) with email magic link.
-- **Adapter**: Prisma + Postgres with row-level security (RLS) keyed by `org_id` and role.
-- **Roles**: `USER`, `REVIEWER`, `ADMIN`.
-  - Users and reviewers can read glossary entries scoped to their org.
-  - Admins can invite teammates, promote glossary entries, and manage roles.
-- **Session storage**: Database-backed sessions (`Session` table) with Prisma adapter.
-
-## Environment variables
-
-| Variable                                                                                  | Purpose                                                                         |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                                                            | Postgres connection string used by Prisma and Auth.js.                          |
-| `AUTH_SECRET`                                                                             | Random string used to sign NextAuth cookies/JWT.                                |
-| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME`                                                     | Seed organization for default tenancy.                                          |
-| `ADMIN_EMAIL` / `ADMIN_NAME`                                                              | Bootstrap admin account created by `npm run db:seed`.                           |
-| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery.                                       |
-| `EMAIL_FROM`                                                                              | From address for Auth.js email provider.                                        |
-| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). |
-
-Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible defaults. Override secrets in production.
-
-## Provisioning steps
-
-1. **Start Postgres**
-   ```bash
-   make db.up
-   ```
-2. **Apply migrations**
-   ```bash
-   make db.migrate
-   ```
-3. **Generate Prisma client**
-   ```bash
-   npm run prisma:generate
-   ```
-4. **Seed default org + admin**
-   ```bash
-   make db.seed
-   ```
-   The seed script creates (or updates) the organization referenced by `DEFAULT_ORG_ID` and promotes `ADMIN_EMAIL` to `ADMIN`.
-5. **Run the app**
-   ```bash
-   npm run dev
-   ```
-   Visit `http://localhost:3000/signin`, request a magic link for the admin email, and open the link to access `/admin`.
-
-## Testing
-
-- **Unit**: `npm run test:unit` (Vitest) covers RBAC helpers.
-- **Playwright**: `npm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` is writable before running.
-- **Smoke**: `make web-test` + `make web-e2e` are wired into CI.
-
-## RLS behaviour
-
-- Policies enforce `org_id` scoping for users, sessions, accounts, and glossary entries.
-- Admin-only actions (`INSERT`, `UPDATE`, `DELETE` on `GlossaryEntry`) require the connection role to be `ADMIN`. Service-level operations (NextAuth adapter) run under the `SERVICE` context, set via database defaults, to bootstrap new sessions.
-- Always wrap Prisma calls that rely on user context with `withRlsContext(session, fn)` to set `app.current_user_*` settings.
-
-## Operations
-
-- **Magic link debugging**: When `AUTH_DEBUG_MAILBOX_DIR` is set, each email writes `<email>.txt` containing the latest link. Clear the file to invalidate previous links.
-- **Role changes**: Use Prisma Studio or a SQL client to update `User.role`. RLS allows admins to self-manage via future UI.
-- **Glossary management**: Admins manage terms in `/admin`. Reviewers will gain propose-only permissions in later phases.
-
-## Rollback
-
-1. Stop the Next.js app (`Ctrl+C`).
-2. Revert migrations by restoring the previous database snapshot or running `psql` to drop the new tables/enums if safe.
-3. Reset the workspace by checking out the prior git tag and reinstalling dependencies (`npm install`).
-4. Restore `.env` from backups and restart services.
-
-For emergency disablement, set `NEXTAUTH_SECRET` to an empty value and restart; Auth.js rejects new sessions, effectively putting the UI into maintenance mode while RBAC policies remain intact.
-
-````
-
----
-
-### scripts/rollback.md
-
-````md
-# Rollback Runbook (§7)
-
-1. **Identify the prior release tag.**
-
-   ```bash
-   git fetch --tags
-   git tag --sort=-creatordate | head
-   ```
-
-2. **Checkout the previous release.**
-
-   ```bash
-   git checkout <previous-tag>
-   ```
-
-3. **Restore the matching index snapshot.**
-   - Locate the snapshot in `indexes/snapshots/` stamped with the release timestamp.
-   - Copy it over the active index:
-
-     ```bash
-     cp indexes/snapshots/<snapshot>.json indexes/atticus_index.json
-     ```
-
-4. **Re-pin configuration.**
-   - Verify `pyproject.toml` matches the target tag.
-   - Confirm embedding/LLM identifiers (`text-embedding-3-large`, `gpt-4.1`) in `atticus/config.py`.
-5. **Smoke test with gold queries.**
-
-   ```bash
-   pytest evaluation/harness -k retrieval --maxfail=1
-   ```
-
-   Review `evaluation/runs/YYYYMMDD/` outputs for the top queries (nDCG@10, Recall@50, MRR).
-
-6. **Log the rollback.**
-   - Append the action to `CHANGELOG.md`.
-   - Tag the rollback release (e.g., `v0.1.0-rollback1`) with a short summary of the trigger and outcome.
-
-````
-
----
-
-### seeds/README.md
-
-```md
-# Seeds
-
-The `seed_manifest.json` generated by `make seed` captures a lightweight summary of the
-current CED corpus. It records document fingerprints, chunk counts, and the first set of
-chunks (including SHA-256 hashes) so operators can bootstrap a development database
-without requiring the full ingestion pipeline.
-
-Running `make seed` will:
-
-1. Load configuration from `.env`/`config.yaml`.
-2. Parse up to 10 source documents from `content/` using the CED chunker.
-3. Write `seeds/seed_manifest.json` containing the deduplicated chunk metadata.
-
-The manifest is designed to be checked into CI as an artifact and referenced by
-deployment pipelines or smoke tests that need deterministic seed data.
-
-> **Note:** Table extraction relies on optional dependencies (`camelot`, `tabula`, OpenCV).
-> If they are unavailable the script skips table metadata gracefully; install them for
-> full fidelity in production environments.
-
-## Contributor checklist
-
-- Run `pytest tests/test_seed_manifest.py` to confirm the manifest structure and
-  chunk metadata remain deterministic for CI.
-- Execute `make seed` before opening a PR whenever documents inside `content/`
-  change; commit the refreshed `seeds/seed_manifest.json` if the diff is
-  intentional.
-- Document any new optional dependencies required for seeding inside this file
-  and `REQUIREMENTS.md` to keep onboarding clear.
-
-```
+<!-- End file: TROUBLESHOOTING.md -->
