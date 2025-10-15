@@ -309,3 +309,29 @@ Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.
 
 See [LICENSE](LICENSE).
 
+## Token Count Test
+
+    ```
+    # GPT 4o-mini
+    python scripts/run_token_eval.py `
+        --input "TOKEN_EVAL.xlsx" `
+        --output "reports/4o_mini_ac7070_token_eval_atticus.csv" `
+        --atticus-endpoint "http://localhost:8000/ask" `
+        --model gpt-4o-mini `
+        --tokenizer-model gpt-4o-mini
+    # GPT‑4.1
+    python scripts/run_token_eval.py `
+        --input "TOKEN_EVAL.xlsx" `
+        --output "reports/gpt4_1_ac7070_token_eval_atticus.csv" `
+        --atticus-endpoint "http://localhost:8000/ask" `
+        --model gpt-4.1 `
+        --tokenizer-model gpt-4.1
+
+    # GPT‑5
+    python scripts/run_token_eval.py `
+        --input "TOKEN_EVAL.xlsx" `
+        --output "reports/gpt5_ac7070_token_eval_atticus.csv" `
+        --atticus-endpoint "http://localhost:8000/ask" `
+        --model gpt-5 `
+        --tokenizer-model gpt-5
+    ```

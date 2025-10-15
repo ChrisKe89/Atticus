@@ -1,0 +1,306 @@
+row_index,question,answer,error,prompt_tokens,completion_tokens,total_tokens,response_id,question_tokens,answer_tokens
+0,What is the maximum print resolution of the Apeos C8180?,"The maximum print resolution of the Apeos C8180 is 2,400 x 2,400 dpi (dots per inch) for text-photo and photo modes, and 600 x 600 dpi for text or map modes",,14,46,60,2e58df3d00ac48d292524b15c988d21e,14,46
+1,How many paper trays are included in the base configuration of the Apeos C8180?,"The base configuration of the Apeos C8180 includes four main paper trays, as well as a Multi-Sheet Inserter (MSI) / Bypass Tray (Tray 5) that comes standard with the device. This is confirmed by the product description and specification table, which lists ""4 Paper Trays (TTM)"" and a ""Bypass Tray (150 sheets)"" as standard features in the base configuration",,18,84,102,c4c5a88b29ef44a9bd12ec9a4698693a,18,84
+2,What are the standard network interfaces supported by the Apeos C8180?,"The standard network interfaces supported by the Apeos C8180 are Ethernet 1000BASE-T, 100BASE-TX, 10BASE-T, USB 3.0, and USB 2.0. Wireless LAN (IEEE 802.11 a/b/g/n/ac) is available as an optional interface (Context).",,15,67,82,53e257944f4b426fbc10f1a5fed05777,15,67
+3,"Is wireless connectivity available on the Apeos C8180, and under what conditions?","Yes, wireless connectivity is available on the Apeos C8180, but it requires the use of an optional Wireless Network Kit (Dongle). To use wireless connectivity, customers must have a working wireless network and provide the necessary network information (SSID, encryption type, and passphrase) for setup. The device can connect wirelessly to an access point or enable Wi-Fi Direct® printing capability. However, the Wireless Network Kit cannot connect to access points using IEEE802.11b, does not support the 192-bit option of WPA3 Enterprise, and does not support Wi-Fi Ad-hoc mode. The range is dependent on the device and router location, with an assumed interference distance of 40 meters or less. Customers are responsible for maintaining their network and ensuring ongoing compatibility if network changes occur. For printing and scanning via Wi-Fi Direct, the FBAU Print Utility app must be used, and only up to three devices can connect concurrently via Wi-Fi Direct with the kit installed. Additional limitations apply to mobile printing and network configurations, as detailed in the product documentation",,17,214,231,0bf98f92f0434c4eaa67db0ed9a1e987,17,214
+4,What network protocols are supported for printing on the Apeos C8180?,"The Apeos C8180 supports printing via several network protocols, including LPD (Line Printer Daemon), port 9100 (commonly known as RAW printing), SNMP (Simple Network Management Protocol), and HTTP. These protocols are available on both the standard and secondary Ethernet interfaces, although some limitations apply to the secondary Ethernet (e.g., Internet fax and IP fax are not supported, and certain cloud print services are unavailable). Additionally, the device supports printing over Ethernet (1000BASE-T/100BASE-TX/10BASE-T) and can be optionally configured for wireless LAN (IEEE 802.11 a/b/g/n/ac) connectivity. Printing using the IPP protocol is not supported on the secondary Ethernet interface, and some features require manual IP configuration when using Mac OS X or mobile print utilities",,15,163,178,16a81451b1854634a1a27b83c21cdcf3,15,163
+5,Which operating systems are compatible with the Apeos C8180 printer driver?,"The provided context does not specify which operating systems are compatible with the Apeos C8180 printer driver. For detailed compatibility information, it is recommended to consult the official FUJIFILM Business Innovation Australia website or contact your FBAU sales representative, as suggested in the document for further questions regarding product specifications and support (see context:
+
+""If you have any further questions after reading this document, please contact your FBAU sales representative who will be happy to assist you."").",,15,96,111,8e3ec0734f144110be941d8c8b08b3f6,15,96
+6,Does the Apeos C8180 support Adobe PostScript 3 as standard or optional?,"The Apeos C8180 supports Adobe PostScript 3 as an optional feature, not as standard. The documentation lists ""Adobe PostScript 3 Kit"" as an option, and the ""Adobe PostScript3 Label Kit"" is described as a mandatory option for the Adobe PostScript 3 Kit, confirming that Adobe PostScript 3 functionality requires the purchase of an additional kit and is not included by default (""Adobe PostScript 3 Kit | Option""; ""Adobe PostScript3 Label Kit | Mandatory Option for Adobe PostScript 3 Kit"").",,18,110,128,967708bc86d1493ca9d852bb5c746a2b,18,110
+7,What file formats are available for colour scans on the Apeos C8180?,"The Apeos C8180 supports colour scans in the following file formats:
+
+TIFF, JPEG, DocuWorks documents, PDF, and Highly compressed PDF formats (Context Snippet: ""Full colour: TIFF, JPEG, DocuWorks documents*1, PDF*1, Highly compressed PDF*1"").",,16,62,78,7515f54463834fb4adb236c5245fa8b2,16,62
+8,What is the maximum scanning speed for colour duplex scans on the Apeos C8180?,"The maximum scanning speed for colour duplex scans on the Apeos C8180 is 270 pages per minute (ppm) when using the Duplex Automatic Document Feeder (DADF) in 1-pass, 2-sided scanning mode, with standard documents (A4), at 200 dpi, to folder. This speed applies to both black and white and colour scanning in duplex mode[^1^].
+
+[^1^]: ""Scan Speed: B/W: 135 ppm, Colour: 135 ppm (1 pass, 2 sided scanning; B/W: 270 ppm, Colour: 270 ppm) (Standard Document (A4), 200 dpi, to Folder.)""",,18,137,155,1c8cf2d313bf4f75837d775fc50271e7,18,137
+9,Which network protocols does the Apeos C8180 support for scan-to-folder?,"The Apeos C8180 supports the following network protocols for scan-to-folder:
+
+**TCP/IP (WebDAV, HTTP)**. These protocols are used when scanning documents to a network folder. For scan-to-PC functionality, it also supports **TCP/IP (SMB, FTP)** protocols. This allows flexibility in sending scanned files to various network destinations depending on your setup and requirements (see ""Network Scanner Specifications"" section)",,16,84,100,364f9b096a594cb38d5fa0f79b53f86b,16,84
+10,What scanning resolutions are available on the Apeos C8180 network scanner?,"The Apeos C8180 network scanner supports scanning resolutions of 600 x 600 dpi, 400 x 400 dpi, 300 x 300 dpi, and 200 x 200 dpi. These resolutions are available for network scanning functions such as scan to folder, scan to PC, and scan to email, and are consistent with the device's copy and basic scanning functions",,15,76,91,c4b3889bfd6441e0b226d527f0cb6369,15,76
+11,What scanning resolution does the Apeos C8180 support?,"The Apeos C8180 supports scanning resolutions up to 600 x 600 dpi, as indicated in the product overview and fax specifications sections of the document. This resolution applies to both copying and scanning functions, ensuring high-quality image capture for various document types (Context).",,12,54,66,7b59903c88a04908a04eab4b1388c0f7,12,54
+12,What fax transmission speed does the Apeos C8180 support at high-speed mode?,"The Apeos C8180 supports a fax transmission speed of up to 33.6 kbps in high-speed (G3) mode, as indicated in the context:
+
+""G3: 33.6 / 31.2 / 28.8 / ..."".",,17,55,72,7bd58d0772104f7889ec7309fb66d2cd,17,55
+13,What finishing options are available for the Apeos C8180?,"The Apeos C8180 offers several finishing options, including the C5 Finisher with Booklet Maker and the D6 Finisher with Booklet Maker. These finishing devices provide advanced capabilities such as booklet making, which can be essential for producing professional-quality documents. The specific features and configurations available may vary, so it is recommended to consult the detailed product documentation or your FUJIFILM Business Innovation Australia sales representative for further information on the full range of finishing options supported by the Apeos C8180 (Context).",,13,105,118,8805607ca9794c94acda59cfcbb1ddbe,13,105
+14,What is the maximum capacity of the Offset Catch Tray on the Apeos C8180?,"The maximum capacity of the Offset Catch Tray (OCT) on the Apeos C8180 is 500 sheets of 80gsm paper. However, this capacity is for papers up to 488mm in length; for longer papers, the capacity is not guaranteed, and it is recommended to remove them manually one by one. Additionally, the Catch Tray Fan Kit is mandatory to prevent paper sticking due to heat",,18,82,100,e796f1edc7c34fce9e6254b2f1a36619,18,82
+15,Which finishing device for the Apeos C8180 requires the Interface Decurler Module D1?,"The Finisher D6 with Booklet Maker requires the Interface Decurler Module D1 as a mandatory option for the Apeos C8180 (""Interface Decurler Module D1 | QD200137 | Mandatory option for Finisher D6 w/ Booklet Maker."").",,20,57,77,8585715c7b7749618fd6e9c18afeccb7,20,57
+16,What folding types are supported by the Folder Unit CD3 on the Apeos C8180?,"The Folder Unit CD3 on the Apeos C8180 supports two folding types:
+
+Tri-fold and Z fold half sheet. Tri-fold is available for A4 and Letter sizes, while Z fold half sheet is available for A3, 11×17, and B4 sizes. Both folding types are supported only for uncoated papers within specified weight ranges (64–90 gsm recommended) [Folder Unit CD2/3 specifications].",,19,88,107,a3ab142e8c4d4c22851ad074ab76930c,19,88
+17,What is the maximum banner print length supported by the Apeos C8180?,"The maximum banner print length supported by the Apeos C8180 is 1,300 mm (or 1300mm) when using the appropriate output tray or extension kit. The device supports banner printing up to this length, as specified for long paper and banner print applications",,16,55,71,058f787a65ef42a2aa568c5e1409ebb4,16,55
+18,What encryption standard does the Apeos C8180 use for data security?,The Apeos C8180 uses AES 256-bit encryption as its standard for data security,,15,18,33,6929d7abe631404ab0face6787c3f14b,15,18
+19,Does the Apeos C8180 include a data overwrite function by default?,"No, the Apeos C8180 does not include a data overwrite function by default. The standard data security features include AES 256-bit encryption, but the data overwrite functionality is excluded. To enable data overwrite, you must purchase the Data Overwrite Kit (EC104193) as an additional option. This kit replaces the standard SDD with a SATA HDD and enables 1 or 3 pass overwrite functions",,15,82,97,a7bc2249e30f44a7933aee336aa8d8c3,15,82
+20,What add-on software kits are available for the Apeos C8180?,"The Apeos C8180 supports several add-on software kits to enhance its functionality. These include:
+
+1. **External Access Kit**: Enables uploading of scanned documents and direct printing by accessing web applications via a custom browser on the device’s UI panel.
+
+2. **Scan Delivery Kit**: Automates scanning and sending of documents to various destinations. This kit is customer installable but may require remote or onsite support for configuration, especially for multiple scan destinations.
+
+3. **Copy Management Expansion Kit**: Expands copy management capabilities.
+
+4. **Data Overwrite Kit**: Provides data security by enabling data overwriting.
+
+5. **Secure Watermark Kit**: Adds copy prevention features through secure watermarking.
+
+6. **Image Log Kit**: Enables image logging for security and auditing purposes.
+
+7. **Image Log Kit with Adobe PostScript 3**: Adds Adobe PostScript 3 support to image logging.
+
+8. **Fax Kit 3**: Adds fax functionality, including direct fax, internet fax, and additional fax lines.
+
+9. **IP FAX [SIP] Kit**: Enables IP faxing using SIP protocol.
+
+10. **EPSV (Electronic Partnership SuperVisor) Kit**: Interfaces with external cost recovery devices for account management. These kits allow customization of the device to meet specific business needs, such as enhanced security, advanced scanning, and integration with external systems",,15,282,297,456a59957fe540c5841fd8902acf48a8,15,282
+21,What is the storage device capacity in the base configuration of the Apeos C8180?,The storage device capacity in the base configuration of the Apeos C8180 is a 128GB Solid State Drive (SSD) that is shared for system operations and storage purposes,,18,35,53,85a0d38dbd9942edba31017d00753b8a,18,35
+22,What is the designed AMPV (Average Monthly Print Volume) for the Apeos C8180?,"The designed AMPV (Average Monthly Print Volume) for the Apeos C8180 is 35,000 A4 equivalent impressions per month. Working outside this range may affect machine performance, and consistent operation above the maximum AMPV should prompt consideration of additional or higher-capacity devices",,20,56,76,ed47ba33b3934702a93a5972a4689299,20,56
+23,How can a customer enable Data Overwrite functionality on the Apeos C8180?,"To enable Data Overwrite functionality on the Apeos C8180, the customer must purchase and install the Data Overwrite Kit (EC104193) as an additional option. The standard device includes AES 256-bit encryption for data security but does not provide data overwrite by default. Installing the Data Overwrite Kit replaces the standard SSD with a SATA HDD and enables 1 or 3 pass overwrite functions, ensuring that data is securely erased from the device. This kit is not included as standard and must be ordered separately for full data overwrite capability (Context Snippet 9, *2).",,17,118,135,6ce83306223b453d867a58c032374c03,17,118
+24,What are the electrical requirements for the Apeos C8180?,"The electrical requirements for the Apeos C8180 are as follows:
+
+- **Nominal Voltage:** AC 220-240V ±10%
+- **Amperage Circuit:** 10 A
+- **Frequency:** 50/60 Hz
+- **Plug/Receptacle:** The plug/receptacle should be prepared by the customer.
+- **Placement:** The device should be placed within 3 metres of wall outlets, and the power cord must have sole use of the circuit (the outlet/circuit cannot be shared with other devices).
+- **Optional Devices:** Most optional feeding and finishing devices require their own 210-240 VAC country-specific power receptacles and must be plugged into outlets separate from the printer. Each accessory may have specific amperage requirements (e.g., High Capacity Feeder C3-DS requires 4.0-3.0 A at 240V ±10%).
+- **Surge Protection:** Use surge protection only as required, and it is the customer’s responsibility.
+
+These requirements must be satisfied before equipment delivery to ensure proper installation and operation of the Apeos C8180 and its accessories",,13,227,240,7d4261a98f594bc888ab2118e960260b,13,227
+25,What service-space clearances are recommended for installing the Apeos C8180?,"For installing the Apeos C8180, the recommended service-space clearances are as follows:
+
+- **Rear of MFD:** 250 mm (movable configuration) or 610 mm (non-movable configuration)
+- **Front of MFD:** 1020 mm
+- **Left of MFD:** 330 mm
+- **Right of MFD:** 330 mm (movable) or 610 mm (non-movable)
+
+Additionally, the minimum overhead clearance (floor to ceiling) must be 2,000 mm, and these clearances are based on Occupational Health and Safety (OH&S) standards to allow safe operation and servicing. The actual site width and depth required will depend on the specific configuration of the device and its options, as detailed in the configuration dimensions table",,16,159,175,0b0000ce3dae4659b4e2299861b40bed,16,159
+26,What environmental requirements apply to the operation of the Apeos C8180?,"The environmental requirements for operating the Apeos C8180 are as follows:
+
+- **Temperature:** The minimum operating temperature is 10°C, and the maximum is 32°C. However, for optimal performance, it is recommended to maintain the temperature between 20°C and 24°C. Note that if the temperature exceeds 32°C, the relative humidity must be reduced to maintain optimal performance.
+- **Relative Humidity (RH):** The acceptable range is 15% to 85%, with a recommended level of 45%.
+- **General Installation:** The device should not be exposed to direct sunlight, external heat
+
+, excessive dust, or vibration. It should not be operated in a poorly ventilated room.
+
+These conditions help ensure consistent performance, image quality, and reliability of the device",,15,159,174,815ddd160b814220b236be2c4994e6de,15,159
+27,What is the maximum noise emission of the Apeos C8180?,"The maximum noise emission of the Apeos C8180, measured as the A-weighted radiated sound pressure level (LpAm), is 60.6 dB during operation, according to the provided data. This value is based on the full system configuration and represents the highest referenced operating noise level for this model",,14,63,77,ad88da272ba04c2aadbc9f8aeb42d02e,14,63
+28,What are the temperature and humidity requirements for installing the Apeos C8180?,"The Apeos C8180 should be installed in an environment with a temperature range of 10°C to 32°C, with optimal performance achieved between 20°C and 24°C. If the temperature exceeds 32°C, the relative humidity should be reduced to maintain optimal performance. The acceptable relative humidity (RH) range is 15% to 85%, with a recommended RH of 45% for best results. These conditions help ensure consistent performance and image quality from the device",,16,97,113,dafbfb4b59cb4415a72e73971ea38e21,16,97
+29,What components of the Apeos C8180 are classified as Customer Replaceable Units (CRUs)?,"The components of the Apeos C8180 classified as Customer Replaceable Units (CRUs) are:
+
+- Drum Cartridges (Black and Colour)
+- Toner Cartridges (Black, Cyan, Magenta, Yellow)
+- Waste Toner Bottle
+- Staple Cartridges (various types, depending on the finisher installed)
+
+These items are designed to be replaced by the customer as needed, and initial supplies are provided with the device. Consumables such as toner and staples can be ordered directly by the customer, while the yield rates for each CRU are specified in the documentation (see context) for planning and maintenance purposes.",,20,131,151,84768c4c545341f4ae21dacc7ad80f33,20,131
+30,What is the toner cartridge yield rate for the Apeos C8180?,"The toner cartridge yield rate for the Apeos C8180 is as follows, based on A4 LEF size paper at 5% area coverage per colour:
+
+- Black Toner Cartridge (CT203450): 37,600 impressions per cartridge (the device comes standard with 2 cartridges, totaling 75,200 impressions)
+- Cyan Toner Cartridge (CT203451): 39,700 impressions
+- Magenta Toner Cartridge (CT203452): 39,700 impressions
+- Yellow Toner Cartridge (CT203453): 39,700 impressions
+
+All yields are per cartridge and are customer-replaceable items",,15,128,143,8e86a79d99524074b7d2066ddefea4f4,15,128
+31,How are billing meters captured on the Apeos C8180?,"Billing meters on the Apeos C8180 can be captured automatically if the customer has a current support services agreement with FBAU and the device and network are compatible with FBAU’s automated meter capture technology. This service eliminates the need for manual meter read submission. If the device or network is not compatible, customers must manually submit meter readings, which can be viewed on the control panel display screen. The billing meters track colour impressions, black impressions, and colour large impressions, with counts incrementing based on page size (up to four counts per page depending on width)",,13,115,128,b2b71e17984d4fbda02f783a89f20ee2,13,115
+32,What data does the automated meter capture service collect from the Apeos C8180?,"The automated meter capture service for the Apeos C8180 collects data on device usage for billing purposes. Specifically, it captures:
+
+- **Colour impressions (Meter 1):** Total output for all prints in colour, with the billing meter incrementing based on page size (up to 4 counts per page).
+- **Black impressions (Meter 2):** Total output for all prints in black, also incrementing based on page size (up to 4 counts per page).
+- **Colour Large impressions (Meter 3):** Total output for colour prints larger than 297mm x 400mm up to 330mm x 567mm.
+- **Total impressions (Meter 4):** The sum of colour and black impressions, though this meter is not reported for billing.
+
+This data is collected automatically if the device and network are compatible with FBAU’s meter capture technology, eliminating the need for manual meter reading submissions",,17,188,205,e1028653ca7c43d4a3f746a5a1d61218,17,188
+33,What is the maximum AMPV for the Apeos C7580?,"The maximum Average Monthly Print Volume (AMPV) for the Apeos C7580 is 70,000 pages per month (70K) [Context].",,14,32,46,b8593542d7ff421491e2be9419e3835d,14,32
+34,What should a customer do if their network is not compatible with meter capture on the Apeos C8180?,"If a customer's network is not compatible with the automated meter capture technology on the Apeos C8180, they are required to manually submit their meter readings for billing purposes. The billing counters can be viewed directly on the device's control panel display screen, and customers must report these readings as part of the billing process",,22,62,84,5daa6c77d7b145a6935776d567ef3299,22,62
+35,What limitations apply to printing from USB on the Apeos C8180?,"Printing from USB on the Apeos C8180 has several limitations:
+
+- Only PDF, TIFF, and XPS files can be printed from USB memory in media Text mode.
+- Supported file systems are FAT12, FAT16, FAT32, and VFAT; NTFS and exFAT are not supported.
+- JPEG files can be printed if the DCIM folder from a digital camera is copied to the USB root directory (media Photo mode).
+- The optional USB Memory Kit is required for this feature.
+- Text mode printing results in low image quality.
+- USB memory devices encrypted with software cannot be used.
+- The internal Auditron can restrict access to USB Media Print, but access control applies only to the MFD, not to individual users.
+- Only USB devices compatible with USB 2.0 and up to 128GB capacity are supported.
+- Jobs are stored in the root directory of the USB device.
+- For further details, refer to the product User/Administrator Guide “Configuration of Store to USB”",,15,205,220,b0ac5d92d17c4b898b6ef201853ea075,15,205
+36,Does the Apeos C8180 support AirPrint and Mopria printing?,"Yes, the Apeos C8180 supports both AirPrint and Mopria printing. AirPrint enables printing from Apple devices on a network without needing to download software or drivers, and is supported on iOS 6 or later and MacOS X 10.8 or later. Mopria allows printing from Mopria-certified Android devices without installing manufacturer-specific apps, but requires the Mopria Print Service app (supported on Android 4.4 or later) and does not work over Bluetooth or cellular connections. Both services have specific limitations and requirements as detailed in the product documentation",,15,114,129,63e384e644a5458484840bd3952839b3,15,114
+37,What limitations apply to Scan to Word/Excel functionality on the Apeos C8180?,"The ""Scan to Word/Excel"" functionality on the Apeos C8180 has several limitations:
+
+1. **Advanced Scan Kit Required**: This feature is only available if the optional Advanced Scan Kit is installed.
+
+2. **OCR Accuracy**: The Optical Character Recognition (OCR) technology used is not 100% accurate. Errors in text recognition, layout discrepancies, and color differences may occur in the generated Word, Excel, or searchable PDF documents compared to the original scanned document.
+
+3. **Manual Verification Needed**: Customers are advised to check the converted documents against the originals and manually correct any discrepancies.
+
+4. **Software Compatibility**: Use with the Mac OS version of Microsoft Office (Word/Excel) and Microsoft Word/Excel 2000 is not guaranteed, meaning functionality may be limited or unsupported on these platforms. These limitations mean that while the feature can be useful, it may require additional manual effort to ensure accuracy and may not work in all software environments [Context, p. 40].",,18,202,220,ef2cffc6c58b4004a740116d4a2273a0,18,202
+38,Can the Apeos C8180 connect to two networks simultaneously?,"Yes, the Apeos C8180 can connect to two separate network environments simultaneously by using the Secondary Ethernet Kit (EC103656). This allows the device to be connected to both a private and a public network at the same time. However, there are limitations:
+
+only certain protocols (LPD, port 9100, SNMP, and HTTP) are supported on the secondary Ethernet connection, and features such as Internet fax, IP fax, Mopria, Google Cloud Print, and some scanning functions are not available on the secondary network. Additionally, common settings are shared between the standard and secondary Ethernet connections, and some configurations (like IPv6 DNS) cannot be set automatically on the secondary Ethernet (see ""Secondary Ethernet Limitations"")",,13,147,160,3020599b69024696ab652149f2f7c5a3,13,147
+39,What limitations exist for banner printing on the Apeos C8180?,"Banner printing on the Apeos C8180 has several limitations:
+
+1. **Tray and Feeding Restrictions**: Banner printing is only possible via the Multi Sheet Inserter tray. Feeding coated long papers from the Bypass tray may cause mis-feeding, so it is recommended to feed such paper one by one. The Bypass tray does not guarantee reliable feeding for multiple sheets of long paper (length >488.1 mm) and registration is not guaranteed for stock longer than 488 mm or when using the Bypass tray [Context].
+
+2. **Paper Specifications**: Supported banner sizes are up to 330 x 1300 mm. Paper weight ranges from 52 to 220 gsm for uncoated and 106 to 220 gsm for coated paper. Banner sheets less than 210 mm in width will not stack properly in the Long Catch Tray [Context].
+
+3. **Output and Stacking**: The Long Catch Tray can hold up to 100 sheets for lengths 488.1–729 mm and only 10 sheets for 729.1–1300 mm (based on 82 gsm paper). The paper holding capacity for long sheets is not guaranteed, and users are advised to remove sheets promptly to avoid stacking issues [Context].
+
+4. **Finishing Limitations**: Finishing features such as stapling, folding, punching, and trimming are not supported for long banner paper. Only basic output is available for banners [Context].
+
+5. **Productivity and Quality**: There is an increased risk of paper jams, creasing, and wrinkling with sheets longer than 488 mm. Registration and image alignment are less precise on long sheets, and image losses may occur depending on image placement. Productivity may decrease due to the need for manual intervention and slower processing [Context].
+
+6. **General Handling**: The Banner Print Extension Kit must be set up correctly, and the tray should be angled as specified. For long banners, manual removal is recommended due to stacking limitations. Environmental factors and paper characteristics can further impact reliability and print quality [Context]. In summary, banner printing on the Apeos C8180 is subject to tray, paper, stacking, finishing, and productivity limitations, especially for longer or coated sheets. Careful handling and adherence to guidelines are required for optimal results.",,14,464,478,6eafea785fba423a8f46b289d99de192,14,464
+40,What is the expected recovery time from sleep mode for the Apeos C8180?,"The expected recovery time from sleep mode for the Apeos C8180 is 30 seconds or less at a room temperature of 23 degrees Celsius (see context table:
+
+""from Sleep mode...30 seconds or less (23 degrees Celsius room temperature)"").",,17,50,67,605b5c470b7740cf9819b732f1cdd038,17,50
+41,What warm-up time is expected at room temperature for the Apeos C8180?,"The expected warm-up time for the Apeos C8180 at room temperature is 6 seconds, as indicated in the specifications under ""Warm-up Time"" for the model Apeos C8180/C7580/C6580 [Embedded Plug-ins / Custom Services]",,17,53,70,6b04b76e9808407d8fb2617f4e9ac420,17,53
+42,What fax protocols are supported by the Apeos C8180?,"The Apeos C8180 supports several fax protocols depending on the fax function in use:
+
+1. **Standard Fax Function:** It is designed to meet the T.30 protocol as set by ITU-T Recommendations, which specifies facsimile operation over the public switched telephone network (PSTN)
+
+2. **Internet Fax Function (Optional):** Uses SMTP for transmission and SMTP/POP3 for reception, with file formats such as TIFF-FX
+
+3. **IP Fax (SIP) Function (Optional):** Supports SIP and JT-T.38 protocols for IP-based faxing G4 fax (ISDN) is not supported, and faxing over VoIP/FoIP cannot be guaranteed unless the network is configured for optimum fax protocol, preferably T.38 with redundancy",,13,157,170,64b1bbbafbf1492faf98a1bf25b61c61,13,157
+43,What is the capacity of the Duplex Automatic Document Feeder (DADF) on the Apeos C8180?,"The Duplex Automatic Document Feeder (DADF) on the Apeos C8180 has a capacity of 250 sheets [Context, p. 6].",,23,32,55,d4e9cd1317d84777b854608d7728e377,23,32
+44,What is the duty cycle rating for the Apeos C6580?,"The duty cycle rating for the Apeos C6580 is 342,000 impressions per month. This represents the maximum rated print volume capacity of the device for a given month and is not expected to be sustained on a regular basis",,14,46,60,485f7b10d3fa4767a569629e5649f5f3,14,46
+45,Which optional finishing unit for the Apeos C8180 supports saddle-stitch booklet making?,"The optional finishing units for the Apeos C8180 that support saddle-stitch booklet making are the Finisher D6 with Booklet Maker and the Finisher C4/C5 with Booklet Maker. Both units are specifically mentioned as being capable of saddle stapling (saddle-stitch booklet making) up to 30 sheets (Finisher D6) and 24 sheets (Finisher C4/C5) respectively, as indicated in the provided context (""Finisher D6 with Booklet Maker only"" and ""Finisher C4/C5 with Booklet Maker only"") and under the ""Saddle Stapling"" options.",,18,128,146,cd1dbb32d140485a93b8c4f2c134b921,18,128
+46,How long is the rated machine life for the Apeos C8180?,The rated machine life for the Apeos C8180 is 4.2 million A4 equivalent impressions (4.2M) [Context snippet 7].,,15,33,48,7ffdfa02915243d6aede06ef790d7c7a,15,33
+47,What is the rated print speed of the Apeos C8180 in ppm for both colour and monochrome?,"The rated print speed of the Apeos C8180 is 81 pages per minute (ppm) for both colour and monochrome (black and white) printing when using A4 LEF or JIS B5 LEF paper sizes. For other sizes and job types, actual speed may vary due to operational adjustments and settings (see ""Continuous Copy Speed"" and ""Rated Print Speed /ppm"")",,22,80,102,1153789e38c645aeaff7e2ae3e75a5f0,22,80
+48,What paper weights are supported in the paper tray of the Apeos C8180?,"The paper trays of the Apeos C8180 support the following paper weights:
+
+- For uncoated paper: 52–300 gsm
+- For coated paper: 106–300 gsm
+
+These weight ranges apply to the standard paper trays (Trays 1, 2, 3, and 4). The bypass tray also supports uncoated paper from 52–300 gsm and coated paper from 106–300 gsm, except for long paper, where the maximum is 220 gsm for both uncoated and coated types. Optional high-capacity feeders (HCF B1-S and HCF C3-DS) can support up to 300 gsm (B1-S) or 350 gsm (C3-DS) for both uncoated and coated paper, depending on the module used",,17,166,183,098ee77bad99461489aa86cc437fca95,17,166
+49,What are the available high-capacity feeder options for the Apeos C8180?,"The available high-capacity feeder options for the Apeos C8180 are:
+
+1. **High Capacity Feeder B1**: This feeder has a capacity of 2,000 sheets (A4 size) in a single tray (Part Number: QC100223) [context].
+
+2. **High Capacity Feeder C3-DS**: This feeder is compatible with the Apeos C8180 and has physical dimensions of 988.0 mm (width) x 762.0 mm (depth) x 992.0 mm (height), with a weight of 199 kg [context]. Both feeders are designed to increase the paper input capacity for high-volume printing environments.",,17,139,156,7fd2cd9fcda948f4a80dc0495e70f321,17,139
+50,What is the maximum print resolution of the Apeos C7070?,"The maximum print resolution of the Apeos C7070 is 1,200 x 2,400 dpi (dots per inch) [Context].",,14,30,44,9c649bcfc5064268a07e3e9c610218e8,14,30
+51,What paper weights can the trays of the Apeos C7070 support?,"The trays of the Apeos C7070 support paper weights up to a maximum of 300 gsm. Specifically, the standard paper trays can handle a range of paper weights, with the side tray and duplex output unit both supporting 52 to 300 gsm. Optional high-capacity feeders (HCF-B1 and HCF-B2) support 55 to 216 gsm, while the envelope tray supports 75 to 90 gsm for envelopes and 106 to 220 gsm for postcards. For duplex printing, uncoated paper between 221 and 300 gsm is supported. Always refer to the device’s reference guide for details on specific tray and media compatibility (see context above).",,15,138,153,d8d2bfb8b8ca4851b7f2392adb787d7b,15,138
+52,What network protocols does the Apeos C7070 support for printing?,"The Apeos C7070 series supports printing over several network protocols, including LAN (wired Ethernet), Wi-Fi (wireless network), and Wi-Fi Direct (with limitations). It also supports mobile printing protocols such as AirPrint, Mopria, and Google Cloud Print 2.0. For Wi-Fi Direct, printing is only supported via the FBAU Print Utility on Android or iOS, and not all mobile printing protocols are available through Wi-Fi Direct. Additionally, NFC Touch-to-Print is supported for compatible devices. Connection methods can be selected from LAN1, LAN2, and Wi-Fi when registering devices with CentreWare Internet Service (CWIS) [Context, p. 36].",,14,141,155,96b7e5d3562d4b7995ed6a55d496edfc,14,141
+53,What hardware interfaces are supported on the Apeos C7070?,"The Apeos C7070 supports Gigabit Ethernet as a hardware interface. Additionally, it can be equipped with a USB Memory Kit, which allows for USB connectivity via a connector on the left side of the operation panel (context).",,13,46,59,6e8c0e2446754242be9e8c3cdf7acb54,13,46
+54,Does the Apeos C7070 support Wi-Fi connectivity?,"Yes, the Apeos C7070 supports Wi-Fi connectivity through the use of an optional Wireless Network Kit (Dongle). This kit enables the device to connect wirelessly to an access point and also provides Wi-Fi Direct printing capability. Customers must have a working wireless network and are responsible for providing network details for setup. The Wireless Network Kit does not require an additional power source and its range depends on the device and router location, with an assumed interference distance of 40 meters or less. For further details, users are advised to refer to the FBAU Wireless Network Kit setup guide or contact customer support",,12,121,133,b5bd309bc1dd4bd3a787edfc15a4379b,12,121
+55,Which authentication protocols are supported on the Apeos C7070?,"The Apeos C7070 supports password authentication for SFTP when creating a job flow via CentreWare Internet Services (CWIS). It does not support public key authentication for SFTP. Additionally, remote authentication is available, but authenticated printing is not supported via AirPrint. For more advanced authentication options, such as card readers and authentication terminals, compatibility depends on the FBAU Software Solution and the correct type of reader and terminal combination for your environment (see context for details)​[context]​.",,13,100,113,d89be8ae1f5a4a78aeec6c4cf2dd2d5d,13,100
+56,Is ThinPrint supported on the Apeos C7070?,"Based on the provided context, there is no mention of ThinPrint support for the Apeos C7070. The context lists features such as AirPrint compatibility and details about media handling, but ThinPrint is not referenced. Therefore, it cannot be confirmed from the given information that ThinPrint is supported on the Apeos C7070.",,12,67,79,b01ac44859a945cc99266e07ca3f1ab2,12,67
+57,What is the maximum scanning speed for the Apeos C7070 using the DADF C2-PC?,"The maximum scanning speed for the Apeos C7070 using the DADF C2-PC is 135 sheets per minute (spm) for simplex scanning and 270 images per minute (ipm) for duplex scanning, for both black-and-white and colour documents (A4 LEF, 200 dpi, store to folder) [Context, p. 12].",,21,75,96,aa03fa81bfbd435ca0f778a3e44a6fbf,21,75
+58,Which duplex document feeder is standard on the Apeos C7070?,"The Duplex Automatic Document Feeder C2-PC (Single Pass) is standard on the Apeos C7070 model. This is specified in the context:
+
+""The Duplex Automatic Document Feeder C2-PC is standard on C7070/C6570 and also available on the C5570 and C4570 models when pre-configured""",,14,67,81,d2dc9b0c64cc44339c5369d4f5213e95,14,67
+59,What file formats are supported for colour scans on the Apeos C7070?,"The Apeos C7070 supports the following file formats for colour scans:
+
+TIFF, JPEG, DocuWorks, PDF, and High Compression formats (such as High Compression DocuWorks and High Compression PDF) [Context, Q: What file formats are supported for colour scans?; Scan Function section].",,16,62,78,ca246ed21cee4c499f82b30d35c571c8,16,62
+60,Which optional kit enables scanning to Microsoft Word or Excel formats on the Apeos C7070?,"The optional kit that enables scanning to Microsoft Word or Excel formats on the Apeos C7070 is the **Advanced Scan Kit**. This kit is required for the ""Scan to Word/Excel"" features, allowing the device to create files in Microsoft Word and Excel formats, as well as searchable PDF format (Context).",,19,64,83,d89d59fe4b084745a50826ade7e78d2d,19,64
+61,What scanning resolution does the Apeos C7070 support?,"The Apeos C7070 supports scanning resolutions up to 600 x 600 dpi, with additional selectable resolutions of 400 x 400 dpi, 300 x 300 dpi, and 200 x 200 dpi. This applies to both color and monochrome scanning functions (context).",,12,58,70,16c7319db3284e7db2d1441c8d2c165e,12,58
+62,What scanning resolutions are supported on the Apeos C7070?,"The Apeos C7070 supports scanning resolutions of 600 x 600 dpi, 400 x 400 dpi, 300 x 300 dpi, and 200 x 200 dpi. These resolutions apply to both colour and monochrome scanning modes, providing flexibility for various scanning needs (see ""Scanning Resolution | 600 x 600dpi, 400 x 400dpi, 300 x 300dpi, 200 x 200dpi"") and are consistent with the device’s fax function scanning capabilities (""Scanning Resolution | Same as the fax function"") [Context].",,13,115,128,c6a2e2468bf64133b0aac551ee78dca2,13,115
+63,Which finishing units are compatible with the Apeos C7070?,"The Apeos C7070 is compatible with the standard Side Tray finishing unit. However, the Finisher-A2 is not supported on the Apeos C7070 (nor the C6570) models, as explicitly noted in the documentation:
+
+""The optional A2-Finisher cannot be installed on Apeos C7070/C6570 models."" Therefore, only the Side Tray is confirmed as compatible based on the provided context (see context snippet).",,13,90,103,8073514182a244d59c7ce46f87e17686,13,90
+64,What paper-weight range is supported by the B4/B5 Finisher on the Apeos C7070?,"The B4/B5 Finisher on the Apeos C7070 supports paper weights ranging from 52 to 300 gsm, depending on the finishing function being used (e.g., saddle-stapling, half-folding, or single-folding) [see context, p. 16].",,22,60,82,b82596db3d724c76aac6d3e51becdb77,22,60
+65,Which finishing units for the Apeos C7070 support staple-free stapling?,"For the Apeos C7070, the finishing units that support staple-free stapling are the B5-Finisher and the C5-Finisher. The documentation specifies:
+
+""Both stapled stapling and staple-free stapling are available with Finisher-B5 only,"" and also notes that the C5-Finisher supports the Staple Free Feature across all models, including the C7070 (see context, C4/C5-Finisher with Booklet Maker section). The A2-Finisher does not mention staple-free stapling support.",,16,113,129,e360451952b8499492c24e1c0ab68f62,16,113
+66,What is the maximum stacking capacity of the Finisher-B5 on the Apeos C7070?,"The maximum stacking capacity of the Finisher-B5 on the Apeos C7070 is 2,000 sheets. This is confirmed by the specification:
+
+""Finisher B5*1 | Stores up to 2,000 sheets. Up to 50 sheets stapling"" (see context snippet: ""QC100206 | Finisher B5*1 | Stores up to 2,000 sheets. Up to 50 sheets stapling and"").",,20,91,111,66b196ebc6ae4f0089eace89c448fd35,20,91
+67,Can the Apeos C7070 use the Finisher-A2?,"No, the Apeos C7070 cannot use the Finisher-A2. The documentation specifically states, ""The optional A2-Finisher cannot be installed on Apeos C7070/C6570 models"" (see context snippet:
+
+""Note: The optional A2-Finisher cannot be installed on Apeos C7070/C6570 models.""). Therefore, the Finisher-A2 is not supported on the Apeos C7070.",,14,91,105,b27a5c99bc74475bbc0d1f308f6e5d7a,14,91
+68,What level of data encryption does the Apeos C7070 use?,The Apeos C7070 series uses AES 256-bit encryption for data security (Context).,,14,19,33,6b281b01df4f4f9eb43b72b9d86fe19f,14,19
+69,Which optional kit enables Data Overwrite functionality on the Apeos C7070?,"The optional kit that enables Data Overwrite functionality on the Apeos C7070 is the Data Overwrite Kit (EC104193). This kit must be purchased separately and replaces the standard SDD with a SATA HDD, enabling 1 or 3 pass overwrite functions for enhanced data security (see context:
+
+""To have Data Overwrite functionality, Data Overwrite Kit (EC104193) must be purchased at additional charge. This kit replaces the standard SDD with a SATA HDD and enables 1 or 3 Pass overwrite function."").",,16,108,124,9838d5cb1ec449f9a59e6e29b4728473,16,108
+70,What embedded customization capability is available on the Apeos C7070?,"The Apeos C7070 offers an ""Extensible Customization Kit"" as an embedded customization capability. This allows for tailored solutions and integration with specific workflows or applications, enhancing the device's adaptability to unique business needs (see context:
+
+""Extensible Customization Kit | ✓"")",,14,56,70,10701fc0ad2b42cf99429cdbc5b6a0d2,14,56
+71,Does the Apeos C7070 support Chromebook printing?,"Yes, the Apeos C7070 supports printing from a Chromebook, as indicated by the specification ""Print from Chromebook | ✓"" in the provided context.",,11,31,42,4334d7036dda41d6a0fa0e05ea855145,11,31
+72,What are the minimum and maximum AMPV values for the Apeos C7070?,"The minimum Average Monthly Print Volume (AMPV) for the Apeos C7070 is 25,000 pages, and the maximum AMPV is 50,000 pages. Operating the device consistently outside this range may affect machine performance",,17,47,64,debaf0eed17e4fdd9284951f9074bba1,17,47
+73,What software is used for network scanning management on the Apeos C7070?,"The software used for network scanning management on the Apeos C7070 is the Management Console. This is a downloadable tool that can be installed on a Windows-based PC and enables centralized management of services on the Multi-Function Device, including network scanning functions",,16,50,66,4f0a8545351b4fd295813f7c5d0cab6c,16,50
+74,What minimum service-clearance requirements apply to the installation of the Apeos C7070?,"The minimum service-clearance requirements for the installation of the Apeos C7070 are as follows:
+
+825 mm at the front, 100 mm at the rear, 500 mm on the left side, and 100 mm on the right side. Additionally, a minimum overhead workspace clearance of 2,000 mm is required for all installations. These clearances ensure safe and effective operation and servicing of the device, including access for technicians and the movement of components such as trays and doors (Service Clearance Configuration Table, C7070/C6570) [context, p. 49].",,18,118,136,f898abff3de6426083473a498283b30a,18,118
+75,What is the total power consumption of the Apeos C7070?,"The total (maximum) power consumption of the Apeos C7070 is 2.4 kW. In addition, its power consumption in Sleep Mode is 0.5 W, and in Stand-By mode is 106 W. These values represent the different operational states of the device, with 2.4 kW being the peak usage when running at full capacity (see context table under ""Power Consumption"")",,14,85,99,1f6f1498526e494e8d41c1dc30c3628f,14,85
+76,What is the Typical Electricity Consumption (TEC) value for the Apeos C7070?,"The Typical Electricity Consumption (TEC) value for the Apeos C7070 is 0.87 kWh per week (see context table under ""TEC (Typical Electricity Consumption)"").",,18,36,54,57930afe4fe64000abbcd90da3c38069,18,36
+77,What are the noise emission levels of the Apeos C7070?,"The noise emission levels of the Apeos C7070 are 59.3 dB(A) during operation (run mode) and 15.6 dB(A) in standby mode. These values represent the A-weighted radiated sound pressure levels as measured for this device model (see context table under ""Noise Emission (Sound Pressure Level)"")",,14,71,85,c73051c610134cfc8bf8f5792dcc8352,14,71
+78,What operating temperature range is recommended for the Apeos C7070?,"The recommended operating temperature range for the Apeos C7070 is between 10°C (minimum) and 32°C (maximum). Operating the device outside this range may negatively affect image quality, performance, and consistency. It is strongly advised to use the product in an air-conditioned environment for optimal results (see ""Temperature & Humidity"" section in the provided context).",,14,74,88,1b39df34a0464724bf0567d7fc5c7bb3,14,74
+79,What consumables are customer-replaceable on the Apeos C7070?,"On the Apeos C7070, the following consumables are customer-replaceable:
+
+1. **Toner Cartridges**: Black (CT203582, 36,000 impressions), Cyan (CT203583, 21,000 impressions), Magenta (CT203584, 21,000 impressions), and Yellow (CT203585, 21,000 impressions).
+
+2. **Drum Cartridges**: Mono (CT351312, 270,000 impressions), Colour (CT351312, 250,000 impressions).
+
+3. **Waste Toner Bottle**: (CWAA0984, 83,000 impressions).
+
+4. **Staple Cartridges**: For various finishers, including CWAA0856, CWAA0728, and CWAA0855, with specified staple counts per cartridge. All these items are listed as being replaced by the customer in the documentation provided",,16,187,203,f142189a0edf40a08514e8df9ae8a1fd,16,187
+80,What toner cartridge yield rate applies to the Apeos C7070?,"For the Apeos C7070, the toner cartridge yield rates are as follows, based on A4 LEF size paper at 5% area coverage per colour:
+
+- Black (K): 36,000 impressions
+- Cyan (C): 21,000 impressions
+- Magenta (M): 21,000 impressions
+- Yellow (Y): 21,000 impressions
+
+These yields indicate the number of impressions each toner cartridge can produce before needing replacement (see context, ""Toner Cartridge Yield Rate"")",,14,105,119,5d70ebb5f7c2445c8444707261d79fcd,14,105
+81,How is billing-meter data submitted from the Apeos C7070?,"Billing-meter data from the Apeos C7070 can be submitted in two ways, depending on device and network compatibility. If the customer's devices and networks are compatible with FUJIFILM Business Innovation Australia (FBAU) meter capture technology, an automated meter capture service is available, which eliminates the need for manual meter read submission. If the device or network is not compatible, customers are required to manually submit their meter readings for billing purposes. The billing counters can be viewed directly on the device’s control panel display screen for manual reporting",,14,108,122,774331e51fd34f8284c72ffdbc240a5d,14,108
+82,What automated meter-capture capability is available on the Apeos C7070?,"The Apeos C7070 offers an automated meter capture service for customers who have a current support services agreement with FBAU, provided that the customer's devices and networks are compatible with FBAU meter capture technology. This service automates the collection of meter readings for billing purposes, eliminating the need for manual meter read submissions. If the device or network is not compatible, manual submission of meter readings is required, which can be viewed on the device’s control panel display screen",,16,94,110,9c4c45d20f47481e90ae65c0ce7358ef,16,94
+83,What is the duty cycle rating for the Apeos C7070?,"The duty cycle rating for the Apeos C7070 is 381,000 impressions (pages) per month. This figure represents the maximum print volume capacity the device is rated to handle in a given month, assuming recommended usage conditions (8 hours per day, 20 days per month) [Context, Section:
+
+Monthly Print Volume Range].",,14,68,82,ebfdc2e58f70488298bba2362ba0028e,14,68
+84,What is the waste-toner-bottle yield rate for the Apeos C7070?,"The waste toner bottle yield rate for the Apeos C7070 is 83,000 impressions. This yield is based on A4 LEF size paper at 5% area coverage per impression (an impression is defined as a one-sided print or copy on A4 or smaller paper) [Context].",,18,61,79,27626d6605414b648169a637fe27f262,18,61
+85,What limitations apply to Scan-to-Network functionality on the Apeos C7070?,"The Scan-to-Network functionality on the Apeos C7070 has the following limitations:
+
+- SFTP can only be used when creating a job flow via CentreWare Internet Services (CWIS). It is not possible to select SFTP as the transfer protocol for job flow sheets created directly on the device or with job flow creation tools.
+- The destination of a job flow sheet that uses the SFTP protocol cannot be changed on the device.
+- Only the password authentication method is supported for SFTP; public key authentication is not supported.
+
+These restrictions may affect how network scanning workflows are set up and managed, particularly if SFTP or advanced authentication methods are required for your environment",,17,134,151,67c23b47eec6427ea37f06973db22821,17,134
+86,What maximum banner-print size is supported by the Apeos C7070?,The maximum banner print size supported by the Apeos C7070 is 320 x 1200 mm (as stated in the provided context)​[24]​.,,15,34,49,437b5e3a691d4f83b0f66d25e98631d7,15,34
+87,What limitations apply to AirPrint or Mopria printing on the Apeos C7070?,"**AirPrint Limitations:
+
+**
+- AirPrint enables printing from networked devices without extra drivers but does not support authenticated printing or Private Charge Print.
+- Printing is only supported from certain apps (e.g., Safari, Mail, Maps, Adobe Reader, Photos).
+- Supported on iOS 6 or later and Mac OS X 10.8 or later.
+- If SSL is disabled after printing with authentication and SSL, the printer may not be detected until SSL is re-enabled.
+- User name and password may be required in some OS X registration scenarios.
+- The hole punch position is fixed and cannot be changed via AirPrint; use the FBAU driver for more options.
+- Some features (hole punching, certain paper types) are not available on OS X 10.8; update to OS X 10.9 to enable them.
+- Printing from Photoshop CS6 may not work.
+- USB connection is supported only on Mac OS X 10.11.3 or later.
+- Faxing via AirPrint is unavailable if the MFD prohibits Direct Fax, and fax numbers must be entered in half-width characters.
+- Some applications may not support faxing via AirPrint.
+- Mixed Size Originals cannot be scanned due to Mac OS scanner driver limitations.
+- Device cannot scan to multiple Macs simultaneously via AirPrint.
+- Scanning may not work if the Mac uses a proxy server.
+- OS X print driver may print in color even if set to black and white; use the FBAU driver for accuracy.
+- iOS 7.0.3 or later is recommended for mobile printing
+
+**Mopria Limitations:**
+- Mopria allows printing from certified Android devices without manufacturer-specific apps, but only through Mopria-supported apps.
+- Mopria Print Service must be downloaded from Google Play and is only supported on Android 4.4 or later.
+- Not supported via Bluetooth or cellular (3G/4G) connections.
+- For a list of supported apps and further limitations, refer to http://mopria.org/
+
+**Additional Note:**
+Neither AirPrint nor Mopria is available through Wi-Fi Direct on the Apeos C7070",,18,437,455,a7bf4f2c90c149f48f3b674752e84a90,18,437
+88,What is the warm-up time of the Apeos C7070?,"The warm-up time of the Apeos C7070 is 30 seconds or less when embedded plug-ins or custom services are enabled (default setting) [source:
+
+context snippet].",,14,36,50,81674c93042f4f458a167b226c85e08d,14,36
+89,What is the first-copy output time in colour mode for the Apeos C7070?,"The first-copy output time in colour mode for the Apeos C7070 is 4.1 seconds. This is measured from pressing the [Start] button until the first paper is output, with the fuser at operating temperature and under standard test conditions (see context for measurement details) [Context, p. 9].",,18,66,84,e4de474bbf464d1cbba1e23771e2b2d9,18,66
+90,Can the Apeos C7070 connect to both wired and wireless networks simultaneously?,"Yes, the Apeos C7070 can connect to both wired and wireless networks simultaneously. This is possible through the use of the Wireless Network Kit (Dongle) for wireless connectivity and the standard Ethernet port for wired connectivity. Additionally, the device supports a Secondary Ethernet option, which allows two wired networks (such as private and public) to be connected at the same time. However, each network connection type (wired, wireless, or secondary Ethernet) has its own limitations and supported features, so some functions may not be available on all connections simultaneously (e.g., certain protocols and scanning features are limited on the Secondary Ethernet) [Context, p. 35, 37].",,16,136,152,60f50777f3844989b5b008cc78159618,16,136
+91,What fax-transmission speeds are supported on the Apeos C7070?,"The Apeos C7070 supports fax transmission speeds ranging from 2.4 kbps up to 33.6 kbps, in accordance with the ITU-T G3 standard. The specific supported speeds are:
+
+33.6, 31.2, 28.8, 26.4, 24.0, 21.6, 19.2, 16.8, 14.4, 12.0, 9.6, 7.2, 4.8, and 2.4 kbps (G3) [Context].",,15,122,137,350765452e3641c7a31a3cec00951fb9,15,122
+92,What fax coding methods are supported by the Apeos C7070?,"The Apeos C7070 supports the following fax coding methods:
+
+MH (Modified Huffman), MR (Modified READ), MMR (Modified Modified READ), and JBIG. These are the same coding methods used for the fax function on this model (see context: ""Coding Method | Same as the fax function"" and ""Coding Method: MH, MR, MMR, JBIG"")",,14,78,92,366bfd6545724a26a8dca1d5587ecbb2,14,78
+93,Which optional feature enables secure secondary-Ethernet connectivity on the Apeos C7070?,"The optional feature that enables secure secondary-Ethernet connectivity on the Apeos C7070 is the ""Secondary Ethernet Kit."" This kit allows two Ethernet networks (such as private and public) to be connected to a single device, supporting protocols like LPD, port 9100, SNMP, and HTTP. The kit is identified as EC104202 in the provided context (""EC104202 | Secondary Ethernet Kit | Allows two Ethernet networks to be connected to a"").",,18,94,112,c052220658554cbf955ccbd0af103d15,18,94
+94,What is the rated print speed of the Apeos C7070 in ppm?,"The rated print speed of the Apeos C7070 is 70 pages per minute (ppm) for both colour and mono (black and white) printing on A4 LEF (Long Edge Feed) paper [Context, Q&A section].",,16,49,65,dba8d799674f451093afe3d445ae92dc,16,49
+95,What are the maximum paper dimensions for the Duplex Output Unit on the Apeos C7070?,"The maximum paper dimensions for the Duplex Output Unit on the Apeos C7070 are SRA3 (320 x 450 mm) or 12 x 18 inches (305 x 457 mm) [see context, Duplex Output Unit section].",,19,50,69,6c96f0af53c94107984130055d5e6091,19,50
+96,What is the rated machine life of the Apeos C6570?,"The rated machine life of the Apeos C6570 is 2.7 million impressions. This figure represents the manufacturer’s print volume limit for reliable performance over the device’s lifetime (see context, ""Machine Life:
+
+2.7M"" for C6570) and is defined as the total number of impressions the machine is expected to produce reliably during its operational life.",,14,75,89,83131f83a12b47e79435b674b2f5fcd1,14,75
+97,What is the power-supply specification for the Apeos C7070?,"The power-supply specification for the Apeos C7070 is 220-240 Volt, 50/60 Hz, and it requires a dedicated 10 Amp supply for each machine installation. If a dedicated supply is not available, it is the customer’s responsibility to provide an equivalent, and FUJIFILM Business Innovation Australia will not be held responsible for any damage resulting from inadequate power supply, lightning strikes, or power surges (see ""Electrical Requirements"" section)",,15,96,111,6759f0cbd0fe4661b22c24030a8e66a2,15,96
+98,How much shared memory does the Apeos C7070 include?,"The Apeos C7070 includes 4GB of shared system memory (RAM) and a 128GB SSD kit for storage, both shared among system functions (Context).",,13,35,48,c576ccb6f8e94de7a982ece520ee8aef,13,35
+99,What type of storage device is installed in the Apeos C7070?,"The Apeos C7070 is equipped with a Solid State Drive (SSD) with a capacity of 128GB as its storage device (see ""SDD (128GB) | ✓"" in the provided context)​[context]​.",,15,49,64,faf2a9b1a43848aeb39d568e81df3aa4,15,49
+,,,,1583,9941,11524,,,
