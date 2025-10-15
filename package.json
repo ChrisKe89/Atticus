@@ -1,8 +1,8 @@
 {
-  "name": "atticus",
-  "version": "0.8.1",
+  "name": "atticus-webdev",
+  "version": "0.0.0",
   "private": true,
-  "description": "Next.js frontend for the Atticus RAG workspace.",
+  "description": "Sandbox copy of the Atticus Next.js frontend for local experimentation.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
@@ -11,13 +11,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "audit:ts": "knip --strict",
-    "audit:icons": "node scripts/icon-audit.mjs",
-    "audit:routes": "node scripts/route-audit.mjs",
-    "audit:py": "python scripts/audit_unused.py --json",
-    "prisma:generate": "python -m scripts.prisma_cli generate",
-    "db:migrate": "python -m scripts.prisma_cli migrate deploy",
-    "db:seed": "python -m scripts.db_seed",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list"

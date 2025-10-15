@@ -215,7 +215,7 @@ export function ChatPanel() {
   }
 
   return (
-    <section className="flex w-full justify-center">
+    <section className="flex w-full flex-1 justify-center">
       <Card className="flex w-full max-w-3xl flex-col">
         <CardHeader className="border-b border-slate-200/80 pb-4 dark:border-slate-800/60">
           <div className="flex items-center justify-between gap-3">
