@@ -57,8 +57,33 @@ export async function streamAsk(
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || "Unable to reach Atticus.");
+    // Try to parse JSON error payload and map to a friendly message
+    let friendly = "Something went wrong. Please try again.";
+    const ct = response.headers.get("content-type") ?? "";
+    if (ct.includes("application/json")) {
+      try {
+        const errJson = await response.json();
+        const code = (errJson?.error as string | undefined) ?? "";
+        const detail = (errJson?.detail as string | undefined) ?? "";
+        if (response.status === 400 || code === "bad_request") {
+          friendly =
+            "There is no context to that question or it is not a proper question, please try again";
+        } else if (typeof detail === "string" && detail) {
+          friendly = detail;
+        }
+      } catch {
+        // fall back to text below
+      }
+    }
+    if (!ct.includes("application/json")) {
+      try {
+        const text = await response.text();
+        if (text) friendly = text;
+      } catch {
+        // ignore
+      }
+    }
+    throw new Error(friendly);
   }
 
   const contentType = response.headers.get("content-type") ?? "";

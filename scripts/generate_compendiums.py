@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 from typing import Iterable
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -49,7 +48,11 @@ EXCLUDE_DIRS = {
     "indices",
     "logs",
     "node_modules",
+    ".next",
     ".git",
+    ".venv",
+    ".mypy_cache",
+    ".pytest_cache",
     "eval/runs",
     "reports/playwright-artifacts",
 }
@@ -86,7 +89,9 @@ def iter_doc_files() -> Iterable[Path]:
     for p in REPO_ROOT.rglob("*.md"):
         if p.is_dir():
             continue
-        if p.name in {"ALL_DOCS.md"}:  # avoid self-inclusion
+        if p.name in {"ALL_DOCS.md", "ALL_CODE.md"}:  # avoid self-inclusion/cycles
+            continue
+        if should_exclude(p):
             continue
         yield p
 
@@ -109,15 +114,18 @@ def write_all_code(target: Path) -> None:
     buf.write("# All Code\n\n")
     buf.write("## Index\n")
     for p in files:
-        buf.write(f"- `{p.as_posix()}`\n")
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        buf.write(f"- `{rel}`\n")
     buf.write("\n")
     for p in files:
-        buf.write(f"## {p.as_posix()}\n\n")
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        buf.write(f"## {rel}\n\n")
         lang = guess_lang(p)
         fence = f"```{lang}" if lang else "```"
         buf.write(f"{fence}\n")
-        buf.write(read_text(p))
-        if not read_text(p).endswith("\n"):
+        content = read_text(p)
+        buf.write(content)
+        if not content.endswith("\n"):
             buf.write("\n")
         buf.write("```\n\n")
     target.write_text(buf.getvalue(), encoding="utf-8")
@@ -129,12 +137,15 @@ def write_all_docs(target: Path) -> None:
     buf.write("# All Documentation\n\n")
     buf.write("## Index\n")
     for p in files:
-        buf.write(f"- `{p.as_posix()}`\n")
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        buf.write(f"- `{rel}`\n")
     buf.write("\n")
     for p in files:
-        buf.write(f"## {p.as_posix()}\n\n")
-        buf.write(read_text(p))
-        if not read_text(p).endswith("\n"):
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        buf.write(f"## {rel}\n\n")
+        content = read_text(p)
+        buf.write(content)
+        if not content.endswith("\n"):
             buf.write("\n")
         buf.write("\n")
     target.write_text(buf.getvalue(), encoding="utf-8")

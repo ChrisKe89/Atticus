@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, Send } from "lucide-react";
 import { streamAsk, type AskStreamEvent } from "@/lib/ask-client";
 import type { AskResponse, AskSource } from "@/lib/ask-contract";
@@ -30,11 +30,36 @@ function formatConfidence(confidence: number | null | undefined) {
 }
 
 export function ChatPanel() {
+  const FRIENDLY_VALIDATION_MSG =
+    "There is no context to that question or it is not a proper question, please try again";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [composer, setComposer] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showIntro, setShowIntro] = useState(true);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const autoResize = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    // Base: 3 rows; allow growth up to 6 rows, then scroll
+    const maxRows = 6;
+    const style = window.getComputedStyle(el);
+    const lineHeight = parseFloat(style.lineHeight || "20");
+    const padding = parseFloat(style.paddingTop || "0") + parseFloat(style.paddingBottom || "0");
+    const border = parseFloat(style.borderTopWidth || "0") + parseFloat(style.borderBottomWidth || "0");
+    const minHeight = Math.max(0, lineHeight * 3 + padding + border);
+    const maxHeight = Math.max(minHeight, lineHeight * maxRows + padding + border);
+    el.style.height = "auto";
+    const newHeight = Math.min(el.scrollHeight, Math.floor(maxHeight));
+    el.style.height = `${newHeight}px`;
+    el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
+  };
+
+  useEffect(() => {
+    autoResize();
+  }, [composer]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,15 +118,16 @@ export function ChatPanel() {
       );
     } catch (err) {
       setIsStreaming(false);
-      const messageError = err instanceof Error ? err.message : "Something went wrong.";
-      setError(messageError);
+      const messageError = err instanceof Error ? err.message : FRIENDLY_VALIDATION_MSG;
+      // Only show bottom error if it's not the friendly validation message
+      setError(messageError === FRIENDLY_VALIDATION_MSG ? null : messageError);
       setMessages((prev) =>
         prev.map((message) =>
           message.id === placeholder.id
             ? {
                 ...message,
                 status: "error",
-                content: "Unable to generate a response. Try again in a few moments.",
+                content: FRIENDLY_VALIDATION_MSG,
                 error: messageError,
               }
             : message
@@ -169,15 +195,16 @@ export function ChatPanel() {
         }
       );
     } catch (err) {
-      const messageError = err instanceof Error ? err.message : "Something went wrong.";
-      setError(messageError);
+      const messageError = err instanceof Error ? err.message : FRIENDLY_VALIDATION_MSG;
+      // Only show bottom error if it's not the friendly validation message
+      setError(messageError === FRIENDLY_VALIDATION_MSG ? null : messageError);
       setMessages((prev) =>
         prev.map((message) =>
           message.id === messageId
             ? {
                 ...message,
                 status: "error",
-                content: "Unable to generate a response. Try again in a few moments.",
+                content: FRIENDLY_VALIDATION_MSG,
                 error: messageError,
               }
             : message
@@ -260,11 +287,7 @@ export function ChatPanel() {
                       <span className="truncate">Request ID: {message.response.request_id}</span>
                     </footer>
                   ) : null}
-                  {message.status === "error" ? (
-                    <p className="mt-2 text-xs text-rose-600">
-                      {error ?? "Try asking again in a few minutes."}
-                    </p>
-                  ) : null}
+                  {/* Suppress duplicate red error text inside bubbles; message content carries user-facing message */}
                 </div>
               </article>
             ))}
@@ -273,6 +296,7 @@ export function ChatPanel() {
       </div>
       <div className="shrink-0 px-4 pb-4 pt-4 sm:px-6 lg:px-8">
         <form
+          ref={formRef}
           onSubmit={handleSubmit}
           className="flex gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:backdrop-blur dark:border-slate-800 dark:bg-slate-950/90"
         >
@@ -284,9 +308,22 @@ export function ChatPanel() {
               id="chat-message"
               value={composer}
               onChange={(event) => setComposer(event.target.value)}
+              ref={textareaRef}
+              onKeyDown={(event) => {
+                // Enter: send. Shift+Enter: newline
+                const composing = (event.nativeEvent as unknown as { isComposing?: boolean }).isComposing;
+                if (event.key === "Enter" && !event.shiftKey && !composing) {
+                  event.preventDefault();
+                  // Only submit if there is content and not streaming
+                  if (!isStreaming && composer.trim()) {
+                    // Prefer requestSubmit for proper form submission semantics
+                    formRef.current?.requestSubmit();
+                  }
+                }
+              }}
               rows={3}
               placeholder="Message Atticus..."
-              className="max-h-[160px] min-h-[72px]"
+              className="min-h-[72px] resize-none overflow-y-hidden"
             />
           </div>
           <Button type="submit" disabled={isStreaming || !composer.trim()} className="self-end rounded-xl">
