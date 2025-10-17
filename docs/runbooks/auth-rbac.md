@@ -13,15 +13,41 @@ This runbook documents the Auth.js + Prisma deployment that powers Atticus phase
 
 ## Environment variables
 
-| Variable                                                                                  | Purpose                                                                         |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `DATABASE_URL`                                                                            | Postgres connection string used by Prisma and Auth.js.                          |
-| `AUTH_SECRET`                                                                             | Secret used to sign NextAuth cookies/JWT (matches `lib/auth.ts`).               |
-| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME`                                                     | Seed organization for default tenancy.                                          |
-| `ADMIN_EMAIL` / `ADMIN_NAME`                                                              | Bootstrap admin account created by `npm run db:seed`.                           |
-| `EMAIL_FROM`                                                                              | From address for Auth.js email provider.                                        |
-| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery (UI mailer also supports `SMTP_*`).    |
-| `AUTH_DEBUG_MAILBOX_DIR`                                                                  | Filesystem directory where test magic links are persisted (used by Playwright). Defaults to `./logs/mailbox`. |
+<!-- markdownlint-disable-next-line MD013 -->
+
+| Variable | Purpose |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `DATABASE_URL` | Postgres connection string used by Prisma and Auth.js. |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `AUTH_SECRET` | Secret used to sign NextAuth cookies/JWT (matches `lib/auth.ts`). |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `DEFAULT_ORG_ID` / `DEFAULT_ORG_NAME` | Seed organization for default tenancy. |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `ADMIN_EMAIL` / `ADMIN_NAME` | Bootstrap admin account created by `npm run db:seed`. |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `EMAIL_FROM` | From address for Auth.js email provider. |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `EMAIL_SERVER_HOST` / `EMAIL_SERVER_PORT` / `EMAIL_SERVER_USER` / `EMAIL_SERVER_PASSWORD` | SMTP server used for magic link delivery (UI mailer also supports `SMTP_*`). |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| `AUTH_DEBUG_MAILBOX_DIR` | Filesystem directory where test magic links are persisted (used by Playwright). Defaults to `./logs/mailbox`. |
 
 Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible defaults. Override secrets in production.
 

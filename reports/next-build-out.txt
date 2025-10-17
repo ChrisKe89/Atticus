@@ -1,0 +1,46 @@
+
+> atticus-webdev@0.0.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/13) ...
+   Generating static pages (3/13) 
+   Generating static pages (6/13) 
+   Generating static pages (9/13) 
+ ✓ Generating static pages (13/13)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size     First Load JS
+┌ ƒ /                                       63.3 kB         169 kB
+├ ƒ /_not-found                             873 B          88.2 kB
+├ ƒ /admin                                  24.9 kB         131 kB
+├ ƒ /api/admin/uncertain                    0 B                0 B
+├ ƒ /api/admin/uncertain/[id]/approve       0 B                0 B
+├ ƒ /api/admin/uncertain/[id]/ask-followup  0 B                0 B
+├ ƒ /api/admin/uncertain/[id]/escalate      0 B                0 B
+├ ƒ /api/ask                                0 B                0 B
+├ ƒ /api/auth/[...nextauth]                 0 B                0 B
+├ ƒ /api/glossary                           0 B                0 B
+├ ƒ /api/glossary/[id]                      0 B                0 B
+├ ƒ /apps                                   178 B          96.2 kB
+├ ƒ /contact                                142 B          87.5 kB
+├ ƒ /settings                               178 B          96.2 kB
+├ ƒ /signin                                 1.59 kB         115 kB
+└ ƒ /signin/verify                          142 B          87.5 kB
++ First Load JS shared by all               87.3 kB
+  ├ chunks/117-3e748445850e12ce.js          31.7 kB
+  ├ chunks/fd9d1056-96ce47984f4dfdd7.js     53.6 kB
+  └ other shared chunks (total)             1.96 kB
+
+
+ƒ Middleware                                49.4 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+

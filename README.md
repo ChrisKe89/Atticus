@@ -19,171 +19,170 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 1. Bootstrap environment variables
 
-    Generate a local `.env` so secrets stay inside the repository:
+   Generate a local `.env` so secrets stay inside the repository:
 
-    ```bash
-    python scripts/generate_env.py
-    python scripts/debug_env.py  # inspect precedence when overriding values
-    ```
+   ```bash
+   python scripts/generate_env.py
+   python scripts/debug_env.py  # inspect precedence when overriding values
+   ```
 
-    Populate SMTP settings for escalation email delivery:
-
-    - `CONTACT_EMAIL` – escalation recipient
-    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials
-    - `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
-    - `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
+   Populate SMTP settings for escalation email delivery:
+   - `CONTACT_EMAIL` – escalation recipient
+   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials
+   - `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
+   - `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
 
 1. Install dependencies
 
-    Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
+   Install Python tooling (Ruff, mypy, pytest, etc.) and Node packages (Next.js workspace, shadcn/ui, Knip).
 
-    ```powershell
-    pip install -U pip pip-tools
-    pip-compile -U requirements.in
-    pip-sync requirements.txt
-    npm install
-    ```
+   ```powershell
+   pip install -U pip pip-tools
+   pip-compile -U requirements.in
+   pip-sync requirements.txt
+   npm install
+   ```
 
 1. Database and Prisma
 
-    Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
+   Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
 
-    ```bash
-    make db.up
-    make db.migrate   # runs `prisma generate` before applying migrations
-    # POSIX shells (bash/zsh): export DATABASE_URL before verification
-    set -a
-    . .env
-    set +a
-    make db.verify    # pgvector extension, dimension, IVFFlat probes
-    make db.seed
-    ```
+   ```bash
+   make db.up
+   make db.migrate   # runs `prisma generate` before applying migrations
+   # POSIX shells (bash/zsh): export DATABASE_URL before verification
+   set -a
+   . .env
+   set +a
+   make db.verify    # pgvector extension, dimension, IVFFlat probes
+   make db.seed
+   ```
 
-    > Windows users: do **not** run the `set -a` snippet—instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
+   > Windows users: do **not** run the `set -a` snippet—instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
 
-    ```powershell
-    make db.up
-    make db.migrate
-    Get-Content .env | ForEach-Object {
-    if ($_ -and $_ -notmatch '^#') {
-        $name, $value = $_.Split('=', 2)
-        if ($value) { [System.Environment]::SetEnvironmentVariable($name.Trim(), $value.Trim(), 'Process') }
-    }
-    }
-    make db.verify
-    make db.seed
-    ```
+   ```powershell
+   make db.up
+   make db.migrate
+   Get-Content .env | ForEach-Object {
+   if ($_ -and $_ -notmatch '^#') {
+       $name, $value = $_.Split('=', 2)
+       if ($value) { [System.Environment]::SetEnvironmentVariable($name.Trim(), $value.Trim(), 'Process') }
+   }
+   }
+   make db.verify
+   make db.seed
+   ```
 
-    `make db.verify` auto-loads `.env`, then shells out to `psql` (falling back to `docker compose exec postgres psql` when the CLI is unavailable) and will emit a notice if your pgvector build caps ANN indexes at 2K dimensions; upgrade the image to regain IVFFlat on 3K-dim embeddings.
+   `make db.verify` auto-loads `.env`, then shells out to `psql` (falling back to `docker compose exec postgres psql` when the CLI is unavailable) and will emit a notice if your pgvector build caps ANN indexes at 2K dimensions; upgrade the image to regain IVFFlat on 3K-dim embeddings.
 
-    Run the verification SQL directly when debugging:
+   Run the verification SQL directly when debugging:
 
-    ```bash
-    psql "$DATABASE_URL" \
-      -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
-      -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
-      -f scripts/verify_pgvector.sql
-    ```
+   ```bash
+   psql "$DATABASE_URL" \
+     -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
+     -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+     -f scripts/verify_pgvector.sql
+   ```
 
-    ```powershell
-    if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
-    if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
-    psql "$env:DATABASE_URL" `
-    -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
-    -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
-    -f scripts/verify_pgvector.sql
-    ```
+   ```powershell
+   if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
+   if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+   psql "$env:DATABASE_URL" `
+   -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
+   -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
+   -f scripts/verify_pgvector.sql
+   ```
 
 1. Ingest documents
 
-    Run ingestion once after the database is ready so the assistant has content to answer with; rerun whenever new documents land. `make eval` and `make seed` help during iteration.
+   Run ingestion once after the database is ready so the assistant has content to answer with; rerun whenever new documents land. `make eval` and `make seed` help during iteration.
 
-    ```bash
-    make ingest     # parse, chunk, embed, and update pgvector index
-    make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
-    make eval       # run retrieval evaluation and emit metrics under eval/runs/
-    ```
+   ```bash
+   make ingest     # parse, chunk, embed, and update pgvector index
+   make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+   make eval       # run retrieval evaluation and emit metrics under eval/runs/
+   ```
 
-    > **Note:** The CED chunker now operates with zero token overlap by default
-    > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
-    > different stride is required for specialised corpora.
+   > **Note:** The CED chunker now operates with zero token overlap by default
+   > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
+   > different stride is required for specialised corpora.
 
 1. Run services
 
-    Use separate terminals for the FastAPI backend and the Next.js UI.
+   Use separate terminals for the FastAPI backend and the Next.js UI.
 
-    ```bash
-    make api        # FastAPI service on http://localhost:8000
-    make web-dev    # Next.js workspace on http://localhost:3000
-    ```
+   ```bash
+   make api        # FastAPI service on http://localhost:8000
+   make web-dev    # Next.js workspace on http://localhost:3000
+   ```
 
-    ```powershell
-    make api
-    make web-dev
-    ```
+   ```powershell
+   make api
+   make web-dev
+   ```
 
 1. Quality gates (before committing)
 
-    ```bash
-    make quality
-    ```
+   ```bash
+   make quality
+   ```
 
-    ```powershell
-    make quality
-    ```
+   ```powershell
+   make quality
+   ```
 
-    `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+   `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
 
-    Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`, which defaults to `./logs/mailbox`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
+   Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`, which defaults to `./logs/mailbox`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
-    The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
-    FastAPI still returns canonical JSON; the proxy synthesises `start`, `answer`, and `end` events so the UI can subscribe using a single streaming interface.
+   The Next.js app exposes `/api/ask`, proxying the FastAPI retrieval service through server-sent events (SSE).
+   FastAPI still returns canonical JSON; the proxy synthesises `start`, `answer`, and `end` events so the UI can subscribe using a single streaming interface.
 
-    **Request**
+## Request
 
-    ```json
-    {
-    "question": "What is the pilot timeline?",
-    "contextHints": ["Managed print"],
-    "topK": 8
-    }
-    ```
+```json
+{
+  "question": "What is the pilot timeline?",
+  "contextHints": ["Managed print"],
+  "topK": 8
+}
+```
 
-    **Response**
+## Response
 
-    ```json
-    {
-    "answer": "...",
-    "sources": [{ "path": "content/pilot.pdf", "page": 3 }],
-    "confidence": 0.82,
-    "request_id": "abc123",
-    "should_escalate": false
-    }
-    ```
+```json
+{
+  "answer": "...",
+  "sources": [{ "path": "content/pilot.pdf", "page": 3 }],
+  "confidence": 0.82,
+  "request_id": "abc123",
+  "should_escalate": false
+}
+```
 
-    Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.ts` handles SSE parsing, JSON fallback, and request-id logging.
+Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.ts` handles SSE parsing, JSON fallback, and request-id logging.
 
-    ---
+---
 
 ## Developer workflow
 
 1. **Environment**:
-   - Generate `.env` and update SMTP + Postgres credentials. 
+   - Generate `.env` and update SMTP + Postgres credentials.
    - Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match.
    - Set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
 2. **Dependencies**:
    - install Python + Node dependencies (`pip-sync` and `npm install`).
 3. **Database**:
-   - Run `make db.up && make db.migrate && make db.seed`. 
+   - Run `make db.up && make db.migrate && make db.seed`.
    - Export `.env` before `make db.verify` so `DATABASE_URL` is available (`set -a; . .env; set +a` on POSIX shells, or use the PowerShell snippet in Quick Start on Windows).
-4. **Quality**: 
-   - Run `make quality` locally before every PR. 
+4. **Quality**:
+   - Run `make quality` locally before every PR.
    - Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
-5. **Run** 
+5. **Run**
    - `make api`
    - `make web-dev` for local development.
 6. **Observe**
@@ -196,7 +195,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 8. **Git**
    - Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene
-    - Use `pre-commit run --all-files` to verify manually.
+   - Use `pre-commit run --all-files` to verify manually.
 
 ## Legacy UI
 
@@ -228,36 +227,36 @@ Always confirm local `make quality` mirrors CI before pushing.
 
 ## Make targets
 
-| Target                      | Description                                                         |
-| --------------------------- | ------------------------------------------------------------------- |
-| `make env`                  | Generate `.env` from defaults                                       |
-| `make ingest`               | Parse, chunk, embed, and update the pgvector index                  |
-| `make seed`                 | Generate deduplicated seed manifest (`seeds/seed_manifest.json`)    |
-| `make eval`                 | Run retrieval evaluation and write metrics under `eval/runs/`       |
-| `make api`                  | Start FastAPI backend                                               |
-| `make web-dev`              | Run Next.js dev server (port 3000)                                  |
-| `make app-dev`              | Alias for `make web-dev`                                            |
-| `make db.up`                | Start Postgres (Docker)                                             |
-| `make db.down`              | Stop Postgres (Docker)                                              |
-| `make db.migrate`           | Run Prisma migrations                                               |
-| `make db.verify`            | Ensure pgvector extension, dimensions, and IVFFlat settings         |
-| `make db.seed`              | Seed default organization/admin                                     |
-| `make help`                 | List available make targets                                         |
-| `make web-build`            | Build the production Next.js bundle                                 |
-| `make web-start`            | Start the built Next.js app                                         |
-| `make web-lint`             | Run Next.js lint checks                                             |
-| `make web-typecheck`        | Type-check the UI with TypeScript                                   |
-| `make web-test`             | Run Vitest unit tests                                               |
-| `make web-e2e`              | Run Playwright smoke tests                                          |
-| `make smtp-test`            | Send an SES test email                                              |
-| `make smoke`                | Run FastAPI health probe                                            |
-| `make test.unit`            | Unit tests for hashing, config reload, mailer, chunker, seeds, eval |
-| `make test.api`             | API contract tests (ask/contact/error schema/UI)                    |
-| `make test`                 | Run pytest suite with coverage >=90%                                |
-| `make lint` / `make format` | Ruff lint + auto-fix                                                |
-| `make typecheck`            | Run mypy over atticus/api/ingest/retriever/eval                     |
+| Target                      | Description                                                            |
+| --------------------------- | ---------------------------------------------------------------------- |
+| `make env`                  | Generate `.env` from defaults                                          |
+| `make ingest`               | Parse, chunk, embed, and update the pgvector index                     |
+| `make seed`                 | Generate deduplicated seed manifest (`seeds/seed_manifest.json`)       |
+| `make eval`                 | Run retrieval evaluation and write metrics under `eval/runs/`          |
+| `make api`                  | Start FastAPI backend                                                  |
+| `make web-dev`              | Run Next.js dev server (port 3000)                                     |
+| `make app-dev`              | Alias for `make web-dev`                                               |
+| `make db.up`                | Start Postgres (Docker)                                                |
+| `make db.down`              | Stop Postgres (Docker)                                                 |
+| `make db.migrate`           | Run Prisma migrations                                                  |
+| `make db.verify`            | Ensure pgvector extension, dimensions, and IVFFlat settings            |
+| `make db.seed`              | Seed default organization/admin                                        |
+| `make help`                 | List available make targets                                            |
+| `make web-build`            | Build the production Next.js bundle                                    |
+| `make web-start`            | Start the built Next.js app                                            |
+| `make web-lint`             | Run Next.js lint checks                                                |
+| `make web-typecheck`        | Type-check the UI with TypeScript                                      |
+| `make web-test`             | Run Vitest unit tests                                                  |
+| `make web-e2e`              | Run Playwright smoke tests                                             |
+| `make smtp-test`            | Send an SES test email                                                 |
+| `make smoke`                | Run FastAPI health probe                                               |
+| `make test.unit`            | Unit tests for hashing, config reload, mailer, chunker, seeds, eval    |
+| `make test.api`             | API contract tests (ask/contact/error schema/UI)                       |
+| `make test`                 | Run pytest suite with coverage >=90%                                   |
+| `make lint` / `make format` | Ruff lint + auto-fix                                                   |
+| `make typecheck`            | Run mypy over atticus/api/ingest/retriever/eval                        |
 | `make quality`              | Combined Python + Next quality gates, version-parity check, and audits |
-| `make web-audit`            | Run Node and Python audit scripts                                   |
+| `make web-audit`            | Run Node and Python audit scripts                                      |
 
 ---
 

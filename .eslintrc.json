@@ -1,15 +1,31 @@
 {
   "root": true,
-  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended", "prettier"],
-  "plugins": ["tailwindcss"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ],
+  "plugins": [
+    "tailwindcss",
+    "react"
+  ],
   "settings": {
     "tailwindcss": {
-      "callees": ["cn", "clsx", "cva"],
-      "classRegex": ["cva\\(([^)]*)\\)", "cn\\(([^)]*)\\)", "clsx\\(([^)]*)\\)"]
+      "callees": [
+        "cn",
+        "clsx",
+        "cva"
+      ],
+      "classRegex": [
+        "cva\\(([^)]*)\\)",
+        "cn\\(([^)]*)\\)",
+        "clsx\\(([^)]*)\\)"
+      ]
     }
   },
   "rules": {
     "@next/next/no-html-link-for-pages": "off",
-    "tailwindcss/classnames-order": "off"
+    "tailwindcss/classnames-order": "off",
+    "react/jsx-key": "warn"
   }
 }

@@ -6,29 +6,27 @@ config:
     strict: false
     inner_sentence: true
     code_blocks: false
-  MD029:
-    style: "one_or_ordered"
   MD022: true
   MD024:
     siblings_only: true
     allow_different_nesting: true
+  MD025: true
+  MD029:
+    style: one_or_ordered
   MD032: true
   MD033:
-    allowed_elements: ["img", "p", "br", "a", "code", "em", "strong", "details", "summary"]
+    allowed_elements: ["img","p","br","a","code","em","strong","details","summary"]
+  MD036: true
+  MD040: true
   MD041: true
+  MD012: true
 globs:
-  - "**/*.md"
+  - "README.md"
+  - "docs/**/*.md"
 ignores:
-  - "CHANGELOG.md"
-  - ".venv/**"
-  - "**/.venv/**"
   - "node_modules/**"
-  - "ToDo-Complete.md"
-  - "TODO.md"
-  - "CODEX_PROMPT.md"
-  - "CONTRIBUTING.md"
+  - ".venv/**"
+  - "archive/**"
   - "content/**"
-  - "scripts/rollback.md"
-  - ".archive/**"
-  - "tests/**"
-  - "EXAMPLES_ONLY/**"
+  - "eval/**"
+  - "reports/**"

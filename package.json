@@ -13,7 +13,9 @@
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
-    "test:e2e": "playwright test --reporter=list"
+    "test:e2e": "playwright test --reporter=list",
+    "audit:icons": "node scripts/icon-audit.mjs",
+    "audit:routes": "node scripts/route-audit.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -43,6 +45,7 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-tailwindcss": "^3.13.0",
     "knip": "^5.64.1",
     "postcss": "8.4.40",
