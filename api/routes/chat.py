@@ -13,9 +13,8 @@ from fastapi import APIRouter, HTTPException, Request
 from atticus.logging import log_event
 from atticus.tokenization import count_tokens
 from retriever import answer_question
-from retriever.resolver import ModelResolution, ModelScope, resolve_models
-
 from retriever.models import Citation
+from retriever.resolver import ModelResolution, ModelScope, resolve_models
 
 from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import (
