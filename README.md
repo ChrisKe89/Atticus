@@ -4,14 +4,14 @@
 
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
-> **Release 0.7.10** – Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
+> **Release 0.7.10** â€“ Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
 
 ## Model Disambiguation Flows
 
-- **Direct hit** — when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
-- **Unclear** — if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
-- **Multi-model** — if several models are detected or supplied, Atticus fans out retrieval per model and responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
-- **Testing** — `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
+- **Direct hit** â€” when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
+- **Unclear** â€” if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
+- **Multi-model** â€” if several models are detected or supplied, Atticus fans out retrieval per model and responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
+- **Testing** â€” `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
 
 ---
 
@@ -27,10 +27,10 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
    ```
 
    Populate SMTP settings for escalation email delivery:
-   - `CONTACT_EMAIL` – escalation recipient
-   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SES SMTP credentials
-   - `SMTP_ALLOW_LIST` – comma-separated sender/recipient allow list
-   - `RAG_SERVICE_URL` – FastAPI retrieval service (defaults to `http://localhost:8000`)
+   - `CONTACT_EMAIL` â€“ escalation recipient
+   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` â€“ SES SMTP credentials
+   - `SMTP_ALLOW_LIST` â€“ comma-separated sender/recipient allow list
+   - `RAG_SERVICE_URL` â€“ FastAPI retrieval service (defaults to `http://localhost:8000`)
 
 1. Install dependencies
 
@@ -58,7 +58,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
    make db.seed
    ```
 
-   > Windows users: do **not** run the `set -a` snippet—instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
+   > Windows users: do **not** run the `set -a` snippetâ€”instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
 
    ```powershell
    make db.up
@@ -190,7 +190,7 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
    - `logs/errors.jsonl`
    - `/admin/metrics` (dashboard)
 7. **Release**
-   - Follow [RELEASE.md](RELEASE.md) for tagging.
+   - Follow [RELEASE.md](docs/RELEASE.md) for tagging.
    - Upgrade/rollback steps, confirming `VERSION` matches `package.json` before tagging.
 
 8. **Git**
@@ -216,10 +216,10 @@ The legacy HTML/CSS demo under `archive/legacy-ui/` is for reference only and ex
 
 GitHub Actions enforces:
 
-- **frontend-quality** – Node 20 + Postgres service, running `npm run lint`, `npm run typecheck`, `npm run build`, and all audit scripts (`npm run audit:ts`, `npm run audit:icons`, `npm run audit:routes`, `npm run audit:py`). Audit outputs are uploaded as artifacts under `frontend-audit-reports`.
-- **lint-test** – Python 3.12 toolchain running Ruff (lint + format check), mypy, pytest with ≥90% coverage, and pre-commit.
-- **pgvector-check** – Applies Prisma migrations against pgvector-enabled Postgres and runs `make db.verify`.
-- **eval-gate** – Retrieval evaluation regression checks (see [eval-gate.yml](.github/workflows/eval-gate.yml)).
+- **frontend-quality** â€“ Node 20 + Postgres service, running `npm run lint`, `npm run typecheck`, `npm run build`, and all audit scripts (`npm run audit:ts`, `npm run audit:icons`, `npm run audit:routes`, `npm run audit:py`). Audit outputs are uploaded as artifacts under `frontend-audit-reports`.
+- **lint-test** â€“ Python 3.12 toolchain running Ruff (lint + format check), mypy, pytest with â‰¥90% coverage, and pre-commit.
+- **pgvector-check** â€“ Applies Prisma migrations against pgvector-enabled Postgres and runs `make db.verify`.
+- **eval-gate** â€“ Retrieval evaluation regression checks (see [eval-gate.yml](.github/workflows/eval-gate.yml)).
 
 Always confirm local `make quality` mirrors CI before pushing.
 
@@ -294,17 +294,17 @@ Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.
 
 ## Documentation map
 
-- [AGENTS.md](AGENTS.md) – architecture, environment settings, audit/CI requirements
-- [ARCHITECTURE.md](ARCHITECTURE.md) – system diagram, data flow, SSE contract
-- [OPERATIONS.md](OPERATIONS.md) – runbooks, metrics, and incident response
-- [RELEASE.md](RELEASE.md) – release process, upgrade/rollback steps
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) – common setup, Auth.js, pgvector, SSE issues
-- [REQUIREMENTS.md](REQUIREMENTS.md) – functional/non-functional requirements for the Next.js + pgvector stack
-- [AUDIT_REPORT.md](AUDIT_REPORT.md) / [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) – remediation history
-- [CHANGELOG.md](CHANGELOG.md) – release history
-- [CONTRIBUTING.md](CONTRIBUTING.md) – contributor workflow
-- [STYLEGUIDE.md](STYLEGUIDE.md) – code and writing standards
-- [TODO.md](TODO.md) / [TODO_COMPLETE.md](TODO_COMPLETE.md) – authoritative backlog
+- [AGENTS.md](docs/AGENTS.md) â€“ architecture, environment settings, audit/CI requirements
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) â€“ system diagram, data flow, SSE contract
+- [OPERATIONS.md](docs/OPERATIONS.md) â€“ runbooks, metrics, and incident response
+- [RELEASE.md](docs/RELEASE.md) â€“ release process, upgrade/rollback steps
+- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) â€“ common setup, Auth.js, pgvector, SSE issues
+- [REQUIREMENTS.md](docs/REQUIREMENTS.md) â€“ functional/non-functional requirements for the Next.js + pgvector stack
+- [docs/AUDIT_REPORT.md](docs/AUDIT_REPORT.md) / [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) â€“ remediation history
+- [CHANGELOG.md](CHANGELOG.md) â€“ release history
+- [CONTRIBUTING.md](CONTRIBUTING.md) â€“ contributor workflow
+- [STYLEGUIDE.md](docs/STYLEGUIDE.md) â€“ code and writing standards
+- [TODO.md](TODO.md) / [TODO_COMPLETE.md](TODO_COMPLETE.md) â€“ authoritative backlog
 
 ---
 
@@ -322,7 +322,7 @@ See [LICENSE](LICENSE).
         --atticus-endpoint "http://localhost:8000/ask" `
         --model gpt-4o-mini `
         --tokenizer-model gpt-4o-mini
-    # GPT‑4.1
+    # GPTâ€‘4.1
     python scripts/run_token_eval.py `
         --input "TOKEN_EVAL.xlsx" `
         --output "reports/gpt4_1_ac7070_token_eval_atticus.csv" `
@@ -330,7 +330,7 @@ See [LICENSE](LICENSE).
         --model gpt-4.1 `
         --tokenizer-model gpt-4.1
 
-    # GPT‑5
+    # GPTâ€‘5
     python scripts/run_token_eval.py `
         --input "TOKEN_EVAL.xlsx" `
         --output "reports/gpt5_ac7070_token_eval_atticus.csv" `

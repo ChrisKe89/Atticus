@@ -1,10 +1,7 @@
 """Unified chat route returning the canonical ask response contract."""
 
-from __future__ import annotations
-
 import time
 from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -13,8 +10,7 @@ from atticus.tokenization import count_tokens
 from retriever import answer_question
 from retriever.resolver import ModelResolution, ModelScope, resolve_models
 
-if TYPE_CHECKING:
-    from retriever.models import Citation
+from retriever.models import Citation
 
 from ..dependencies import LoggerDep, SettingsDep
 from ..schemas import (

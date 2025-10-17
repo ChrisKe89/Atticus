@@ -1,7 +1,5 @@
 """Health endpoints."""
 
-from __future__ import annotations
-
 from fastapi import APIRouter
 
 from atticus.config import load_manifest

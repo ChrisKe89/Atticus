@@ -18,7 +18,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 ## Release Checklist
 
 1. **Update CHANGELOG**
-   - Edit [CHANGELOG.md](CHANGELOG.md) with the new version number, date, and highlights.
+   - Edit [CHANGELOG.md](../CHANGELOG.md) with the new version number, date, and highlights.
 2. **Verify Environment**
    - Confirm `.env` is complete and correct using:
 
@@ -40,7 +40,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    - CI requires ≥90% coverage and enforces evaluation regression thresholds.
 
 4. **Sync Versioning**
-   - Update [`VERSION`](VERSION), `package.json`, and [CHANGELOG.md](CHANGELOG.md) with the new semantic version (e.g. `0.7.0`).
+   - Update [`VERSION`](../VERSION), `package.json`, and [CHANGELOG.md](../CHANGELOG.md) with the new semantic version (e.g. `0.7.0`).
    - Confirm the values match by running `node -p "require('./package.json').version"` and comparing with `cat VERSION`.
    - Commit the changes with a descriptive message (e.g. `release(0.7.0): developer experience + docs sync`).
 5. **Tag the Release**
@@ -106,6 +106,6 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 
 ## References
 
-- [CHANGELOG.md](CHANGELOG.md) — full version history.
+- [CHANGELOG.md](../CHANGELOG.md) — full version history.
 - [OPERATIONS.md](OPERATIONS.md) — runbooks and evaluation metrics.
 - [SECURITY.md](SECURITY.md) — secrets management and IAM policy examples.

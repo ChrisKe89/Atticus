@@ -1,7 +1,5 @@
 """Admin endpoints for dictionary and error logs."""
 
-from __future__ import annotations
-
 import json
 from datetime import datetime
 

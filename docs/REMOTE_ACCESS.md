@@ -14,11 +14,23 @@ and tooling that fits your environment.
 
 <!-- markdownlint-disable-next-line MD013 -->
 
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
+
 | ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
 
 <!-- markdownlint-disable-next-line MD013 -->
 
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
+
 | **Tailscale** | Always-on secure mesh between office/home devices | Zero-trust, device-based auth, automatic key rotation | Personal/enterprise Tailscale account (free tier works) |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
 
 <!-- markdownlint-disable-next-line MD013 -->
 
@@ -147,4 +159,4 @@ and tooling that fits your environment.
 
 - [OPERATIONS.md](OPERATIONS.md) - runbooks, evaluation workflow, and rollback steps.
 - [SECURITY.md](SECURITY.md) - IAM, SES policies, and secrets guidance.
-- [README.md](README.md) - setup instructions and Make targets.
+- [README.md](../README.md) - setup instructions and Make targets.

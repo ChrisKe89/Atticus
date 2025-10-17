@@ -18,6 +18,10 @@ The Next.js application is the canonical UI; historical static assets live under
 
 <!-- markdownlint-disable-next-line MD013 -->
 
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
+
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 <!-- markdownlint-disable-next-line MD013 -->
@@ -34,6 +38,10 @@ The Next.js application is the canonical UI; historical static assets live under
 
 <!-- markdownlint-disable-next-line MD013 -->
 
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
+
 | **API Layer** | FastAPI exposes `/health`, `/ingest`, `/ask`, `/eval`, `/contact` with `/ask` streaming SSE payloads `{answer, sources, confidence, should_escalate, request_id}`. |
 
 <!-- markdownlint-disable-next-line MD013 -->
@@ -43,6 +51,10 @@ The Next.js application is the canonical UI; historical static assets live under
 <!-- markdownlint-disable-next-line MD013 -->
 
 | **Auth & Sessions** | Auth.js magic-link flow with Prisma adapter, RLS-backed session storage, and RBAC-aware server actions. |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+<!-- markdownlint-disable-next-line MD013 -->
 
 <!-- markdownlint-disable-next-line MD013 -->
 
@@ -88,7 +100,7 @@ The Next.js application is the canonical UI; historical static assets live under
 
 - All secrets are loaded from `.env` and can be audited with `scripts/debug_env.py`.
 - Escalation emails use SES SMTP credentials with IAM policies restricting senders and region (see [SECURITY.md](SECURITY.md)).
-- Versioning is centralized in the [`VERSION`](VERSION) file and must align with `package.json` releases.
+- Versioning is centralized in the [`VERSION`](../VERSION) file and must align with `package.json` releases.
 
 ---
 
@@ -96,4 +108,4 @@ The Next.js application is the canonical UI; historical static assets live under
 
 - [AGENTS.md](AGENTS.md) — Detailed agent responsibilities and error policy.
 - [OPERATIONS.md](OPERATIONS.md) — Runbooks and evaluation metrics.
-- [README.md](README.md) — Setup instructions and Make targets.
+- [README.md](../README.md) — Setup instructions and Make targets.
