@@ -25,6 +25,6 @@ Key directories to understand when working on Atticus.
 - `tests/`
   - Python pytest suites covering API contracts, ingestion utilities, and auth flows.
 - `archive/legacy-ui/` – historical static HTML prototype retained for reference only.
-- `content/`, `indices/`, `reports/`, `logs/` – document corpus, vector indices, evaluation artifacts, and log outputs.
+- `content/`, `indexes/`, `reports/`, `logs/` – document corpus, vector indices, evaluation artifacts, and log outputs.
 
 Supporting docs live at the repository root (`README.md`, `AGENTS.md`, `ARCHITECTURE.md`, `OPERATIONS.md`, etc.).

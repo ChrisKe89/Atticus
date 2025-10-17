@@ -30,7 +30,7 @@ The Next.js application is the canonical UI; historical static assets live under
    New or updated documents are added to `content/` and named `YYYYMMDD_topic_version.ext`.
 
 2. **Ingestion**
-   Run `make ingest` to parse and chunk documents, compute embeddings, and update the index stored under `indices/`.
+   Run `make ingest` to parse and chunk documents, compute embeddings, and update the index stored under `indexes/`.
 
 3. **Retrieval**
    When a user submits a query, the retriever searches the pgvector index and optionally applies a re-ranker to prioritize the most relevant chunks.

@@ -82,7 +82,7 @@ test.api:
 		tests/test_contact_route.py \
 		tests/test_error_schema.py \
 		tests/test_api_version.py \
-		tests/test_ui_route.py
+		tests/test_admin_route.py
 
 test:
 	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \

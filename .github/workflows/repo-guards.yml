@@ -1,0 +1,48 @@
+name: Repo Guards
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  lockfile-guard:
+    name: Lockfile guard (npm vs pnpm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail if both npm and pnpm lockfiles exist anywhere
+        shell: bash
+        run: |
+          set -euo pipefail
+          has_npm=$(git ls-files "**/package-lock.json" | wc -l | tr -d ' ')
+          has_pnpm=$(git ls-files "**/pnpm-lock.yaml" | wc -l | tr -d ' ')
+          echo "Found $has_npm package-lock.json and $has_pnpm pnpm-lock.yaml"
+          if [ "$has_npm" -gt 0 ] && [ "$has_pnpm" -gt 0 ]; then
+            echo '::error::Both npm and pnpm lockfiles detected. Choose one package manager and remove the other lockfile(s).'
+            echo 'package-lock.json files:'; git ls-files "**/package-lock.json" || true
+            echo 'pnpm-lock.yaml files:'; git ls-files "**/pnpm-lock.yaml" || true
+            exit 1
+          fi
+
+  artifact-guard:
+    name: Artifact guard (disallow tracked eval outputs)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fail if eval/runs/** contains tracked files
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files "eval/runs/**" | grep -q .; then
+            echo '::error::Tracked files detected under eval/runs/**. These should be CI artifacts only.'
+            git ls-files "eval/runs/**" || true
+            exit 1
+          fi
+

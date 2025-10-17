@@ -198,6 +198,10 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
    - Git pre-commit hooks enforce Ruff, mypy, ESLint, Prettier, markdownlint, and repository hygiene
     - Use `pre-commit run --all-files` to verify manually.
 
+## Legacy UI
+
+The legacy HTML/CSS demo under `archive/legacy-ui/` is for reference only and excluded from builds and linting. The canonical UI is the Next.js app under `app/`. Avoid editing legacy files unless documenting history.
+
 ---
 
 ## Frontend design system
