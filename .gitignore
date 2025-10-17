@@ -52,3 +52,7 @@ EXAMPLES_ONLY/
 
 node_modules/
 tsconfig.tsbuildinfo
+atticus.egg-info/
+eval/runs/
+eval/runs/*
+eval/runs/**/*
