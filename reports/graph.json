@@ -1,0 +1,240 @@
+{
+  "frontend": {
+    "pages": [
+      "/",
+      "/admin",
+      "/apps",
+      "/contact",
+      "/settings",
+      "/signin",
+      "/signin/verify"
+    ],
+    "apiRoutes": [
+      {
+        "path": "/api/glossary",
+        "methods": [
+          "GET",
+          "POST"
+        ],
+        "file": "app/api/glossary/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/ask",
+        "methods": [
+          "POST"
+        ],
+        "file": "app/api/ask/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/glossary/[id]",
+        "methods": [
+          "DELETE",
+          "PATCH",
+          "PUT"
+        ],
+        "file": "app/api/glossary/[id]/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/auth/[...nextauth]",
+        "methods": [
+          "GET",
+          "POST"
+        ],
+        "file": "app/api/auth/[...nextauth]/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/admin/uncertain",
+        "methods": [
+          "GET"
+        ],
+        "file": "app/api/admin/uncertain/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/admin/uncertain/[id]/ask-followup",
+        "methods": [
+          "POST"
+        ],
+        "file": "app/api/admin/uncertain/[id]/ask-followup/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/admin/uncertain/[id]/approve",
+        "methods": [
+          "POST"
+        ],
+        "file": "app/api/admin/uncertain/[id]/approve/route.ts",
+        "runtime": null
+      },
+      {
+        "path": "/api/admin/uncertain/[id]/escalate",
+        "methods": [
+          "POST"
+        ],
+        "file": "app/api/admin/uncertain/[id]/escalate/route.ts",
+        "runtime": null
+      }
+    ]
+  },
+  "backend": {
+    "fastapi": [
+      {
+        "path": "/dictionary",
+        "methods": [
+          "GET"
+        ],
+        "handler": "read_dictionary",
+        "requestModel": "AdminGuard",
+        "responseModel": "DictionaryPayload",
+        "deps": [
+          "SettingsDep"
+        ],
+        "file": "api/routes/admin.py"
+      },
+      {
+        "path": "/dictionary",
+        "methods": [
+          "POST"
+        ],
+        "handler": "write_dictionary",
+        "requestModel": "AdminGuard",
+        "responseModel": "DictionaryPayload",
+        "deps": [
+          "SettingsDep",
+          "LoggerDep"
+        ],
+        "file": "api/routes/admin.py"
+      },
+      {
+        "path": "/errors",
+        "methods": [
+          "GET"
+        ],
+        "handler": "get_errors",
+        "requestModel": "AdminGuard",
+        "responseModel": "list[ErrorLogEntry]",
+        "deps": [
+          "SettingsDep"
+        ],
+        "file": "api/routes/admin.py"
+      },
+      {
+        "path": "/sessions",
+        "methods": [
+          "GET"
+        ],
+        "handler": "get_sessions",
+        "requestModel": "AdminGuard",
+        "responseModel": "SessionLogResponse",
+        "deps": [
+          "SettingsDep"
+        ],
+        "file": "api/routes/admin.py"
+      },
+      {
+        "path": "/metrics",
+        "methods": [
+          "GET"
+        ],
+        "handler": "get_metrics_dashboard",
+        "requestModel": "AdminGuard",
+        "responseModel": "MetricsDashboard",
+        "deps": [
+          "MetricsDep"
+        ],
+        "file": "api/routes/admin.py"
+      },
+      {
+        "path": "/ui",
+        "methods": [
+          "GET"
+        ],
+        "handler": "ui_landing",
+        "requestModel": null,
+        "responseModel": null,
+        "deps": [],
+        "file": "api/routes/ui.py"
+      },
+      {
+        "path": "/health",
+        "methods": [
+          "GET"
+        ],
+        "handler": "health",
+        "requestModel": null,
+        "responseModel": "HealthResponse",
+        "deps": [
+          "SettingsDep"
+        ],
+        "file": "api/routes/health.py"
+      },
+      {
+        "path": "/ask",
+        "methods": [
+          "POST"
+        ],
+        "handler": "ask_endpoint",
+        "requestModel": "AskRequest",
+        "responseModel": "AskResponse",
+        "deps": [
+          "SettingsDep",
+          "LoggerDep"
+        ],
+        "file": "api/routes/chat.py"
+      },
+      {
+        "path": "/contact",
+        "methods": [
+          "POST"
+        ],
+        "handler": "contact",
+        "requestModel": "ContactRequest",
+        "responseModel": null,
+        "deps": [],
+        "file": "api/routes/contact.py"
+      },
+      {
+        "path": "/eval/run",
+        "methods": [
+          "POST"
+        ],
+        "handler": "run_eval",
+        "requestModel": null,
+        "responseModel": "EvalResponse",
+        "deps": [
+          "SettingsDep",
+          "LoggerDep"
+        ],
+        "file": "api/routes/eval.py"
+      },
+      {
+        "path": "/ingest",
+        "methods": [
+          "POST"
+        ],
+        "handler": "trigger_ingestion",
+        "requestModel": "IngestRequest",
+        "responseModel": "IngestResponse",
+        "deps": [
+          "SettingsDep",
+          "LoggerDep"
+        ],
+        "file": "api/routes/ingest.py"
+      }
+    ]
+  },
+  "edges": [
+    {
+      "from": "Next:/api/ask",
+      "to": "FastAPI:/ask"
+    }
+  ],
+  "stores": [
+    "Postgres via Prisma (Chat, Ticket, GlossaryEntry)",
+    "Retriever indexes and embeddings"
+  ]
+}

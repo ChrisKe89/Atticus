@@ -1,0 +1,210 @@
+FILE: docs/SECURITY.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/SECURITY.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/ARCHITECTURE.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/ARCHITECTURE.md
+  [✓] SECURITY.md
+  [✓] ../VERSION
+  [✓] AGENTS.md
+  [✓] OPERATIONS.md
+  [✓] ../README.md
+
+  5 links checked.
+
+FILE: docs/README.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/README.md
+  [✓] ./ARCHITECTURE.md
+  [✓] ./AGENTS.md
+  [✓] ./REQUIREMENTS.md
+  [✓] ./OPERATIONS.md
+  [✓] ./SECURITY.md
+  [✓] ./RELEASE.md
+  [✓] ./REFERENCE.md
+  [✓] ../REPO_STRUCTURE.md
+  [✓] ./TROUBLESHOOTING.md
+  [✓] ./runbooks/seeding.md
+  [✓] ./api/openapi.json
+  [✓] ./diagrams/atticus-simple.mmd
+  [✓] ./diagrams/atticus-detailed.mmd
+  [✓] ../CHANGELOG.md
+
+  14 links checked.
+
+FILE: docs/RELEASE.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/RELEASE.md
+  [✓] ../CHANGELOG.md
+  [✓] ../VERSION
+  [✓] OPERATIONS.md
+  [✓] SECURITY.md
+
+  4 links checked.
+
+FILE: docs/glossary-spec.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/glossary-spec.md
+  [✓] ../TODO.md#5-uncertain-chat-validation-flow
+  [✓] ../TODO.md#4-admin-ops-console-uncertain-chats-tickets-glossary
+
+  2 links checked.
+
+FILE: docs/OPERATIONS.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/OPERATIONS.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/runbooks/auth-rbac.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/runbooks/auth-rbac.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/runbooks/seeding.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/runbooks/seeding.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/AGENTS.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/AGENTS.md
+  [✓] ./AUDIT_REPORT.md
+  [✓] ./IMPLEMENTATION_PLAN.md
+  [✓] ../TODO.md
+
+  3 links checked.
+
+FILE: docs/IMPLEMENTATION_PLAN.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/IMPLEMENTATION_PLAN.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/REMOTE_ACCESS.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/REMOTE_ACCESS.md
+  [✓] https://tailscale.com/download
+  [✓] OPERATIONS.md
+  [✓] SECURITY.md
+  [✓] ../README.md
+
+  4 links checked.
+
+FILE: docs/REFERENCE.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/REFERENCE.md
+  [✓] ../app/
+  [✓] ../api/
+  [✓] ../atticus/
+  [✓] ../components/
+  [✓] ../content/
+  [✓] ./
+  [✓] ../indices/
+  [✓] ../ingest/
+  [✓] ../retriever/
+  [✓] ../prisma/
+  [✓] ../scripts/
+  [✓] ../tests/
+  [✓] ../reports/
+  [✓] ../README.md
+  [✓] ../CHANGELOG.md
+  [✓] ../package.json
+  [✓] ../pyproject.toml
+  [✓] ../next.config.js
+  [✓] ../Makefile
+  [✓] ../tsconfig.json
+  [✓] ../api/main.py
+  [✓] ../app/layout.tsx
+  [✓] ../app/api/ask/route.ts
+
+  23 links checked.
+
+FILE: docs/REQUIREMENTS.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/REQUIREMENTS.md
+  [✓] ../VERSION
+  [✓] ../CHANGELOG.md
+  [✓] RELEASE.md
+  [✓] ../README.md
+  [✓] AGENTS.md
+  [✓] SECURITY.md
+
+  6 links checked.
+
+FILE: docs/api/README.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/api/README.md
+  [✖] ../../AGENTS.md
+  [✓] ../ATTICUS_DETAILED_GUIDE.md
+  [✓] ../README.md
+  [✓] ../OPERATIONS.md
+
+  4 links checked.
+
+  ERROR: 1 dead link found!
+  [✖] ../../AGENTS.md → Status: 400
+
+FILE: docs/TROUBLESHOOTING.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/TROUBLESHOOTING.md
+  [✓] OPERATIONS.md#dependency-risk-exceptions
+  [✓] ../README.md
+  [✓] OPERATIONS.md
+  [✓] SECURITY.md
+
+  4 links checked.
+
+FILE: docs/ATTICUS_DETAILED_GUIDE.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/ATTICUS_DETAILED_GUIDE.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/AUDIT_REPORT.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/AUDIT_REPORT.md
+  No hyperlinks found!
+
+  0 links checked.
+
+FILE: docs/STYLEGUIDE.md
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+FILE: docs/STYLEGUIDE.md
+  [✓] https://docs.astral.sh/ruff/
+  [✓] ../README.md
+  [✓] AGENTS.md
+  [✓] OPERATIONS.md
+  [✓] ../CHANGELOG.md
+
+  5 links checked.
+

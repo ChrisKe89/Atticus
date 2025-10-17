@@ -1,0 +1,13 @@
+flowchart LR
+    user((User)) --> nextPages["Next.js App (Pages & Middleware)"]
+    nextPages --> nextApi["Next.js Route Handlers (API)"]
+    nextApi --> fastapiCluster{{"FastAPI Service"}}
+    fastapiCluster --> askEndpoint["POST /ask"]
+    fastapiCluster --> ingestEndpoint["POST /ingest"]
+    fastapiCluster --> adminEndpoint["/admin routes"]
+    fastapiCluster --> healthEndpoint["GET /health"]
+    askEndpoint --> dataStores["RAG Pipeline / Vector Indexes"]
+    ingestEndpoint --> dataStores
+    adminEndpoint --> postgres["Postgres (Prisma)"]
+    dataStores --> user
+    postgres --> user

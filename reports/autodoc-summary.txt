@@ -1,0 +1,18 @@
+Files annotated: 157
+Functions/classes documented: 0 (module-level headers added)
+Routes discovered: 8 Next.js API routes, 11 FastAPI endpoints, 7 pages cataloged.
+Diagrams generated: docs/diagrams/atticus-simple.mmd, docs/diagrams/atticus-detailed.mmd.
+Outstanding markdownlint issues (top 10):
+- docs/AGENTS.md:55:181 MD013/line-length Line length [Expected: 180; Actual: 209]
+- docs/AGENTS.md:61:181 MD013/line-length Line length [Expected: 180; Actual: 312]
+- docs/AGENTS.md:67:181 MD013/line-length Line length [Expected: 180; Actual: 201]
+- docs/AGENTS.md:140:181 MD013/line-length Line length [Expected: 180; Actual: 393]
+- docs/AGENTS.md:167:181 MD013/line-length Line length [Expected: 180; Actual: 278]
+- docs/AGENTS.md:168:181 MD013/line-length Line length [Expected: 180; Actual: 226]
+- docs/AGENTS.md:260 MD024/no-duplicate-heading Multiple headings with the same content [Context: "Request"]
+- docs/AGENTS.md:269 MD024/no-duplicate-heading Multiple headings with the same content [Context: "Response"]
+- docs/AGENTS.md:298:181 MD013/line-length Line length [Expected: 180; Actual: 324]
+- docs/AGENTS.md:378:181 MD013/line-length Line length [Expected: 180; Actual: 187]
+Dead links remaining: none.
+OpenAPI generation: succeeded (docs/api/openapi.json updated).
+TODO notes added: none.
