@@ -131,7 +131,7 @@
 - **OPERATIONS.md** — Deploy, backups, monitoring, incident playbook
 - **TROUBLESHOOTING.md** — Common issues & fixes
 - **CHANGELOG.md** — Versioned changes
-- **CODE.md** — Consolidated source (for quick reference)
+- **ALL_CODE.md** — Consolidated source (for quick reference)
 
 ---
 
@@ -179,40 +179,45 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 
 **Core**
 
-- `DATABASE_URL`, `NEXTAUTH_SECRET`, `EMAIL_SERVER`, `EMAIL_FROM`
-- SMTP: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+- `DATABASE_URL`, `AUTH_SECRET`, `EMAIL_FROM`
+- Email server: `EMAIL_SERVER_HOST`, `EMAIL_SERVER_PORT`, `EMAIL_SERVER_USER`, `EMAIL_SERVER_PASSWORD`
+- SMTP (fallbacks supported by the UI mailer): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
 
 **RAG**
 
-- `GEN_MODEL`, `EMBED_MODEL`, `EMBEDDING_VERSION`, `TOP_K`, `CONFIDENCE_THRESHOLD`
+- `GEN_MODEL`, `EMBED_MODEL`, `EMBEDDING_MODEL_VERSION`, `TOP_K`, `CONFIDENCE_THRESHOLD`
 
 **Flags**
 
 - `ENABLE_AZURE_AD=false`
 - `EMAIL_SANDBOX=true`
-- `RATE_LIMIT_PER_MINUTE=5`
+- Rate limit: `RATE_LIMIT_REQUESTS=5`, `RATE_LIMIT_WINDOW_SECONDS=60`
 - `LOG_FORMAT=json`
 
 **Windows‑friendly examples (`.env.local`)**
 
 ```dotenv
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/atticus?schema=public"
-NEXTAUTH_SECRET="dev-secret"
-EMAIL_SERVER="smtp://localhost:1025"
+AUTH_SECRET="dev-secret"
 EMAIL_FROM="atticus@localhost"
-SMTP_HOST="localhost"
-SMTP_PORT=1025
-SMTP_USER=""
-SMTP_PASS=""
-SMTP_FROM="atticus@localhost"
-GEN_MODEL="gpt-4o-mini"
+EMAIL_SERVER_HOST="localhost"
+EMAIL_SERVER_PORT=1025
+EMAIL_SERVER_USER=""
+EMAIL_SERVER_PASSWORD=""
+SMTP_HOST="localhost"           # optional; used as fallback
+SMTP_PORT=1025                  # optional; used as fallback
+SMTP_USER=""                    # optional; used as fallback
+SMTP_PASS=""                    # optional; used as fallback
+SMTP_FROM="atticus@localhost"   # optional; used as fallback
+GEN_MODEL="gpt-4.1"
 EMBED_MODEL="text-embedding-3-large"
-EMBEDDING_VERSION="2025-01-01"
+EMBEDDING_MODEL_VERSION="text-embedding-3-large@2025-01-15"
 TOP_K=8
 CONFIDENCE_THRESHOLD=0.70
 ENABLE_AZURE_AD=false
 EMAIL_SANDBOX=true
-RATE_LIMIT_PER_MINUTE=5
+RATE_LIMIT_REQUESTS=5
+RATE_LIMIT_WINDOW_SECONDS=60
 LOG_FORMAT=json
 ```
 

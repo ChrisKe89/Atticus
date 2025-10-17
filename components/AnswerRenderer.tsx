@@ -42,27 +42,7 @@ function formatConfidence(value: number | null | undefined): string {
   return `${Math.round(value * 100)}%`;
 }
 
-function SourcesList({ sources }: { sources: AskSource[] }) {
-  if (!sources.length) {
-    return null;
-  }
-  return (
-    <div className="mt-3 space-y-1 text-xs text-slate-600 dark:text-slate-300">
-      {sources.map((source, index) => (
-        <div key={`${source.path}-${index}`} className="flex gap-2">
-          <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-indigo-500" aria-hidden="true" />
-          <span>
-            {source.path}
-            {typeof source.page === "number" ? ` · page ${source.page}` : ""}
-            {source.heading ? ` · ${source.heading}` : ""}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AnswerPanel({ answer }: { answer: AskAnswer }) {
+function AnswerPanel({ answer, requestId }: { answer: AskAnswer; requestId?: string }) {
   const title = answer.model ?? answer.family_label ?? answer.family ?? "Answer";
   return (
     <section className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/70">
@@ -91,7 +71,25 @@ function AnswerPanel({ answer }: { answer: AskAnswer }) {
           {answer.answer}
         </ReactMarkdown>
       </div>
-      <SourcesList sources={answer.sources ?? []} />
+      {answer.sources?.length ? (
+        <div className="mt-4 space-y-1 text-xs text-slate-600 dark:text-slate-300">
+          <p className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            Citations:
+          </p>
+          {answer.sources.map((source, index) => (
+            <p key={`${source.path}-${index}`} className="truncate">
+              {source.path}
+            </p>
+          ))}
+        </div>
+      ) : null}
+      <div className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <p>
+          Confidence: {formatConfidence(answer.confidence)} · Escalate:{" "}
+          {answer.should_escalate ? "Yes" : "No"}
+        </p>
+        {requestId ? <p className="truncate">Request ID: {requestId}</p> : null}
+      </div>
     </section>
   );
 }
@@ -173,7 +171,11 @@ export default function AnswerRenderer({ text, response, disabled, onClarify }: 
     return (
       <div className="space-y-4">
         {response.answers.map((answer) => (
-          <AnswerPanel key={`${answer.model ?? answer.family ?? "answer"}-${answer.answer.slice(0, 16)}`} answer={answer} />
+          <AnswerPanel
+            key={`${answer.model ?? answer.family ?? "answer"}-${answer.answer.slice(0, 16)}`}
+            answer={answer}
+            requestId={response?.request_id}
+          />
         ))}
       </div>
     );

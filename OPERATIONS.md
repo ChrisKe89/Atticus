@@ -96,42 +96,6 @@ Document deviations (e.g., temporary reviewer overrides) in the incident or rele
 
 ---
 
-## Glossary Baseline & Rollback
-
-Use these steps to keep glossary fixtures deterministic across environments.
-
-1. Seed the database:
-
-   ```bash
-   make db.seed
-   ```
-
-   ```powershell
-   make db.seed
-   ```
-
-   The target provisions service users (`glossary.author@seed.atticus`, `glossary.approver@seed.atticus`) and three glossary entries spanning `APPROVED`, `PENDING`, and `REJECTED` states.
-
-2. Verify the baseline rows (requires Postgres access):
-
-   ```bash
-   pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip
-   ```
-
-   ```powershell
-   pytest tests/test_seed_manifest.py::test_glossary_seed_entries_round_trip
-   ```
-
-3. To reset production data after exploratory edits:
-
-   - Snapshot current entries: `psql "$DATABASE_URL" -c 'COPY "GlossaryEntry" TO STDOUT WITH CSV HEADER' > glossary_backup.csv`.
-   - Re-import when ready: `psql "$DATABASE_URL" -c "\copy \"GlossaryEntry\" FROM 'glossary_backup.csv' WITH CSV HEADER"`.
-   - Rerun `make db.seed` to restore deterministic reviewer accounts.
-
-Document deviations (e.g., temporary reviewer overrides) in the incident or release notes and update `docs/glossary-spec.md` if the workflow changes.
-
----
-
 ## Evaluate Retrieval
 
 1. Ensure gold Q/A sets exist under `eval/goldset/*.jsonl`.

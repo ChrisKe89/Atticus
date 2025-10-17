@@ -1,20 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Loader2, Paperclip, Send } from "lucide-react";
+import { useState } from "react";
+import { Loader2, Send } from "lucide-react";
 import { streamAsk, type AskStreamEvent } from "@/lib/ask-client";
 import type { AskResponse, AskSource } from "@/lib/ask-contract";
 import AnswerRenderer from "@/components/AnswerRenderer";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 
 interface ChatMessage {
@@ -26,12 +17,6 @@ interface ChatMessage {
   error?: string;
   question?: string;
 }
-
-const shortcuts = [
-  { label: "Shift + Enter", description: "New line" },
-  { label: "Ctrl + Enter", description: "Send message" },
-  { label: "Esc", description: "Clear composer" },
-];
 
 function createId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -45,23 +30,11 @@ function formatConfidence(confidence: number | null | undefined) {
 }
 
 export function ChatPanel() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: createId(),
-      role: "assistant",
-      status: "complete",
-      content:
-        "Hi! Drop any tender or product question below and I will back it with citations from your latest content set.",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [composer, setComposer] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const lastAssistant = useMemo(
-    () => messages.filter((message) => message.role === "assistant").at(-1)?.response,
-    [messages]
-  );
+  const [showIntro, setShowIntro] = useState(true);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,6 +43,9 @@ export function ChatPanel() {
       return;
     }
     setError(null);
+    if (showIntro) {
+      setShowIntro(false);
+    }
 
     const userMessage: ChatMessage = {
       id: createId(),
@@ -96,11 +72,6 @@ export function ChatPanel() {
           onEvent: (event: AskStreamEvent) => {
             if (event.type === "answer") {
               const response = event.payload;
-              console.info("ask_response", {
-                requestId: response.request_id,
-                confidence: response.confidence,
-                shouldEscalate: response.should_escalate,
-              });
               setMessages((prev) =>
                 prev.map((message) =>
                   message.id === placeholder.id
@@ -148,6 +119,9 @@ export function ChatPanel() {
       return;
     }
     setError(null);
+    if (showIntro) {
+      setShowIntro(false);
+    }
     setIsStreaming(true);
     setMessages((prev) =>
       prev.map((message) =>
@@ -215,37 +189,37 @@ export function ChatPanel() {
   }
 
   return (
-    <section className="flex w-full flex-1 justify-center">
-      <Card className="flex w-full max-w-3xl flex-col">
-        <CardHeader className="border-b border-slate-200/80 pb-4 dark:border-slate-800/60">
-          <div className="flex items-center justify-between gap-3">
-            <CardTitle className="text-base">Live conversation</CardTitle>
-            <Badge variant={isStreaming ? "default" : "success"}>
-              {isStreaming ? "Streaming..." : "Connected"}
-            </Badge>
+    <section className="flex h-full min-h-0 flex-1 flex-col">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 lg:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {showIntro && messages.length === 0 ? (
+          <div className="flex h-full min-h-full items-center justify-center text-center">
+            <div className="max-w-xl space-y-3">
+              <p className="text-sm font-semibold uppercase tracking-[0.35em] text-slate-400 dark:text-slate-500">
+                Welcome
+              </p>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
+                Hi there — I’m Atticus.
+              </h2>
+              <p className="text-base text-slate-600 dark:text-slate-300">
+                Ask me about any FUJIFILM product, process, or spec. Every answer comes sourced
+                from verified documentation.
+              </p>
+            </div>
           </div>
-          <CardDescription>
-            Atticus shares grounded responses with request IDs and citation details for audit trails.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-1 flex-col gap-4">
-          <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+        ) : (
+          <div className="flex min-h-full flex-col justify-end gap-4">
             {messages.map((message) => (
-              <article key={message.id} className="flex items-start gap-3">
+              <article
+                key={message.id}
+                className={
+                  message.role === "assistant" ? "flex justify-start" : "flex justify-end"
+                }
+              >
                 <div
                   className={
                     message.role === "assistant"
-                      ? "flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white"
-                      : "flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                  }
-                >
-                  {message.role === "assistant" ? "A" : "You"}
-                </div>
-                <div
-                  className={
-                    message.role === "assistant"
-                      ? "flex-1 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700 shadow-sm dark:bg-slate-800/60 dark:text-slate-200"
-                      : "flex-1 rounded-2xl bg-white p-4 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-100 dark:ring-slate-800"
+                      ? "max-w-3xl rounded-2xl bg-slate-100 p-4 text-sm text-slate-800 shadow dark:bg-slate-900 dark:text-slate-200"
+                      : "max-w-3xl rounded-2xl bg-slate-900 p-4 text-sm text-white shadow dark:bg-slate-100 dark:text-slate-900"
                   }
                 >
                   {message.role === "assistant" ? (
@@ -259,39 +233,29 @@ export function ChatPanel() {
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   )}
                   {message.response?.sources?.length ? (
-                    <div className="mt-3 space-y-2">
-                      <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Sources
-                      </h3>
-                      <ul className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                    <div className="mt-3 space-y-1 text-xs text-slate-600 dark:text-slate-400">
+                      <p className="font-semibold uppercase tracking-wide">Sources</p>
+                      <ul className="space-y-1">
                         {message.response.sources.map((source: AskSource, index) => (
-                          <li key={`${message.id}-source-${index}`} className="flex items-start gap-2">
-                            <span
-                              className="mt-0.5 inline-flex h-2 w-2 flex-none rounded-full bg-indigo-500"
-                              aria-hidden="true"
-                            />
-                            <span>
-                              {source.path}
-                              {typeof source.page === "number" ? ` · page ${source.page}` : ""}
-                              {source.heading ? ` · ${source.heading}` : ""}
-                            </span>
+                          <li key={`${message.id}-source-${index}`}>
+                            {source.path}
+                            {typeof source.page === "number" ? ` · page ${source.page}` : ""}
+                            {source.heading ? ` · ${source.heading}` : ""}
                           </li>
                         ))}
                       </ul>
                     </div>
                   ) : null}
                   {message.response ? (
-                    <footer className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                    <footer className="mt-3 flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400">
                       <span>Confidence: {formatConfidence(message.response.confidence)}</span>
                       <span>
                         Escalate:{" "}
                         {message.response.should_escalate === undefined
                           ? "-"
-                          : message.response.should_escalate ? (
-                              <span className="font-semibold text-rose-600">Yes</span>
-                            ) : (
-                              "No"
-                            )}
+                          : message.response.should_escalate
+                          ? "Yes"
+                          : "No"}
                       </span>
                       <span className="truncate">Request ID: {message.response.request_id}</span>
                     </footer>
@@ -305,55 +269,41 @@ export function ChatPanel() {
               </article>
             ))}
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3 border-t border-slate-200/80 bg-white/80 dark:border-slate-800/70 dark:bg-slate-950/60">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <div className="flex items-end gap-3">
-              <Button type="button" variant="outline" size="icon" className="rounded-2xl">
-                <Paperclip className="h-5 w-5" aria-hidden="true" />
-                <span className="sr-only">Attach file</span>
-              </Button>
-              <div className="flex-1">
-                <label htmlFor="chat-message" className="sr-only">
-                  Message Atticus
-                </label>
-                <Textarea
-                  id="chat-message"
-                  value={composer}
-                  onChange={(event) => setComposer(event.target.value)}
-                  rows={3}
-                  placeholder="Message Atticus..."
-                  className="max-h-[160px] min-h-[72px]"
-                />
-              </div>
-              <Button type="submit" disabled={isStreaming || !composer.trim()} className="rounded-2xl">
-                {isStreaming ? (
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                ) : (
-                  <Send className="h-4 w-4" aria-hidden="true" />
-                )}
-                <span>{isStreaming ? "Sending..." : "Send"}</span>
-              </Button>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
-              <div className="flex flex-wrap gap-2">
-                {shortcuts.map((shortcut) => (
-                  <Badge key={shortcut.label} variant="subtle" className="normal-case">
-                    {shortcut.label} · {shortcut.description}
-                  </Badge>
-                ))}
-              </div>
-              {error ? (
-                <span className="text-rose-600">{error}</span>
-              ) : lastAssistant ? (
-                <span className="truncate text-slate-400">Last request: {lastAssistant.request_id}</span>
-              ) : null}
-            </div>
-          </form>
-        </CardFooter>
-      </Card>
+        )}
+      </div>
+      <div className="shrink-0 px-4 pb-4 pt-4 sm:px-6 lg:px-8">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur supports-[backdrop-filter]:backdrop-blur dark:border-slate-800 dark:bg-slate-950/90"
+        >
+          <div className="min-w-0 flex-1">
+            <label htmlFor="chat-message" className="sr-only">
+              Message Atticus
+            </label>
+            <Textarea
+              id="chat-message"
+              value={composer}
+              onChange={(event) => setComposer(event.target.value)}
+              rows={3}
+              placeholder="Message Atticus..."
+              className="max-h-[160px] min-h-[72px]"
+            />
+          </div>
+          <Button type="submit" disabled={isStreaming || !composer.trim()} className="self-end rounded-xl">
+            {isStreaming ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <Send className="h-4 w-4" aria-hidden="true" />
+            )}
+            <span>{isStreaming ? "Sending..." : "Send"}</span>
+          </Button>
+        </form>
+        {error ? (
+          <p className="mt-3 text-sm text-rose-600" role="status">
+            {error}
+          </p>
+        ) : null}
+      </div>
     </section>
   );
 }
-
-

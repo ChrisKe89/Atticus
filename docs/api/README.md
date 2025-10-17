@@ -96,7 +96,7 @@ When Atticus cannot confidently infer a model, the endpoint returns a clarificat
 }
 ```
 
-Errors follow the JSON error schema described in [AGENTS.md](../AGENTS.md#error-handling).
+Errors follow the Error JSON schema described in [AGENTS.md](../../AGENTS.md).
 
 ---
 
