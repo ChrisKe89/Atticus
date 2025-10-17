@@ -196,7 +196,9 @@ def main(argv: Iterable[str] | None = None) -> int:
                     answers = data.get("answers")
                     if isinstance(answers, list):
                         answer_content = "\n\n".join(
-                            str(answer.get("answer", "")) for answer in answers if isinstance(answer, dict)
+                            str(answer.get("answer", ""))
+                            for answer in answers
+                            if isinstance(answer, dict)
                         )
                 else:
                     answer_content = None
