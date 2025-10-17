@@ -4,16 +4,7 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 
 module.exports = {
   darkMode: ["class"],
-  content: [
-    "./app/src/app/**/*.{ts,tsx}",
-    "./app/src/components/**/*.{ts,tsx}",
-    "./app/src/lib/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx,mdx}",
-    "./lib/**/*.{ts,tsx}",
-    "./content/**/*.{md,mdx}",
-    "./docs/**/*.{md,mdx}",
-  ],
+  content: ["./app/**/*.{ts,tsx,js,jsx,mdx}", "./components/**/*.{ts,tsx,js,jsx,mdx}", "./pages/**/*.{ts,tsx,js,jsx,mdx}"],
   theme: {
     extend: {
       colors: {
@@ -81,3 +72,4 @@ module.exports = {
   },
   plugins: [animate],
 };
+

@@ -8,11 +8,25 @@ and tooling that fits your environment.
 
 ## Quick Decision Matrix
 
-| Option                 | Best For                                          | Security Posture                                            | What You Need                                              |
+<!-- markdownlint-disable-next-line MD013 -->
+
+| Option | Best For | Security Posture | What You Need |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
 | ---------------------- | ------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------- |
-| **Tailscale**          | Always-on secure mesh between office/home devices | Zero-trust, device-based auth, automatic key rotation       | Personal/enterprise Tailscale account (free tier works)    |
-| **Cloudflare Tunnel**  | Sharing access with vendors or short-term demos   | One-time tokens, granular routes, no inbound firewall rules | Cloudflare account with a free zone + `cloudflared` binary |
-| **SSH Reverse Tunnel** | One-off troubleshooting from a trusted jump host  | Depends on SSH key hygiene                                  | Any VPS or machine reachable from the remote PC            |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| **Tailscale** | Always-on secure mesh between office/home devices | Zero-trust, device-based auth, automatic key rotation | Personal/enterprise Tailscale account (free tier works) |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| **Cloudflare Tunnel** | Sharing access with vendors or short-term demos | One-time tokens, granular routes, no inbound firewall rules | Cloudflare account with a free zone + `cloudflared` binary |
+
+<!-- markdownlint-disable-next-line MD013 -->
+
+| **SSH Reverse Tunnel** | One-off troubleshooting from a trusted jump host | Depends on SSH key hygiene | Any VPS or machine reachable from the remote PC |
 
 ---
 

@@ -9,14 +9,11 @@
         "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
         "python.terminal.activateEnvironment": true,
         "python.envFile": "${workspaceFolder}\\.env",
-        // Pylance: keep editor helpful; mypy is your strict gate
         "python.analysis.typeCheckingMode": "basic",
-        // Avoid noisy diagnostics from virtualenv site-packages
         "python.analysis.exclude": [
             "**/.venv/**",
             "**/site-packages/**"
         ],
-        // Suppress optional typing noise from Starlette response types in FastAPI
         "python.analysis.diagnosticSeverityOverrides": {
             "reportInvalidTypeForm": "none",
             "reportOptionalMemberAccess": "none"
@@ -28,13 +25,14 @@
         "files.eol": "\n",
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
-        // Ruff: formatter + linter
+        // --- Ruff: formatter + linter ---
         "ruff.nativeServer": "on",
+        "ruff.lint.organizeImports": true, // let Ruff handle imports
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-            "source.fixAll.ruff": "always",
-            "source.organizeImports.ruff": "always",
-            "source.fixAll.markdownlint": "always"
+            "source.fixAll": "always", // Ruff fixes
+            "source.organizeImports": "always", // Ruff/isort via ruff.lint.organizeImports
+            "source.fixAll.markdownlint": "always" // markdownlint quick fixes if available
         },
         "[python]": {
             "editor.defaultFormatter": "charliermarsh.ruff"
@@ -47,7 +45,43 @@
         ],
         "python.testing.cwd": "${workspaceFolder}",
         // --- Markdown (align with repo rule) ---
-        "markdownlint.configFile": ".markdownlint-cli2.yaml",
+        // VS Code extension uses its own config; mirror the CLI settings here
+        "markdownlint.config": {
+            "MD013": {
+                "line_length": 180,
+                // "heading_line_length": 0, // removed: VS Code schema disallows 0
+                "tables": false,
+                "strict": false,
+                "code_blocks": false
+            },
+            "MD022": true,
+            "MD024": {
+                "siblings_only": true
+                // "allow_different_nesting": true // removed: not in schema
+            },
+            "MD025": true,
+            "MD029": {
+                "style": "one_or_ordered"
+            },
+            "MD032": true,
+            "MD033": {
+                "allowed_elements": [
+                    "img",
+                    "p",
+                    "br",
+                    "a",
+                    "code",
+                    "em",
+                    "strong",
+                    "details",
+                    "summary"
+                ]
+            },
+            "MD036": true,
+            "MD040": true,
+            "MD041": true,
+            "MD012": true
+        },
         "[markdown]": {
             "editor.wordWrap": "bounded",
             "editor.wordWrapColumn": 120
@@ -79,6 +113,6 @@
             "eval/runs": true
         },
         // --- Terminal ---
-        "terminal.integrated.cwd": "${workspaceFolder}",
+        "terminal.integrated.cwd": "${workspaceFolder}"
     }
 }

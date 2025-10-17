@@ -1,3 +1,4 @@
+/* GENERATED FILE: update via scripts/generate_api_docs.py */
 {
   "components": {
     "schemas": {
@@ -858,3 +859,4 @@
     }
   }
 }
+

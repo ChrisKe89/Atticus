@@ -1,0 +1,4 @@
+
+> atticus-webdev@0.0.0 typecheck
+> tsc --noEmit
+

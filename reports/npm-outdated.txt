@@ -1,0 +1,24 @@
+Package                      Current   Wanted   Latest  Location                                  Depended by
+@playwright/test              1.55.1   1.56.1   1.56.1  node_modules/@playwright/test             Atticus
+@prisma/client                5.22.0   5.22.0   6.17.1  node_modules/@prisma/client               Atticus
+@types/node                  20.14.9  20.14.9   24.8.1  node_modules/@types/node                  Atticus
+@types/nodemailer              7.0.1    7.0.2    7.0.2  node_modules/@types/nodemailer            Atticus
+@types/react                  18.3.5   18.3.5   19.2.2  node_modules/@types/react                 Atticus
+@types/react-dom              18.3.0   18.3.0   19.2.2  node_modules/@types/react-dom             Atticus
+autoprefixer                 10.4.20  10.4.20  10.4.21  node_modules/autoprefixer                 Atticus
+eslint                        8.57.0   8.57.0   9.37.0  node_modules/eslint                       Atticus
+eslint-config-next            14.2.5   14.2.5   15.5.6  node_modules/eslint-config-next           Atticus
+eslint-config-prettier         9.1.2    9.1.2   10.1.8  node_modules/eslint-config-prettier       Atticus
+knip                          5.64.1   5.66.0   5.66.0  node_modules/knip                         Atticus
+lucide-react                 0.452.0  0.452.0  0.546.0  node_modules/lucide-react                 Atticus
+next                         14.2.33  14.2.33   15.5.6  node_modules/next                         Atticus
+nodemailer                    6.10.1   6.10.1    7.0.9  node_modules/nodemailer                   Atticus
+postcss                       8.4.40   8.4.40    8.5.6  node_modules/postcss                      Atticus
+prettier-plugin-tailwindcss   0.5.14   0.5.14    0.7.0  node_modules/prettier-plugin-tailwindcss  Atticus
+prisma                        5.22.0   5.22.0   6.17.1  node_modules/prisma                       Atticus
+react                         18.2.0   18.2.0   19.2.0  node_modules/react                        Atticus
+react-dom                     18.2.0   18.2.0   19.2.0  node_modules/react-dom                    Atticus
+tailwind-merge                 2.6.0    2.6.0    3.3.1  node_modules/tailwind-merge               Atticus
+tailwindcss                   3.4.10   3.4.10   4.1.14  node_modules/tailwindcss                  Atticus
+typescript                     5.4.5    5.4.5    5.9.3  node_modules/typescript                   Atticus
+zod                           4.1.11   4.1.12   4.1.12  node_modules/zod                          Atticus

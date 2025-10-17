@@ -1,0 +1,5 @@
+
+> atticus-webdev@0.0.0 lint
+> next lint
+
+Ô£ö No ESLint warnings or errors
