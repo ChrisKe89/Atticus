@@ -14,11 +14,11 @@
    ```
 
 3. **Restore the matching index snapshot.**
-   - Locate the snapshot in `indices/snapshots/` stamped with the release timestamp.
+   - Locate the snapshot in `indexes/snapshots/` stamped with the release timestamp.
    - Copy it over the active index:
 
      ```bash
-     cp indices/snapshots/<snapshot>.json indices/atticus_index.json
+     cp indexes/snapshots/<snapshot>.json indexes/atticus_index.json
      ```
 
 4. **Re-pin configuration.**

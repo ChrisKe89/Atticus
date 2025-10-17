@@ -33,7 +33,5 @@
         - link "submit a request" [ref=e25] [cursor=pointer]:
           - /url: /contact
         - text: .
-  - contentinfo [ref=e26]:
-    - paragraph [ref=e28]: © 2025 Atticus. All rights reserved.
-  - alert [ref=e29]
+  - alert [ref=e26]
 ```

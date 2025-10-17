@@ -98,7 +98,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 ### Rollback
 
 1. Checkout the previous tag and redeploy (`git checkout vX.Y.(Z-1)` followed by the upgrade steps above).
-2. Restore index snapshots using `python scripts/rollback.py --manifest indices/manifest.json` if ingestion changes shipped.
+2. Restore index snapshots using `python scripts/rollback.py --manifest indexes/manifest.json` if ingestion changes shipped.
 3. Re-run `make eval` and `make quality` to ensure the rolled-back version is healthy.
 4. Update status pages/runbooks with the rollback rationale and next steps.
 

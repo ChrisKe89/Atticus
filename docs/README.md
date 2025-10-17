@@ -1,18 +1,21 @@
-# Atticus Documentation
+# Documentation Index
 
-## Adding New Content
+Start here for Atticus docs. For quick start, see the root `README.md`.
 
-1. Place documents inside the `content/` tree following the taxonomy in
-   `AGENTS.md` §3.1.
-2. Name files using `YYYYMMDD_topic_version.ext` for traceability.
-3. Run `python scripts/ingest_cli.py` (or `make ingest`) to parse, chunk
-   (defaults controlled by `config.yaml` / `.env`), embed, and update the
-   index.
-4. Review the ingestion report in `logs/app.jsonl` and commit the updated index
-   snapshot plus `indices/manifest.json`.
-5. Execute the evaluation harness with
-   `python scripts/eval_run.py --json --output-dir eval/runs/manual` to confirm
-   retrieval quality before tagging a release.
-6. Regenerate API documentation with `python scripts/generate_api_docs.py` so
-   the OpenAPI schema in `docs/api/openapi.json` stays in sync with the
-   deployed code.
+## Core
+- [README.md](../README.md) — Overview & Quick Start
+- [ARCHITECTURE.md](../ARCHITECTURE.md) — System & RAG flow (with diagrams)
+- [AGENTS.md](../AGENTS.md) — Agent contracts, behaviors, escalation
+- [REQUIREMENTS.md](../REQUIREMENTS.md) — Functional & non-functional
+- [OPERATIONS.md](../OPERATIONS.md) — Deploy, backups, monitoring, incidents
+- [SECURITY.md](../SECURITY.md) — Auth/RBAC, secrets, email/SES policy
+- [REPO_STRUCTURE.md](../REPO_STRUCTURE.md) — File map & purposes
+- [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) — Common issues
+
+## Release & Change History
+- [CHANGELOG.md](../CHANGELOG.md)
+
+> Note: Legacy UI is kept under `archive/legacy-ui/` for reference only.
+
+**See also:** [SECURITY.md](../SECURITY.md) for SES/email and admin token policy.
+

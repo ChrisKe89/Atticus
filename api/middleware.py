@@ -33,6 +33,8 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         logger = getattr(request.app.state, "logger", None)
 
         limiter = getattr(request.app.state, "rate_limiter", None)
+        # Clarification: rate limit applies to FastAPI /ask endpoint only.
+        # The Next.js handler lives under /api/ask and is rate-limited separately via frontend middleware/infra.
         if request.url.path == "/ask":
             settings = load_settings()
             if (

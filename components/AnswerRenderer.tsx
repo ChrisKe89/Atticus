@@ -179,7 +179,7 @@ export default function AnswerRenderer({ text, response, disabled, onClarify }: 
         ))}
       </div>
     );
-  }, [response?.answers]);
+  }, [response?.answers, response?.request_id]);
 
   const fallbackMarkdown = useMemo(() => {
     const content = response?.answer ?? text;
