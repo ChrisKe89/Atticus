@@ -192,6 +192,6 @@ If local Node tooling drifts, reinstall via `npm install` and retry.
 
 ## References
 
-- [README.md](README.md) — installation and setup
+- [README.md](../README.md) — installation and setup
 - [OPERATIONS.md](OPERATIONS.md) — detailed runbooks and evaluation metrics
 - [SECURITY.md](SECURITY.md) — secret handling and IAM policy examples

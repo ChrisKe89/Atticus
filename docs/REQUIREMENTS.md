@@ -118,14 +118,14 @@ Local workflows must mirror CI:
 
 ## Versioning
 
-- Project version lives in [`VERSION`](VERSION) and must match `package.json`.
-- Update [CHANGELOG.md](CHANGELOG.md) and [RELEASE.md](RELEASE.md) on every release.
+- Project version lives in [`VERSION`](../VERSION) and must match `package.json`.
+- Update [CHANGELOG.md](../CHANGELOG.md) and [RELEASE.md](RELEASE.md) on every release.
 - Tag releases using semantic versioning (`vX.Y.Z`) after CI passes.
 
 ---
 
 ## References
 
-- [README.md](README.md) — overall setup and Makefile targets.
+- [README.md](../README.md) — overall setup and Makefile targets.
 - [AGENTS.md](AGENTS.md) — agent roles and configuration.
 - [SECURITY.md](SECURITY.md) — secrets handling and IAM guidance.

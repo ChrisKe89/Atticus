@@ -51,6 +51,10 @@ except Exception:
 # ------------------------------------------------------------
 
 
+
+FAILED_HINTS: list[str] = []
+
+
 def __resolve_forward_refs() -> None:
     """Best-effort resolution for postponed annotations under Pydantic v2."""
 
@@ -76,9 +80,11 @@ def __resolve_forward_refs() -> None:
         except TypeError:
             try:
                 evaluated = get_type_hints(target, globalns=namespace, localns=namespace)
-            except Exception:
+            except Exception as exc:
+                FAILED_HINTS.append(f"{target.__module__}.{getattr(target, '__qualname__', repr(target))}: {exc}")
                 return
-        except Exception:
+        except Exception as exc:
+            FAILED_HINTS.append(f"{target.__module__}.{getattr(target, '__qualname__', repr(target))}: {exc}")
             return
 
         annotations = getattr(target, "__annotations__", None)
@@ -106,6 +112,11 @@ def __resolve_forward_refs() -> None:
 
 
 __resolve_forward_refs()
+
+if FAILED_HINTS:
+    debug_log = ROOT / "reports" / "openapi-typehint-failures.txt"
+    debug_log.parent.mkdir(parents=True, exist_ok=True)
+    debug_log.write_text("\n".join(FAILED_HINTS) + "\n", encoding="utf-8")
 
 
 def build_parser() -> argparse.ArgumentParser:

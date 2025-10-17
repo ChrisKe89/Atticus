@@ -1,7 +1,5 @@
 """Shared FastAPI dependencies."""
 
-from __future__ import annotations
-
 import logging
 from functools import lru_cache
 from pathlib import Path
@@ -58,3 +56,4 @@ def require_admin_token(request: Request, settings: SettingsDep) -> None:
 
 
 AdminGuard = Annotated[None, Depends(require_admin_token)]
+

@@ -1,7 +1,5 @@
 """Evaluation API endpoint."""
 
-from __future__ import annotations
-
 from fastapi import APIRouter, HTTPException
 
 from atticus.logging import log_event

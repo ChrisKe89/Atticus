@@ -2,8 +2,88 @@
 {
   "components": {
     "schemas": {
-      "AskRequest": {
+      "AskAnswer": {
         "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "family_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family Label"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "should_escalate": {
+            "title": "Should Escalate",
+            "type": "boolean"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/AskSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "answer",
+          "confidence",
+          "should_escalate",
+          "sources"
+        ],
+        "title": "AskAnswer",
+        "type": "object"
+      },
+      "AskRequest": {
+        "description": "Canonical ask request contract shared across services.",
+        "properties": {
+          "contextHints": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional hints supplied by the UI to bias retrieval",
+            "title": "Contexthints"
+          },
           "filters": {
             "anyOf": [
               {
@@ -19,7 +99,7 @@
             "description": "Metadata filters such as path_prefix or source_type",
             "title": "Filters"
           },
-          "contextHints": {
+          "models": {
             "anyOf": [
               {
                 "items": {
@@ -31,14 +111,18 @@
                 "type": "null"
               }
             ],
-            "description": "Optional hints supplied by the UI to bias retrieval",
-            "title": "ContextHints"
+            "description": "Optional explicit models or families selected by the user",
+            "title": "Models"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
           },
           "topK": {
             "anyOf": [
               {
-                "maximum": 32,
-                "minimum": 1,
+                "maximum": 32.0,
+                "minimum": 1.0,
                 "type": "integer"
               },
               {
@@ -46,49 +130,113 @@
               }
             ],
             "description": "Override for the retrieval top-k window",
-            "title": "TopK"
-          },
-          "question": {
-            "title": "Question",
-            "type": "string"
+            "title": "Topk"
           }
         },
-        "required": ["question"],
+        "required": [
+          "query"
+        ],
         "title": "AskRequest",
         "type": "object"
       },
       "AskResponse": {
         "properties": {
           "answer": {
-            "title": "Answer",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answer"
           },
-          "sources": {
-            "items": {
-              "$ref": "#/components/schemas/AskSource"
-            },
-            "title": "Sources",
-            "type": "array"
+          "answers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AskAnswer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answers"
+          },
+          "clarification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClarificationPayload"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "confidence": {
-            "title": "Confidence",
-            "type": "number"
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
           },
           "request_id": {
             "title": "Request Id",
             "type": "string"
           },
           "should_escalate": {
-            "title": "Should Escalate",
-            "type": "boolean"
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Should Escalate"
+          },
+          "sources": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AskSource"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sources"
           }
         },
-        "required": ["answer", "confidence", "should_escalate", "request_id", "sources"],
+        "required": [
+          "request_id"
+        ],
         "title": "AskResponse",
         "type": "object"
       },
       "AskSource": {
+        "description": "Structured citation returned to the UI.",
         "properties": {
+          "chunkId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunkid"
+          },
           "heading": {
             "anyOf": [
               {
@@ -111,28 +259,65 @@
             ],
             "title": "Page"
           },
-          "chunkId": {
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "score": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Chunkid"
+            "title": "Score"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "title": "AskSource",
+        "type": "object"
+      },
+      "ClarificationOption": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
           },
-          "score": {
-            "title": "Score",
-            "type": "number"
-          },
-          "path": {
-            "title": "Path",
+          "label": {
+            "title": "Label",
             "type": "string"
           }
         },
-        "required": ["path"],
-        "title": "AskSource",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "ClarificationOption",
+        "type": "object"
+      },
+      "ClarificationPayload": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/ClarificationOption"
+            },
+            "title": "Options",
+            "type": "array"
+          }
+        },
+        "required": [
+          "message",
+          "options"
+        ],
+        "title": "ClarificationPayload",
         "type": "object"
       },
       "ContactRequest": {
@@ -141,6 +326,17 @@
             "description": "Reason for contacting support/escalation",
             "title": "Reason",
             "type": "string"
+          },
+          "trace": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EscalationTrace"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional trace payload including user/chat/document context"
           },
           "transcript": {
             "anyOf": [
@@ -161,7 +357,9 @@
             "title": "Transcript"
           }
         },
-        "required": ["reason"],
+        "required": [
+          "reason"
+        ],
         "title": "ContactRequest",
         "type": "object"
       },
@@ -179,7 +377,10 @@
             "type": "string"
           }
         },
-        "required": ["term", "synonyms"],
+        "required": [
+          "term",
+          "synonyms"
+        ],
         "title": "DictionaryEntry",
         "type": "object"
       },
@@ -193,7 +394,9 @@
             "type": "array"
           }
         },
-        "required": ["entries"],
+        "required": [
+          "entries"
+        ],
         "title": "DictionaryPayload",
         "type": "object"
       },
@@ -215,8 +418,80 @@
             "type": "string"
           }
         },
-        "required": ["time", "message"],
+        "required": [
+          "time",
+          "message"
+        ],
         "title": "ErrorLogEntry",
+        "type": "object"
+      },
+      "EscalationTrace": {
+        "properties": {
+          "chat_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chat Id"
+          },
+          "message_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Id"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "top_documents": {
+            "description": "Top retrieved documents and scores",
+            "items": {
+              "$ref": "#/components/schemas/TraceDocument"
+            },
+            "title": "Top Documents",
+            "type": "array"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          }
+        },
+        "title": "EscalationTrace",
         "type": "object"
       },
       "EvalResponse": {
@@ -239,12 +514,22 @@
             "title": "Summary Csv",
             "type": "string"
           },
+          "summary_html": {
+            "title": "Summary Html",
+            "type": "string"
+          },
           "summary_json": {
             "title": "Summary Json",
             "type": "string"
           }
         },
-        "required": ["metrics", "deltas", "summary_csv", "summary_json"],
+        "required": [
+          "metrics",
+          "deltas",
+          "summary_csv",
+          "summary_json",
+          "summary_html"
+        ],
         "title": "EvalResponse",
         "type": "object"
       },
@@ -302,7 +587,12 @@
             "type": "string"
           }
         },
-        "required": ["status", "manifest_present", "document_count", "chunk_count"],
+        "required": [
+          "status",
+          "manifest_present",
+          "document_count",
+          "chunk_count"
+        ],
         "title": "HealthResponse",
         "type": "object"
       },
@@ -388,6 +678,87 @@
           "embedding_model_version"
         ],
         "title": "IngestResponse",
+        "type": "object"
+      },
+      "MetricsDashboard": {
+        "properties": {
+          "avg_confidence": {
+            "title": "Avg Confidence",
+            "type": "number"
+          },
+          "avg_latency_ms": {
+            "title": "Avg Latency Ms",
+            "type": "number"
+          },
+          "escalations": {
+            "title": "Escalations",
+            "type": "integer"
+          },
+          "histogram": {
+            "items": {
+              "$ref": "#/components/schemas/MetricsHistogram"
+            },
+            "title": "Histogram",
+            "type": "array"
+          },
+          "p95_latency_ms": {
+            "title": "P95 Latency Ms",
+            "type": "number"
+          },
+          "queries": {
+            "title": "Queries",
+            "type": "integer"
+          },
+          "rate_limit": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Limit"
+          },
+          "recent_trace_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Recent Trace Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "queries",
+          "avg_confidence",
+          "escalations",
+          "avg_latency_ms",
+          "p95_latency_ms",
+          "histogram",
+          "recent_trace_ids"
+        ],
+        "title": "MetricsDashboard",
+        "type": "object"
+      },
+      "MetricsHistogram": {
+        "properties": {
+          "bucket": {
+            "title": "Bucket",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "bucket",
+          "count"
+        ],
+        "title": "MetricsHistogram",
         "type": "object"
       },
       "SessionLogEntry": {
@@ -486,7 +857,9 @@
             "title": "Time"
           }
         },
-        "required": ["request_id"],
+        "required": [
+          "request_id"
+        ],
         "title": "SessionLogEntry",
         "type": "object"
       },
@@ -500,8 +873,61 @@
             "type": "array"
           }
         },
-        "required": ["sessions"],
+        "required": [
+          "sessions"
+        ],
         "title": "SessionLogResponse",
+        "type": "object"
+      },
+      "TraceDocument": {
+        "properties": {
+          "chunk_id": {
+            "title": "Chunk Id",
+            "type": "string"
+          },
+          "heading": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heading"
+          },
+          "page_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Number"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "source_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Path"
+          }
+        },
+        "required": [
+          "chunk_id",
+          "score"
+        ],
+        "title": "TraceDocument",
         "type": "object"
       },
       "ValidationError": {
@@ -529,7 +955,11 @@
             "type": "string"
           }
         },
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError",
         "type": "object"
       }
@@ -537,7 +967,7 @@
   },
   "info": {
     "title": "Atticus RAG API",
-    "version": "0.4.1"
+    "version": "0.8.1"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -645,6 +1075,24 @@
           }
         },
         "summary": "Get Errors"
+      }
+    },
+    "/admin/metrics": {
+      "get": {
+        "operationId": "get_metrics_dashboard_admin_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsDashboard"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Metrics Dashboard"
       }
     },
     "/admin/sessions": {
@@ -859,4 +1307,3 @@
     }
   }
 }
-

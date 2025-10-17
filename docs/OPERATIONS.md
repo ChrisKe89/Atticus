@@ -135,3 +135,66 @@ Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10
 - SECURITY.md — SES/email and admin token policy (canonical)
 - AGENTS.md — architecture and error policy
 - TROUBLESHOOTING.md — quick fixes
+
+## Environment Variables
+
+| Variable                  | Dev      | Prod     | Notes |
+| ------------------------- | -------- | -------- | ----- |
+| ADMIN_API_TOKEN           | required | required |       |
+| ADMIN_EMAIL               | required | required |       |
+| ADMIN_NAME                | required | required |       |
+| ASK_SERVICE_URL           | required | required |       |
+| AUTH_DEBUG_MAILBOX_DIR    | required | required |       |
+| AUTH_SECRET               | required | required |       |
+| CHUNK_MIN_TOKENS          | required | required |       |
+| CHUNK_OVERLAP_TOKENS      | required | required |       |
+| CHUNK_TARGET_TOKENS       | required | required |       |
+| CONFIDENCE_THRESHOLD      | required | required |       |
+| CONTACT_EMAIL             | required | required |       |
+| CONTENT_ROOT              | required | required |       |
+| DATABASE_URL              | required | required |       |
+| DEFAULT_ORG_ID            | required | required |       |
+| DEFAULT_ORG_NAME          | required | required |       |
+| DICTIONARY_PATH           | required | required |       |
+| EMAIL_FROM                | required | required |       |
+| EMAIL_SANDBOX             | required | required |       |
+| EMAIL_SERVER_HOST         | required | required |       |
+| EMAIL_SERVER_PASSWORD     | required | required |       |
+| EMAIL_SERVER_PORT         | required | required |       |
+| EMAIL_SERVER_USER         | required | required |       |
+| EMBED_MODEL               | required | required |       |
+| EMBEDDING_MODEL_VERSION   | required | required |       |
+| ENABLE_RERANKER           | required | required |       |
+| ERROR_LOG_PATH            | required | required |       |
+| EVAL_REGRESSION_THRESHOLD | required | required |       |
+| GEN_MODEL                 | required | required |       |
+| INDICES_DIR               | required | required |       |
+| LOG_FORMAT                | required | required |       |
+| LOG_LEVEL                 | required | required |       |
+| LOG_PATH                  | required | required |       |
+| LOG_TRACE                 | required | required |       |
+| LOG_VERBOSE               | required | required |       |
+| MAX_CONTEXT_CHUNKS        | required | required |       |
+| NEXTAUTH_SECRET           | required | required |       |
+| NEXTAUTH_URL              | required | required |       |
+| NEXTAUTH_URL_INTERNAL     | required | required |       |
+| OPENAI_API_KEY            | required | required |       |
+| PGVECTOR_LISTS            | required | required |       |
+| PGVECTOR_PROBES           | required | required |       |
+| POSTGRES_DB               | required | required |       |
+| POSTGRES_PASSWORD         | required | required |       |
+| POSTGRES_PORT             | required | required |       |
+| POSTGRES_USER             | required | required |       |
+| RAG_SERVICE_URL           | required | required |       |
+| RATE_LIMIT_REQUESTS       | required | required |       |
+| RATE_LIMIT_WINDOW_SECONDS | required | required |       |
+| SMTP_ALLOW_LIST           | required | required |       |
+| SMTP_DRY_RUN              | required | required |       |
+| SMTP_FROM                 | required | required |       |
+| SMTP_HOST                 | required | required |       |
+| SMTP_PASS                 | required | required |       |
+| SMTP_PORT                 | required | required |       |
+| SMTP_TO                   | required | required |       |
+| SMTP_USER                 | required | required |       |
+| TIMEZONE                  | required | required |       |
+| TOP_K                     | required | required |       |
