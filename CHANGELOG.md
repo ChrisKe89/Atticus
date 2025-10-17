@@ -1,4 +1,3 @@
-<<<<<<< ours
 # CHANGELOG — Atticus
 
 All notable changes to this project are documented here following **Semantic Versioning**.
@@ -20,6 +19,7 @@ The newest entries appear first.
 - Consolidated the active backlog into `TODO.md`, updated cross-references, and recorded completed tasks in `TODO_COMPLETE.md`.
 - Resolved merge artefacts in `VERSION` to restore 0.7.2 as the canonical release number and flagged the follow-up automation in the backlog.
 - Documented the model disambiguation contract across AGENTS, README, and `docs/ATTICUS_DETAILED_GUIDE.md`.
+- Documentation: aligned environment variable names across AGENTS and runbooks (`AUTH_SECRET`, `EMAIL_SERVER_*`, `EMBEDDING_MODEL_VERSION`, `RATE_LIMIT_REQUESTS/WINDOW_SECONDS`), deduplicated repeated sections in `OPERATIONS.md` and `docs/glossary-spec.md`, fixed API error schema link, clarified `app/README.md` as experimental workspace, removed stale `ALL_DOCS.md`, and added `AUDIT_REPORT.md`.
 
 ---
 
@@ -543,18 +543,3 @@ The newest entries appear first.
 - Initial content taxonomy and ingestion pipeline with deterministic embeddings and JSON logging.
 - Retrieval helpers, observability metrics, and ingestion CLI.
 - Seeded evaluation harness with gold set and baseline metrics.
-=======
-# Changelog
-
-## 0.1.1 — 10-Oct-2025
-
-- Added Tailwind CSS 3.4 configuration with shadcn-compatible tokens and utilities.
-- Installed baseline UI dependencies: React Query, Zod, Lucide, clsx/tailwind-merge, and tailwindcss-animate.
-- Seeded `components.json` to mirror shadcn/ui defaults pending CLI authentication fix.
-- Replaced the starter page with a Tailwind-backed placeholder confirming style application.
-- Documented setup steps and tooling expectations in `app/README.md`.
-
-## 0.1.0 — 10-Oct-2025
-
-- Scaffolded Next.js 15 App Router project with TypeScript support.
->>>>>>> theirs

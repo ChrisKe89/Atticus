@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
 import { Providers } from "@/app/providers";
 import { getServerAuthSession } from "@/lib/auth";
 
@@ -22,8 +21,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 dark:bg-slate-950 dark:text-slate-100">
         <Providers session={session}>
           <SiteHeader />
-          <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8">{children}</main>
-          <SiteFooter />
+          <main className="flex-1 overflow-hidden">{children}</main>
         </Providers>
       </body>
     </html>
