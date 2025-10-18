@@ -7,24 +7,24 @@ on:
 
 jobs:
   lockfile-guard:
-    name: Lockfile guard (npm vs pnpm)
+    name: Lockfile guard (pnpm only)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fail if both npm and pnpm lockfiles exist anywhere
-        shell: bash
+      - name: Ensure pnpm lockfile exists
         run: |
-          set -euo pipefail
-          has_npm=$(git ls-files "**/package-lock.json" | wc -l | tr -d ' ')
-          has_pnpm=$(git ls-files "**/pnpm-lock.yaml" | wc -l | tr -d ' ')
-          echo "Found $has_npm package-lock.json and $has_pnpm pnpm-lock.yaml"
-          if [ "$has_npm" -gt 0 ] && [ "$has_pnpm" -gt 0 ]; then
-            echo '::error::Both npm and pnpm lockfiles detected. Choose one package manager and remove the other lockfile(s).'
-            echo 'package-lock.json files:'; git ls-files "**/package-lock.json" || true
-            echo 'pnpm-lock.yaml files:'; git ls-files "**/pnpm-lock.yaml" || true
+          if [ ! -f pnpm-lock.yaml ]; then
+            echo '::error::pnpm-lock.yaml is required. Run `pnpm install` to generate it.'
+            exit 1
+          fi
+      - name: Fail if npm lockfiles exist
+        run: |
+          if git ls-files "**/package-lock.json" | grep -q .; then
+            echo '::error::package-lock.json detected. Remove npm lockfiles in favour of pnpm-lock.yaml.'
+            git ls-files "**/package-lock.json" || true
             exit 1
           fi
 
@@ -45,4 +45,46 @@ jobs:
             git ls-files "eval/runs/**" || true
             exit 1
           fi
+
+  lockfile-freshness:
+    name: Lockfile freshness check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate requirements.txt
+        run: |
+          python -m pip install --upgrade pip pip-tools
+          pip-compile requirements.in --quiet --output-file requirements.txt.tmp
+          if ! diff -u requirements.txt requirements.txt.tmp >/tmp/requirements.diff; then
+            cat /tmp/requirements.diff
+            echo '::error::requirements.txt is out of date. Run `pip-compile requirements.in`.'
+            exit 1
+          fi
+      - name: Clean temporary requirement output
+        run: rm -f requirements.txt.tmp /tmp/requirements.diff
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Validate pnpm lockfile
+        run: pnpm install --frozen-lockfile
+
+  secret-scan:
+    name: Secret scanning (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source=. --no-banner --redact
 

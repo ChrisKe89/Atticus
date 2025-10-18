@@ -74,7 +74,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException) 
                 "http_exception",
                 request_id=getattr(request.state, "request_id", "unknown"),
                 status_code=exc.status_code,
-                detail=detail,
+                path=request.url.path,
             )
     return _build_response(
         request,
@@ -104,8 +104,8 @@ async def validation_exception_handler(
             logger,
             "request_validation_error",
             request_id=getattr(request.state, "request_id", "unknown"),
-            detail=detail,
-            fields=fields,
+            path=request.url.path,
+            field_count=len(fields),
         )
     return _build_response(
         request,
@@ -124,7 +124,8 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
             logger,
             "unhandled_exception",
             request_id=getattr(request.state, "request_id", "unknown"),
-            detail=str(exc),
+            path=request.url.path,
+            error_type=exc.__class__.__name__,
         )
     return _build_response(
         request,

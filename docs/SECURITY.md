@@ -34,6 +34,7 @@ We acknowledge reports within 3 business days and coordinate a fix and disclosur
   - `EMAIL_FROM`, `EMAIL_SERVER_HOST`, `EMAIL_SERVER_PORT`, `EMAIL_SERVER_USER`, `EMAIL_SERVER_PASSWORD`
   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` (fallbacks supported by the UI mailer)
   - `ADMIN_API_TOKEN`
+  - `ALLOWED_ORIGINS` (lock CORS to the enterprise gateway domain list)
 - Run diagnostics any time:
 
 ```bash
@@ -75,6 +76,7 @@ All outbound email and escalation are covered by this policy.
 - Redact PII in logs/traces; never log secret values
 - App logs: `logs/app.jsonl`; error logs: `logs/errors.jsonl`
 - Include `request_id` and minimal context for correlation
+- Error logging intentionally omits chat payloads—only `request_id`, route, and error metadata are retained.
 
 ---
 

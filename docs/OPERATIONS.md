@@ -79,6 +79,12 @@ make web-dev
 make e2e
 ```
 
+- Validate the hardened container stack and API health endpoint:
+
+```bash
+make compose-up
+```
+
 ---
 
 ## Admin Service
@@ -135,6 +141,7 @@ Uses sandbox/non‑delivery settings in local environments; production must foll
 ## Observability & Debugging
 
 - Logs: `logs/app.jsonl` (info), `logs/errors.jsonl` (errors)
+- Sensitive chat payloads are automatically redacted from error logs; only `request_id`, route, and status metadata remain.
 - Rate limiting: see `/admin/metrics`
 - Environment diagnostics: `python scripts/debug_env.py`
 

@@ -53,7 +53,10 @@ def test_http_exception_handler_logs_server_errors() -> None:
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert logger.error_calls
     payload = logger.error_calls[0][1]
-    assert payload and payload["extra_payload"]["detail"] == "boom"
+    assert payload
+    extra = payload["extra_payload"]
+    assert extra["status_code"] == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert extra["path"] == "/tests"
 
 
 def test_validation_exception_handler_collects_fields() -> None:

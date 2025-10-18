@@ -5,7 +5,7 @@ The Atticus admin service is a lightweight Next.js application that separates es
 ## Key characteristics
 
 - **Framework:** Next.js 14.x (app router, TypeScript)
-- **Port:** `9000` (`make admin-dev` or `npm run dev --workspace admin`)
+- **Port:** `9000` (`make admin-dev` or `pnpm --filter admin dev`)
 - **Data sources:** Atticus main workspace APIs (`/api/admin/uncertain/**`)
 - **Outputs:** Appends approved answers to `content/<family>/<model>.csv` in Excel-friendly format
 
@@ -13,7 +13,7 @@ The Atticus admin service is a lightweight Next.js application that separates es
 
 ```bash
 # Install dependencies (root workspace)
-npm install
+pnpm install
 
 # Start the admin UI (port 9000)
 make admin-dev

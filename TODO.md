@@ -81,25 +81,25 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
   * Serve chat and admin panels on separate ports (e.g., `:8000` for API/chat, `:9000` for admin).
   * Admin UI must not be bundled with chat UI in Next.js build.
-* [ ] **CORS Hardening** — Restrict allowed origins to the enterprise gateway only.
-* [ ] **.env Hygiene**
+* [x] **CORS Hardening** — Restrict allowed origins to the enterprise gateway only.
+* [x] **.env Hygiene**
 
   * Add `.env.example` documenting required variables; ensure `.env` is git-ignored.
-* [ ] **Secret Scanning** — Add pre-commit/CI scan for leaked API keys.
-* [ ] **Log Redaction** — Strip chat content from exception logs; include only request_id and route info.
-* [ ] **Rate-Limit Headers** — Implement global limiters for incoming requests.
-* [ ] **Docker Hardening** — Non-root, read-only filesystem, `HEALTHCHECK`, slim images.
+* [x] **Secret Scanning** — Add pre-commit/CI scan for leaked API keys.
+* [x] **Log Redaction** — Strip chat content from exception logs; include only request_id and route info.
+* [x] **Rate-Limit Headers** — Implement global limiters for incoming requests.
+* [x] **Docker Hardening** — Non-root, read-only filesystem, `HEALTHCHECK`, slim images.
 
 ---
 
 ## ⚙️ Build & CI/CD
 
-* [ ] Pin and lock all dependencies (`requirements.txt`, `pnpm-lock.yaml`).
-* [ ] Fail CI if lockfiles missing or outdated.
-* [ ] Add ephemeral Postgres migration smoke test.
-* [ ] Docker Compose smoke test (`make compose-up` → check `/health`).
-* [ ] Multi-stage Docker builds with caching for deps.
-* [ ] Release artifacts: `eval/reports`, `api/schema.json`, `docs/*.md`.
+* [x] Pin and lock all dependencies (`requirements.txt`, `pnpm-lock.yaml`).
+* [x] Fail CI if lockfiles missing or outdated.
+* [x] Add ephemeral Postgres migration smoke test.
+* [x] Docker Compose smoke test (`make compose-up` → check `/health`).
+* [x] Multi-stage Docker builds with caching for deps.
+* [x] Release artifacts: `eval/reports`, `api/schema.json`, `docs/*.md`.
 
 ---
 
