@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from atticus.config import load_settings  # noqa: E402
+from core.config import load_settings  # noqa: E402
 from atticus.logging_utils import get_logger  # noqa: E402
 from eval.runner import run_evaluation  # noqa: E402
 

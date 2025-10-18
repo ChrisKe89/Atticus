@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable
 
 if TYPE_CHECKING:  # avoid importing heavy deps at import time
-    from atticus.config import AppSettings
+    from core.config import AppSettings
     from retriever.vector_store import RetrievalMode, SearchResult
 
 
@@ -315,7 +315,7 @@ def run_evaluation(
     modes: Sequence[str] | None = None,
 ) -> EvaluationResult:
     # Lazy imports to keep unit tests lightweight
-    from atticus.config import load_settings  # noqa: PLC0415
+    from core.config import load_settings  # noqa: PLC0415
     from atticus.logging import configure_logging, log_event  # noqa: PLC0415
     from retriever.vector_store import VectorStore  # noqa: PLC0415
 
@@ -425,7 +425,7 @@ def run_evaluation(
 
 
 def main() -> None:
-    from atticus.config import load_settings  # noqa: PLC0415
+    from core.config import load_settings  # noqa: PLC0415
 
     settings = load_settings()
     result = run_evaluation(settings=settings)

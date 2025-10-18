@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 
 from .models import Answer
 from .resolver import ModelScope

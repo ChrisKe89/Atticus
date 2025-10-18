@@ -11,7 +11,7 @@ from typing import Any
 
 from rapidfuzz import fuzz
 
-from atticus.config import AppSettings, Manifest, load_manifest
+from core.config import AppSettings, Manifest, load_manifest
 from atticus.embeddings import EmbeddingClient
 from atticus.logging import log_event
 from atticus.vector_db import PgVectorRepository, StoredChunk

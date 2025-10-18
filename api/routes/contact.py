@@ -10,7 +10,7 @@ import json
 from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from atticus.config import load_settings
+from core.config import load_settings
 from atticus.logging import configure_logging, log_error, log_event
 from atticus.notify.mailer import EscalationDeliveryError, send_escalation
 

@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
 
-from atticus.config import AppSettings, load_settings
+from core.config import AppSettings, load_settings
 from atticus.logging import configure_logging
 from atticus.metrics import MetricsRecorder
 
