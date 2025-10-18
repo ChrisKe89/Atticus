@@ -7,8 +7,8 @@ from fastapi import APIRouter, HTTPException, Request
 
 from atticus.logging import log_event
 from atticus.tokenization import count_tokens
-from retriever import answer_question
 from retriever.models import Citation
+from retriever.query_splitter import run_rag_for_each
 from retriever.resolver import ModelResolution, ModelScope, resolve_models
 
 from ..dependencies import LoggerDep, SettingsDep
@@ -59,20 +59,19 @@ def _build_answer_payloads(
     settings: SettingsDep,
     logger: LoggerDep,
 ) -> list[AskAnswer]:
+    query_answers = run_rag_for_each(
+        question=question,
+        scopes=scopes,
+        settings=settings,
+        logger=logger,
+        filters=payload.filters or {},
+        top_k=payload.top_k,
+        context_hints=payload.context_hints or [],
+    )
     answers: list[AskAnswer] = []
-    for scope in scopes:
-        filters = dict(payload.filters or {})
-        answer = answer_question(
-            question,
-            settings=settings,
-            filters=filters,
-            logger=logger,
-            top_k=payload.top_k,
-            context_hints=payload.context_hints,
-            product_family=scope.family_id or None,
-            family_label=scope.family_label or None,
-            model=scope.model,
-        )
+    for item in query_answers:
+        scope = item.scope
+        answer = item.answer
         ask_sources = _convert_citations(answer.citations)
         answers.append(
             AskAnswer(
