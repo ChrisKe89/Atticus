@@ -1,0 +1,7 @@
+Refactor Summary (2025-10-18)
+-----------------------------
+- Auth cleanup: removed next-auth/nodemailer/@auth/prisma-adapter, deleted signin UX and legacy tests, and replaced SessionProvider usage.
+- Admin service: added admin/ workspace (Next.js 14.2.33) with review console, CSV export pipeline, Docker Compose entry, and ATTICUS_* overrides.
+- Content manager: shipped /admin/content with list/upload/folder/delete/re-ingest APIs and audit logging to reports/content-actions.log.
+- Documentation & diagrams refreshed to reflect upstream SSO, the new service topology, and the ingestion workflow.
+- Pending follow-up: coordinate with gateway team on header provisioning and backfill automated tests for role-based access under the new model.

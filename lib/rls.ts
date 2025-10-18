@@ -1,20 +1,20 @@
-import type { Session } from "next-auth";
 import type { Prisma } from "@prisma/client";
 import { prisma, setRlsContext, clearRlsContext } from "@/lib/prisma";
+import type { RequestUser } from "@/lib/request-context";
 
 export async function withRlsContext<T>(
-  session: Session | null,
+  user: RequestUser | null | undefined,
   fn: (client: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
-  if (!session?.user?.id || !session.user.orgId || !session.user.role) {
-    throw new Error("RBAC enforcement requires an authenticated session");
+  if (!user?.id || !user.orgId || !user.role) {
+    throw new Error("RBAC enforcement requires an upstream user context.");
   }
 
   return prisma.$transaction(async (tx) => {
     await setRlsContext(tx, {
-      userId: session.user.id,
-      role: session.user.role,
-      orgId: session.user.orgId,
+      userId: user.id,
+      role: user.role,
+      orgId: user.orgId,
     });
 
     try {

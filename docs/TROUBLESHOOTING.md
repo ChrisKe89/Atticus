@@ -30,7 +30,6 @@ This guide covers common setup issues, ingestion problems, and quick diagnostics
   - Request a magic link and inspect the debug inbox:
 
     ```powershell
-    Start-Process "http://localhost:3000/signin"
     Get-Content -Path "$env:AUTH_DEBUG_MAILBOX_DIR/*.eml"
     ```
 

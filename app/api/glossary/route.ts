@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary, canReviewGlossary } from "@/lib/rbac";
 import {
@@ -10,6 +9,7 @@ import {
   serializeEntry,
   snapshotEntry,
 } from "@/app/api/glossary/utils";
+import { getRequestContext } from "@/lib/request-context";
 
 const relationSelect = {
   author: { select: { id: true, email: true, name: true } },
@@ -19,8 +19,9 @@ const relationSelect = {
 
 export async function GET() {
   try {
-    const session = canReviewGlossary(await getServerAuthSession());
-    const entries = (await withRlsContext(session, (tx) =>
+    const { user } = getRequestContext();
+    const reviewer = canReviewGlossary(user);
+    const entries = (await withRlsContext(reviewer, (tx) =>
       tx.glossaryEntry.findMany({
         orderBy: { term: "asc" },
         include: {
@@ -38,7 +39,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = canEditGlossary(await getServerAuthSession());
+    const { user } = getRequestContext();
+    const editor = canEditGlossary(user);
     const payload = await request.json();
     const term = typeof payload.term === "string" ? payload.term.trim() : "";
     const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
@@ -58,16 +60,16 @@ export async function POST(request: Request) {
         ? null
         : undefined;
 
-    const result = await withRlsContext(session, async (tx) => {
+    const result = await withRlsContext(editor, async (tx) => {
       const existing = await tx.glossaryEntry.findFirst({
-        where: { orgId: session.user.orgId, term },
+        where: { orgId: editor.orgId, term },
       });
 
       const data: Record<string, unknown> = {
         definition,
         synonyms,
         status,
-        updatedById: session.user.id,
+        updatedById: editor.id,
       };
       if (reviewNotes !== undefined) {
         data.reviewNotes = reviewNotes;
@@ -77,22 +79,22 @@ export async function POST(request: Request) {
         data.reviewerId = null;
       } else {
         data.reviewedAt = new Date();
-        data.reviewerId = session.user.id;
+        data.reviewerId = editor.id;
       }
 
       const entry = await tx.glossaryEntry.upsert({
-        where: { orgId_term: { orgId: session.user.orgId, term } },
+        where: { orgId_term: { orgId: editor.orgId, term } },
         create: {
           term,
           definition,
           synonyms,
           status,
-          orgId: session.user.orgId,
-          authorId: session.user.id,
-          updatedById: session.user.id,
+          orgId: editor.orgId,
+          authorId: editor.id,
+          updatedById: editor.id,
           reviewNotes: reviewNotes ?? null,
           reviewedAt: status === GlossaryStatus.PENDING ? null : new Date(),
-          reviewerId: status === GlossaryStatus.PENDING ? null : session.user.id,
+          reviewerId: status === GlossaryStatus.PENDING ? null : editor.id,
         },
         update: data,
         include: relationSelect,
@@ -100,9 +102,9 @@ export async function POST(request: Request) {
 
       await tx.ragEvent.create({
         data: {
-          orgId: session.user.orgId,
-          actorId: session.user.id,
-          actorRole: session.user.role,
+          orgId: editor.orgId,
+          actorId: editor.id,
+          actorRole: editor.role,
           action: existing ? "glossary.updated" : "glossary.created",
           entity: "glossary",
           glossaryId: entry.id,

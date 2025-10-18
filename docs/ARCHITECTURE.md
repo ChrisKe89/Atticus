@@ -15,50 +15,14 @@ The Next.js application is the canonical UI; historical static assets live under
 <!-- markdownlint-disable-next-line MD013 -->
 
 | Component | Responsibility |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
+| --------- | -------------- |
 | **Ingestion & Indexing** | Parse → chunk → embed → persist vectors + metadata via Prisma migrations and Postgres/pgvector. |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **Retriever & Ranker** | Vector search with optional lexical rerank; enforces metadata filters (`org_id`, `product`, `version`). |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **Generator** | Drafts concise, sourced answers using the configured `GEN_MODEL`, respecting confidence thresholds. |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **API Layer** | FastAPI exposes `/health`, `/ingest`, `/ask`, `/eval`, `/contact` with `/ask` streaming SSE payloads `{answer, sources, confidence, should_escalate, request_id}`. |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **Web UI** | Next.js App Router served from `/`, delivering chat, admin, settings, contact, and apps routes using shadcn/ui + Tailwind. |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **Auth & Sessions** | Auth.js magic-link flow with Prisma adapter, RLS-backed session storage, and RBAC-aware server actions. |
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-<!-- markdownlint-disable-next-line MD013 -->
-
-| **Developer Tooling & CI** | Pre-commit (Ruff, mypy, ESLint, Prettier, markdownlint) plus GitHub Actions jobs (`frontend-quality`, `lint-test`, `pgvector-check`, `eval-gate`) mirroring `make quality`. |
+| **Retriever & Ranker** | Vector search with optional lexical rerank; enforces metadata filters (org_id, product,ersion). |
+| **Generator** | Drafts concise, sourced answers using the configured GEN_MODEL, respecting confidence thresholds. |
+| **API Layer** | FastAPI exposes /health, /ingest, /ask, /eval, /contact with /ask streaming SSE payloads {answer, sources, confidence, should_escalate, request_id}. |
+| **Web UI** | Next.js App Router served from /, delivering chat, admin, settings, contact, and apps routes using shadcn/ui + Tailwind. |
+| **Admin Service** | Lightweight Next.js workspace on port 3101 for escalated chat review, answer curation, and CSV exports under content/. |
+| **Developer Tooling & CI** | Pre-commit (Ruff, mypy, ESLint, Prettier, markdownlint) plus GitHub Actions jobs (rontend-quality, lint-test, pgvector-check, val-gate) mirroring make quality. |
 
 ---
 
@@ -68,7 +32,7 @@ The Next.js application is the canonical UI; historical static assets live under
    New or updated documents are added to `content/` and named `YYYYMMDD_topic_version.ext`.
 
 2. **Ingestion**
-   Run `make ingest` to parse and chunk documents, compute embeddings, and update the index stored under `indexes/`.
+   Run make ingest or trigger ingestion from /admin/content to parse and chunk documents, compute embeddings, and update the index stored under indexes/.
 
 3. **Retrieval**
    When a user submits a query, the retriever searches the pgvector index and optionally applies a re-ranker to prioritize the most relevant chunks.

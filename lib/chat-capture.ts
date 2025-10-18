@@ -1,7 +1,7 @@
 import { Prisma, Role } from "@prisma/client";
 import type { AskResponse } from "@/lib/ask-contract";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
+import type { RequestUser } from "@/lib/request-context";
 
 function parseConfidenceThreshold(): number {
   const raw = process.env.CONFIDENCE_THRESHOLD;
@@ -30,9 +30,10 @@ function serializeSources(sources: AskResponse["sources"] | undefined): Prisma.J
 type CaptureArgs = {
   question: string;
   response: AskResponse;
+  user: RequestUser | null | undefined;
 };
 
-export async function captureLowConfidenceChat({ question, response }: CaptureArgs): Promise<void> {
+export async function captureLowConfidenceChat({ question, response, user }: CaptureArgs): Promise<void> {
   if (response.clarification) {
     return;
   }
@@ -84,13 +85,12 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
     return;
   }
 
-  const session = await getServerAuthSession();
-  if (!session?.user?.id || !session.user.orgId) {
+  if (!user?.id || !user.orgId) {
     return;
   }
 
   try {
-    await withRlsContext(session, async (tx) => {
+    await withRlsContext(user, async (tx) => {
       const now = new Date();
       const auditLog: Prisma.JsonArray = [
         {
@@ -103,8 +103,8 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
 
       const chat = await tx.chat.create({
         data: {
-          orgId: session.user.orgId,
-          userId: session.user.id,
+          orgId: user.orgId,
+          userId: user.id,
           question,
           answer: aggregatedAnswer,
           confidence: aggregatedConfidence,
@@ -118,9 +118,9 @@ export async function captureLowConfidenceChat({ question, response }: CaptureAr
 
       await tx.ragEvent.create({
         data: {
-          orgId: session.user.orgId,
-          actorId: session.user.id,
-          actorRole: session.user.role ?? Role.USER,
+          orgId: user.orgId,
+          actorId: user.id,
+          actorRole: user.role ?? Role.USER,
           action: "chat.captured",
           entity: "chat",
           chatId: chat.id,

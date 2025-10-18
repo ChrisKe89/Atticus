@@ -1,6 +1,8 @@
 # Auth & RBAC Runbook
 
-This runbook documents the Auth.js + Prisma deployment that powers Atticus phase 3.
+> **Note:** Authentication is now handled upstream via enterprise SSO. This runbook is retained for legacy reference only; the UI trusts identity headers provided by the gateway.
+
+This runbook documents the historical Auth.js + Prisma deployment that powered Atticus phase 3.
 
 ## Overview
 
@@ -58,26 +60,36 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 ## Provisioning steps
 
 1. **Start Postgres**
+
    ```bash
    make db.up
    ```
+
 2. **Apply migrations**
+
    ```bash
    make db.migrate
    ```
+
 3. **Generate Prisma client**
+
    ```bash
    npm run prisma:generate
    ```
+
 4. **Seed default org + admin**
+
    ```bash
    make db.seed
    ```
+
    The seed script creates (or updates) the organization referenced by `DEFAULT_ORG_ID` and promotes `ADMIN_EMAIL` to `ADMIN`.
 5. **Run the app**
+
    ```bash
    npm run dev
    ```
+
    Visit `http://localhost:3000/signin`, request a magic link for the admin email, and open the link to access `/admin`.
 
 ## Testing

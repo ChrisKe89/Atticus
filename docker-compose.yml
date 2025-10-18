@@ -51,6 +51,23 @@ services:
       timeout: 5s
       retries: 3
 
+  admin:
+    image: node:20
+    container_name: atticus-admin
+    working_dir: /workspace/admin
+    environment:
+      ATTICUS_MAIN_BASE_URL: ${ATTICUS_MAIN_BASE_URL:-http://host.docker.internal:3000}
+      ATTICUS_REVIEWER_NAME: ${ATTICUS_REVIEWER_NAME:-Admin Service}
+      ATTICUS_REVIEWER_EMAIL: ${ATTICUS_REVIEWER_EMAIL:-admin@example.com}
+      ATTICUS_REVIEWER_ID: ${ATTICUS_REVIEWER_ID:-admin-service}
+    command: ["npm", "run", "dev"]
+    volumes:
+      - .:/workspace
+    ports:
+      - "3101:3101"
+    depends_on:
+      - api
+
 volumes:
   indices:
   logs:

@@ -1,51 +1,48 @@
 import { describe, expect, it } from "vitest";
-import type { Session } from "next-auth";
 import { Role } from "@prisma/client";
 import {
   canEditGlossary,
   canReviewGlossary,
   ensureRole,
-  requireSession,
+  requireUser,
   ForbiddenError,
   UnauthorizedError,
 } from "@/lib/rbac";
+import type { RequestUser } from "@/lib/request-context";
 
-const baseSession: Session = {
-  user: {
-    id: "user-1",
-    role: Role.ADMIN,
-    orgId: "org-1",
-    email: "admin@example.com",
-    name: "Admin",
-  },
-  expires: new Date(Date.now() + 60_000).toISOString(),
+const baseUser: RequestUser = {
+  id: "user-1",
+  role: Role.ADMIN,
+  orgId: "org-1",
+  email: "admin@example.com",
+  name: "Admin",
 };
 
 describe("RBAC helpers", () => {
-  it("requires a session", () => {
-    expect(() => requireSession(null)).toThrow(UnauthorizedError);
-    expect(requireSession(baseSession)).toBe(baseSession);
+  it("requires a user context", () => {
+    expect(() => requireUser(null)).toThrow(UnauthorizedError);
+    expect(requireUser(baseUser)).toBe(baseUser);
   });
 
   it("checks allowed roles", () => {
-    expect(ensureRole(baseSession, [Role.ADMIN, Role.REVIEWER])).toBe(baseSession);
-    const userSession: Session = {
-      ...baseSession,
-      user: { ...baseSession.user, role: Role.USER },
+    expect(ensureRole(baseUser, [Role.ADMIN, Role.REVIEWER])).toBe(baseUser);
+    const userContext: RequestUser = {
+      ...baseUser,
+      role: Role.USER,
     };
-    expect(() => ensureRole(userSession, [Role.ADMIN])).toThrow(ForbiddenError);
+    expect(() => ensureRole(userContext, [Role.ADMIN])).toThrow(ForbiddenError);
   });
 
   it("allows reviewers to view glossary but not edit", () => {
-    const reviewerSession: Session = {
-      ...baseSession,
-      user: { ...baseSession.user, role: Role.REVIEWER },
+    const reviewerContext: RequestUser = {
+      ...baseUser,
+      role: Role.REVIEWER,
     };
-    expect(canReviewGlossary(reviewerSession)).toBe(reviewerSession);
-    expect(() => canEditGlossary(reviewerSession)).toThrow(ForbiddenError);
+    expect(canReviewGlossary(reviewerContext)).toBe(reviewerContext);
+    expect(() => canEditGlossary(reviewerContext)).toThrow(ForbiddenError);
   });
 
   it("allows admins to edit glossary", () => {
-    expect(canEditGlossary(baseSession)).toBe(baseSession);
+    expect(canEditGlossary(baseUser)).toBe(baseUser);
   });
 });

@@ -1,0 +1,7 @@
+Documentation Update Summary
+============================
+- README now covers the admin service (port 3101) and the Content Manager workflow.
+- ARCHITECTURE.md revised with new component table and data flow, linking to updated mermaid diagrams.
+- OPERATIONS.md includes admin/content runbooks and removes legacy NEXTAUTH variables.
+- docs/README.md adds ADMIN_SERVICE.md; docs/AGENTS.md and REQUIREMENTS.md drop Auth.js references.
+- Mermaid diagrams (atticus-simple.mmd, atticus-detailed.mmd) illustrate the two-service topology and CSV export loop.

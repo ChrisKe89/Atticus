@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { askRequestSchema, askResponseSchema } from "@/lib/ask-contract";
 import type { AskRequest } from "@/lib/ask-contract";
 import { captureLowConfidenceChat } from "@/lib/chat-capture";
+import { getRequestUser } from "@/lib/request-context";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -92,6 +93,8 @@ export async function POST(request: Request) {
     return buildErrorResponse(400, requestId, "validation_error", detail);
   }
 
+  const requestUser = getRequestUser();
+
   let upstream: Response;
   try {
     upstream = await fetch(`${getServiceUrl()}/ask`, {
@@ -175,6 +178,7 @@ export async function POST(request: Request) {
                 capturePromise = captureLowConfidenceChat({
                   question: parsed.question,
                   response: parsedAnswer,
+                  user: requestUser,
                 });
               } catch (error) {
                 // Ignore malformed payloads; the client will handle upstream data.
@@ -208,7 +212,7 @@ export async function POST(request: Request) {
     return buildErrorResponse(502, upstreamRequestId, "invalid_upstream_response", detail);
   }
 
-  await captureLowConfidenceChat({ question: parsed.question, response: askResponse });
+  await captureLowConfidenceChat({ question: parsed.question, response: askResponse, user: requestUser });
 
   if (acceptsSse) {
     const stream = new ReadableStream<Uint8Array>({

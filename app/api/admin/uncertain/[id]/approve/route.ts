@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
+import { Prisma, Role } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
+import { getRequestContext } from "@/lib/request-context";
 
 function canApprove(role: Role | undefined): boolean {
   return role === Role.ADMIN || role === Role.REVIEWER;
@@ -9,14 +9,12 @@ function canApprove(role: Role | undefined): boolean {
 
 type ApproveBody = {
   notes?: string;
+  answer?: string;
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
-  if (!canApprove(session.user.role)) {
+  const { user } = getRequestContext();
+  if (!canApprove(user.role)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
@@ -28,10 +26,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
     body = {};
   }
   const notes = typeof body.notes === "string" ? body.notes.trim() : undefined;
+  const editedAnswer = typeof body.answer === "string" ? body.answer.trim() : undefined;
   const eventTimestamp = new Date().toISOString();
 
   try {
-    const result = await withRlsContext(session, async (tx) => {
+    const result = await withRlsContext(user, async (tx) => {
       const existing = await tx.chat.findUnique({
         where: { id },
         select: { auditLog: true, status: true, orgId: true, requestId: true },
@@ -39,27 +38,39 @@ export async function POST(request: Request, { params }: { params: { id: string 
       if (!existing) {
         return null;
       }
-      if (existing.status !== "pending_review") {
+      if (existing.status !== "pending_review" && existing.status !== "draft") {
         return "not_pending" as const;
       }
 
-      const auditLog = Array.isArray(existing.auditLog) ? [...existing.auditLog] : [];
-      auditLog.push({
+      const auditLog: Prisma.JsonArray = Array.isArray(existing.auditLog)
+        ? [...(existing.auditLog as Prisma.JsonArray)]
+        : [];
+      const logEntry: Prisma.JsonObject = {
         action: "approve",
-        actorId: session.user.id,
-        actorRole: session.user.role,
+        actorId: user.id,
+        actorRole: user.role,
         at: eventTimestamp,
         notes: notes ?? null,
-      });
+      };
+      if (editedAnswer !== undefined) {
+        logEntry.answerUpdated = editedAnswer.length > 0;
+      }
+      auditLog.push(logEntry);
+
+      const updateData: Prisma.ChatUncheckedUpdateInput = {
+        status: "reviewed",
+        reviewedAt: new Date(eventTimestamp),
+        reviewedById: user.id,
+        auditLog,
+      };
+
+      if (editedAnswer !== undefined) {
+        updateData.answer = editedAnswer;
+      }
 
       const updated = await tx.chat.update({
         where: { id },
-        data: {
-          status: "reviewed",
-          reviewedAt: new Date(eventTimestamp),
-          reviewedById: session.user.id,
-          auditLog,
-        },
+        data: updateData,
         select: {
           id: true,
           status: true,
@@ -74,8 +85,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
       await tx.ragEvent.create({
         data: {
           orgId: existing.orgId,
-          actorId: session.user.id,
-          actorRole: session.user.role,
+          actorId: user.id,
+          actorRole: user.role,
           action: "chat.approved",
           entity: "chat",
           chatId: updated.id,

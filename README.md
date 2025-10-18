@@ -2,9 +2,11 @@
 
 > **Atticus for Sales Enablement** accelerates tender responses, keeps Sales self-sufficient, and frees Service/Marketing from ad-hoc requests.
 
-Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, **Prisma**, and **Auth.js**. It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
+Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, and **Prisma**.
+It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
 > **Release 0.7.10** â€“ Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
+> Enterprise authentication and SSO are managed externally. This app assumes user access is handled upstream.
 
 ## Model Disambiguation Flows
 
@@ -45,7 +47,7 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
 
 1. Database and Prisma
 
-   Launch Postgres, apply migrations, and seed the default admin specified in `.env`.
+   Launch Postgres, apply migrations, and seed baseline data.
 
    ```bash
    make db.up
@@ -131,11 +133,10 @@ Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**
    make quality
    ```
 
-   `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit). Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+  > `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
+  > Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
-
-   Visit `http://localhost:3000/signin`, request a magic link for your provisioned email, and follow the link (from your inbox or `AUTH_DEBUG_MAILBOX_DIR`, which defaults to `./logs/mailbox`) to sign in. Admins and reviewers can reach `/admin` to triage low-confidence chats, capture follow-up prompts, review escalations, and curate glossary entries (reviewers operate in read-only mode for glossary changes).
 
 1. `/api/ask` contract
 
@@ -172,8 +173,6 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 
 1. **Environment**:
    - Generate `.env` and update SMTP + Postgres credentials.
-   - Ensure `AUTH_SECRET` and `NEXTAUTH_SECRET` match.
-   - Set `NEXTAUTH_URL` (typically `http://localhost:3000` for local dev).
 2. **Dependencies**:
    - install Python + Node dependencies (`pip-sync` and `npm install`).
 3. **Database**:
@@ -240,7 +239,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 | `make db.down`              | Stop Postgres (Docker)                                                 |
 | `make db.migrate`           | Run Prisma migrations                                                  |
 | `make db.verify`            | Ensure pgvector extension, dimensions, and IVFFlat settings            |
-| `make db.seed`              | Seed default organization/admin                                        |
+| `make db.seed`              | Seed baseline demo content                                             |
 | `make help`                 | List available make targets                                            |
 | `make web-build`            | Build the production Next.js bundle                                    |
 | `make web-start`            | Start the built Next.js app                                            |
@@ -275,20 +274,36 @@ The Next.js application in `app/` is the supported interface.
 
 - `app/page.tsx` hosts the streaming chat surface using `/api/ask` and renders citations.
 - `app/contact/page.tsx` handles escalations to the FastAPI `/contact` endpoint.
-- `app/admin/page.tsx` powers the glossary workflow and enforces Auth.js RBAC.
+- `app/admin/page.tsx` powers the glossary workflow and respects upstream reviewer/admin context.
 
 Legacy static assets live under `archive/legacy-ui/` for reference only.
 
 ---
 
-## Auth & RBAC
+## Access Control
 
-- Email magic links deliver sign-in using SES SMTP credentials from `.env`.
-- Admins (`ADMIN_EMAIL`) manage the Uncertain, Tickets, and Glossary tabs at `/admin`. Reviewers share the same surface with approval capabilities but cannot escalate chats or edit glossary entries. Standard users are redirected to `/`.
-- Postgres Row Level Security gates glossary CRUD, user/session tables, and admin APIs by `org_id` + role.
-- Use `withRlsContext(session, fn)` for Prisma calls that inherit user context.
+Enterprise authentication and SSO are managed upstream. The Atticus web workspace trusts the incoming request context and no longer performs session management or magic-link delivery internally.
 
-Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.md](docs/runbooks/auth-rbac.md).
+## Admin Service (port 3101)
+
+A separate Next.js workspace (`admin/`) now powers escalation review and answer curation. Run it alongside the main UI:
+
+```bash
+npm run dev --workspace admin    # http://localhost:3101
+```
+
+Reviewers can browse escalated chats, edit responses, and approve or reject items without impacting the primary chat surface. Approved answers are appended to `content/<family>/<model>.csv`, keeping the knowledge base synchronised with curator feedback.
+
+## Content Management & Ingestion
+
+The in-app **Content Manager** (`/admin/content`) exposes a file-browser for the `content/` tree:
+
+- Upload Markdown, PDF, and text sources
+- Create or delete folders and files (with audit logging to `reports/content-actions.log`)
+- Trigger ingestion via a dedicated “Re-ingest Content” control that runs `scripts/ingest_cli.py`
+- Receive a prompt whenever changes are made so ingestion occurs intentionally
+
+Ingestion output includes the total document count indexed and a transcript of the underlying CLI run for quick diagnostics.
 
 ---
 
@@ -298,12 +313,13 @@ Provisioning and rollback procedures are documented in [docs/runbooks/auth-rbac.
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) â€“ system diagram, data flow, SSE contract
 - [OPERATIONS.md](docs/OPERATIONS.md) â€“ runbooks, metrics, and incident response
 - [RELEASE.md](docs/RELEASE.md) â€“ release process, upgrade/rollback steps
-- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) â€“ common setup, Auth.js, pgvector, SSE issues
+- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) – common setup, pgvector, and SSE issues
 - [REQUIREMENTS.md](docs/REQUIREMENTS.md) â€“ functional/non-functional requirements for the Next.js + pgvector stack
 - [docs/AUDIT_REPORT.md](docs/AUDIT_REPORT.md) / [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) â€“ remediation history
 - [CHANGELOG.md](CHANGELOG.md) â€“ release history
 - [CONTRIBUTING.md](CONTRIBUTING.md) â€“ contributor workflow
 - [STYLEGUIDE.md](docs/STYLEGUIDE.md) â€“ code and writing standards
+- [ADMIN_SERVICE.md](docs/ADMIN_SERVICE.md) – standalone escalation tooling and reviewer workflow
 - [TODO.md](TODO.md) / [TODO_COMPLETE.md](TODO_COMPLETE.md) â€“ authoritative backlog
 
 ---
@@ -314,27 +330,27 @@ See [LICENSE](LICENSE).
 
 ## Token Count Test
 
-    ```
-    # GPT 4o-mini
-    python scripts/run_token_eval.py `
-        --input "TOKEN_EVAL.xlsx" `
-        --output "reports/4o_mini_ac7070_token_eval_atticus.csv" `
-        --atticus-endpoint "http://localhost:8000/ask" `
-        --model gpt-4o-mini `
-        --tokenizer-model gpt-4o-mini
-    # GPTâ€‘4.1
-    python scripts/run_token_eval.py `
-        --input "TOKEN_EVAL.xlsx" `
-        --output "reports/gpt4_1_ac7070_token_eval_atticus.csv" `
-        --atticus-endpoint "http://localhost:8000/ask" `
-        --model gpt-4.1 `
-        --tokenizer-model gpt-4.1
+```powershell
+# GPT 4o-mini
+python scripts/run_token_eval.py `
+    --input "TOKEN_EVAL.xlsx" `
+    --output "reports/4o_mini_ac7070_token_eval_atticus.csv" `
+    --atticus-endpoint "http://localhost:8000/ask" `
+    --model gpt-4o-mini `
+    --tokenizer-model gpt-4o-mini
+# GPT 4.1
+python scripts/run_token_eval.py `
+    --input "TOKEN_EVAL.xlsx" `
+    --output "reports/gpt4_1_ac7070_token_eval_atticus.csv" `
+    --atticus-endpoint "http://localhost:8000/ask" `
+    --model gpt-4.1 `
+    --tokenizer-model gpt-4.1
 
-    # GPTâ€‘5
-    python scripts/run_token_eval.py `
-        --input "TOKEN_EVAL.xlsx" `
-        --output "reports/gpt5_ac7070_token_eval_atticus.csv" `
-        --atticus-endpoint "http://localhost:8000/ask" `
-        --model gpt-5 `
-        --tokenizer-model gpt-5
-    ```
+# GPT 5
+python scripts/run_token_eval.py `
+    --input "TOKEN_EVAL.xlsx" `
+    --output "reports/gpt5_ac7070_token_eval_atticus.csv" `
+    --atticus-endpoint "http://localhost:8000/ask" `
+    --model gpt-5 `
+    --tokenizer-model gpt-5
+```

@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import type { Session } from "next-auth";
+import type { RequestUser } from "@/lib/request-context";
 
 export class ForbiddenError extends Error {
   constructor(message = "Forbidden") {
@@ -15,25 +15,25 @@ export class UnauthorizedError extends Error {
   }
 }
 
-export function requireSession(session: Session | null): Session {
-  if (!session?.user?.id) {
+export function requireUser(user: RequestUser | null | undefined): RequestUser {
+  if (!user?.id) {
     throw new UnauthorizedError();
   }
-  return session;
+  return user;
 }
 
-export function ensureRole(session: Session | null, allowed: Role[]): Session {
-  const activeSession = requireSession(session);
-  if (!allowed.includes(activeSession.user.role)) {
+export function ensureRole(user: RequestUser | null | undefined, allowed: Role[]): RequestUser {
+  const activeUser = requireUser(user);
+  if (!allowed.includes(activeUser.role)) {
     throw new ForbiddenError("Insufficient role");
   }
-  return activeSession;
+  return activeUser;
 }
 
-export function canReviewGlossary(session: Session | null): Session {
-  return ensureRole(session, [Role.ADMIN, Role.REVIEWER]);
+export function canReviewGlossary(user: RequestUser | null | undefined): RequestUser {
+  return ensureRole(user, [Role.ADMIN, Role.REVIEWER]);
 }
 
-export function canEditGlossary(session: Session | null): Session {
-  return ensureRole(session, [Role.ADMIN]);
+export function canEditGlossary(user: RequestUser | null | undefined): RequestUser {
+  return ensureRole(user, [Role.ADMIN]);
 }

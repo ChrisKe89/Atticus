@@ -12,6 +12,7 @@ Start here for Atticus docs. Root **README.md** is the quick start; everything e
 - [RELEASE.md](./RELEASE.md)
 - [REPO_STRUCTURE.md](../REPO_STRUCTURE.md)
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+- [ADMIN_SERVICE.md](./ADMIN_SERVICE.md)
 - [Runbooks: Seeding](./runbooks/seeding.md)
 - [API Spec](./api/openapi.json) (generated)
 

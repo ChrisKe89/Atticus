@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary } from "@/lib/rbac";
 import {
@@ -10,6 +9,7 @@ import {
   handleGlossaryError,
   snapshotEntry,
 } from "@/app/api/glossary/utils";
+import { getRequestContext } from "@/lib/request-context";
 
 const relationSelect = {
   author: { select: { id: true, email: true, name: true } },
@@ -19,7 +19,8 @@ const relationSelect = {
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
-    const session = canEditGlossary(await getServerAuthSession());
+    const { user } = getRequestContext();
+    const editor = canEditGlossary(user);
     const payload = await request.json();
     const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
     if (!definition) {
@@ -38,7 +39,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         ? null
         : undefined;
 
-    const entry = await withRlsContext(session, async (tx) => {
+    const entry = await withRlsContext(editor, async (tx) => {
       const existing = await tx.glossaryEntry.findUnique({
         where: { id: params.id },
         include: relationSelect,
@@ -52,7 +53,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         definition,
         synonyms,
         status,
-        updatedById: session.user.id,
+        updatedById: editor.id,
       };
       if (term) {
         data.term = term;
@@ -65,7 +66,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         data.reviewerId = null;
       } else {
         data.reviewedAt = new Date();
-        data.reviewerId = session.user.id;
+        data.reviewerId = editor.id;
       }
 
       const updated = await tx.glossaryEntry.update({
@@ -76,9 +77,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
       await tx.ragEvent.create({
         data: {
-          orgId: session.user.orgId,
-          actorId: session.user.id,
-          actorRole: session.user.role,
+          orgId: editor.orgId,
+          actorId: editor.id,
+          actorRole: editor.role,
           action: "glossary.updated",
           entity: "glossary",
           glossaryId: updated.id,
@@ -106,8 +107,9 @@ export async function PATCH(request: Request, ctx: { params: { id: string } }) {
 
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   try {
-    const session = canEditGlossary(await getServerAuthSession());
-    const result = await withRlsContext(session, async (tx) => {
+    const { user } = getRequestContext();
+    const editor = canEditGlossary(user);
+    const result = await withRlsContext(editor, async (tx) => {
       const existing = await tx.glossaryEntry.findUnique({ where: { id: params.id } });
       if (!existing) {
         return null;
@@ -115,9 +117,9 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       await tx.glossaryEntry.delete({ where: { id: params.id } });
       await tx.ragEvent.create({
         data: {
-          orgId: session.user.orgId,
-          actorId: session.user.id,
-          actorRole: session.user.role,
+          orgId: editor.orgId,
+          actorId: editor.id,
+          actorRole: editor.role,
           action: "glossary.deleted",
           entity: "glossary",
           glossaryId: existing.id,
