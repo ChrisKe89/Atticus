@@ -3,7 +3,18 @@
 from __future__ import annotations
 
 
-from eval.runner import _write_outputs
+import json
+
+import pytest
+
+from eval.runner import (
+    EvaluationMode,
+    _load_baseline,
+    _resolve_modes,
+    _write_modes_summary,
+    _write_outputs,
+)
+from retriever.vector_store import RetrievalMode
 
 
 def test_write_outputs_creates_csv_json_and_html(tmp_path):
@@ -30,3 +41,38 @@ def test_write_outputs_creates_csv_json_and_html(tmp_path):
     assert "metrics" in html.lower()
     assert "0.8123" in html
     assert "0.9" in html
+
+
+def test_resolve_modes_handles_duplicates():
+    modes = _resolve_modes(["HYBRID", "vector", "hybrid"], ["lexical"])
+    assert modes[0] is RetrievalMode.HYBRID
+    assert modes[1] is RetrievalMode.VECTOR
+    assert len(modes) == 2
+
+
+def test_load_baseline_supports_multi_schema(tmp_path):
+    payload = {
+        "hybrid": {"nDCG@10": 0.91, "Recall@50": 0.87, "MRR": 0.74},
+        "vector": {"nDCG@10": 0.84, "Recall@50": 0.76, "MRR": 0.62},
+    }
+    path = tmp_path / "baseline.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    metrics = _load_baseline(path)
+    assert metrics["hybrid"]["nDCG@10"] == pytest.approx(0.91)
+    assert metrics["vector"]["MRR"] == pytest.approx(0.62)
+
+
+def test_write_modes_summary_creates_overview(tmp_path):
+    mode = EvaluationMode(
+        mode="hybrid",
+        metrics={"nDCG@10": 0.9, "Recall@50": 0.8, "MRR": 0.7},
+        deltas={"nDCG@10": 0.1, "Recall@50": 0.2, "MRR": 0.3},
+        summary_csv=tmp_path / "hybrid" / "metrics.csv",
+        summary_json=tmp_path / "hybrid" / "summary.json",
+        summary_html=tmp_path / "hybrid" / "metrics.html",
+    )
+    summary_path = _write_modes_summary(tmp_path, [mode])
+    assert summary_path.exists()
+    data = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert data["hybrid"]["metrics"]["MRR"] == 0.7

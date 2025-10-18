@@ -15,7 +15,7 @@ from atticus.config import AppSettings, load_manifest, reset_settings_cache
 from atticus.vector_db import StoredChunk
 from ingest.pipeline import IngestionOptions, ingest_corpus
 from retriever.service import answer_question
-from retriever.vector_store import VectorStore
+from retriever.vector_store import RetrievalMode, VectorStore
 
 
 class InMemoryPgVectorRepository:
@@ -207,7 +207,11 @@ def test_retrieval_pipeline_answers_question(test_settings: AppSettings) -> None
     ingest_corpus(settings=test_settings, options=IngestionOptions(paths=[document_path]))
 
     store = VectorStore(test_settings, logging.getLogger("atticus.test"))
-    results = store.search("What resolution do printers support?", top_k=3, hybrid=True)
+    results = store.search(
+        "What resolution do printers support?",
+        top_k=3,
+        mode=RetrievalMode.HYBRID,
+    )
     assert results
     top_result = results[0]
     assert top_result.source_path == str(document_path)

@@ -1,6 +1,6 @@
 {
   "name": "atticus-webdev",
-  "version": "0.8.4",
+  "version": "0.8.6",
   "private": true,
   "workspaces": [
     "admin"
@@ -26,7 +26,7 @@
     "audit:py": "python scripts/audit_unused.py --json"
   },
   "dependencies": {
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "5.18.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.0.4",
     "@radix-ui/react-tabs": "^1.0.5",
@@ -57,7 +57,7 @@
     "postcss": "8.4.40",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "prisma": "^5.18.0",
+    "prisma": "5.18.0",
     "tailwindcss": "3.4.10",
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2",
