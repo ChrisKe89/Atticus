@@ -17,3 +17,15 @@ export type ReviewChat = {
   topSources: SourceSummary[];
   auditLog: Array<Record<string, unknown>> | null;
 };
+
+export type GlossaryEntry = {
+  term: string;
+  synonyms: string[];
+};
+
+export type EvalSeed = {
+  question: string;
+  relevantDocuments: string[];
+  expectedAnswer: string | null;
+  notes: string | null;
+};

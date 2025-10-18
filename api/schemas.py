@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from pydantic.config import ConfigDict
 
 
@@ -130,6 +130,57 @@ class DictionaryEntry(BaseModel):
 
 class DictionaryPayload(BaseModel):
     entries: list[DictionaryEntry]
+
+
+class EvalSeedEntry(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    question: str
+    relevant_documents: list[str] = Field(default_factory=list, alias="relevantDocuments")
+    expected_answer: str | None = Field(default=None, alias="expectedAnswer")
+    notes: str | None = None
+
+    @field_validator("question")
+    @classmethod
+    def _validate_question(cls, value: str) -> str:
+        trimmed = value.strip()
+        if not trimmed:
+            raise ValueError("Question must not be empty")
+        return trimmed
+
+    @field_validator("relevant_documents", mode="before")
+    @classmethod
+    def _normalize_documents(cls, value: object) -> list[str]:
+        if value is None:
+            return []
+        if isinstance(value, (str, bytes)):
+            trimmed = str(value).strip()
+            return [trimmed] if trimmed else []
+        if isinstance(value, list):
+            return [str(item).strip() for item in value if str(item).strip()]
+        return []
+
+    @field_validator("expected_answer", mode="before")
+    @classmethod
+    def _normalize_expected_answer(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        text = str(value).strip()
+        return text or None
+
+    @field_validator("notes", mode="before")
+    @classmethod
+    def _normalize_notes(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        text = str(value).strip()
+        return text or None
+
+
+class EvalSeedPayload(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    seeds: list[EvalSeedEntry]
 
 
 class ErrorLogEntry(BaseModel):
