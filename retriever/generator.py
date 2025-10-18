@@ -14,6 +14,8 @@ from rapidfuzz import fuzz
 
 from atticus.config import AppSettings
 
+from .prompts import get_prompt_template
+
 UNCERTAINTY_PATTERNS: tuple[str, ...] = (
     r"\b(?:i|we)\s+(?:am|are)\s+(?:not\s+sure|unsure)\b",
     r"\b(?:i|we)\s+(?:cannot|can't|am\s+unable\s+to)\s+(?:answer|determine|confirm)\b",
@@ -30,6 +32,13 @@ class GeneratorClient:
     def __init__(self, settings: AppSettings, logger: logging.Logger | None = None) -> None:
         self.settings = settings
         self.logger = logger or logging.getLogger("atticus")
+        template_version = getattr(settings, "generation_prompt_version", "atticus-v1")
+        try:
+            self.prompt_template = get_prompt_template(template_version)
+        except KeyError as exc:
+            raise ValueError(
+                f"Prompt template version '{template_version}' is not registered"
+            ) from exc
         # Resolve API key and record source for diagnostics
         source = "none"
         api_key = None
@@ -59,6 +68,7 @@ class GeneratorClient:
                             "source": source,
                             "key_fp": fp,
                             "model": self.settings.generation_model,
+                            "prompt_version": self.prompt_template.version,
                         }
                     },
                 )
@@ -68,7 +78,14 @@ class GeneratorClient:
                     extra={"extra_payload": {"error": str(exc)}},
                 )
         else:
-            self.logger.info("No OpenAI API key detected; using offline summarizer")
+            self.logger.info(
+                "No OpenAI API key detected; using offline summarizer",
+                extra={
+                    "extra_payload": {
+                        "prompt_version": self.prompt_template.version,
+                    }
+                },
+            )
 
     def generate(  # noqa: PLR0912, PLR0915
         self,
@@ -83,8 +100,8 @@ class GeneratorClient:
 
         if self._client is not None:  # pragma: no cover - requires network
             try:
-                system_prompt = "You are Atticus, a factual assistant. Respond with concise paragraphs and cite the provided context snippets."
-                user_prompt = f"Context:\n{context_text}\n\nPrompt:\n{prompt}"
+                system_prompt = self.prompt_template.render_system()
+                user_prompt = self.prompt_template.render_user(prompt=prompt, context=context_text)
                 response: Any = self._client.responses.create(
                     model=self.settings.generation_model,
                     input=[

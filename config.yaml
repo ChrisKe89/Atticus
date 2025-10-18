@@ -21,6 +21,7 @@ top_k: 20
 embed_model: text-embedding-3-large
 embedding_model_version: text-embedding-3-large@2025-01-15
 generation_model: gpt-4.1
+generation_prompt_version: atticus-v1
 confidence_threshold: 0.7
 log_level: INFO
 timezone: UTC
@@ -28,6 +29,8 @@ evaluation_runs_dir: eval/runs
 baseline_path: eval/baseline.json
 gold_set_path: eval/gold_set.csv
 eval_regression_threshold: 3.0
+eval_min_ndcg: 0.55
+eval_min_mrr: 0.5
 evaluation_modes:
   - hybrid
   - vector

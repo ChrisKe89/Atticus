@@ -49,3 +49,15 @@ def test_load_settings_refreshes_env(tmp_path, monkeypatch):
         os.chdir(old_cwd)
         importlib.reload(config_module)
         config_module.reset_settings_cache()
+
+
+def test_evaluation_thresholds_property(monkeypatch):
+    monkeypatch.setenv("EVAL_MIN_NDCG", "0.65")
+    monkeypatch.setenv("EVAL_MIN_MRR", "0.6")
+
+    config_module.reset_settings_cache()
+    settings = config_module.load_settings()
+
+    thresholds = settings.evaluation_thresholds
+    assert thresholds["nDCG@10"] == 0.65
+    assert thresholds["MRR"] == 0.6

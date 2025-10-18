@@ -68,6 +68,7 @@ class AppSettings(BaseSettings):
     )
     embed_dimensions: int = Field(default=3072, ge=128)
     generation_model: str = Field(default="gpt-4.1", alias="GEN_MODEL")
+    generation_prompt_version: str = Field(default="atticus-v1", alias="GEN_PROMPT_VERSION")
     confidence_threshold: float = Field(default=0.70, alias="CONFIDENCE_THRESHOLD")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     log_format: str = Field(default="json", alias="LOG_FORMAT")
@@ -78,6 +79,8 @@ class AppSettings(BaseSettings):
     baseline_path: Path = Field(default=Path("eval/baseline.json"))
     gold_set_path: Path = Field(default=Path("eval/gold_set.csv"))
     eval_regression_threshold: float = Field(default=3.0, alias="EVAL_REGRESSION_THRESHOLD")
+    eval_min_ndcg: float = Field(default=0.55, alias="EVAL_MIN_NDCG", ge=0.0, le=1.0)
+    eval_min_mrr: float = Field(default=0.50, alias="EVAL_MIN_MRR", ge=0.0, le=1.0)
     evaluation_modes: list[str] = Field(
         default_factory=lambda: ["hybrid", "vector"], alias="EVAL_MODES"
     )
@@ -113,6 +116,10 @@ class AppSettings(BaseSettings):
         if self.chunk_overlap_tokens_setting is not None:
             return max(0, self.chunk_overlap_tokens_setting)
         return max(0, int(self.chunk_size * self.chunk_overlap_ratio))
+
+    @property
+    def evaluation_thresholds(self) -> dict[str, float]:
+        return {"nDCG@10": self.eval_min_ndcg, "MRR": self.eval_min_mrr}
 
     def ensure_directories(self) -> None:
         for path in [

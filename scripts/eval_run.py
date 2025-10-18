@@ -85,6 +85,8 @@ def main() -> None:
         "summary_csv": str(result.summary_csv),
         "summary_json": str(result.summary_json),
         "summary_html": str(result.summary_html),
+        "thresholds": result.thresholds,
+        "threshold_failures": result.threshold_failures,
         "modes": [
             {
                 "mode": mode.mode,
@@ -107,6 +109,13 @@ def main() -> None:
         log.info("eval_summary_written", path=str(summary_path))
 
     threshold = settings.eval_regression_threshold / 100.0
+    if result.threshold_failures:
+        log.error(
+            "eval_threshold_breach",
+            thresholds=result.thresholds,
+            failures=result.threshold_failures,
+        )
+        raise SystemExit(1)
     if any(delta < -threshold for delta in result.deltas.values()):
         log.error("eval_regression_detected", threshold=threshold, deltas=result.deltas)
         raise SystemExit(1)
