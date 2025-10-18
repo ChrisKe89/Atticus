@@ -60,26 +60,24 @@ def _safe_rmtree(path: str | None) -> None:
 
 if camelot is not None:  # pragma: no cover - runtime safeguard for camelot cleanup
     try:
-        from camelot import utils as camelot_utils  # type: ignore
+        from camelot import utils as camelot_utils
     except Exception:
         camelot = None
     else:
         temp_dir_cls = getattr(camelot_utils, "TemporaryDirectory", None)
-        if temp_dir_cls is not None and not getattr(
-            temp_dir_cls, "_atticus_safe_cleanup", False
-        ):
+        if temp_dir_cls is not None and not getattr(temp_dir_cls, "_atticus_safe_cleanup", False):
 
             def _patched_enter(self) -> str:  # type: ignore[no-untyped-def]
                 self.name = tempfile.mkdtemp()
-                return self.name
+                return cast(str, self.name)
 
             def _patched_exit(self, exc_type, exc_value, traceback) -> None:  # type: ignore[no-untyped-def]
                 _safe_rmtree(getattr(self, "name", None))
 
             # Replace the temp dir helpers so cleanup happens immediately and tolerates locks.
-            temp_dir_cls.__enter__ = _patched_enter  # type: ignore[assignment]
-            temp_dir_cls.__exit__ = _patched_exit  # type: ignore[assignment]
-            temp_dir_cls._atticus_safe_cleanup = True  # type: ignore[attr-defined]
+            temp_dir_cls.__enter__ = _patched_enter
+            temp_dir_cls.__exit__ = _patched_exit
+            temp_dir_cls._atticus_safe_cleanup = True
 
 
 def _extract_ocr(page: fitz.Page) -> str:

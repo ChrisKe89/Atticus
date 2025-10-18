@@ -7,6 +7,7 @@ import pytest
 from api.routes.chat import ask_endpoint
 from api.schemas import AskRequest
 from retriever.models import Answer, Citation, FamilyOption
+from retriever.query_splitter import QueryAnswer
 from retriever.resolver import ModelResolution, ModelScope
 
 
@@ -109,9 +110,9 @@ def test_ask_endpoint_returns_clarification(monkeypatch: pytest.MonkeyPatch) -> 
 
     monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
     monkeypatch.setattr(
-        "api.routes.chat.answer_question",
+        "api.routes.chat.run_rag_for_each",
         lambda *args, **kwargs: pytest.fail(
-            "answer_question should not be called when clarification is needed"
+            "run_rag_for_each should not be called when clarification is needed"
         ),
     )
 
@@ -150,35 +151,36 @@ def test_ask_endpoint_fans_out_answers(monkeypatch: pytest.MonkeyPatch) -> None:
 
     calls = []
 
-    def fake_answer_question(
+    def fake_run_rag_for_each(
         question: str,
-        *,
-        product_family: str | None = None,
-        family_label: str | None = None,
-        model: str | None = None,
+        scopes: list[ModelScope],
         **kwargs,
-    ) -> Answer:
-        calls.append((product_family, model))
-        citation = Citation(
-            chunk_id=f"{model}-chunk",
-            source_path=f"content/{product_family}.pdf",
-            page_number=5,
-            heading=f"{model} Specs",
-            score=0.88,
-        )
-        return Answer(
-            question=question,
-            response=f"{model} capabilities summary.",
-            citations=[citation],
-            confidence=0.92,
-            should_escalate=False,
-            model=model,
-            family=product_family,
-            family_label=family_label,
-        )
+    ) -> list[QueryAnswer]:
+        results: list[QueryAnswer] = []
+        for scope in scopes:
+            calls.append((scope.family_id, scope.model))
+            citation = Citation(
+                chunk_id=f"{scope.model}-chunk",
+                source_path=f"content/{scope.family_id}.pdf",
+                page_number=5,
+                heading=f"{scope.model} Specs",
+                score=0.88,
+            )
+            answer = Answer(
+                question=question,
+                response=f"{scope.model} capabilities summary.",
+                citations=[citation],
+                confidence=0.92,
+                should_escalate=False,
+                model=scope.model,
+                family=scope.family_id,
+                family_label=scope.family_label,
+            )
+            results.append(QueryAnswer(scope=scope, answer=answer))
+        return results
 
     monkeypatch.setattr("api.routes.chat.resolve_models", fake_resolve_models)
-    monkeypatch.setattr("api.routes.chat.answer_question", fake_answer_question)
+    monkeypatch.setattr("api.routes.chat.run_rag_for_each", fake_run_rag_for_each)
 
     payload = AskRequest(question="Compare the Apeos C4570 and C6580 models.", top_k=2)
     request = SimpleNamespace(state=SimpleNamespace(request_id="req-multi"))

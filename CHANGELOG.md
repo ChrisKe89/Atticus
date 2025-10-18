@@ -4,6 +4,17 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.8.2] - 2025-10-18
+
+### Added
+
+- Multi-model query splitter that decomposes prompts mentioning multiple FUJIFILM product families before running retrieval, ensuring per-model RAG passes (`retriever/query_splitter.py`, `api/routes/chat.py`).
+- Unit tests and documentation for the splitter, including a dedicated runbook under `docs/runbooks/query_splitter.md` and README updates describing the new workflow.
+
+### Changed
+
+- Version bumped to 0.8.2 to capture the query decomposition feature and supporting docs/tests.
+
 ## TODO — Completed / Obsolete
 
 This file is the **permanent log of completed tasks**.

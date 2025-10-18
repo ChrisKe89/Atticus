@@ -24,6 +24,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-10-18
+
+- [x] Delivered the multi-model query splitter (AI / RAG Enhancements) with targeted prompts, chat integration, documentation, tests, and version bump — completed 2025-10-18 (this change set).
+
+---
+
 ## 2025-10-10
 
 - [x] Added model parser/resolver unit tests, retrieval filter coverage, API clarification regressions, UI integration tests, and a gated Playwright chat clarification flow — completed 2025-10-10 (this change set).
