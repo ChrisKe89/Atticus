@@ -6,6 +6,7 @@ import logging
 import math
 import re
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any
 
 from rapidfuzz import fuzz
@@ -14,6 +15,33 @@ from atticus.config import AppSettings, Manifest, load_manifest
 from atticus.embeddings import EmbeddingClient
 from atticus.logging import log_event
 from atticus.vector_db import PgVectorRepository, StoredChunk
+
+
+class RetrievalMode(str, Enum):
+    """Supported retrieval scoring strategies."""
+
+    HYBRID = "hybrid"
+    VECTOR = "vector"
+    LEXICAL = "lexical"
+
+    @classmethod
+    def from_inputs(
+        cls,
+        mode: "str | RetrievalMode | None",  # noqa: UP037
+        hybrid: bool | None,
+    ) -> "RetrievalMode":  # noqa: UP037
+        if mode is not None:
+            if isinstance(mode, cls):
+                return mode
+            try:
+                return cls(str(mode).lower())
+            except ValueError as exc:  # pragma: no cover - defensive guard
+                raise ValueError(
+                    f"Unsupported retrieval mode '{mode}'. Choose from {[item.value for item in cls]}"
+                ) from exc
+        if hybrid is None:
+            return cls.HYBRID
+        return cls.HYBRID if hybrid else cls.VECTOR
 
 
 @dataclass(slots=True)
@@ -165,25 +193,32 @@ class VectorStore:
         query: str,
         top_k: int = 10,
         filters: dict[str, str] | None = None,
-        hybrid: bool = True,
+        hybrid: bool | None = None,
+        *,
+        mode: RetrievalMode | str | None = None,
     ) -> list[SearchResult]:
         if not self.chunks:
             return []
 
-        query_embedding = self.embedding_client.embed_texts([query])
-        if not query_embedding:
-            return []
-        embedding_vector = list(query_embedding[0])
+        retrieval_mode = RetrievalMode.from_inputs(mode, hybrid)
+        vector_rows: list[dict[str, Any]] = []
+        if retrieval_mode is not RetrievalMode.LEXICAL:
+            query_embedding = self.embedding_client.embed_texts([query])
+            if not query_embedding:
+                return []
+            embedding_vector = list(query_embedding[0])
 
-        candidate_limit = max(top_k * 4, top_k)
-        vector_rows = self.repository.query_similar_chunks(
-            embedding_vector,
-            limit=candidate_limit,
-            probes=self.settings.pgvector_probes,
-        )
+            candidate_limit = max(top_k * 4, top_k)
+            vector_rows = self.repository.query_similar_chunks(
+                embedding_vector,
+                limit=candidate_limit,
+                probes=self.settings.pgvector_probes,
+            )
 
         bm25_all = self._bm25_scores(query)
-        candidates: dict[str, dict[str, Any]] = {row["chunk_id"]: row for row in vector_rows}
+        candidates: dict[str, dict[str, Any]] = (
+            {row["chunk_id"]: row for row in vector_rows} if vector_rows else {}
+        )
 
         top_lexical = sorted(range(len(bm25_all)), key=lambda i: bm25_all[i], reverse=True)[
             : max(top_k * 3, 30)
@@ -195,9 +230,12 @@ class VectorStore:
         if not candidates:
             return []
 
-        candidate_indices = [
-            self.chunk_index_map[c_id] for c_id in candidates if c_id in self.chunk_index_map
-        ]
+        if retrieval_mode is RetrievalMode.LEXICAL:
+            candidate_indices = [idx for idx in top_lexical if idx < len(self.chunks)]
+        else:
+            candidate_indices = [
+                self.chunk_index_map[c_id] for c_id in candidates if c_id in self.chunk_index_map
+            ]
         bm25_min = min((bm25_all[i] for i in candidate_indices), default=0.0)
         bm25_max = max((bm25_all[i] for i in candidate_indices), default=0.0)
 
@@ -226,17 +264,24 @@ class VectorStore:
             lexical_score = bm25_norm(idx)
             fuzz_score = fuzz.partial_ratio(query, chunk.text) / 100.0
 
-            distance = row.get("distance")
-            if distance is None:
+            distance = row.get("distance") if row else None
+            if retrieval_mode is RetrievalMode.LEXICAL:
+                vector_score = 0.0
+            elif distance is None:
                 vector_score = 0.0
             else:
                 vector_score = max(0.0, 1.0 - float(distance))
 
-            base_score = alpha * vector_score + (1 - alpha) * lexical_score
-            if hybrid and not self.settings.enable_reranker:
-                combined_score = 0.8 * base_score + 0.2 * fuzz_score
+            if retrieval_mode is RetrievalMode.LEXICAL:
+                combined_score = lexical_score
+            elif retrieval_mode is RetrievalMode.VECTOR:
+                combined_score = vector_score
             else:
-                combined_score = base_score
+                base_score = alpha * vector_score + (1 - alpha) * lexical_score
+                if not self.settings.enable_reranker:
+                    combined_score = 0.8 * base_score + 0.2 * fuzz_score
+                else:
+                    combined_score = base_score
 
             results.append(
                 SearchResult(
@@ -257,12 +302,17 @@ class VectorStore:
         if not results:
             return []
 
-        if self.settings.enable_reranker:
+        if self.settings.enable_reranker and retrieval_mode is RetrievalMode.HYBRID:
             results = self._rerank_results(results)
-        elif hybrid:
-            results.sort(key=lambda result: result.score, reverse=True)
-        else:
+        elif retrieval_mode is RetrievalMode.LEXICAL:
+            results.sort(
+                key=lambda result: (result.lexical_score, result.fuzz_score),
+                reverse=True,
+            )
+        elif retrieval_mode is RetrievalMode.VECTOR:
             results.sort(key=lambda result: result.vector_score, reverse=True)
+        else:
+            results.sort(key=lambda result: result.score, reverse=True)
 
         results = results[:top_k]
 
@@ -273,5 +323,6 @@ class VectorStore:
             top_k=top_k,
             results=len(results),
             filters=filters or {},
+            mode=retrieval_mode.value,
         )
         return results

@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable
 
 if TYPE_CHECKING:  # avoid importing heavy deps at import time
     from atticus.config import AppSettings
-    from retriever.vector_store import SearchResult
+    from retriever.vector_store import RetrievalMode, SearchResult
 
 
 def _default_output_dir(settings: AppSettings) -> Path:
@@ -34,12 +34,24 @@ class GoldExample:
 
 
 @dataclass(slots=True)
+class EvaluationMode:
+    mode: str
+    metrics: dict[str, float]
+    deltas: dict[str, float]
+    summary_csv: Path
+    summary_json: Path
+    summary_html: Path
+
+
+@dataclass(slots=True)
 class EvaluationResult:
     metrics: dict[str, float]
     deltas: dict[str, float]
     summary_csv: Path
     summary_json: Path
     summary_html: Path
+    modes: list[EvaluationMode]
+    modes_summary: Path | None
 
 
 def load_gold_set(path: Path) -> list[GoldExample]:
@@ -234,10 +246,63 @@ def _write_outputs(
     return summary_csv, summary_json, summary_html
 
 
-def _load_baseline(path: Path) -> dict[str, float]:
-    if path.exists():
-        return cast(dict[str, float], json.loads(path.read_text(encoding="utf-8")))
-    return {"nDCG@10": 0.0, "Recall@50": 0.0, "MRR": 0.0}
+def _write_modes_summary(output_dir: Path, modes: Sequence[EvaluationMode]) -> Path:
+    payload = {
+        item.mode: {
+            "metrics": item.metrics,
+            "deltas": item.deltas,
+            "summary_csv": str(item.summary_csv),
+            "summary_json": str(item.summary_json),
+            "summary_html": str(item.summary_html),
+        }
+        for item in modes
+    }
+    summary_path = output_dir / "retrieval_modes.json"
+    summary_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return summary_path
+
+
+def _load_baseline(path: Path) -> dict[str, dict[str, float]]:
+    if not path.exists():
+        return {}
+
+    data = cast(dict[str, object], json.loads(path.read_text(encoding="utf-8")))
+    if not data:
+        return {}
+
+    # Support legacy single-mode baseline schema.
+    if all(isinstance(value, (int, float)) for value in data.values()):
+        return {"hybrid": {key: float(value) for key, value in data.items()}}
+
+    metrics_map: dict[str, dict[str, float]] = {}
+    for mode, metrics in data.items():
+        if not isinstance(metrics, Mapping):
+            continue
+        metrics_map[str(mode)] = {
+            key: float(metrics.get(key, 0.0)) for key in ("nDCG@10", "Recall@50", "MRR")
+        }
+    return metrics_map
+
+
+def _resolve_modes(
+    requested: Sequence[str] | None, fallback: Sequence[str]
+) -> list["RetrievalMode"]:  # noqa: UP037
+    from retriever.vector_store import RetrievalMode  # noqa: PLC0415
+
+    options = {mode.value: mode for mode in RetrievalMode}
+    selected: list[RetrievalMode] = []
+    for item in requested or fallback:
+        key = item.lower()
+        if key not in options:
+            raise ValueError(
+                f"Unsupported evaluation mode '{item}'. Choose from {sorted(options)}."
+            )
+        mode = options[key]
+        if mode not in selected:
+            selected.append(mode)
+    if not selected:
+        selected.append(RetrievalMode.HYBRID)
+    return selected
 
 
 def run_evaluation(
@@ -245,6 +310,7 @@ def run_evaluation(
     gold_path: Path | None = None,
     baseline_path: Path | None = None,
     output_dir: Path | None = None,
+    modes: Sequence[str] | None = None,
 ) -> EvaluationResult:
     # Lazy imports to keep unit tests lightweight
     from atticus.config import load_settings  # noqa: PLC0415
@@ -260,52 +326,85 @@ def run_evaluation(
     store = VectorStore(settings, logger)
     gold_examples = load_gold_set(gold_path)
 
-    ndcg_scores: list[float] = []
-    recall_scores: list[float] = []
-    mrr_scores: list[float] = []
-    per_query_rows: list[dict[str, object]] = []
+    baseline_metrics = _load_baseline(baseline_path)
+    configured_modes = getattr(settings, "evaluation_modes", ["hybrid"])
+    resolved_modes = _resolve_modes(modes, configured_modes)
 
-    for example in gold_examples:
-        results = store.search(example.question, top_k=50, filters=None, hybrid=True)
-        # Unique documents by basename (prefer metadata.source)
-        doc_keys, documents_primary = _build_doc_keys(results)
+    mode_results: list[EvaluationMode] = []
 
-        ndcg, recall, mrr = _evaluate_query(doc_keys, example.relevant_documents)
-        ndcg_scores.append(ndcg)
-        recall_scores.append(recall)
-        mrr_scores.append(mrr)
-        per_query_rows.append(
-            {
-                "query": example.question,
-                "nDCG@10": round(ndcg, 4),
-                "Recall@50": round(recall, 4),
-                "MRR": round(mrr, 4),
-                "top_document": documents_primary[0] if documents_primary else None,
-            }
+    for retrieval_mode in resolved_modes:
+        ndcg_scores: list[float] = []
+        recall_scores: list[float] = []
+        mrr_scores: list[float] = []
+        per_query_rows: list[dict[str, object]] = []
+
+        for example in gold_examples:
+            results = store.search(
+                example.question,
+                top_k=50,
+                filters=None,
+                mode=retrieval_mode,
+            )
+            doc_keys, documents_primary = _build_doc_keys(results)
+
+            ndcg, recall, mrr = _evaluate_query(doc_keys, example.relevant_documents)
+            ndcg_scores.append(ndcg)
+            recall_scores.append(recall)
+            mrr_scores.append(mrr)
+            per_query_rows.append(
+                {
+                    "query": example.question,
+                    "nDCG@10": round(ndcg, 4),
+                    "Recall@50": round(recall, 4),
+                    "MRR": round(mrr, 4),
+                    "top_document": documents_primary[0] if documents_primary else None,
+                }
+            )
+
+        metrics = _compute_metrics(ndcg_scores, recall_scores, mrr_scores)
+        mode_dir = output_dir
+        if len(resolved_modes) > 1:
+            mode_dir = output_dir / f"mode-{retrieval_mode.value}"
+        summary_csv, summary_json, summary_html = _write_outputs(mode_dir, per_query_rows, metrics)
+
+        baseline = baseline_metrics.get(retrieval_mode.value) or baseline_metrics.get("hybrid", {})
+        deltas = {key: round(metrics[key] - baseline.get(key, 0.0), 4) for key in metrics}
+
+        mode_results.append(
+            EvaluationMode(
+                mode=retrieval_mode.value,
+                metrics=metrics,
+                deltas=deltas,
+                summary_csv=summary_csv,
+                summary_json=summary_json,
+                summary_html=summary_html,
+            )
         )
 
-    metrics = _compute_metrics(ndcg_scores, recall_scores, mrr_scores)
-    summary_csv, summary_json, summary_html = _write_outputs(output_dir, per_query_rows, metrics)
+    summary_path: Path | None = None
+    if len(mode_results) > 1:
+        summary_path = _write_modes_summary(output_dir, mode_results)
 
-    baseline_metrics = _load_baseline(baseline_path)
-
-    deltas = {key: round(metrics[key] - baseline_metrics.get(key, 0.0), 4) for key in metrics}
+    primary = mode_results[0]
 
     log_event(
         logger,
         "evaluation_complete",
-        metrics=metrics,
-        deltas=deltas,
+        metrics=primary.metrics,
+        deltas=primary.deltas,
         gold_examples=len(gold_examples),
         output=str(output_dir),
+        modes=[mode.mode for mode in mode_results],
     )
 
     return EvaluationResult(
-        metrics=metrics,
-        deltas=deltas,
-        summary_csv=summary_csv,
-        summary_json=summary_json,
-        summary_html=summary_html,
+        metrics=primary.metrics,
+        deltas=primary.deltas,
+        summary_csv=primary.summary_csv,
+        summary_json=primary.summary_json,
+        summary_html=primary.summary_html,
+        modes=mode_results,
+        modes_summary=summary_path,
     )
 
 

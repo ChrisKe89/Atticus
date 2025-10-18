@@ -28,3 +28,6 @@ evaluation_runs_dir: eval/runs
 baseline_path: eval/baseline.json
 gold_set_path: eval/gold_set.csv
 eval_regression_threshold: 3.0
+evaluation_modes:
+  - hybrid
+  - vector

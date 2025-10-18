@@ -47,6 +47,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print results as JSON to stdout",
     )
+    parser.add_argument(
+        "--mode",
+        dest="modes",
+        action="append",
+        choices=["hybrid", "vector", "lexical"],
+        help="Retrieval mode to evaluate (may be passed multiple times)",
+    )
     return parser
 
 
@@ -69,6 +76,7 @@ def main() -> None:
         gold_path=args.gold_set,
         baseline_path=args.baseline,
         output_dir=args.output_dir,
+        modes=args.modes,
     )
 
     payload = {
@@ -77,6 +85,18 @@ def main() -> None:
         "summary_csv": str(result.summary_csv),
         "summary_json": str(result.summary_json),
         "summary_html": str(result.summary_html),
+        "modes": [
+            {
+                "mode": mode.mode,
+                "metrics": mode.metrics,
+                "deltas": mode.deltas,
+                "summary_csv": str(mode.summary_csv),
+                "summary_json": str(mode.summary_json),
+                "summary_html": str(mode.summary_html),
+            }
+            for mode in result.modes
+        ],
+        "modes_summary": str(result.modes_summary) if result.modes_summary else None,
     }
 
     if args.json or not args.output_dir:

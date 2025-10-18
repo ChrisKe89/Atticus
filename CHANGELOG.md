@@ -4,6 +4,28 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.8.6] - 2025-11-02
+
+### Added
+
+- Hybrid retrieval evaluation covering BM25+vector fusion and vector-only modes with aggregated metrics output (`retrieval_modes.json`) and new evaluation configuration knobs.
+
+### Changed
+
+- `VectorStore` now supports explicit retrieval modes (hybrid, vector, lexical) and evaluation defaults benchmark hybrid vs. vector strategies in every run.
+
+## [0.8.5] - 2025-10-18
+
+### Added
+
+- Feedback capture pipeline: `/api/feedback`, Prisma `SeedRequest`, and `lib/seed-request-writer` now generate targeted markdown scaffolds in `content/seed_requests/` whenever users flag unclear answers.
+- Admin console _Seed requests_ tab with regeneration (`/api/admin/seed-requests/:id/regenerate`) and completion (`/api/admin/seed-requests/:id/complete`) workflows plus operational runbook (`docs/runbooks/feedback-loop.md`).
+- Vitest coverage for the seed document writer to ensure scaffolds include captured context and source hints.
+
+### Changed
+
+- Chat `AnswerRenderer` surfaces a _Flag for seeds_ action so operators can queue feedback without leaving the conversation.
+
 ## [0.8.4] - 2025-11-01
 
 ### Added
