@@ -52,6 +52,8 @@ class EvaluationResult:
     summary_html: Path
     modes: list[EvaluationMode]
     modes_summary: Path | None
+    thresholds: dict[str, float]
+    threshold_failures: dict[str, dict[str, float]]
 
 
 def load_gold_set(path: Path) -> list[GoldExample]:
@@ -387,6 +389,18 @@ def run_evaluation(
 
     primary = mode_results[0]
 
+    thresholds = dict(getattr(settings, "evaluation_thresholds", {}))
+    threshold_failures: dict[str, dict[str, float]] = {}
+    if thresholds:
+        for mode in mode_results:
+            failing: dict[str, float] = {}
+            for metric, minimum in thresholds.items():
+                value = mode.metrics.get(metric, 0.0)
+                if value < minimum:
+                    failing[metric] = value
+            if failing:
+                threshold_failures[mode.mode] = failing
+
     log_event(
         logger,
         "evaluation_complete",
@@ -405,6 +419,8 @@ def run_evaluation(
         summary_html=primary.summary_html,
         modes=mode_results,
         modes_summary=summary_path,
+        thresholds=thresholds,
+        threshold_failures=threshold_failures,
     )
 
 

@@ -63,7 +63,7 @@ Here’s the exact addition you should drop into your `TODO.md` under the **🧠
 * [x] **Hybrid Retrieval**
 
   * Test BM25 + vector fusion, store eval metrics.
-* [ ] **Prompt/Eval Governance**
+* [x] **Prompt/Eval Governance**
 
   * Version prompt templates; pin MRR/nDCG thresholds in code.
 
