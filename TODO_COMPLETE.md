@@ -182,6 +182,10 @@ PR: feat/enterprise_boundary_enforcement
 
 - [x] TODO "Glossary Enrichment" — completed 2025-11-01 (augmented glossary records with aliases/units/normalized product families, added inline glossary highlights to chat answers, refreshed seeds/tests, and documented the enriched dictionary workflow).
 
+## 2025-11-02
+
+- [x] TODO "Refactor Chat Flow" — completed 2025-11-02 (introduced a shared `useAskStream` hook powering both initial submissions and clarification follow-ups, eliminating duplicated streaming logic and preserving consistent error handling).
+
 ## 2025-10-18 — split_service_design
 ✅ Completed: Split the chat and admin UIs onto dedicated ports, added admin Make targets, and refreshed docs to emphasize independent builds.
 PR: feat/split_service_design

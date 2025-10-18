@@ -105,7 +105,7 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## 🧩 Architecture & Maintainability
 
-* [ ] **Refactor Chat Flow** — unify `submit` and `clarify` into shared `useAskStream()` hook.
+* [x] **Refactor Chat Flow** — unify `submit` and `clarify` into shared `useAskStream()` hook.
 * [ ] **Central Config Loader** — single `core/config.py` (Pydantic `AppSettings`).
 * [ ] **SSE Event Schema** — shared TS/Python schema for `answer` / `end` events.
 * [ ] **Architecture Doc** — update `docs/ARCHITECTURE.md` for split-port deployment.
