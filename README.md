@@ -39,6 +39,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    - `CONTACT_EMAIL` â€“ escalation recipient
    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` â€“ SES SMTP credentials
    - `SMTP_ALLOW_LIST` â€“ comma-separated sender/recipient allow list
+   - `ALLOWED_ORIGINS` â€“ comma-separated enterprise gateway origins allowed for browser requests
    - `RAG_SERVICE_URL` â€“ FastAPI retrieval service (defaults to `http://localhost:8000`)
    - `ENFORCE_GATEWAY_BOUNDARY`, `REQUIRE_FORWARDED_FOR_HEADER`, `REQUIRE_HTTPS_FORWARD_PROTO`, `TRUSTED_GATEWAY_SUBNETS` â€“ lock down the enterprise perimeter. Loopback traffic stays permitted via `ALLOW_LOOPBACK_REQUESTS` for local development.
 
@@ -50,7 +51,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    pip install -U pip pip-tools
    pip-compile -U requirements.in
    pip-sync requirements.txt
-   npm install
+   pnpm install
    ```
 
 1. Database and Prisma
@@ -118,6 +119,15 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    `retrieval_modes.json` summary for dashboards and regression tracking.
 
   > **Note:** The CED chunker now operates with zero token overlap by default
+
+1. Smoke test the container stack
+
+   ```bash
+   make compose-up
+   ```
+
+   This target generates a local `.env` (if missing), builds the hardened FastAPI image, and boots the Postgres/API/Nginx stack.
+   It waits for `/health` to return `200 OK`, captures the latest API logs, and tears the stack down to keep environments clean.
   > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
   > different stride is required for specialised corpora.
 
@@ -193,13 +203,13 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 1. **Environment**:
    - Generate `.env` and update SMTP + Postgres credentials.
 2. **Dependencies**:
-   - install Python + Node dependencies (`pip-sync` and `npm install`).
+  - install Python + Node dependencies (`pip-sync` and `pnpm install`).
 3. **Database**:
    - Run `make db.up && make db.migrate && make db.seed`.
    - Export `.env` before `make db.verify` so `DATABASE_URL` is available (`set -a; . .env; set +a` on POSIX shells, or use the PowerShell snippet in Quick Start on Windows).
 4. **Quality**:
    - Run `make quality` locally before every PR.
-   - Fix formatting with `npm run format` (Prettier) and `make format` (Ruff) as needed.
+  - Fix formatting with `pnpm run format` (Prettier) and `make format` (Ruff) as needed.
 5. **Run**
    - `make api`
    - `make web-dev` for local development.
@@ -234,7 +244,7 @@ The legacy HTML/CSS demo under `archive/legacy-ui/` is for reference only and ex
 
 GitHub Actions enforces:
 
-- **frontend-quality** â€“ Node 20 + Postgres service, running `npm run lint`, `npm run typecheck`, `npm run build`, and all audit scripts (`npm run audit:ts`, `npm run audit:icons`, `npm run audit:routes`, `npm run audit:py`). Audit outputs are uploaded as artifacts under `frontend-audit-reports`.
+- **frontend-quality** â€“ Node 20 + Postgres service, running `pnpm run lint`, `pnpm run typecheck`, `pnpm run build`, and all audit scripts (`pnpm run audit:ts`, `pnpm run audit:icons`, `pnpm run audit:routes`, `pnpm run audit:py`). Audit outputs are uploaded as artifacts under `frontend-audit-reports`.
 - **lint-test** â€“ Python 3.12 toolchain running Ruff (lint + format check), mypy, pytest with â‰¥90% coverage, and pre-commit.
 - **pgvector-check** â€“ Applies Prisma migrations against pgvector-enabled Postgres and runs `make db.verify`.
 - **eval-gate** â€“ Retrieval evaluation regression checks (see [eval-gate.yml](.github/workflows/eval-gate.yml)).

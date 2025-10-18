@@ -12,24 +12,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install Node.js dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Next.js quality gates
         run: |
-          npm run lint
-          npm run typecheck
-          npm run build
+          pnpm run lint
+          pnpm run typecheck
+          pnpm run build
 
       - name: Runtime dependency audit (non-blocking)
         continue-on-error: true
-        run: npm audit --omit=dev
+        run: pnpm audit --prod
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,6 +62,9 @@ jobs:
       - name: Pytest
         run: pytest
 
+      - name: Generate API schema
+        run: python scripts/generate_api_docs.py --output api/schema.json
+
       - name: Run evaluation
         run: python scripts/eval_run.py --json --output-dir eval/runs/release
 
@@ -64,6 +74,14 @@ jobs:
           name: evaluation-release
           path: eval/runs/release
 
+      - name: Package release artifacts
+        run: |
+          mkdir -p release-artifacts
+          mkdir -p eval/reports
+          tar -czf release-artifacts/eval-reports.tar.gz eval/reports
+          cp api/schema.json release-artifacts/api-schema.json
+          tar -czf release-artifacts/docs-md.tar.gz docs/*.md
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -71,5 +89,8 @@ jobs:
           files: |
             eval/runs/release/metrics.csv
             eval/runs/release/summary.json
+            release-artifacts/api-schema.json
+            release-artifacts/eval-reports.tar.gz
+            release-artifacts/docs-md.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

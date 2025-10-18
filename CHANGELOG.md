@@ -4,6 +4,19 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.1] - 2025-10-18
+
+### Added
+
+- Secret scanning guard (pre-commit + CI) and lockfile freshness enforcement to block leaked credentials and stale dependency graphs.
+- CI smoke tests for Prisma migrations and Docker Compose (`make compose-up`) plus automated packaging of API schema, evaluation reports, and docs in release artifacts.
+
+### Changed
+
+- Hardened FastAPI ingress with explicit CORS origin allow lists, global rate-limit headers, and redacted exception logging.
+- Rebuilt API Docker image as a multi-stage, non-root, read-only deployment with baked-in health checks and pnpm-based workspace management.
+- Migrated JavaScript tooling to pnpm with pinned dependencies and updated Makefile/README/operations runbooks.
+
 ## [0.10.0] - 2025-10-18
 
 ### Changed

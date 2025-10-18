@@ -44,6 +44,7 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ## 2025-10-18
 
+- [x] Security & CI hardening sweep — locked CORS to trusted origins, extended `.env` scaffolding, redacted chat payloads from error logs, implemented global rate limit headers, hardened Docker images (non-root, read-only, health checks), enforced pnpm lockfiles, added migration/compose smoke tests, secret scanning, and release artifacts — completed 2025-10-18 (this change set).
 - [x] Delivered the multi-model query splitter (AI / RAG Enhancements) with targeted prompts, chat integration, documentation, tests, and version bump — completed 2025-10-18 (this change set).
 - [x] TODO "Feedback Loop" — implemented the end-to-end capture, seed document generation, admin triage workflows, documentation, and regression tests for the new feedback loop — completed 2025-10-18 (this change set).
 

@@ -61,3 +61,15 @@ def test_evaluation_thresholds_property(monkeypatch):
     thresholds = settings.evaluation_thresholds
     assert thresholds["nDCG@10"] == 0.65
     assert thresholds["MRR"] == 0.6
+
+
+def test_cors_allowed_origins_parsing(monkeypatch):
+    monkeypatch.setenv("ALLOWED_ORIGINS", "https://gw.example.com, https://alt.example.com")
+
+    config_module.reset_settings_cache()
+    settings = config_module.load_settings()
+
+    assert settings.cors_allowed_origins == (
+        "https://gw.example.com",
+        "https://alt.example.com",
+    )

@@ -108,6 +108,7 @@ class AppSettings(BaseSettings):
     smtp_allow_list_raw: str | list[str] | None = Field(default=None, alias="SMTP_ALLOW_LIST")
     rate_limit_requests: int = Field(default=5, alias="RATE_LIMIT_REQUESTS", ge=1)
     rate_limit_window_seconds: int = Field(default=60, alias="RATE_LIMIT_WINDOW_SECONDS", ge=1)
+    cors_allowed_origins_raw: str | list[str] | None = Field(default=None, alias="ALLOWED_ORIGINS")
     admin_api_token: str | None = Field(default=None, alias="ADMIN_API_TOKEN")
     secrets_report: dict[str, dict[str, Any]] = Field(
         default_factory=dict, exclude=True, repr=False
@@ -143,6 +144,17 @@ class AppSettings(BaseSettings):
     @property
     def trusted_gateway_networks(self) -> tuple[Any, ...]:
         return tuple(ip_network(subnet, strict=False) for subnet in self.trusted_gateway_subnets)
+
+    @property
+    def cors_allowed_origins(self) -> tuple[str, ...]:
+        raw = self.cors_allowed_origins_raw
+        if raw is None:
+            return ()
+        if isinstance(raw, str):
+            values = [item.strip() for item in raw.split(",") if item.strip()]
+        else:
+            values = [str(item).strip() for item in raw if str(item).strip()]
+        return tuple(values)
 
     def ensure_directories(self) -> None:
         for path in [
