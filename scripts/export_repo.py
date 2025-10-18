@@ -12,7 +12,7 @@ Skips (dir substrings, case-insensitive, at any depth):
   coverage .parcel-cache indexes indices vector cache
 
 Also skips obvious binary/asset extensions and any file containing NUL bytes.
-Hard-excludes the absolute path: C:\Dev\Atticus\indices (and below).
+Hard-excludes the absolute path: C:\\Dev\\Atticus\\indices (and below).
 
 Outputs:
   - ALL_FILES.md  (sections with ``` fences, language autodetected)
