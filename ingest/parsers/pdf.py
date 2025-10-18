@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import importlib
 import io
+import logging
+import shutil
+import tempfile
+import time
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any, cast
@@ -31,6 +35,51 @@ try:  # pragma: no cover - optional dependency
     tabula = importlib.import_module("tabula")
 except Exception:  # pragma: no cover
     tabula = None
+
+
+_pdfminer_logger = logging.getLogger("pdfminer.pdfinterp")
+# pdfminer sometimes logs noisy warnings for malformed color values; suppress them.
+if _pdfminer_logger.getEffectiveLevel() >= logging.WARNING:
+    _pdfminer_logger.setLevel(logging.ERROR)
+
+
+def _safe_rmtree(path: str | None) -> None:
+    """Best-effort removal that tolerates transient Windows file locks."""
+    if not path:
+        return
+    for attempt in range(5):
+        try:
+            shutil.rmtree(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            time.sleep(0.2 * (attempt + 1))
+    shutil.rmtree(path, ignore_errors=True)
+
+
+if camelot is not None:  # pragma: no cover - runtime safeguard for camelot cleanup
+    try:
+        from camelot import utils as camelot_utils  # type: ignore
+    except Exception:
+        camelot = None
+    else:
+        temp_dir_cls = getattr(camelot_utils, "TemporaryDirectory", None)
+        if temp_dir_cls is not None and not getattr(
+            temp_dir_cls, "_atticus_safe_cleanup", False
+        ):
+
+            def _patched_enter(self) -> str:  # type: ignore[no-untyped-def]
+                self.name = tempfile.mkdtemp()
+                return self.name
+
+            def _patched_exit(self, exc_type, exc_value, traceback) -> None:  # type: ignore[no-untyped-def]
+                _safe_rmtree(getattr(self, "name", None))
+
+            # Replace the temp dir helpers so cleanup happens immediately and tolerates locks.
+            temp_dir_cls.__enter__ = _patched_enter  # type: ignore[assignment]
+            temp_dir_cls.__exit__ = _patched_exit  # type: ignore[assignment]
+            temp_dir_cls._atticus_safe_cleanup = True  # type: ignore[attr-defined]
 
 
 def _extract_ocr(page: fitz.Page) -> str:
@@ -73,7 +122,7 @@ def _extract_tables(path: Path) -> Iterable[ParsedSection]:  # noqa: PLR0912
     tables_found = False
     if camelot is not None:  # pragma: no cover - requires camelot dependencies
         try:
-            tables = camelot.read_pdf(str(path), pages="all")
+            tables = camelot.read_pdf(str(path), pages="all", suppress_stdout=True)
         except Exception:
             tables = []
         for index, table in enumerate(tables, start=1):

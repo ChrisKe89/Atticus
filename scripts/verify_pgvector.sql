@@ -1,4 +1,4 @@
--- Accept overrides via `psql -v expected_pgvector_dimension=1536 -v expected_pgvector_lists=50 ...`
+-- Accept overrides via `psql -v expected_pgvector_dimension=3072 -v expected_pgvector_lists=50 ...`
 \set ON_ERROR_STOP on
 
 \if :{?expected_pgvector_dimension}
@@ -81,7 +81,10 @@ BEGIN
     RAISE EXCEPTION 'IVFFlat index missing on atticus_chunks';
   END IF;
 
-  IF position(lower(format('lists = %s', expected_lists)) IN lower(idx_record)) = 0 THEN
+  IF position(lower(format('lists = %s', expected_lists)) IN lower(idx_record)) = 0
+     AND position(lower(format('lists=%s', expected_lists)) IN lower(idx_record)) = 0
+     AND position(lower(format('lists = ''%s''', expected_lists)) IN lower(idx_record)) = 0
+     AND position(lower(format('lists=''%s''', expected_lists)) IN lower(idx_record)) = 0 THEN
     RAISE EXCEPTION 'idx_atticus_chunks_embedding lists mismatch. Expected lists=% with index definition: %', expected_lists, idx_record;
   END IF;
 END$$;
@@ -111,7 +114,7 @@ BEGIN
   FROM information_schema.columns
   WHERE table_name = 'atticus_documents' AND column_name = 'metadata';
 
-  IF doc_default IS DISTINCT FROM '\''{}\''::jsonb' THEN
+  IF doc_default IS NULL OR POSITION('''{}''::jsonb' IN doc_default) = 0 THEN
     RAISE NOTICE 'atticus_documents.metadata default is %, expected {}::jsonb', doc_default;
   END IF;
 
@@ -119,7 +122,7 @@ BEGIN
   FROM information_schema.columns
   WHERE table_name = 'atticus_chunks' AND column_name = 'metadata';
 
-  IF chunk_default IS DISTINCT FROM '\''{}\''::jsonb' THEN
+  IF chunk_default IS NULL OR POSITION('''{}''::jsonb' IN chunk_default) = 0 THEN
     RAISE NOTICE 'atticus_chunks.metadata default is %, expected {}::jsonb', chunk_default;
   END IF;
 END$$;
