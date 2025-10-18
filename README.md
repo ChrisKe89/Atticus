@@ -15,6 +15,12 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 - **Multi-model** â€” if several models are detected or supplied, Atticus now decomposes the question into per-model prompts before retrieval. Each targeted prompt runs its own RAG pass via the multi-model query splitter (`retriever/query_splitter.py`), and the API responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
 - **Testing** â€” `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
 
+## Feedback Loop & Targeted Seeds
+
+- **Flag unclear answers directly in chat.** The chat panel now exposes a _Flag for seeds_ action when an answer returns with citations. Atticus posts the flagged question, answer snippet, and cited paths to `/api/feedback`, which persists a `SeedRequest` row and generates a markdown scaffold under `content/seed_requests/` via `lib/seed-request-writer`.
+- **Seed backlog management.** Admin reviewers gain a new _Seed requests_ tab in the operations console. Each entry shows captured context, regenerates the draft document on demand, and can be marked _completed_ once the curated documentation is published and ingested. Under the hood these actions call `/api/admin/seed-requests/:id/regenerate` and `/api/admin/seed-requests/:id/complete` to update Prisma + emit audit events.
+- **Runbook.** Refer to `docs/runbooks/feedback-loop.md` for day-two operations, including regeneration, ingestion, and troubleshooting steps.
+
 ---
 
 ## Quick Start
@@ -99,15 +105,19 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 
    Run ingestion once after the database is ready so the assistant has content to answer with; rerun whenever new documents land. `make eval` and `make seed` help during iteration.
 
-   ```bash
-   make ingest     # parse, chunk, embed, and update pgvector index
-   make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
-   make eval       # run retrieval evaluation and emit metrics under eval/runs/
-   ```
+  ```bash
+  make ingest     # parse, chunk, embed, and update pgvector index
+  make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+  make eval       # run retrieval evaluation (hybrid/vector) and emit metrics under eval/runs/
+  ```
 
-   > **Note:** The CED chunker now operates with zero token overlap by default
-   > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
-   > different stride is required for specialised corpora.
+   Each evaluation run now benchmarks both the BM25+vector fusion strategy and pure vector search.
+   Results for every mode live alongside per-query CSV/HTML artifacts, with a combined
+   `retrieval_modes.json` summary for dashboards and regression tracking.
+
+  > **Note:** The CED chunker now operates with zero token overlap by default
+  > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
+  > different stride is required for specialised corpora.
 
 1. Run services
 
@@ -231,7 +241,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 | `make env`                  | Generate `.env` from defaults                                          |
 | `make ingest`               | Parse, chunk, embed, and update the pgvector index                     |
 | `make seed`                 | Generate deduplicated seed manifest (`seeds/seed_manifest.json`)       |
-| `make eval`                 | Run retrieval evaluation and write metrics under `eval/runs/`          |
+| `make eval`                 | Run retrieval evaluation (hybrid + vector fusion) and write metrics plus `retrieval_modes.json` under `eval/runs/` |
 | `make api`                  | Start FastAPI backend                                                  |
 | `make web-dev`              | Run Next.js dev server (port 3000)                                     |
 | `make app-dev`              | Alias for `make web-dev`                                               |
