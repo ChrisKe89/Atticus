@@ -1,20 +1,25 @@
 import importlib
-from typing import Any
+import sys
 
 import pytest
 
+from core.config import AppSettings
 
-def _reload_logging_utils(monkeypatch: pytest.MonkeyPatch, **env: Any):
-    for key in ("LOG_LEVEL", "LOG_FORMAT"):
-        monkeypatch.delenv(key, raising=False)
-    for key, value in env.items():
-        monkeypatch.setenv(key, str(value))
+
+def _reload_logging_utils(
+    monkeypatch: pytest.MonkeyPatch, *, log_level: str, log_format: str
+):
+    sys.modules.pop("atticus.logging_utils", None)
     module = importlib.import_module("atticus.logging_utils")
-    return importlib.reload(module)
+    settings = AppSettings(log_level=log_level, log_format=log_format)
+    monkeypatch.setattr(module, "load_settings", lambda: settings)
+    return module
 
 
 def test_get_logger_json_format(monkeypatch: pytest.MonkeyPatch) -> None:
-    logging_utils = _reload_logging_utils(monkeypatch, LOG_LEVEL="INFO", LOG_FORMAT="json")
+    logging_utils = _reload_logging_utils(
+        monkeypatch, log_level="INFO", log_format="json"
+    )
 
     logger = logging_utils.get_logger("atticus-tests")
     assert hasattr(logger, "bind")
@@ -23,7 +28,9 @@ def test_get_logger_json_format(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_get_logger_console_format(monkeypatch: pytest.MonkeyPatch) -> None:
-    logging_utils = _reload_logging_utils(monkeypatch, LOG_LEVEL="DEBUG", LOG_FORMAT="console")
+    logging_utils = _reload_logging_utils(
+        monkeypatch, log_level="DEBUG", log_format="console"
+    )
 
     logger = logging_utils.get_logger("atticus-console")
     assert hasattr(logger, "bind")

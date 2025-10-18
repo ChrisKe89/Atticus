@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import importlib
 import logging
-import os
 import re
 from collections.abc import Iterable
 from typing import Any, cast
@@ -41,13 +40,9 @@ class GeneratorClient:
             ) from exc
         # Resolve API key and record source for diagnostics
         source = "none"
-        api_key = None
-        if getattr(settings, "openai_api_key", None):
-            api_key = settings.openai_api_key
+        api_key = getattr(settings, "openai_api_key", None)
+        if api_key:
             source = "settings"
-        elif os.getenv("OPENAI_API_KEY"):
-            api_key = os.getenv("OPENAI_API_KEY")
-            source = "os.environ"
         self._client: Any | None = None
         if api_key:  # pragma: no cover - requires network
             try:
