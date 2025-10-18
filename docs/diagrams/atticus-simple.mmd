@@ -2,5 +2,5 @@ flowchart TD
     user([User]) --> main[[Atticus Main (Next.js)]]
     main --> fastapi[[FastAPI / RAG APIs]]
     fastapi <--> db[(Postgres + pgvector)]
-    db --> admin[[Admin Service (3101)]]
+    db --> admin[[Admin Service (9000)]]
     admin --> main

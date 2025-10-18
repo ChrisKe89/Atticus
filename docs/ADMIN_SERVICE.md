@@ -5,7 +5,7 @@ The Atticus admin service is a lightweight Next.js application that separates es
 ## Key characteristics
 
 - **Framework:** Next.js 14.x (app router, TypeScript)
-- **Port:** `3101` (`npm run dev --workspace admin`)
+- **Port:** `9000` (`make admin-dev` or `npm run dev --workspace admin`)
 - **Data sources:** Atticus main workspace APIs (`/api/admin/uncertain/**`)
 - **Outputs:** Appends approved answers to `content/<family>/<model>.csv` in Excel-friendly format
 
@@ -15,8 +15,8 @@ The Atticus admin service is a lightweight Next.js application that separates es
 # Install dependencies (root workspace)
 npm install
 
-# Start the admin UI (port 3101)
-npm run dev --workspace admin
+# Start the admin UI (port 9000)
+make admin-dev
 ```
 
 The Docker Compose stack now includes an `admin` service that runs the same command:

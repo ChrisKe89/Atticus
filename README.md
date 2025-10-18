@@ -303,12 +303,12 @@ Legacy static assets live under `archive/legacy-ui/` for reference only.
 
 Enterprise authentication and SSO are managed upstream. The Atticus web workspace trusts the incoming request context and no longer performs session management or magic-link delivery internally.
 
-## Admin Service (port 3101)
+## Admin Service (port 9000)
 
 A separate Next.js workspace (`admin/`) now powers escalation review and answer curation. Run it alongside the main UI:
 
 ```bash
-npm run dev --workspace admin    # http://localhost:3101
+make admin-dev                   # http://localhost:9000
 ```
 
 The console now includes four dedicated panels:
