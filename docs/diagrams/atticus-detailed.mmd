@@ -1,0 +1,52 @@
+flowchart LR
+    subgraph Frontend
+        subgraph Pages
+            page__["Page: /"]
+            page__admin["Page: /admin"]
+            page__apps["Page: /apps"]
+            page__contact["Page: /contact"]
+            page__settings["Page: /settings"]
+            page__signin["Page: /signin"]
+            page__signin_verify["Page: /signin/verify"]
+        end
+        subgraph Route_Handlers
+            nextapi__api_glossary["/api/glossary\nMethods: GET, POST\nRuntime: node"]
+            nextapi__api_ask["/api/ask\nMethods: POST\nRuntime: node"]
+            nextapi__api_glossary__id_["/api/glossary/[id]\nMethods: DELETE, PATCH, PUT\nRuntime: node"]
+            nextapi__api_auth_____nextauth_["/api/auth/[...nextauth]\nMethods: GET, POST\nRuntime: node"]
+            nextapi__api_admin_uncertain["/api/admin/uncertain\nMethods: GET\nRuntime: node"]
+            nextapi__api_admin_uncertain__id__ask_followup["/api/admin/uncertain/[id]/ask-followup\nMethods: POST\nRuntime: node"]
+            nextapi__api_admin_uncertain__id__approve["/api/admin/uncertain/[id]/approve\nMethods: POST\nRuntime: node"]
+            nextapi__api_admin_uncertain__id__escalate["/api/admin/uncertain/[id]/escalate\nMethods: POST\nRuntime: node"]
+        end
+    end
+    subgraph Backend
+        subgraph FastAPI
+            fastapi__dictionary_read_dictionary["GET /dictionary\nHandler: read_dictionary\nRequest: AdminGuard\nResponse: DictionaryPayload\nDeps: SettingsDep"]
+            fastapi__dictionary_write_dictionary["POST /dictionary\nHandler: write_dictionary\nRequest: AdminGuard\nResponse: DictionaryPayload\nDeps: SettingsDep, LoggerDep"]
+            fastapi__errors_get_errors["GET /errors\nHandler: get_errors\nRequest: AdminGuard\nResponse: list[ErrorLogEntry]\nDeps: SettingsDep"]
+            fastapi__sessions_get_sessions["GET /sessions\nHandler: get_sessions\nRequest: AdminGuard\nResponse: SessionLogResponse\nDeps: SettingsDep"]
+            fastapi__metrics_get_metrics_dashboard["GET /metrics\nHandler: get_metrics_dashboard\nRequest: AdminGuard\nResponse: MetricsDashboard\nDeps: MetricsDep"]
+            fastapi__ui_ui_landing["GET /ui\nHandler: ui_landing\nRequest: None\nResponse: None\nDeps: None"]
+            fastapi__health_health["GET /health\nHandler: health\nRequest: None\nResponse: HealthResponse\nDeps: SettingsDep"]
+            fastapi__ask_ask_endpoint["POST /ask\nHandler: ask_endpoint\nRequest: AskRequest\nResponse: AskResponse\nDeps: SettingsDep, LoggerDep"]
+            fastapi__contact_contact["POST /contact\nHandler: contact\nRequest: ContactRequest\nResponse: None\nDeps: None"]
+            fastapi__eval_run_run_eval["POST /eval/run\nHandler: run_eval\nRequest: None\nResponse: EvalResponse\nDeps: SettingsDep, LoggerDep"]
+            fastapi__ingest_trigger_ingestion["POST /ingest\nHandler: trigger_ingestion\nRequest: IngestRequest\nResponse: IngestResponse\nDeps: SettingsDep, LoggerDep"]
+        end
+    end
+    store_postgres(("Postgres via Prisma"))
+    store_rag(("Retriever Indexes"))
+    nextapi__api_ask --> fastapi__ask_ask_endpoint
+    fastapi__dictionary_read_dictionary --> store_postgres
+    fastapi__dictionary_write_dictionary --> store_postgres
+    fastapi__errors_get_errors --> store_postgres
+    fastapi__sessions_get_sessions --> store_postgres
+    fastapi__metrics_get_metrics_dashboard --> store_postgres
+    fastapi__ui_ui_landing --> store_postgres
+    fastapi__health_health --> store_postgres
+    fastapi__ask_ask_endpoint --> store_rag
+    fastapi__contact_contact --> store_postgres
+    fastapi__eval_run_run_eval --> store_rag
+    fastapi__ingest_trigger_ingestion --> store_rag
+    fastapi__ingest_trigger_ingestion --> store_postgres
