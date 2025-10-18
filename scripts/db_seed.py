@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import unicodedata
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,9 @@ GLOSSARY_SEEDS = [
             "delivered as a subscription."
         ),
         "synonyms": ["MPS", "Print-as-a-service"],
+        "aliases": ["Managed Print"],
+        "units": ["fleets"],
+        "product_families": ["Enterprise Services"],
         "status": "APPROVED",
         "review_notes": "Approved for launch collateral and onboarding playbooks.",
         "reviewer_id": "user-seed-approver",
@@ -49,6 +53,9 @@ GLOSSARY_SEEDS = [
             "outages before they impact revenue teams."
         ),
         "synonyms": ["Preventative maintenance"],
+        "aliases": ["Predictive maintenance"],
+        "units": ["visits/year"],
+        "product_families": ["Field Services"],
         "status": "PENDING",
     },
     {
@@ -59,6 +66,9 @@ GLOSSARY_SEEDS = [
             "maintaining SLA-compliant image quality."
         ),
         "synonyms": ["Smart toner", "Consumable optimisation"],
+        "aliases": ["Toner yield optimization"],
+        "units": ["pages"],
+        "product_families": ["C7070", "C8180"],
         "status": "REJECTED",
         "review_notes": "Rejected pending customer-ready evidence and usage data.",
         "reviewer_id": "user-seed-approver",
@@ -202,6 +212,28 @@ def _json(value: Any) -> Jsonb:
     return Jsonb(value)
 
 
+def _normalize_token(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value)
+    sanitized = "".join(char for char in normalized if char.isalnum())
+    return sanitized.lower()
+
+
+def _normalize_family(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value)
+    compact = " ".join(normalized.replace("-", " ").split())
+    return compact.upper()
+
+
+def _dedupe_preserve(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in items:
+        if item not in seen:
+            seen.add(item)
+            ordered.append(item)
+    return ordered
+
+
 def seed_database(*, verbose: bool = False) -> None:
     _load_env_from_file(Path(".env"))
     database_url = os.environ.get("DATABASE_URL")
@@ -274,16 +306,52 @@ def seed_database(*, verbose: bool = False) -> None:
                 approver_id = user_ids["user-seed-approver"]
 
                 for entry in GLOSSARY_SEEDS:
+                    aliases = _dedupe_preserve(
+                        [
+                            str(item).strip()
+                            for item in entry.get("aliases", [])
+                            if str(item).strip()
+                        ]
+                    )
+                    units = _dedupe_preserve(
+                        [str(item).strip() for item in entry.get("units", []) if str(item).strip()]
+                    )
+                    families = _dedupe_preserve(
+                        [
+                            str(item).strip()
+                            for item in entry.get("product_families", [])
+                            if str(item).strip()
+                        ]
+                    )
+                    alias_tokens: list[str] = []
+                    for raw in [entry["term"], *entry.get("synonyms", []), *aliases]:
+                        token = _normalize_token(raw)
+                        if token:
+                            alias_tokens.append(token)
+                    normalized_aliases = _dedupe_preserve(alias_tokens)
+
+                    family_tokens: list[str] = []
+                    for raw in families:
+                        normalized = _normalize_family(raw)
+                        if normalized:
+                            family_tokens.append(normalized)
+                    normalized_families = _dedupe_preserve(family_tokens)
                     cur.execute(
                         """
                         INSERT INTO "GlossaryEntry"
-                            ("id", "term", "definition", "synonyms", "status",
+                            ("id", "term", "definition", "synonyms", "aliases", "units",
+                             "productFamilies", "normalizedAliases", "normalizedFamilies", "status",
                              "orgId", "authorId", "reviewerId", "reviewNotes", "reviewedAt")
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT ("id") DO UPDATE
                         SET "term" = EXCLUDED."term",
                             "definition" = EXCLUDED."definition",
                             "synonyms" = EXCLUDED."synonyms",
+                            "aliases" = EXCLUDED."aliases",
+                            "units" = EXCLUDED."units",
+                            "productFamilies" = EXCLUDED."productFamilies",
+                            "normalizedAliases" = EXCLUDED."normalizedAliases",
+                            "normalizedFamilies" = EXCLUDED."normalizedFamilies",
                             "status" = EXCLUDED."status",
                             "orgId" = EXCLUDED."orgId",
                             "authorId" = EXCLUDED."authorId",
@@ -296,6 +364,11 @@ def seed_database(*, verbose: bool = False) -> None:
                             entry["term"],
                             entry["definition"],
                             entry["synonyms"],
+                            aliases,
+                            units,
+                            families,
+                            normalized_aliases,
+                            normalized_families,
                             entry["status"],
                             org_id,
                             author_id,

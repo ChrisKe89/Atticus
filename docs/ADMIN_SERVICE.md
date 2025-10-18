@@ -31,7 +31,7 @@ By default the service forwards requests to `http://localhost:3000`. Override `A
 
 1. **Embed new documents** — invoke POST `/api/ingest` with optional path filters or a full-refresh toggle. Responses include document counts, chunk totals, and manifest/index paths for downstream auditing.
 2. **Review escalated chats** — retrieve the queue via `GET /api/admin/uncertain` (includes `pending_review`, `draft`, and `rejected` states), inspect the transcript, edit the curated answer, and approve/reject as needed. Approved records append to `content/<model_family>/<model>.csv` with the schema `timestamp,question,answer,model,reviewer`.
-3. **Glossary library** — call `GET /api/admin/dictionary` to confirm synonyms and aliases before updating `indices/dictionary.json`.
+3. **Glossary library** — call `GET /api/admin/dictionary` to confirm synonyms, aliases, units, and canonical product families before updating `indices/dictionary.json`; the chat service consumes this metadata to render inline glossary highlights.
 4. **Evaluation seeds** — manage `eval/gold_set.csv` via `GET/POST /api/admin/eval-seeds`. The admin UI writes directly to the CSV with canonical headers (`question,relevant_documents,expected_answer,notes`).
 
 ## Headers & identity

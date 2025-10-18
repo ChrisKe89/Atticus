@@ -49,6 +49,11 @@ export async function fetchGlossaryEntries(): Promise<GlossaryEntry[]> {
   return entries.map((entry) => ({
     term: entry.term,
     synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
+    aliases: Array.isArray(entry.aliases) ? entry.aliases : [],
+    units: Array.isArray(entry.units) ? entry.units : [],
+    productFamilies: Array.isArray((entry as { productFamilies?: unknown }).productFamilies)
+      ? ((entry as { productFamilies: string[] }).productFamilies ?? [])
+      : [],
   }));
 }
 

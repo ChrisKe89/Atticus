@@ -57,6 +57,9 @@ export function GlossaryViewer({ entries }: GlossaryViewerProps) {
           <tr>
             <th style={headerCellStyle}>Term</th>
             <th style={headerCellStyle}>Synonyms</th>
+            <th style={headerCellStyle}>Aliases</th>
+            <th style={headerCellStyle}>Units</th>
+            <th style={headerCellStyle}>Product families</th>
           </tr>
         </thead>
         <tbody>
@@ -64,6 +67,9 @@ export function GlossaryViewer({ entries }: GlossaryViewerProps) {
             <tr key={entry.term}>
               <td style={cellStyle}>{entry.term}</td>
               <td style={cellStyle}>{entry.synonyms.join(", ") || "—"}</td>
+              <td style={cellStyle}>{entry.aliases.join(", ") || "—"}</td>
+              <td style={cellStyle}>{entry.units.join(", ") || "—"}</td>
+              <td style={cellStyle}>{entry.productFamilies.join(", ") || "—"}</td>
             </tr>
           ))}
         </tbody>

@@ -76,7 +76,20 @@ class AskSource(BaseModel):
     score: float | None = None
 
 
+class GlossaryHit(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    term: str
+    definition: str
+    aliases: list[str] = Field(default_factory=list)
+    units: list[str] = Field(default_factory=list)
+    product_families: list[str] = Field(default_factory=list, alias="productFamilies")
+    matched_value: str = Field(alias="matchedValue")
+
+
 class AskResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     answer: str | None = None
     confidence: float | None = None
     should_escalate: bool | None = None
@@ -84,6 +97,7 @@ class AskResponse(BaseModel):
     sources: list[AskSource] | None = None
     answers: list[AskAnswer] | None = None
     clarification: ClarificationPayload | None = None
+    glossary_hits: list[GlossaryHit] | None = Field(default=None, alias="glossaryHits")
 
 
 class AskAnswer(BaseModel):
@@ -124,8 +138,13 @@ class ErrorResponse(BaseModel):
 
 
 class DictionaryEntry(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     term: str
-    synonyms: list[str]
+    synonyms: list[str] = Field(default_factory=list)
+    aliases: list[str] = Field(default_factory=list)
+    units: list[str] = Field(default_factory=list)
+    product_families: list[str] = Field(default_factory=list, alias="productFamilies")
 
 
 class DictionaryPayload(BaseModel):

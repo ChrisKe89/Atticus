@@ -21,7 +21,15 @@ def test_admin_dictionary_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyP
 
     with TestClient(api_main.app) as client:
         payload = {
-            "entries": [{"term": "Managed print", "synonyms": ["MPS", "Print-as-a-service"]}]
+            "entries": [
+                {
+                    "term": "Managed print",
+                    "synonyms": ["MPS", "Print-as-a-service"],
+                    "aliases": ["Fleet print"],
+                    "units": ["fleets"],
+                    "productFamilies": ["Enterprise Services"],
+                }
+            ]
         }
         response = client.post(
             "/admin/dictionary", json=payload, headers={"X-Admin-Token": "test-admin-token"}
@@ -36,9 +44,13 @@ def test_admin_dictionary_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyP
         entry = data["entries"][0]
         assert entry["term"] == "Managed print"
         assert entry["synonyms"] == ["MPS", "Print-as-a-service"]
+        assert entry.get("aliases") == ["Fleet print"]
+        assert entry.get("units") == ["fleets"]
+        assert entry.get("productFamilies") == ["Enterprise Services"]
 
     raw_file = json.loads(dictionary_path.read_text(encoding="utf-8"))
     assert raw_file[0]["synonyms"] == ["MPS", "Print-as-a-service"]
+    assert raw_file[0]["aliases"] == ["Fleet print"]
 
 
 def test_admin_dictionary_requires_token(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

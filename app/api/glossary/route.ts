@@ -4,8 +4,12 @@ import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary, canReviewGlossary } from "@/lib/rbac";
 import {
   handleGlossaryError,
+  parseAliases,
+  parseProductFamilies,
   parseStatus,
   parseSynonyms,
+  parseUnits,
+  buildNormalizedAliases,
   serializeEntry,
   snapshotEntry,
 } from "@/app/api/glossary/utils";
@@ -45,6 +49,9 @@ export async function POST(request: Request) {
     const term = typeof payload.term === "string" ? payload.term.trim() : "";
     const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
     const synonyms = parseSynonyms(payload.synonyms);
+    const aliases = parseAliases(payload.aliases);
+    const units = parseUnits(payload.units);
+    const families = parseProductFamilies(payload.productFamilies);
     if (!term || !definition) {
       return NextResponse.json(
         { error: "invalid_request", detail: "Both term and definition are required." },
@@ -68,6 +75,11 @@ export async function POST(request: Request) {
       const data: Record<string, unknown> = {
         definition,
         synonyms,
+        aliases,
+        units,
+        productFamilies: families.raw,
+        normalizedAliases: buildNormalizedAliases(term, synonyms, aliases),
+        normalizedFamilies: families.normalized,
         status,
         updatedById: editor.id,
       };
@@ -88,6 +100,11 @@ export async function POST(request: Request) {
           term,
           definition,
           synonyms,
+          aliases,
+          units,
+          productFamilies: families.raw,
+          normalizedAliases: buildNormalizedAliases(term, synonyms, aliases),
+          normalizedFamilies: families.normalized,
           status,
           orgId: editor.orgId,
           authorId: editor.id,

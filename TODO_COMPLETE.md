@@ -158,3 +158,7 @@ The following items are done or no longer relevant and are recorded here for tra
 - [x] Confirmed disambiguation utilities (`retriever/models.py`, `retriever/resolver.py`) and scoped retrieval (`retriever/service.py`) implement the parser/resolver tasks.
 - [x] Checked the API and client flow updates in `api/routes/chat.py`, `app/api/ask/route.ts`, `lib/ask-contract.ts`, `lib/ask-client.ts`, and `components/AnswerRenderer.tsx` to ensure clarification + multi-answer behaviour is live.
 - [x] Reviewed ingestion tagging updates in `ingest/pipeline.py` and supporting docs (`docs/api/README.md`, `README.md`) covering the model-family flows.
+
+## 2025-11-01
+
+- [x] TODO "Glossary Enrichment" — completed 2025-11-01 (augmented glossary records with aliases/units/normalized product families, added inline glossary highlights to chat answers, refreshed seeds/tests, and documented the enriched dictionary workflow).
