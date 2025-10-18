@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { GlossaryStatus, Prisma, Role } from "@prisma/client";
 import { PageHeader } from "@/components/page-header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { withRlsContext } from "@/lib/rls";
-import { AdminOpsConsole, TicketSummary, UncertainChat } from "@/components/admin/admin-ops-console";
+import {
+  AdminOpsConsole,
+  TicketSummary,
+  UncertainChat,
+} from "@/components/admin/admin-ops-console";
 import type { GlossaryEntryDto } from "@/components/glossary/admin-panel";
 import { getRequestContext } from "@/lib/request-context";
 
@@ -79,23 +77,25 @@ export default async function AdminPage() {
     return { chats: pendingChats, tickets: ticketRows, glossary: glossaryRows };
   });
 
-  const glossaryEntries: GlossaryEntryDto[] = (glossary as GlossaryEntryRecord[]).map((entry) => ({
-    id: entry.id,
-    term: entry.term,
-    definition: entry.definition,
-    synonyms: entry.synonyms,
-    aliases: entry.aliases,
-    units: entry.units,
-    productFamilies: entry.productFamilies,
-    status: entry.status,
-    createdAt: entry.createdAt.toISOString(),
-    updatedAt: entry.updatedAt.toISOString(),
-    reviewedAt: entry.reviewedAt ? entry.reviewedAt.toISOString() : null,
-    author: entry.author,
-    updatedBy: entry.updatedBy,
-    reviewer: entry.reviewer,
-    reviewNotes: entry.reviewNotes ?? null,
-  }));
+  const glossaryEntries: GlossaryEntryDto[] = (glossary as unknown as GlossaryEntryRecord[]).map(
+    (entry) => ({
+      id: entry.id,
+      term: entry.term,
+      definition: entry.definition,
+      synonyms: entry.synonyms,
+      aliases: entry.aliases,
+      units: entry.units,
+      productFamilies: entry.productFamilies,
+      status: entry.status,
+      createdAt: entry.createdAt.toISOString(),
+      updatedAt: entry.updatedAt.toISOString(),
+      reviewedAt: entry.reviewedAt ? entry.reviewedAt.toISOString() : null,
+      author: entry.author,
+      updatedBy: entry.updatedBy,
+      reviewer: entry.reviewer,
+      reviewNotes: entry.reviewNotes ?? null,
+    })
+  );
 
   function parseSources(value: Prisma.JsonValue | null): UncertainChat["topSources"] {
     if (!Array.isArray(value)) {
