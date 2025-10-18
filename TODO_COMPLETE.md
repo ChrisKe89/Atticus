@@ -24,6 +24,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-11-03
+
+- [x] TODO "Prompt/Eval Governance" — introduced versioned prompt template registry with configurable `GEN_PROMPT_VERSION`, pinned evaluation thresholds via `EVAL_MIN_NDCG`/`EVAL_MIN_MRR`, enforced gating in `scripts/eval_run.py`, updated docs/env scaffolding, and added regression tests — completed 2025-11-03 (this change set).
+
+---
+
 ## 2025-11-02
 
 - [x] TODO "Hybrid Retrieval" — added explicit retrieval modes (hybrid, vector, lexical), multi-mode evaluation outputs (`retrieval_modes.json`), configuration toggles, documentation updates, and regression tests to track BM25 + vector fusion metrics end to end — completed 2025-11-02 (this change set).
