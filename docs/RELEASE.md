@@ -31,7 +31,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 
      ```bash
      make quality         # Ruff + mypy + pytest + Next lint/typecheck/build + audits
-     npm run format:check # Prettier enforcement
+     pnpm run format:check # Prettier enforcement
      pre-commit run --all-files --show-diff-on-failure
      make eval            # Retrieval regression suite
      make e2e             # Optional but recommended before tagging
@@ -41,7 +41,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 
 4. **Sync Versioning**
    - Update [`VERSION`](../VERSION), `package.json`, and [CHANGELOG.md](../CHANGELOG.md) with the new semantic version (e.g. `0.7.0`).
-   - Confirm the values match by running `node -p "require('./package.json').version"` and comparing with `cat VERSION`.
+   - Confirm the values match by running `pnpm exec node -p "require('./package.json').version"` and comparing with `cat VERSION`.
    - Commit the changes with a descriptive message (e.g. `release(0.7.0): developer experience + docs sync`).
 5. **Tag the Release**
    - Tag using semantic versioning, e.g. `v0.7.0`:
@@ -78,13 +78,13 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 3. Rebuild the Next.js app and restart services:
 
    ```bash
-   npm install --production
-   npm run build
+   pnpm install --prod --frozen-lockfile
+   pnpm run build
    docker compose up -d --build
    ```
 
-    > **Note:** Release 0.7.11 adds Prisma `Chat`/`Ticket` tables plus the tabbed admin console and RBAC APIs. Run `make db.migrate && make db.seed` before `npm run build` so low-confidence chat data and escalations materialise in the UI.
-    > **Note:** Release 0.8.0 enforces the `app.pgvector_lists` GUC, introduces the `RagEvent` audit ledger, and adds glossary upsert/follow-up workflows. Run `make db.migrate`, `make db.verify`, and `npm run db:seed` before `npm run build`, and wire `make version-check` into CI to detect version drift early.
+    > **Note:** Release 0.7.11 adds Prisma `Chat`/`Ticket` tables plus the tabbed admin console and RBAC APIs. Run `make db.migrate && make db.seed` before `pnpm run build` so low-confidence chat data and escalations materialise in the UI.
+    > **Note:** Release 0.8.0 enforces the `app.pgvector_lists` GUC, introduces the `RagEvent` audit ledger, and adds glossary upsert/follow-up workflows. Run `make db.migrate`, `make db.verify`, and `pnpm run db:seed` before `pnpm run build`, and wire `make version-check` into CI to detect version drift early.
 
 4. Verify health:
 
@@ -94,6 +94,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    ```
 
 5. Review audit artifacts (`reports/ci/`, `eval/runs/`) to confirm no regressions.
+6. Download GitHub release artifacts (`api/schema.json`, `release-artifacts/eval-reports.tar.gz`, `release-artifacts/docs-md.tar.gz`) for compliance and downstream distribution.
 
 ### Rollback
 

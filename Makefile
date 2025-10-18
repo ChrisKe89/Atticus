@@ -1,8 +1,9 @@
 # Makefile — Atticus
 .PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
-        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck
+	db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up
 
 PYTHON ?= python
+PNPM ?= pnpm
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
 PYTEST_PARALLEL := $(if $(filter 1,$(XDIST_AVAILABLE)),-n auto,)
 
@@ -26,7 +27,7 @@ api:
 
 web-dev:
 	@echo "Launching Next.js UI on http://localhost:3000 (expects API on :8000)"
-	npm run dev
+	$(PNPM) run dev
 
 app-dev:
 	@echo "Alias for web-dev; launching Next.js UI"
@@ -34,11 +35,11 @@ app-dev:
 
 admin-dev:
 	@echo "Launching Admin Next.js UI on http://localhost:9000"
-	npm run dev --workspace admin
+	$(PNPM) --filter atticus-admin-service dev
 
 admin-start:
 	@echo "Starting Admin Next.js UI on http://localhost:9000"
-	npm run start --workspace admin
+	$(PNPM) --filter atticus-admin-service start
 
 db.up:
 	docker compose up -d $(DB_SERVICE)
@@ -47,14 +48,14 @@ db.down:
 	docker compose stop $(DB_SERVICE)
 
 db.migrate:
-	npm run prisma:generate
-	npm run db:migrate
+	$(PNPM) run prisma:generate
+	$(PNPM) run db:migrate
 
 db.verify:
 	$(PYTHON) scripts/db_verify.py
 
 db.seed:
-	npm run db:seed
+	$(PNPM) run db:seed
 
 ingest:
 	$(PYTHON) scripts/ingest_cli.py
@@ -74,6 +75,15 @@ atticus:
 
 smoke:
 	$(PYTHON) scripts/test_health.py
+
+compose-up:
+	@if [ ! -f .env ]; then \
+		$(PYTHON) scripts/generate_env.py --ignore-env; \
+	fi
+	docker compose up -d --build postgres api nginx
+	$(PYTHON) scripts/wait_for_http.py --url http://localhost:8000/health --timeout 120
+	docker compose logs api --tail=50
+	docker compose down -v
 
 test.unit:
 	$(PYTHON) -m pytest $(PYTEST_PARALLEL) --maxfail=1 --disable-warnings \
@@ -98,10 +108,10 @@ test:
 	       --cov-report=term-missing --cov-fail-under=90
 
 web-test:
-	npm run test:unit
+	$(PNPM) run test:unit
 
 web-e2e:
-	npm run test:e2e
+	$(PNPM) run test:e2e
 
 e2e: env ingest eval
 	$(PYTHON) scripts/e2e_smoke.py
@@ -135,31 +145,31 @@ verify:
 	make web-audit
 	@echo "✅ All checks passed."
 web-build:
-	npm run build
+	$(PNPM) run build
 
 admin-build:
-	npm run build --workspace admin
+	$(PNPM) --filter atticus-admin-service build
 
 web-start:
-	npm run start
+	$(PNPM) run start
 
 web-lint:
-	npm run lint
+	$(PNPM) run lint
 
 admin-lint:
-	npm run lint --workspace admin
+	$(PNPM) --filter atticus-admin-service lint
 
 web-typecheck:
-	npm run typecheck
+	$(PNPM) run typecheck
 
 admin-typecheck:
-	npm run typecheck --workspace admin
+	$(PNPM) --filter atticus-admin-service typecheck
 
 web-audit:
-	npm run audit:ts
-	npm run audit:icons
-	npm run audit:routes
-	npm run audit:py
+	$(PNPM) run audit:ts
+	$(PNPM) run audit:icons
+	$(PNPM) run audit:routes
+	$(PNPM) run audit:py
 
 # Ensure VERSION and package.json are aligned
 version-check:

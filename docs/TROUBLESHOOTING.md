@@ -117,8 +117,8 @@ _Error codes:_ `recipient_not_allowed` or `sender_not_allowed` indicate allow-li
 
 ## Lint / Format Failures
 
-- **Prettier differences** — run `npm run format` (writes) or `npm run format:check` (CI-friendly). Tailwind class order is enforced via `prettier-plugin-tailwindcss`.
-- **ESLint violations** — run `npm run lint`. The configuration uses the tailwindcss plugin; ensure utility classes flow through the `cn` helper.
+- **Prettier differences** — run `pnpm run format` (writes) or `pnpm run format:check` (CI-friendly). Tailwind class order is enforced via `prettier-plugin-tailwindcss`.
+- **ESLint violations** — run `pnpm run lint`. The configuration uses the tailwindcss plugin; ensure utility classes flow through the `cn` helper.
 - **Ruff or mypy failures** — use `make format` (auto-fix) and `make typecheck` to reproduce Python findings.
 - **Full parity check** — `make quality` mirrors CI across Python + Next.js tooling.
 
@@ -132,21 +132,21 @@ Install hooks with `pre-commit install`. To re-run everything after fixing issue
 pre-commit run --all-files --show-diff-on-failure
 ```
 
-If local Node tooling drifts, reinstall via `npm install` and retry.
+If local Node tooling drifts, reinstall via `pnpm install` and retry.
 
 ---
 
 ## Dependency installation failures
 
 - Capture Python failures with `mkdir -p logs/install && pip-sync requirements.txt 2>&1 | tee logs/install/pip-sync.log` and attach the log to incident notes.
-- Capture Node failures with `mkdir -p logs/install && npm install --verbose 2>&1 | tee logs/install/npm-install.log`; redact tokens before sharing.
+- Capture Node failures with `mkdir -p logs/install && pnpm install --reporter=ndjson 2>&1 | tee logs/install/pnpm-install.log`; redact tokens before sharing.
 - Archive both logs under `logs/install/` for the current date and reference them from the audit trail.
 
 ---
 
-## npm audit warnings
+## pnpm audit warnings
 
-`npm audit` currently reports a critical Next.js middleware advisory (GHSA-f82v-jwr5-mffw) plus moderate issues in Next.js, esbuild, vite, and vitest. No fixed versions are available as of 2025-09-28; monitor upstream releases and capture justifications in `reports/ci/npm-audit-latest.json` (see [OPERATIONS.md](OPERATIONS.md#dependency-risk-exceptions)).
+`pnpm audit` currently reports a critical Next.js middleware advisory (GHSA-f82v-jwr5-mffw) plus moderate issues in Next.js, esbuild, vite, and vitest. No fixed versions are available as of 2025-09-28; monitor upstream releases and capture justifications in `reports/ci/pnpm-audit-latest.json` (see [OPERATIONS.md](OPERATIONS.md#dependency-risk-exceptions)).
 
 ---
 

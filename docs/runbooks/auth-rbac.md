@@ -41,7 +41,7 @@ This runbook documents the historical Auth.js + Prisma deployment that powered A
 
 <!-- markdownlint-disable-next-line MD013 -->
 
-| `ADMIN_EMAIL` / `ADMIN_NAME` | Bootstrap admin account created by `npm run db:seed`. |
+| `ADMIN_EMAIL` / `ADMIN_NAME` | Bootstrap admin account created by `pnpm run db:seed`. |
 
 <!-- markdownlint-disable-next-line MD013 -->
 
@@ -74,7 +74,7 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 3. **Generate Prisma client**
 
    ```bash
-   npm run prisma:generate
+   pnpm run prisma:generate
    ```
 
 4. **Seed default org + admin**
@@ -87,15 +87,15 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 5. **Run the app**
 
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
    Visit `http://localhost:3000/signin`, request a magic link for the admin email, and open the link to access `/admin`.
 
 ## Testing
 
-- **Unit**: `npm run test:unit` (Vitest) covers RBAC helpers.
-- **Playwright**: `npm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`) is writable before running.
+- **Unit**: `pnpm run test:unit` (Vitest) covers RBAC helpers.
+- **Playwright**: `pnpm run test:e2e` validates the magic link flow and admin gating. Ensure the dev server is running and `AUTH_DEBUG_MAILBOX_DIR` (default `./logs/mailbox`) is writable before running.
 - **Smoke**: `make web-test` + `make web-e2e` are wired into CI.
 
 ## RLS behaviour
@@ -114,7 +114,7 @@ Use `python scripts/generate_env.py --force` to regenerate `.env` with sensible 
 
 1. Stop the Next.js app (`Ctrl+C`).
 2. Revert migrations by restoring the previous database snapshot or running `psql` to drop the new tables/enums if safe.
-3. Reset the workspace by checking out the prior git tag and reinstalling dependencies (`npm install`).
+3. Reset the workspace by checking out the prior git tag and reinstalling dependencies (`pnpm install`).
 4. Restore `.env` from backups and restart services.
 
 For emergency disablement, set `NEXTAUTH_SECRET` to an empty value and restart; Auth.js rejects new sessions, effectively putting the UI into maintenance mode while RBAC policies remain intact.

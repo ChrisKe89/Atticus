@@ -44,7 +44,7 @@ These are already captured and pinned in `requirements.in` and `requirements.txt
 
 ## Node & Frontend Dependencies
 
-Managed via `package.json` / `package-lock.json` with `npm install`.
+Managed via `package.json` / `pnpm-lock.yaml` with `pnpm install`.
 
 Key packages:
 
@@ -54,7 +54,7 @@ Key packages:
 - `prettier@3.3` + `prettier-plugin-tailwindcss`
 - Tooling: `knip`, `vitest`, `@playwright/test`
 
-Install once with `npm install` (POSIX/PowerShell). Use `npm ci` inside CI.
+Install once with `pnpm install` (POSIX/PowerShell). CI runs `pnpm install --frozen-lockfile`.
 
 ---
 
@@ -86,10 +86,10 @@ Run `python scripts/debug_env.py` to verify that environment settings are source
 - **Ruff** for linting and import sorting (`make lint`, `make format`).
 - **mypy** for static type checking (`make typecheck`).
 - **pytest** for testing (`make test`), with a target of ≥90% coverage.
-- **ESLint** (`npm run lint`) with the Tailwind plugin for shadcn/ui class validation.
-- **Prettier** (`npm run format`, `npm run format:check`) with tailwindcss plugin enforcing class order.
-- **TypeScript compiler** (`npm run typecheck`) and **Next.js build** (`npm run build`).
-- **Vitest / Playwright** for unit and smoke testing (`npm run test:unit`, `npm run test:e2e`).
+- **ESLint** (`pnpm run lint`) with the Tailwind plugin for shadcn/ui class validation.
+- **Prettier** (`pnpm run format`, `pnpm run format:check`) with tailwindcss plugin enforcing class order.
+- **TypeScript compiler** (`pnpm run typecheck`) and **Next.js build** (`pnpm run build`).
+- **Vitest / Playwright** for unit and smoke testing (`pnpm run test:unit`, `pnpm run test:e2e`).
 - Optional: `pytest-xdist` for parallel test runs; if installed, Makefile will automatically add `-n auto`.
 - **pre-commit** hooks covering Ruff, mypy, ESLint, Prettier, markdownlint (`pre-commit install`).
 

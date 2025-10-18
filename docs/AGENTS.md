@@ -31,7 +31,7 @@ Follow IMPLEMENTATION_PLAN.md for phased remediation tied to TODO.md.
 
 Run make quality (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
 
-The admin service (npm run dev --workspace admin) handles escalation review and CSV filing; keep it in sync with the main UI.
+The admin service (`pnpm --filter admin dev`) handles escalation review and CSV filing; keep it in sync with the main UI.
 
 Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav limited to upstream-authorised reviewers.
 
@@ -67,7 +67,7 @@ Keep changes minimal and focused.
 
 Update documentation whenever behavior changes.
 
-Follow formatting standards: npm run format (Prettier) / ruff format.
+Follow formatting standards: pnpm run format (Prettier) / ruff format.
 
 No license headers unless explicitly required.
 
@@ -386,7 +386,7 @@ Local Dev:
 make db.up && make db.migrate && make seed
 Run API: make api
 Run Web: make web-dev
-Tail logs: npm run logs
+Tail logs: pnpm run logs
 
 Production:
 Supabase or hosted Postgres; daily backups; rotate secrets.
@@ -550,7 +550,7 @@ t - /api/ask
 
 ### Start small — 3 concrete moves
 
-1. **Make targets + npm scripts** — thin wrappers for Windows & CI.
+1. **Make targets + pnpm scripts** — thin wrappers for Windows & CI.
 2. **Smoke tests** — assert health/header propagation/chat/admin/db in <20s.
 3. **Retrieval eval** — compute Recall@k (5/8) & MRR@k; produce HTML/CSV under `./reports/` and fail CI on regression.
 
@@ -580,11 +580,11 @@ t - /api/ask
 
 ## Operations Cheatsheet
 
-**Local (dev)** — DB up/down: `make db.up` / `make db.down`; migrate/seed: `make db.migrate && make seed`; run app: `make api` + `make web-dev`; quality: `make quality`; tail logs: `npm run logs`.
+**Local (dev)** — DB up/down: `make db.up` / `make db.down`; migrate/seed: `make db.migrate && make seed`; run app: `make api` + `make web-dev`; quality: `make quality`; tail logs: `pnpm run logs`.
 
 **Supabase/Hosted (prod)** — daily backups; SQL editor for RLS and IVFFlat; rotate secrets; never commit `.env`.
 
-**Viewing logs** — Next.js route logs (`logs/app-*.log` or `npm run logs`); DB logs (dashboard); escalation traces (ESP dashboard).
+**Viewing logs** — Next.js route logs (`logs/app-*.log` or `pnpm run logs`); DB logs (dashboard); escalation traces (ESP dashboard).
 
 ---
 

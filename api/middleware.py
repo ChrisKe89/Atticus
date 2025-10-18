@@ -12,7 +12,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
 from atticus.config import load_settings
-from atticus.logging import log_event
+from atticus.logging import log_error, log_event
 
 from .rate_limit import RateLimiter
 
@@ -33,28 +33,28 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         logger = getattr(request.app.state, "logger", None)
 
         limiter = getattr(request.app.state, "rate_limiter", None)
-        # Clarification: rate limit applies to FastAPI /ask endpoint only.
-        # The Next.js handler lives under /api/ask and is rate-limited separately via frontend middleware/infra.
-        if request.url.path == "/ask":
-            settings = load_settings()
-            if (
-                limiter is None
-                or limiter.limit != settings.rate_limit_requests
-                or limiter.window_seconds != settings.rate_limit_window_seconds
-            ):
-                limiter = RateLimiter(
-                    limit=settings.rate_limit_requests,
-                    window_seconds=settings.rate_limit_window_seconds,
-                )
-                request.app.state.rate_limiter = limiter
-            request.app.state.settings = settings
+        settings = load_settings()
+        if (
+            limiter is None
+            or limiter.limit != settings.rate_limit_requests
+            or limiter.window_seconds != settings.rate_limit_window_seconds
+        ):
+            limiter = RateLimiter(
+                limit=settings.rate_limit_requests,
+                window_seconds=settings.rate_limit_window_seconds,
+            )
+            request.app.state.rate_limiter = limiter
+        request.app.state.settings = settings
+
+        decision = None
+        if request.method != "OPTIONS":
             identifier = (
                 request.headers.get("X-User-ID")
                 or request.headers.get("X-Forwarded-For")
                 or (request.client.host if request.client else "anonymous")
             )
-            allowed, retry_after = limiter.allow(identifier)
-            if not allowed:
+            decision = limiter.allow(identifier)
+            if not decision.allowed:
                 hashed = hashlib.sha256(identifier.encode("utf-8")).hexdigest()[:12]
                 if logger is not None:
                     log_event(
@@ -62,35 +62,46 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                         "rate_limit_blocked",
                         request_id=request_id,
                         identifier_hash=hashed,
-                        retry_after=retry_after,
+                        retry_after=decision.retry_after,
+                        path=request.url.path,
                     )
                 payload = {
                     "error": "rate_limited",
                     "detail": "Rate limit exceeded. Please retry later.",
                     "request_id": request_id,
                 }
-                return JSONResponse(
-                    payload,
-                    status_code=429,
-                    headers={"Retry-After": str(retry_after), "X-Request-ID": request_id},
-                )
+                headers = {
+                    "Retry-After": str(decision.retry_after or 0),
+                    "X-Request-ID": request_id,
+                    "X-RateLimit-Limit": str(limiter.limit),
+                    "X-RateLimit-Remaining": "0",
+                }
+                return JSONResponse(payload, status_code=429, headers=headers)
+            request.state.rate_limit_limit = limiter.limit
+            request.state.rate_limit_remaining = decision.remaining
 
         try:
             response = await call_next(request)
         except Exception as exc:  # pragma: no cover - runtime error path
             if logger is not None:
-                log_event(
+                log_error(
                     logger,
                     "request_error",
                     request_id=request_id,
                     method=request.method,
                     path=request.url.path,
-                    error=str(exc),
+                    error_type=exc.__class__.__name__,
                 )
             raise
 
         elapsed_ms = (time.perf_counter() - start) * 1000
         response.headers["X-Request-ID"] = request_id
+        if limiter is not None:
+            limit_value = getattr(request.state, "rate_limit_limit", limiter.limit)
+            response.headers["X-RateLimit-Limit"] = str(limit_value)
+            remaining_value = getattr(request.state, "rate_limit_remaining", None)
+            if remaining_value is not None:
+                response.headers["X-RateLimit-Remaining"] = str(max(0, remaining_value))
 
         if logger is not None:
             log_event(
