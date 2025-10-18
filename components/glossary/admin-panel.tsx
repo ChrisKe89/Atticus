@@ -30,6 +30,9 @@ export interface GlossaryEntryDto {
   term: string;
   definition: string;
   synonyms: string[];
+  aliases: string[];
+  units: string[];
+  productFamilies: string[];
   status: GlossaryStatus;
   createdAt: string;
   updatedAt: string;
@@ -56,14 +59,20 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
   const [term, setTerm] = useState("");
   const [definition, setDefinition] = useState("");
   const [synonyms, setSynonyms] = useState("");
+  const [aliases, setAliases] = useState("");
+  const [units, setUnits] = useState("");
+  const [families, setFamilies] = useState("");
   const [status, setStatus] = useState<GlossaryStatus>(GlossaryStatus.PENDING);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [definitionDraft, setDefinitionDraft] = useState("");
   const [synonymsDraft, setSynonymsDraft] = useState("");
+  const [aliasesDraft, setAliasesDraft] = useState("");
+  const [unitsDraft, setUnitsDraft] = useState("");
+  const [familiesDraft, setFamiliesDraft] = useState("");
 
-  function parseSynonyms(value: string): string[] {
+  function parseList(value: string): string[] {
     return value
       .split(",")
       .map((item) => item.trim())
@@ -79,7 +88,15 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
       const response = await fetch("/api/glossary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ term, definition, status, synonyms: parseSynonyms(synonyms) }),
+        body: JSON.stringify({
+          term,
+          definition,
+          status,
+          synonyms: parseList(synonyms),
+          aliases: parseList(aliases),
+          units: parseList(units),
+          productFamilies: parseList(families),
+        }),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -91,6 +108,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
       setTerm("");
       setDefinition("");
       setSynonyms("");
+      setAliases("");
+      setUnits("");
+      setFamilies("");
       setStatus(GlossaryStatus.PENDING);
       setFeedback("Entry created successfully.");
     });
@@ -100,6 +120,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     setEditingId(entry.id);
     setDefinitionDraft(entry.definition);
     setSynonymsDraft(entry.synonyms.join(", "));
+    setAliasesDraft(entry.aliases.join(", "));
+    setUnitsDraft(entry.units.join(", "));
+    setFamiliesDraft(entry.productFamilies.join(", "));
     setFeedback(null);
   }
 
@@ -107,6 +130,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     setEditingId(null);
     setDefinitionDraft("");
     setSynonymsDraft("");
+    setAliasesDraft("");
+    setUnitsDraft("");
+    setFamiliesDraft("");
   }
 
   async function saveEntryUpdate(
@@ -114,6 +140,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     overrides: Partial<{
       definition: string;
       synonyms: string[];
+      aliases: string[];
+      units: string[];
+      productFamilies: string[];
       status: GlossaryStatus;
       reviewNotes: string | null;
     }>
@@ -125,6 +154,9 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
       term: entry.term,
       definition: overrides.definition ?? entry.definition,
       synonyms: overrides.synonyms ?? entry.synonyms,
+      aliases: overrides.aliases ?? entry.aliases,
+      units: overrides.units ?? entry.units,
+      productFamilies: overrides.productFamilies ?? entry.productFamilies,
       status: overrides.status ?? entry.status,
       reviewNotes: overrides.reviewNotes ?? entry.reviewNotes,
     };
@@ -195,7 +227,10 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
     startTransition(async () => {
       const updated = await saveEntryUpdate(entry, {
         definition: trimmedDefinition,
-        synonyms: parseSynonyms(synonymsDraft),
+        synonyms: parseList(synonymsDraft),
+        aliases: parseList(aliasesDraft),
+        units: parseList(unitsDraft),
+        productFamilies: parseList(familiesDraft),
       });
       if (updated) {
         setFeedback("Entry updated.");
@@ -247,6 +282,36 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
               value={synonyms}
               onChange={(event) => setSynonyms(event.target.value)}
               placeholder="Comma-separated list"
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="aliases">Aliases</Label>
+            <Input
+              id="aliases"
+              value={aliases}
+              onChange={(event) => setAliases(event.target.value)}
+              placeholder="Alternate spellings or nicknames"
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="units">Units</Label>
+            <Input
+              id="units"
+              value={units}
+              onChange={(event) => setUnits(event.target.value)}
+              placeholder="Comma-separated units (e.g., ppm, g/m²)"
+              disabled={!canEdit}
+            />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="families">Product families</Label>
+            <Input
+              id="families"
+              value={families}
+              onChange={(event) => setFamilies(event.target.value)}
+              placeholder="Canonical product families"
               disabled={!canEdit}
             />
           </div>
@@ -320,6 +385,24 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
                           placeholder="Comma-separated synonyms"
                           disabled={!canEdit || isPending}
                         />
+                        <Input
+                          value={aliasesDraft}
+                          onChange={(event) => setAliasesDraft(event.target.value)}
+                          placeholder="Comma-separated aliases"
+                          disabled={!canEdit || isPending}
+                        />
+                        <Input
+                          value={unitsDraft}
+                          onChange={(event) => setUnitsDraft(event.target.value)}
+                          placeholder="Comma-separated units"
+                          disabled={!canEdit || isPending}
+                        />
+                        <Input
+                          value={familiesDraft}
+                          onChange={(event) => setFamiliesDraft(event.target.value)}
+                          placeholder="Comma-separated product families"
+                          disabled={!canEdit || isPending}
+                        />
                       </div>
                     ) : (
                       <>
@@ -327,6 +410,21 @@ export function GlossaryAdminPanel({ initialEntries, canEdit = true }: GlossaryA
                         {entry.synonyms.length ? (
                           <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                             Synonyms: {entry.synonyms.join(", ")}
+                          </p>
+                        ) : null}
+                        {entry.aliases.length ? (
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Aliases: {entry.aliases.join(", ")}
+                          </p>
+                        ) : null}
+                        {entry.units.length ? (
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Units: {entry.units.join(", ")}
+                          </p>
+                        ) : null}
+                        {entry.productFamilies.length ? (
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Product families: {entry.productFamilies.join(", ")}
                           </p>
                         ) : null}
                         <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">

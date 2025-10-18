@@ -103,18 +103,47 @@ def test_glossary_seed_entries_round_trip() -> None:
             "term": "Managed Print Services",
             "status": "APPROVED",
             "synonyms": ["MPS", "Print-as-a-service"],
+            "aliases": ["Managed Print"],
+            "units": ["fleets"],
+            "families": ["Enterprise Services"],
+            "normalized_aliases": [
+                "managedprintservices",
+                "mps",
+                "printasaservice",
+                "managedprint",
+            ],
+            "normalized_families": ["ENTERPRISE SERVICES"],
             "requires_reviewer": True,
         },
         "glossary-entry-proactive-maintenance": {
             "term": "Proactive Maintenance",
             "status": "PENDING",
             "synonyms": ["Preventative maintenance"],
+            "aliases": ["Predictive maintenance"],
+            "units": ["visits/year"],
+            "families": ["Field Services"],
+            "normalized_aliases": [
+                "proactivemaintenance",
+                "preventativemaintenance",
+                "predictivemaintenance",
+            ],
+            "normalized_families": ["FIELD SERVICES"],
             "requires_reviewer": False,
         },
         "glossary-entry-toner-optimization": {
             "term": "Toner Optimization",
             "status": "REJECTED",
             "synonyms": ["Smart toner", "Consumable optimisation"],
+            "aliases": ["Toner yield optimization"],
+            "units": ["pages"],
+            "families": ["C7070", "C8180"],
+            "normalized_aliases": [
+                "toneroptimization",
+                "smarttoner",
+                "consumableoptimisation",
+                "toneryieldoptimization",
+            ],
+            "normalized_families": ["C7070", "C8180"],
             "requires_reviewer": True,
         },
     }
@@ -122,7 +151,8 @@ def test_glossary_seed_entries_round_trip() -> None:
     with psycopg.connect(database_url) as connection:  # type: ignore[attr-defined]
         with connection.cursor() as cursor:
             cursor.execute(
-                'SELECT "id", "term", "status", "synonyms", "authorId", "reviewerId", "reviewNotes", "reviewedAt" '
+                'SELECT "id", "term", "status", "synonyms", "aliases", "units", "productFamilies", '
+                '"normalizedAliases", "normalizedFamilies", "authorId", "reviewerId", "reviewNotes", "reviewedAt" '
                 'FROM "GlossaryEntry" WHERE "id" = ANY(%s)',
                 (list(expected.keys()),),
             )
@@ -131,10 +161,15 @@ def test_glossary_seed_entries_round_trip() -> None:
                     "term": row[1],
                     "status": row[2],
                     "synonyms": list(row[3] or ()),
-                    "authorId": row[4],
-                    "reviewerId": row[5],
-                    "reviewNotes": row[6],
-                    "reviewedAt": row[7],
+                    "aliases": list(row[4] or ()),
+                    "units": list(row[5] or ()),
+                    "families": list(row[6] or ()),
+                    "normalized_aliases": list(row[7] or ()),
+                    "normalized_families": list(row[8] or ()),
+                    "authorId": row[9],
+                    "reviewerId": row[10],
+                    "reviewNotes": row[11],
+                    "reviewedAt": row[12],
                 }
                 for row in cursor.fetchall()
             }
@@ -160,6 +195,11 @@ def test_glossary_seed_entries_round_trip() -> None:
         assert record["term"] == expectations["term"]
         assert record["status"] == expectations["status"]
         assert record["synonyms"] == expectations["synonyms"]
+        assert record["aliases"] == expectations["aliases"]
+        assert record["units"] == expectations["units"]
+        assert record["families"] == expectations["families"]
+        assert record["normalized_aliases"] == expectations["normalized_aliases"]
+        assert record["normalized_families"] == expectations["normalized_families"]
         assert record["authorId"], "Seed glossary entries must have an author"
 
         if expectations["requires_reviewer"]:

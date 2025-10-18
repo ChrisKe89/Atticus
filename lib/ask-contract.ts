@@ -18,6 +18,15 @@ const clarificationPayloadSchema = z.object({
   options: z.array(clarificationOptionSchema),
 });
 
+const glossaryHitSchema = z.object({
+  term: z.string(),
+  definition: z.string(),
+  aliases: z.array(z.string()).default([]),
+  units: z.array(z.string()).default([]),
+  productFamilies: z.array(z.string()).default([]),
+  matchedValue: z.string(),
+});
+
 const askAnswerSchema = z.object({
   answer: z.string(),
   confidence: z.number(),
@@ -28,15 +37,28 @@ const askAnswerSchema = z.object({
   sources: z.array(askSourceSchema),
 });
 
-export const askResponseSchema = z.object({
-  answer: z.string().optional().nullable(),
-  confidence: z.number().optional().nullable(),
-  should_escalate: z.boolean().optional().nullable(),
-  request_id: z.string(),
-  sources: z.array(askSourceSchema).optional(),
-  answers: z.array(askAnswerSchema).optional(),
-  clarification: clarificationPayloadSchema.nullish(),
-});
+export const askResponseSchema = z.preprocess(
+  (value) => {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const record = value as Record<string, unknown>;
+      if (record.glossary_hits && !record.glossaryHits) {
+        const { glossary_hits, ...rest } = record;
+        return { ...rest, glossaryHits: glossary_hits };
+      }
+    }
+    return value;
+  },
+  z.object({
+    answer: z.string().optional().nullable(),
+    confidence: z.number().optional().nullable(),
+    should_escalate: z.boolean().optional().nullable(),
+    request_id: z.string(),
+    sources: z.array(askSourceSchema).optional(),
+    answers: z.array(askAnswerSchema).optional(),
+    clarification: clarificationPayloadSchema.nullish(),
+    glossaryHits: z.array(glossaryHitSchema).optional(),
+  }),
+);
 
 export const askRequestSchema = z.object({
   question: z.string().trim().min(1, "question is required"),
@@ -66,3 +88,4 @@ export type AskRequest = z.infer<typeof askRequestSchema>;
 export type AskSource = z.infer<typeof askSourceSchema>;
 export type AskAnswer = z.infer<typeof askAnswerSchema>;
 export type ClarificationPayload = z.infer<typeof clarificationPayloadSchema>;
+export type GlossaryHit = z.infer<typeof glossaryHitSchema>;

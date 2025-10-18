@@ -1,0 +1,6 @@
+ALTER TABLE "GlossaryEntry"
+    ADD COLUMN IF NOT EXISTS "aliases" TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
+    ADD COLUMN IF NOT EXISTS "units" TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
+    ADD COLUMN IF NOT EXISTS "productFamilies" TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
+    ADD COLUMN IF NOT EXISTS "normalizedAliases" TEXT[] NOT NULL DEFAULT '{}'::TEXT[],
+    ADD COLUMN IF NOT EXISTS "normalizedFamilies" TEXT[] NOT NULL DEFAULT '{}'::TEXT[];

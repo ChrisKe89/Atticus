@@ -3,8 +3,12 @@ import { GlossaryStatus, Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { canEditGlossary } from "@/lib/rbac";
 import {
+  buildNormalizedAliases,
+  parseAliases,
+  parseProductFamilies,
   parseStatus,
   parseSynonyms,
+  parseUnits,
   serializeEntry,
   handleGlossaryError,
   snapshotEntry,
@@ -31,6 +35,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
     const term = typeof payload.term === "string" && payload.term.trim().length > 0 ? payload.term.trim() : undefined;
     const synonyms = parseSynonyms(payload.synonyms);
+    const aliases = parseAliases(payload.aliases);
+    const units = parseUnits(payload.units);
+    const families = parseProductFamilies(payload.productFamilies);
     const status = parseStatus(payload.status);
     const reviewNotes =
       typeof payload.reviewNotes === "string"
@@ -52,6 +59,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       const data: Record<string, unknown> = {
         definition,
         synonyms,
+        aliases,
+        units,
+        productFamilies: families.raw,
+        normalizedAliases: buildNormalizedAliases(term ?? existing.term, synonyms, aliases),
+        normalizedFamilies: families.normalized,
         status,
         updatedById: editor.id,
       };
