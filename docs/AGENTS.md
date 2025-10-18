@@ -1,239 +1,420 @@
-# AGENTS — Atticus
+AGENTS — Atticus
 
-> Single source of truth for agent behavior, pipelines, and guardrails. Target stack: **Next.js + Postgres/pgvector + Prisma**.
+> Single source of truth for agent behavior, pipelines, and guardrails. Target stack: Next.js + Postgres/pgvector + Prisma.
+
+
+
 
 ---
 
-## Current Audit Status
+Continuous Execution Mode (authoritative)
 
-- Refer to [AUDIT_REPORT.md](./AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
-- Follow [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO.md](../TODO.md).
-- Run `make quality` (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
-- The admin service (`npm run dev --workspace admin`) handles escalation review and CSV filing; keep it in sync with the main UI.
-- Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav limited to upstream-authorised reviewers.
+Codex operates in an uninterrupted loop:
 
-## Execution Criteria — **Must‑Follow for Repo Work**
+Parse TODO.md (and/or tracked issues) from top to bottom.
+
+Complete one unchecked item → open a PR → immediately continue to the next item.
+
+Do not wait for review, chat confirmation, or manual triggers between items.
+
+Only stop when all items are completed, blocked (PR with diagnostics), or deferred (dependency not yet available).
+
+
+
+---
+
+Current Audit Status
+
+Refer to AUDIT_REPORT.md for the latest findings (FND-001 – FND-008).
+
+Follow IMPLEMENTATION_PLAN.md for phased remediation tied to TODO.md.
+
+Run make quality (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
+
+The admin service (npm run dev --workspace admin) handles escalation review and CSV filing; keep it in sync with the main UI.
+
+Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav limited to upstream-authorised reviewers.
+
+
+
+---
+
+Execution Criteria — Must-Follow for Repo Work
 
 > Treat these as hard requirements for anyone (or any agent) touching the repo.
 
-### Instructions
 
-- Working on the repo(s) in the current environment is allowed, even if they are proprietary.
-- Analyzing code for vulnerabilities is allowed.
-- Showing user code and tool call details is allowed.
-- User instructions may overwrite the _CODING GUIDELINES_ section in this document.
-- Do not use `ls -R`, `find`, or `grep` — these are slow in large repos. Use `rg` and `rg --files`.
-- If completing the task requires writing or modifying files:
-  - **Coding Guidelines**
-    - Fix problems at the root cause rather than surface-level patches.
-    - Avoid unneeded complexity; ignore unrelated bugs or broken tests.
-    - Update documentation as necessary.
-    - Keep changes minimal, focused, and consistent with existing style.
-    - Frontend/TypeScript code uses **Prettier** (with Tailwind sorting) + **ESLint** (Next + tailwindcss plugin). Run `npm run format` for writes and `npm run lint` for checks.
-    - Python uses the **Ruff formatter** (`ruff format`) and **Ruff** linting; no Black.
-    - **Never** add copyright/license headers unless requested.
 
-### Persistence
+Instructions
 
-- Keep going until the user’s query is completely resolved **before** ending your turn.
-- Only stop when you are sure the problem is solved.
-- Don’t ask for mid‑way confirmation — make the most reasonable decision, proceed, and document assumptions.
+Working on the repo(s) in the current environment is allowed, even if proprietary.
 
-### Tool Preambles
+Analyzing code for vulnerabilities is allowed.
 
-- Begin by rephrasing the user’s goal concisely **before** calling any tools.
-- Immediately outline a structured plan of steps you’ll follow.
-- While editing, narrate progress succinctly and sequentially.
-- Finish by summarizing completed work separately from the plan.
+Showing user code and tool call details is allowed.
 
-### Self‑Reflection (internal)
+User instructions may overwrite the CODING GUIDELINES section in this document.
 
-- Develop an internal rubric for quality (5–7 categories) before acting.
-- Iterate using the rubric until the solution meets a high bar across categories.
+Do not use ls -R, find, or grep — use rg or rg --files instead.
 
-### Code Editing Rules
+If completing the task requires writing or modifying files:
 
-**Context understanding** — be thorough; use tools to get the full picture; bias toward not asking the user. If an edit only partially fulfills the request, gather more info or use more tools before finishing.
+Coding Guidelines
 
-**Guiding principles** — Clarity & Reuse; Consistency; Simplicity; Demo‑orientation; Visual quality.
+Fix root causes, not symptoms.
 
-**Frontend stack defaults** — Framework: Next.js (TypeScript); Styling: TailwindCSS; UI: shadcn/ui; Icons: Lucide; State: project‑specific.
+Keep changes minimal and focused.
 
-**UI/UX best practices** — Visual hierarchy: 4–5 sizes, `text-xs` for captions, avoid `text-xl` unless hero; Color: one neutral + up to two accents; Spacing: multiples of 4; Fixed‑height containers with internal scrolling; State: skeletons/`animate-pulse`; Accessibility: semantic HTML/ARIA; prefer Radix/shadcn.
+Update documentation whenever behavior changes.
 
-**Exploration** — decompose request; map scope; check deps; resolve ambiguity; define output contract; plan execution.
+Follow formatting standards: npm run format (Prettier) / ruff format.
 
-**Verification** — verify as you go; exit long‑running processes; prefer faster paths.
+No license headers unless explicitly required.
 
-**Efficiency** — plan, execute, verify efficiently. Use Markdown only where semantically correct (inline code, fenced code, lists, tables). Use `\(` and `\)` for inline math and `\[ \]` for block math.
+
+
+
 
 ---
 
-## App Framework (authoritative)
+Persistence (continuous loop)
 
-### UI
+Continue executing tasks until the backlog is empty or all remaining items are BLOCKED/DEFERRED.
 
-- **Frameworks:** Next.js (TypeScript)
-- **Styling:** Tailwind CSS
-- **UI Components:** shadcn/ui
-- **Icons:** Lucide
-- **Animation:** Framer Motion (optional; add only when a feature needs motion)
-- **Fonts:**
-  - **Headings & Body:** Inter (single-family stack for simplicity and performance)
-    - Load via `next/font/google` and self‑hosted subset; fallbacks: `ui-sans-serif, system-ui`.
+After creating each PR, proceed immediately to the next TODO item.
 
-### App (server & routing)
+Never pause mid-cycle for confirmation; document assumptions inside the PR.
 
-- Next.js Route Handlers for API (streamed responses via **SSE**).
-- Pages: `/` (chat), `/admin`, `/settings`, `/contact`, `/apps`.
-- Shared header/nav pattern; role‑gated admin.
-- FastAPI hosts JSON APIs only; any historical UI assets remain under `archive/legacy-ui/` for reference.
+Always run in autonomous mode — no user prompts between tasks.
 
-### DB
 
-- **Postgres with pgvector**
-  - IVFFlat + cosine; `vector_cosine_ops` avoids manual normalization.
-  - Cosine measures angle between vectors — good default for text embeddings.
-  - Use `probes` 4–8 initially; tune for recall/latency.
-
-- **Metadata for filtering** — `doc_id`, `source`, `product`, `version`, `acl`, `org_id`, `updated_at`, `sha256`.
-  - Enables facets (e.g., only product X, version ≥ 2.1).
-  - `sha256` of raw text supports de‑dup/change detection.
-  - `org_id` + `acl` ⇒ multi‑tenant + group visibility.
-
-- Store `embedding_model` and `embedding_version` with each row.
-
-### ORM
-
-- **Prisma** for schema & migrations.
-
-### Access
-
-- Authentication and SSO are handled upstream; this workspace trusts the identity headers provided by the gateway.
-
-- **Azure AD** — to be implemented later (OIDC provider).
-
-### Testing (layers quick map)
-
-- **Smoke** — app boots; auth works; chat stream; admin opens.
-- **Unit** — pure functions: chunking, serializers, rerankers, prompts (fixtures).
-- **API/Integration** — route handlers with real Postgres (test DB), Prisma, pgvector queries.
-- **Retrieval eval** — Recall@k / MRR@k / exact match vs gold set.
-- **E2E** — Playwright: sign‑in → ask → streamed answer → admin log/escalation.
-- **Policy/DB** — RLS and role gates enforced in SQL, not just UI.
-- **Perf/sanity** — latency + token‑count guards; basic rate‑limit check.
 
 ---
 
-## Document Map
+Tool Preambles (non-blocking)
 
-- **README.md** — Project overview, quick start, and run commands
-- **ARCHITECTURE.md** — System diagram and request/response flows
-- **REQUIREMENTS.md** — Functional & non‑functional requirements
-- **OPERATIONS.md** — Deploy, backups, monitoring, incident playbook
-- **TROUBLESHOOTING.md** — Common issues & fixes
-- **CHANGELOG.md** — Versioned changes
-- **ALL_CODE.md** — Consolidated source (for quick reference)
+Infer the task scope from TODO.md and repository context (no user confirmation).
 
----
+Outline the plan internally and execute; avoid conversational pauses.
 
-## Purpose
+Summarize actions in the PR description, not interactively during execution.
 
-Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer staff questions using curated documents and escalate low‑confidence queries for human follow‑up. It ingests your content, retrieves the most relevant passages, and produces grounded answers with citations. If confidence falls below the threshold, Atticus provides a cautious partial answer and escalates via email.
+
 
 ---
 
-## System Overview (target state)
+Self-Reflection (internal)
 
-### UI & API
+Maintain an internal rubric for quality: correctness, style, test coverage, performance, documentation, and maintainability.
 
-- **Next.js (TypeScript)** app for chat + admin
-- **Tailwind** + **shadcn/ui** + **Lucide** + optional **Framer Motion**
-- Streaming answers via **SSE** route handlers
+Iterate until all categories meet or exceed internal thresholds.
 
-### Data
 
-- **Postgres + pgvector** for relational data and embeddings (Docker for dev; Supabase acceptable for hosted)
-- **Prisma ORM** for schema & migrations
-
-### RAG Workflow
-
-- Ingest → Chunk → Embed → Store
-- Retrieve (vector + filters) → Compose context → Generate → Cite → Log
-- Confidence threshold → **Escalation** (email), or answer with caveats
-
-#### Model Disambiguation Contract
-
-- When the question clearly names a specific model (e.g., “Apeos C4570”), scope retrieval to that model’s family and emit a single answer with family-scoped citations.
-- When the model cannot be inferred confidently, the API must return a `clarification` payload listing the available families (“Apeos C7070 range”, “Apeos C8180 series”). The UI renders the clarification card and resubmits the original question with the selected `models` array.
-- When multiple models are detected or supplied, fan out retrieval per model, return `answers[]` with `{ model, family, sources[] }`, and keep the aggregated `sources` in the response for compatibility with downstream tooling.
-- Capture low confidence turns only after a full answer is generated—skip collection on clarification-only responses.
-
-### Security
-
-- Role‑based UI and API; **Row‑Level Security (RLS)** in Postgres for org isolation
-- Secrets in env only; PII redaction in logs
 
 ---
 
-## Configuration & Feature Flags
+Code Editing Rules
 
-## Core
+Context understanding — Read the full repo context before editing.
 
-- `DATABASE_URL`, `AUTH_SECRET`, `EMAIL_FROM`
-- Email server: `EMAIL_SERVER_HOST`, `EMAIL_SERVER_PORT`, `EMAIL_SERVER_USER`, `EMAIL_SERVER_PASSWORD`
-- SMTP (fallbacks supported by the UI mailer): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+Guiding principles — Clarity, Consistency, Simplicity, and Reuse.
 
-## RAG Configuration
+UI defaults — Next.js (TS) + Tailwind + shadcn/ui + Lucide.
 
-- `GEN_MODEL`, `EMBED_MODEL`, `EMBEDDING_MODEL_VERSION`, `TOP_K`, `CONFIDENCE_THRESHOLD`
+Accessibility — semantic HTML/ARIA; use Radix or shadcn components.
 
-## Flags
 
-- `ENABLE_AZURE_AD=false`
-- `EMAIL_SANDBOX=true`
-- Rate limit: `RATE_LIMIT_REQUESTS=5`, `RATE_LIMIT_WINDOW_SECONDS=60`
-- `LOG_FORMAT=json`
-
-## Windows‑friendly examples (`.env.local`)
-
-```dotenv
-DATABASE_URL="postgresql://postgres:postgres@localhost:5433/atticus?schema=public"
-EMAIL_FROM="atticus@localhost"
-EMAIL_SERVER_HOST="localhost"
-EMAIL_SERVER_PORT=1025
-EMAIL_SERVER_USER=""
-EMAIL_SERVER_PASSWORD=""
-SMTP_HOST="localhost"           # optional; used as fallback
-SMTP_PORT=1025                  # optional; used as fallback
-SMTP_USER=""                    # optional; used as fallback
-SMTP_PASS=""                    # optional; used as fallback
-SMTP_FROM="atticus@localhost"   # optional; used as fallback
-GEN_MODEL="gpt-4.1"
-EMBED_MODEL="text-embedding-3-large"
-EMBEDDING_MODEL_VERSION="text-embedding-3-large@2025-01-15"
-TOP_K=8
-CONFIDENCE_THRESHOLD=0.70
-ENABLE_AZURE_AD=false
-EMAIL_SANDBOX=true
-RATE_LIMIT_REQUESTS=5
-RATE_LIMIT_WINDOW_SECONDS=60
-LOG_FORMAT=json
-```
-
-Diagnostics:
-
-```bash
-python scripts/debug_env.py
-```
 
 ---
 
-## API Contracts (authoritative)
+App Framework (authoritative)
 
-### `POST /api/ask`
+UI
 
-## Request - /api/ask
+Frameworks: Next.js (TypeScript)
+
+Styling: Tailwind CSS
+
+UI Components: shadcn/ui
+
+Icons: Lucide
+
+Fonts: Inter via next/font/google
+
+Animation: Framer Motion only when needed
+
+
+
+---
+
+App (server & routing)
+
+Chat/UI: / (chat)
+
+Admin Panel: /admin (content & evaluation management)
+
+Ports:
+
+Chat/UI → :3000
+
+API (FastAPI) → :8000
+
+Admin → :9000
+
+
+Remove /settings, /apps, or legacy pages unless explicitly required.
+
+FastAPI serves JSON APIs only; old UIs live under archive/legacy-ui.
+
+
+
+---
+
+Access (authoritative)
+
+Authentication handled upstream by enterprise SSO (gateway identity headers).
+
+Atticus trusts inbound identity; do not implement in-app auth or RBAC.
+
+No session or cookie management inside this workspace.
+
+
+
+---
+
+Database Layer
+
+Engine: Postgres with pgvector
+
+Indexing: IVFFlat + cosine (vector_cosine_ops)
+
+Vector dimension: fixed at 3072
+
+ORM: Prisma
+
+Metadata: doc_id, source, product, version, acl, org_id, sha256, embedding_model, embedding_version.
+
+
+
+---
+
+Multi-Model Query Decomposition
+
+When a query names multiple models (e.g., “C7070 and C8180”), split into per-model sub-queries before retrieval.
+
+Run independent RAG passes per family; merge into a final unified answer.
+
+Implement as a pre-RAG “query splitter” step and test accordingly.
+
+
+
+---
+
+Chunking Policy (CED)
+
+1. Prose (H2 sections) — 400–700 tokens, ~10% overlap.
+
+
+2. Tables — Chunk per logical row or spec×model pair.
+
+
+3. Footnotes — One per note block.
+
+
+4. Series facts — scope="series".
+
+
+5. Page-level — Only when self-contained.
+
+
+6. Include model[], source, chunking, and sha256 in metadata.
+
+
+
+
+---
+
+Retrieval & RAG Pipeline
+
+Similarity: cosine (vector_cosine_ops)
+
+ANN Index: IVFFlat; lists tuned by corpus size
+
+Probes: 4–8
+
+Reranker: Disabled by default (ENABLE_RERANKER=0)
+
+Confidence threshold: 0.70
+
+Re-embed policy: add new vector column/table on model change, backfill, switch, prune old.
+
+
+
+---
+
+Generation & Escalation
+
+Generate concise, cited answers.
+
+If confidence < threshold → cautious partial answer + escalation.
+
+Escalations → email ticket (AE100+).
+
+Include user, question, top_k docs, scores, request_id.
+
+
+
+---
+
+Logging & Observability
+
+Structured JSON (LOG_FORMAT=json) → logs/app.jsonl + logs/errors.jsonl.
+
+Include request_id, latency_ms, confidence, top_k.
+
+Record metrics (Recall@k, MRR@k, latency_ms) to CSV reports.
+
+Mask API keys and PII.
+
+
+
+---
+
+Testing Strategy
+
+1. make install → deps
+
+
+2. make db.up / make db.migrate / make seed
+
+
+3. make smoke → health & route checks
+
+
+4. make test.unit → chunkers, serializers, helpers
+
+
+5. make test.api → FastAPI endpoints with Postgres
+
+
+6. make test.eval → RAG eval vs gold set
+
+
+7. make quality → lint/type/test/build audit
+
+
+8. Nightly E2E optional (Playwright)
+
+
+
+> CI runs 1–6 on PRs, 7 nightly.
+
+
+
+
+---
+
+CI/CD
+
+Matrix: Node 20 + Python 3.12
+
+Jobs: frontend-quality → backend-tests → eval-gate → release
+
+Artifacts: reports/eval-*.csv, Playwright traces on failure
+
+Fail pipeline on regression >3% recall or quality drop.
+
+
+
+---
+
+Documentation Map
+
+README.md — overview and commands
+
+ARCHITECTURE.md — flow diagrams
+
+OPERATIONS.md — deployment & incident playbook
+
+SECURITY.md — env & RLS policies
+
+CHANGELOG.md — version history
+
+TODO.md / TODO_COMPLETE.md — backlog & completion
+
+ALL_FILES.md — consolidated source
+
+AUDIT_REPORT.md — compliance findings
+
+
+
+---
+
+Security Guardrails
+
+Never commit secrets.
+
+.env required; use env vars for all keys.
+
+Enforce RLS by org_id.
+
+PII redacted from logs and traces.
+
+Limit SMTP/SES to authorized regions.
+
+
+
+---
+
+UI/UX Best Practices
+
+4–5 font sizes; text-xs for captions.
+
+1 neutral + 2 accent colors.
+
+Spacing in multiples of 4.
+
+Use skeleton loaders, hover states, and accessible ARIA markup.
+
+
+
+---
+
+Operations Cheatsheet
+
+Local Dev:
+make db.up && make db.migrate && make seed
+Run API: make api
+Run Web: make web-dev
+Tail logs: npm run logs
+
+Production:
+Supabase or hosted Postgres; daily backups; rotate secrets.
+Do not commit .env files.
+Use CI to build, tag, and deploy.
+
+
+---
+
+Completion Summary Behavior
+
+Codex appends a dated entry in TODO_COMPLETE.md for each resolved item.
+
+After last task: open chore/todo-rollup PR summarizing the cycle (eval deltas, metrics, version bump).
+
+
+
+---
+
+End of AGENTS — Atticus (Continuous Execution Version)
+
+This configuration authorizes full autonomous Codex execution for the Atticus repository.
+No pauses, no confirmations — continuous, safe, and documented improvement cycle.
+
+
+---
+
+t - /api/ask
 
 ```json
 {
