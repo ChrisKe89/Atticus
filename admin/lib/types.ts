@@ -21,6 +21,9 @@ export type ReviewChat = {
 export type GlossaryEntry = {
   term: string;
   synonyms: string[];
+  aliases: string[];
+  units: string[];
+  productFamilies: string[];
 };
 
 export type EvalSeed = {

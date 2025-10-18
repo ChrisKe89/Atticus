@@ -23,6 +23,9 @@ type GlossaryEntryRecord = {
   term: string;
   definition: string;
   synonyms: string[];
+  aliases: string[];
+  units: string[];
+  productFamilies: string[];
   status: GlossaryStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -81,6 +84,9 @@ export default async function AdminPage() {
     term: entry.term,
     definition: entry.definition,
     synonyms: entry.synonyms,
+    aliases: entry.aliases,
+    units: entry.units,
+    productFamilies: entry.productFamilies,
     status: entry.status,
     createdAt: entry.createdAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),

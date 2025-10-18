@@ -100,7 +100,7 @@ npm run dev --workspace admin    # http://localhost:3101
 Use the admin console to orchestrate ingestion and evaluation upkeep without leaving the browser.
 
 - **Embed new documents** &rarr; submit partial or full refresh jobs through the ingestion panel. Results surface document/chunk counts plus manifest, index, and snapshot paths.
-- **Glossary library** &rarr; audit `indices/dictionary.json` entries before applying synonym updates.
+- **Glossary library** &rarr; audit `indices/dictionary.json` entries (terms, synonyms, aliases, units, normalized product families) before applying updates so chat responses continue to surface accurate inline glossary highlights.
 - **Evaluation seeds** &rarr; edit `eval/gold_set.csv` in place; updates drive CI retrieval benchmarks.
 
 ---

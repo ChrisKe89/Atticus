@@ -272,7 +272,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 
 The Next.js application in `app/` is the supported interface.
 
-- `app/page.tsx` hosts the streaming chat surface using `/api/ask` and renders citations.
+- `app/page.tsx` hosts the streaming chat surface using `/api/ask`, renders citations, and now injects glossary highlights (term definition, aliases, units, normalized product families) inline when responses reference curated terms.
 - `app/contact/page.tsx` handles escalations to the FastAPI `/contact` endpoint.
 - `app/admin/page.tsx` powers the glossary workflow and respects upstream reviewer/admin context.
 
@@ -296,7 +296,7 @@ The console now includes four dedicated panels:
 
 - **Embed new documents** — trigger partial or full corpus ingestion by sending POST `/api/ingest` jobs directly from the UI and capture manifest/index paths for auditing.
 - **Escalated chats** — browse low-confidence transcripts, edit responses, and approve/reject escalations without impacting the main workspace.
-- **Glossary library** — inspect the canonical `indices/dictionary.json` entries to confirm synonyms/aliases before publishing updates.
+- **Glossary library** — inspect and maintain the canonical `indices/dictionary.json` entries (terms, synonyms, aliases, units, normalized product families) before publishing updates; the chat surface consumes this metadata to decorate answers automatically.
 - **Evaluation seeds** — review and edit `eval/gold_set.csv` via the admin API so retrieval benchmarks track the latest corpus changes.
 
 Approved answers continue to append to `content/<family>/<model>.csv`, keeping the knowledge base synchronised with curator feedback.

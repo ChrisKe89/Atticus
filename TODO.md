@@ -53,7 +53,7 @@ Here’s the exact addition you should drop into your `TODO.md` under the **🧠
 * [x] **Admin Page Extensions**
 
   * Embed new documents, view glossary entries, manage eval seeds.
-* [ ] **Glossary Enrichment**
+* [x] **Glossary Enrichment**
 
   * Aliases, units, and product family normalization.
   * Display glossary hits inline in chat answers.
