@@ -4,6 +4,17 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.8.4] - 2025-11-01
+
+### Added
+
+- Inline glossary highlights in the chat workspace driven by FastAPI `glossaryHits`, including alias, unit, and product-family context for matched terms.
+- Glossary enrichment across Prisma schema, Next.js admin workflows, and FastAPI dictionary endpoints to capture aliases, units, normalized product families, and supporting seeds/tests/docs.
+
+### Changed
+
+- `lib/ask-contract.ts` and `lib/ask-client.ts` now parse the `glossaryHits` payload, and `components/AnswerRenderer.tsx` renders the enriched metadata alongside streamed answers.
+
 ## [0.8.3] - 2025-10-31
 
 ### Added

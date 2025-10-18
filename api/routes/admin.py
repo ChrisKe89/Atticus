@@ -48,7 +48,10 @@ async def write_dictionary(
     settings: SettingsDep,
     logger: LoggerDep,
 ) -> DictionaryPayload:
-    save_dictionary(settings.dictionary_path, [entry.model_dump() for entry in payload.entries])
+    save_dictionary(
+        settings.dictionary_path,
+        [entry.model_dump(by_alias=True) for entry in payload.entries],
+    )
     log_event(logger, "dictionary_updated", entries=len(payload.entries))
     return payload
 

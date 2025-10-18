@@ -5,6 +5,7 @@ from collections.abc import Iterable, Sequence
 
 from fastapi import APIRouter, HTTPException, Request
 
+from atticus.glossary import find_glossary_hits, load_glossary_entries
 from atticus.logging import log_event
 from atticus.tokenization import count_tokens
 from retriever.models import Citation
@@ -19,6 +20,7 @@ from ..schemas import (
     AskSource,
     ClarificationOption,
     ClarificationPayload,
+    GlossaryHit,
 )
 
 router = APIRouter()
@@ -167,6 +169,27 @@ async def ask_endpoint(
     aggregated_escalation = any(entry.should_escalate for entry in answers)
     flattened_sources = [source for entry in answers for source in entry.sources]
     aggregated_answer = _aggregate_answer_text(answers)
+    base_answer_text = aggregated_answer
+    if len(answers) == 1:
+        base_answer_text = answers[0].answer
+
+    glossary_entries = load_glossary_entries(settings)
+    glossary_matches = find_glossary_hits(
+        answer=base_answer_text,
+        question=question,
+        entries=glossary_entries,
+    )
+    glossary_payloads = [
+        GlossaryHit(
+            term=match.term,
+            definition=match.definition,
+            aliases=list(match.aliases),
+            units=list(match.units),
+            product_families=list(match.product_families),
+            matched_value=match.matched_value,
+        )
+        for match in glossary_matches
+    ]
 
     request.state.confidence = aggregated_confidence
     request.state.escalate = aggregated_escalation
@@ -182,6 +205,7 @@ async def ask_endpoint(
             request_id=request_id,
             sources=primary.sources,
             answers=list(answers),
+            glossary_hits=glossary_payloads or None,
         )
     else:
         response = AskResponse(
@@ -191,6 +215,7 @@ async def ask_endpoint(
             request_id=request_id,
             sources=flattened_sources,
             answers=list(answers),
+            glossary_hits=glossary_payloads or None,
         )
 
     log_event(

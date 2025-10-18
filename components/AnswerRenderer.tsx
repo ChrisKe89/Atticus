@@ -4,7 +4,8 @@ import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import type { AskAnswer, AskResponse, AskSource } from "@/lib/ask-contract";
+import type { AskAnswer, AskResponse, AskSource, GlossaryHit } from "@/lib/ask-contract";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
@@ -96,6 +97,29 @@ function AnswerPanel({ answer, requestId }: { answer: AskAnswer; requestId?: str
 
 export default function AnswerRenderer({ text, response, disabled, onClarify }: AnswerRendererProps) {
   const families = useMemo(() => modelCatalog.families ?? [], []);
+
+  const glossaryHighlights = useMemo(() => {
+    if (!response?.glossaryHits?.length) {
+      return null;
+    }
+    return (
+      <section className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 shadow-sm dark:border-amber-900/60 dark:bg-amber-950/40">
+        <header className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">Glossary highlights</h3>
+            <p className="text-xs text-amber-800/80 dark:text-amber-200/80">
+              Definitions were pulled from the enterprise glossary for matched terms.
+            </p>
+          </div>
+        </header>
+        <ul className="mt-3 space-y-3">
+          {response.glossaryHits.map((hit) => (
+            <GlossaryHighlightItem key={`${hit.term}-${hit.matchedValue}`} hit={hit} />
+          ))}
+        </ul>
+      </section>
+    );
+  }, [response?.glossaryHits]);
 
   const clarificationCard = useMemo(() => {
     if (!response?.clarification) {
@@ -206,8 +230,50 @@ export default function AnswerRenderer({ text, response, disabled, onClarify }: 
 
   return (
     <div className="space-y-4">
+      {glossaryHighlights}
       {clarificationCard}
       {clarificationCard ? null : answerSections ?? fallbackMarkdown}
     </div>
+  );
+}
+
+function GlossaryHighlightItem({ hit }: { hit: GlossaryHit }) {
+  return (
+    <li className="rounded-xl border border-amber-200/80 bg-white/80 p-3 dark:border-amber-900/60 dark:bg-slate-900/60">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{hit.term}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Matched “{hit.matchedValue}”</p>
+        </div>
+        <Badge variant="subtle" className="text-xs capitalize">
+          Glossary term
+        </Badge>
+      </div>
+      <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{hit.definition}</p>
+      <dl className="mt-3 grid gap-2 text-xs text-slate-600 dark:text-slate-300 sm:grid-cols-3">
+        {hit.aliases.length ? (
+          <div>
+            <dt className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              Aliases
+            </dt>
+            <dd>{hit.aliases.join(", ")}</dd>
+          </div>
+        ) : null}
+        {hit.units.length ? (
+          <div>
+            <dt className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Units</dt>
+            <dd>{hit.units.join(", ")}</dd>
+          </div>
+        ) : null}
+        {hit.productFamilies.length ? (
+          <div>
+            <dt className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              Product families
+            </dt>
+            <dd>{hit.productFamilies.join(", ")}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </li>
   );
 }

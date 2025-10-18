@@ -3,6 +3,22 @@ import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
 import { ForbiddenError, UnauthorizedError } from "@/lib/rbac";
 
+function normalizeToken(value: string): string {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/gi, "")
+    .toLowerCase();
+}
+
+function normalizeFamily(value: string): string {
+  return value
+    .trim()
+    .replace(/[\s_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
+
 function buildError(
   status: number,
   error: string,
@@ -38,6 +54,10 @@ export function parseStatus(value: unknown): GlossaryStatus {
 }
 
 export function parseSynonyms(value: unknown): string[] {
+  return parseStringList(value);
+}
+
+function parseStringList(value: unknown): string[] {
   if (!value) {
     return [];
   }
@@ -52,7 +72,32 @@ export function parseSynonyms(value: unknown): string[] {
       .map((item) => item.trim())
       .filter((item) => item.length > 0);
   }
-  throw new Error("Invalid synonyms payload");
+  throw new Error("Invalid list payload");
+}
+
+export function parseAliases(value: unknown): string[] {
+  return parseStringList(value);
+}
+
+export function parseUnits(value: unknown): string[] {
+  return parseStringList(value);
+}
+
+export function parseProductFamilies(value: unknown): { raw: string[]; normalized: string[] } {
+  const families = parseStringList(value);
+  const normalized = families.map(normalizeFamily).filter((item) => item.length > 0);
+  return { raw: families, normalized: Array.from(new Set(normalized)) };
+}
+
+export function buildNormalizedAliases(term: string, synonyms: string[], aliases: string[]): string[] {
+  const tokens = new Set<string>();
+  [term, ...synonyms, ...aliases].forEach((value) => {
+    const normalized = normalizeToken(value);
+    if (normalized) {
+      tokens.add(normalized);
+    }
+  });
+  return Array.from(tokens);
 }
 
 export function serializeEntry(entry: any) {
@@ -61,6 +106,9 @@ export function serializeEntry(entry: any) {
     term: entry.term,
     definition: entry.definition,
     synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
+    aliases: Array.isArray(entry.aliases) ? entry.aliases : [],
+    units: Array.isArray(entry.units) ? entry.units : [],
+    productFamilies: Array.isArray(entry.productFamilies) ? entry.productFamilies : [],
     status: entry.status,
     createdAt: entry.createdAt.toISOString(),
     updatedAt: entry.updatedAt.toISOString(),
@@ -95,6 +143,9 @@ export function snapshotEntry(entry: any) {
     term: entry.term,
     definition: entry.definition,
     synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
+    aliases: Array.isArray(entry.aliases) ? entry.aliases : [],
+    units: Array.isArray(entry.units) ? entry.units : [],
+    productFamilies: Array.isArray(entry.productFamilies) ? entry.productFamilies : [],
     status: entry.status,
     reviewNotes: entry.reviewNotes ?? null,
   };

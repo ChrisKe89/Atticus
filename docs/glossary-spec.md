@@ -20,6 +20,11 @@ model GlossaryEntry {
   term         String
   definition   String          @db.Text
   synonyms     String[]        @default([])
+  aliases           String[] @default([])
+  units             String[] @default([])
+  productFamilies   String[] @default([])
+  normalizedAliases String[] @default([])
+  normalizedFamilies String[] @default([])
   status       GlossaryStatus  @default(PENDING)
   orgId        String
   org          Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
@@ -48,9 +53,16 @@ the `X-Admin-Token` header.
 ## API Contracts
 
 - `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
-  author/reviewer metadata.
-- `POST /api/glossary` – admin session required; idempotent upsert keyed by `(orgId, term)` that accepts term, definition, synonyms, and status updates while recording author/reviewer metadata and request IDs.
-- `PUT /api/glossary/:id` – admin session required; updates an entry in place (definition, synonyms, status, review notes) and stamps reviewer metadata when a decision is made.
+- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
+  author/reviewer metadata plus glossary metadata (aliases, units, normalized product
+  families) used by the chat experience.
+- `POST /api/glossary` – admin session required; idempotent upsert keyed by `(orgId, term)`
+  that accepts term, definition, synonyms, aliases, units, product families, and status updates
+  while recording author/reviewer metadata and request IDs.
+- `PUT /api/glossary/:id` – admin session required; updates an entry in place (definition,
+  synonyms, aliases, units, product families, status, review notes) and stamps reviewer metadata
+  when a decision is made. Normalized aliases/families are recomputed server-side to keep
+  chat lookups consistent.
 - FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and
   require a matching `X-Admin-Token` header; failures emit contract-compliant error
   payloads with `request_id` for observability.
@@ -59,7 +71,9 @@ the `X-Admin-Token` header.
 
 1. Reviewer submits a new term with synonyms and rationale.
 2. Admin views pending proposals on `/admin/glossary`, edits definitions inline, captures review notes, and approves.
-3. Approved entries become available to all users and propagate via the API contract, with each change mirrored in `RagEvent` history.
+3. Approved entries become available to all users and propagate via the API contract. The
+   chat surface inspects glossary metadata on every response and renders inline highlights for
+   matched terms, including aliases, canonical units, and normalized product families.
 
 ### Sequence Diagram
 
