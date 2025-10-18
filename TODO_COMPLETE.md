@@ -24,6 +24,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-10-31
+
+- [x] Admin Page Extensions — delivered ingestion panel, glossary viewer, and eval seed manager in the standalone admin console with secured FastAPI endpoints, tests, docs, and configuration updates — completed 2025-10-31 (this change set).
+
+---
+
 ## 2025-10-18
 
 - [x] Delivered the multi-model query splitter (AI / RAG Enhancements) with targeted prompts, chat integration, documentation, tests, and version bump — completed 2025-10-18 (this change set).

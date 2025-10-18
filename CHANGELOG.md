@@ -4,6 +4,18 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.8.3] - 2025-10-31
+
+### Added
+
+- Admin console extensions: document ingestion panel, glossary viewer, and evaluation seed manager wired to new FastAPI endpoints (`/api/ingest`, `/admin/dictionary`, `/admin/eval-seeds`).
+- FastAPI `/admin/eval-seeds` API with CSV persistence helpers and tests covering round-trip writes and validation.
+
+### Changed
+
+- `admin/lib/config.ts` now forwards `ATTICUS_ADMIN_TOKEN` so downstream admin APIs remain guarded by `X-Admin-Token`.
+- Documentation and `.env.example` updated for the split-service workflow, including new admin environment variables and ingestion/eval runbooks.
+
 ## [0.8.2] - 2025-10-18
 
 ### Added

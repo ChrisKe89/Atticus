@@ -292,18 +292,22 @@ A separate Next.js workspace (`admin/`) now powers escalation review and answer 
 npm run dev --workspace admin    # http://localhost:3101
 ```
 
-Reviewers can browse escalated chats, edit responses, and approve or reject items without impacting the primary chat surface. Approved answers are appended to `content/<family>/<model>.csv`, keeping the knowledge base synchronised with curator feedback.
+The console now includes four dedicated panels:
+
+- **Embed new documents** — trigger partial or full corpus ingestion by sending POST `/api/ingest` jobs directly from the UI and capture manifest/index paths for auditing.
+- **Escalated chats** — browse low-confidence transcripts, edit responses, and approve/reject escalations without impacting the main workspace.
+- **Glossary library** — inspect the canonical `indices/dictionary.json` entries to confirm synonyms/aliases before publishing updates.
+- **Evaluation seeds** — review and edit `eval/gold_set.csv` via the admin API so retrieval benchmarks track the latest corpus changes.
+
+Approved answers continue to append to `content/<family>/<model>.csv`, keeping the knowledge base synchronised with curator feedback.
 
 ## Content Management & Ingestion
 
-The in-app **Content Manager** (`/admin/content`) exposes a file-browser for the `content/` tree:
+Use the admin service ingestion panel to queue re-embeds after updating the `content/` tree:
 
-- Upload Markdown, PDF, and text sources
-- Create or delete folders and files (with audit logging to `reports/content-actions.log`)
-- Trigger ingestion via a dedicated “Re-ingest Content” control that runs `scripts/ingest_cli.py`
-- Receive a prompt whenever changes are made so ingestion occurs intentionally
-
-Ingestion output includes the total document count indexed and a transcript of the underlying CLI run for quick diagnostics.
+- Submit one or more relative paths for partial refreshes or leave blank for full re-ingestion.
+- Toggle “full refresh” to ignore the active manifest and rebuild embeddings from scratch.
+- Capture ingestion output (documents processed, chunks indexed, manifest/index/snapshot paths) for downstream reporting.
 
 ---
 

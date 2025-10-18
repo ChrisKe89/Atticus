@@ -13,12 +13,21 @@ from ..schemas import (
     DictionaryEntry,
     DictionaryPayload,
     ErrorLogEntry,
+    EvalSeedEntry,
+    EvalSeedPayload,
     MetricsDashboard,
     MetricsHistogram,
     SessionLogEntry,
     SessionLogResponse,
 )
-from ..utils import load_dictionary, load_error_logs, load_session_logs, save_dictionary
+from ..utils import (
+    load_dictionary,
+    load_error_logs,
+    load_eval_seeds,
+    load_session_logs,
+    save_dictionary,
+    save_eval_seeds,
+)
 
 router = APIRouter(prefix="/admin")
 
@@ -42,6 +51,48 @@ async def write_dictionary(
     save_dictionary(settings.dictionary_path, [entry.model_dump() for entry in payload.entries])
     log_event(logger, "dictionary_updated", entries=len(payload.entries))
     return payload
+
+
+@router.get("/eval-seeds", response_model=EvalSeedPayload)
+async def read_eval_seeds(_: AdminGuard, settings: SettingsDep) -> EvalSeedPayload:
+    raw_entries = load_eval_seeds(settings.gold_set_path)
+    seeds = [
+        EvalSeedEntry(
+            question=item.get("question", ""),
+            relevant_documents=item.get("relevant_documents", []),
+            expected_answer=item.get("expected_answer"),
+            notes=item.get("notes"),
+        )
+        for item in raw_entries
+    ]
+    return EvalSeedPayload(seeds=seeds)
+
+
+@router.post("/eval-seeds", response_model=EvalSeedPayload)
+async def write_eval_seeds(
+    _: AdminGuard,
+    payload: EvalSeedPayload,
+    settings: SettingsDep,
+    logger: LoggerDep,
+) -> EvalSeedPayload:
+    records: list[dict[str, object]] = []
+    for seed in payload.seeds:
+        question = seed.question.strip()
+        if not question:
+            raise HTTPException(status_code=400, detail="Question must not be empty")
+        records.append(
+            {
+                "question": question,
+                "relevant_documents": [
+                    doc.strip() for doc in seed.relevant_documents if doc.strip()
+                ],
+                "expected_answer": seed.expected_answer,
+                "notes": seed.notes,
+            }
+        )
+    save_eval_seeds(settings.gold_set_path, records)
+    log_event(logger, "eval_seeds_updated", count=len(records))
+    return EvalSeedPayload(seeds=payload.seeds)
 
 
 @router.get("/errors", response_model=list[ErrorLogEntry])
