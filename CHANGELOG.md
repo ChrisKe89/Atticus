@@ -4,6 +4,14 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.0] - 2025-10-18
+
+### Changed
+
+- Admin Next.js workspace now runs on port 9000 with explicit Make targets for dev/start/build, ensuring the chat and admin UIs ship as independent services.
+- Docker Compose maps the admin container to :9000 and documentation (README, OPERATIONS, ADMIN_SERVICE, ARCHITECTURE) highlights the split-port deployment.
+- `make quality` now lint/typechecks/builds the admin workspace separately from the chat UI to guarantee isolated bundles.
+
 ## [0.9.0] - 2025-10-18
 
 ### Added

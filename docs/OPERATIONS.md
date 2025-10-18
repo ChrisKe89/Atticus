@@ -86,7 +86,7 @@ make e2e
 The standalone admin workspace handles escalated chat review and lives in the `admin/` directory.
 
 ```bash
-npm run dev --workspace admin    # http://localhost:3101
+make admin-dev                   # http://localhost:9000
 ```
 
 - Set `ATTICUS_MAIN_BASE_URL` if the primary UI runs behind nginx or a custom domain.
