@@ -5,6 +5,9 @@ import pytest
 
 from api.routes.chat import ask_endpoint
 from api.schemas import AskRequest
+from retriever.models import Answer, Citation
+from retriever.query_splitter import QueryAnswer
+from retriever.resolver import ModelScope
 
 
 class _DummyLogger:
@@ -13,23 +16,27 @@ class _DummyLogger:
 
 
 def test_ask_endpoint_emits_verbose_logs(monkeypatch: pytest.MonkeyPatch) -> None:
-    citations = [
-        SimpleNamespace(
+    scope = ModelScope(family_id="C7070", family_label="Apeos C7070", model="Apeos C7070")
+
+    def fake_run_rag_for_each(*args, **kwargs):
+        citation = Citation(
             chunk_id="chunk-1",
             source_path="content/manuals/guide.pdf",
             page_number=5,
             heading="Overview",
             score=0.87,
         )
-    ]
-
-    def fake_answer_question(*args, **kwargs):
-        return SimpleNamespace(
+        answer = Answer(
+            question="Explain the workflow",
             response="All systems operational.",
+            citations=[citation],
             confidence=0.72,
             should_escalate=False,
-            citations=citations,
+            model=scope.model,
+            family=scope.family_id,
+            family_label=scope.family_label,
         )
+        return [QueryAnswer(scope=scope, answer=answer)]
 
     log_calls: list[tuple[str, dict]] = []
 
@@ -39,7 +46,7 @@ def test_ask_endpoint_emits_verbose_logs(monkeypatch: pytest.MonkeyPatch) -> Non
     def fake_count_tokens(value: str) -> int:
         return len(value.split())
 
-    monkeypatch.setattr("api.routes.chat.answer_question", fake_answer_question)
+    monkeypatch.setattr("api.routes.chat.run_rag_for_each", fake_run_rag_for_each)
     monkeypatch.setattr("api.routes.chat.log_event", fake_log_event)
     monkeypatch.setattr("api.routes.chat.count_tokens", fake_count_tokens)
 

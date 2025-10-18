@@ -1,6 +1,6 @@
 {
   "name": "atticus-webdev",
-  "version": "0.0.0",
+  "version": "0.8.2",
   "private": true,
   "workspaces": [
     "admin"
@@ -20,8 +20,10 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list",
+    "audit:ts": "knip --reporter compact || true",
     "audit:icons": "node scripts/icon-audit.mjs",
-    "audit:routes": "node scripts/route-audit.mjs"
+    "audit:routes": "node scripts/route-audit.mjs",
+    "audit:py": "python scripts/audit_unused.py --json"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
