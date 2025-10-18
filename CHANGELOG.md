@@ -4,6 +4,17 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.9.0] - 2025-10-18
+
+### Added
+
+- `TrustedGatewayMiddleware` enforces the enterprise perimeter by validating source CIDRs, forwarded headers, and TLS handoff before any FastAPI route executes.
+- New pytest coverage (`tests/test_trusted_gateway_middleware.py`) to prove trusted networks are accepted, untrusted callers are blocked, and loopback remains opt-in for developers.
+
+### Changed
+
+- `.env.example`, `config.yaml`, and `README.md` document the trusted gateway defaults so production retains SSO-only ingress while local development keeps loopback allowances.
+
 ## [0.8.7] - 2025-11-03
 
 ### Added

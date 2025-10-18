@@ -25,6 +25,13 @@ generation_prompt_version: atticus-v1
 confidence_threshold: 0.7
 log_level: INFO
 timezone: UTC
+enforce_gateway_boundary: true
+allow_loopback_requests: true
+require_forwarded_for_header: true
+require_https_forward_proto: true
+trusted_gateway_subnets:
+  - 127.0.0.1/32
+  - ::1/128
 evaluation_runs_dir: eval/runs
 baseline_path: eval/baseline.json
 gold_set_path: eval/gold_set.csv
