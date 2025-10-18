@@ -1,0 +1,6 @@
+flowchart TD
+    user([User]) --> nextapp[[Next.js Pages & Middleware]]
+    nextapp --> nextapi{{Next.js API Routes}}
+    nextapi --> fastapi[[FastAPI Services (/ask, /ingest, /admin, /health)]]
+    fastapi --> data(((RAG Stores & Databases)))
+    data --> user
