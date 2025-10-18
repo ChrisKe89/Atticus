@@ -1,6 +1,6 @@
 # Makefile — Atticus
 .PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
-        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit
+        db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck
 
 PYTHON ?= python
 XDIST_AVAILABLE := $(shell $(PYTHON) -c "import importlib.util; print(1 if importlib.util.find_spec('xdist') else 0)")
@@ -31,6 +31,14 @@ web-dev:
 app-dev:
 	@echo "Alias for web-dev; launching Next.js UI"
 	$(MAKE) web-dev
+
+admin-dev:
+	@echo "Launching Admin Next.js UI on http://localhost:9000"
+	npm run dev --workspace admin
+
+admin-start:
+	@echo "Starting Admin Next.js UI on http://localhost:9000"
+	npm run start --workspace admin
 
 db.up:
 	docker compose up -d $(DB_SERVICE)
@@ -110,7 +118,7 @@ format:
 typecheck:
 	mypy atticus api ingest retriever eval
 
-quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e
+quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e admin-lint admin-typecheck admin-build
 
 # Full verification pass for CI / release
 verify:
@@ -129,14 +137,23 @@ verify:
 web-build:
 	npm run build
 
+admin-build:
+	npm run build --workspace admin
+
 web-start:
 	npm run start
 
 web-lint:
 	npm run lint
 
+admin-lint:
+	npm run lint --workspace admin
+
 web-typecheck:
 	npm run typecheck
+
+admin-typecheck:
+	npm run typecheck --workspace admin
 
 web-audit:
 	npm run audit:ts

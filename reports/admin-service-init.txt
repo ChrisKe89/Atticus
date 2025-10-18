@@ -1,7 +1,7 @@
 Admin Service Initialisation
 =============================
 - Workspace: admin/
-- Dev command: npm run dev --workspace admin (port 3101)
+- Dev command: make admin-dev (port 9000)
 - Build verified: npm run build --workspace admin
 - Docker compose: docker compose up admin (uses node:20 image)
 - Upstream base URL: ATTICUS_MAIN_BASE_URL (defaults to http://localhost:3000)

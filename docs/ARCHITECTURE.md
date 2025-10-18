@@ -21,7 +21,7 @@ The Next.js application is the canonical UI; historical static assets live under
 | **Generator** | Drafts concise, sourced answers using the configured GEN_MODEL, respecting confidence thresholds. |
 | **API Layer** | FastAPI exposes /health, /ingest, /ask, /eval, /contact with /ask streaming SSE payloads {answer, sources, confidence, should_escalate, request_id}. |
 | **Web UI** | Next.js App Router served from /, delivering chat, admin, settings, contact, and apps routes using shadcn/ui + Tailwind. |
-| **Admin Service** | Lightweight Next.js workspace on port 3101 for escalated chat review, answer curation, and CSV exports under content/. |
+| **Admin Service** | Lightweight Next.js workspace on port 9000 for escalated chat review, answer curation, and CSV exports under content/. |
 | **Developer Tooling & CI** | Pre-commit (Ruff, mypy, ESLint, Prettier, markdownlint) plus GitHub Actions jobs (rontend-quality, lint-test, pgvector-check, val-gate) mirroring make quality. |
 
 ---

@@ -77,7 +77,7 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
   * Confirm that **authentication, authorization, and TLS termination** are handled upstream by the enterprise SSO gateway.
   * Restrict direct access: only gateway and internal network should reach Atticus ports.
-* [ ] **Split-Service Design**
+* [x] **Split-Service Design**
 
   * Serve chat and admin panels on separate ports (e.g., `:8000` for API/chat, `:9000` for admin).
   * Admin UI must not be bundled with chat UI in Next.js build.
