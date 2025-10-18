@@ -4,11 +4,13 @@ import {
   type AskRequest,
   type AskResponse,
 } from "@/lib/ask-contract";
-
-export type AskStreamEvent =
-  | { type: "start"; requestId: string }
-  | { type: "answer"; payload: AskResponse }
-  | { type: "end"; requestId: string };
+import {
+  type AskStreamEvent,
+  sseEventSchema,
+  type SseAnswerEvent,
+  type SseEndEvent,
+  type SseStartEvent,
+} from "@/lib/sse-events";
 
 interface StreamOptions {
   signal?: AbortSignal;
@@ -31,14 +33,15 @@ function parseSseChunk(chunk: string): AskStreamEvent | null {
     return null;
   }
   const payload = JSON.parse(dataLine);
-  switch (eventType) {
-    case "start":
-      return { type: "start", requestId: payload.request_id ?? payload.requestId ?? "" };
-    case "end":
-      return { type: "end", requestId: payload.request_id ?? payload.requestId ?? "" };
-    default:
-      return { type: "answer", payload: askResponseSchema.parse(payload) };
+  if (eventType === "start" || eventType === "end") {
+    const normalised: SseStartEvent | SseEndEvent = sseEventSchema.parse({
+      type: eventType,
+      requestId: payload.request_id ?? payload.requestId ?? "",
+    }) as SseStartEvent | SseEndEvent;
+    return normalised;
   }
+  const answer: SseAnswerEvent = sseEventSchema.parse({ type: "answer", payload }) as SseAnswerEvent;
+  return answer;
 }
 
 export async function streamAsk(
@@ -127,3 +130,5 @@ export async function streamAsk(
   }
   return resolved;
 }
+
+export type { AskStreamEvent } from "@/lib/sse-events";

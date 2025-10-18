@@ -6,7 +6,7 @@ import json
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 from atticus.tokenization import decode, encode, split_tokens
 from atticus.utils import sha256_text
 

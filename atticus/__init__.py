@@ -12,6 +12,6 @@ if str(_REPO_ROOT) not in _PATH_ENTRIES:
         f"{_REPO_ROOT}{os.pathsep}{os.environ['PATH']}" if _PATH_ENTRIES else str(_REPO_ROOT)
     )
 
-from .config import AppSettings
+from core.config import AppSettings
 
 __all__ = ["AppSettings"]

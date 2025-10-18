@@ -9,7 +9,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
 
-from atticus.config import load_settings
+from core.config import load_settings
 
 
 @dataclass(slots=True)

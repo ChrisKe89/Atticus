@@ -15,7 +15,7 @@ from collections.abc import Iterable
 from email.message import EmailMessage
 from typing import Any, Literal, TypedDict
 
-from atticus.config import load_settings
+from core.config import load_settings
 from atticus.logging import configure_logging, log_error
 
 

@@ -15,7 +15,7 @@ from pgvector.psycopg import Vector, register_vector
 from psycopg.rows import dict_row
 from psycopg.types.json import Json
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 
 logger = logging.getLogger(__name__)
 

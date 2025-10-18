@@ -11,7 +11,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
-from atticus.config import load_settings
+from core.config import load_settings
 from atticus.logging import log_error, log_event
 
 from .rate_limit import RateLimiter

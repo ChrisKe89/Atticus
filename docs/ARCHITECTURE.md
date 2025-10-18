@@ -19,9 +19,9 @@ The Next.js application is the canonical UI; historical static assets live under
 | **Ingestion & Indexing** | Parse → chunk → embed → persist vectors + metadata via Prisma migrations and Postgres/pgvector. |
 | **Retriever & Ranker** | Vector search with optional lexical rerank; enforces metadata filters (org_id, product,ersion). |
 | **Generator** | Drafts concise, sourced answers using the configured GEN_MODEL, respecting confidence thresholds. |
-| **API Layer** | FastAPI exposes /health, /ingest, /ask, /eval, /contact with /ask streaming SSE payloads {answer, sources, confidence, should_escalate, request_id}. |
-| **Web UI** | Next.js App Router served from /, delivering chat, admin, settings, contact, and apps routes using shadcn/ui + Tailwind. |
-| **Admin Service** | Lightweight Next.js workspace on port 9000 for escalated chat review, answer curation, and CSV exports under content/. |
+| **API Layer** | FastAPI exposes /health plus mode-specific routers controlled by `SERVICE_MODE` (`chat` = /ingest, /ask, /eval, /contact, /ui; `admin` = /admin). `/ask` streams SSE payloads conforming to the shared JSON schema (`schemas/sse-events.schema.json`). |
+| **Web UI** | Next.js App Router served from / on port 3000 (chat mode), delivering chat, settings, contact, and apps routes using shadcn/ui + Tailwind. |
+| **Admin Service** | Dedicated Next.js workspace (port 9000) for escalated chat review, metrics, and content tooling. Deploy separately with `SERVICE_MODE=admin` for the API and `pnpm --filter admin dev` for the UI. |
 | **Developer Tooling & CI** | Pre-commit (Ruff, mypy, ESLint, Prettier, markdownlint) plus GitHub Actions jobs (rontend-quality, lint-test, pgvector-check, val-gate) mirroring make quality. |
 
 ---
@@ -47,7 +47,7 @@ The Next.js application is the canonical UI; historical static assets live under
 
 1. Next.js `/api/ask` receives the chat request and validates payloads with shared DTOs in `lib/ask-contract.ts`.
 2. The handler proxies the request to the FastAPI `/ask` endpoint.
-3. FastAPI returns the canonical JSON payload; when the caller requested SSE, the Next.js proxy emits `start`, `answer`, and `end` events so the UI has a consistent streaming interface.
+3. FastAPI returns the canonical JSON payload; when the caller requested SSE, the Next.js proxy emits `start`, `answer`, and `end` events using the shared schema defined by `core/schemas/sse.py` (materialised as `schemas/sse-events.schema.json`).
 4. The UI renders the received answer (currently delivered as a single chunk), logs the propagated `request_id`, and stores metadata for escalations.
 
 ---
