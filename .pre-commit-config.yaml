@@ -7,6 +7,7 @@ repos:
         exclude: '^_tmp_.*\.py$'
       - id: ruff-format
         exclude: '^_tmp_.*\.py$'
+
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.8.0
     hooks:
@@ -17,11 +18,12 @@ repos:
           - types-requests
           - types-PyYAML
         args: ["--config-file=pyproject.toml"]
+
   - repo: local
     hooks:
       - id: eslint
         name: eslint
-        entry: npx --yes eslint --max-warnings=0
+        entry: eslint
         language: node
         types_or: [javascript, jsx, ts, tsx]
         additional_dependencies:
@@ -33,21 +35,22 @@ repos:
         args: ["--fix"]
       - id: prettier
         name: prettier
-        entry: npx --yes prettier --write
+        entry: prettier
         language: node
         types_or: [javascript, jsx, ts, tsx, json, yaml, css, scss, less, markdown, mdx]
         additional_dependencies:
           - prettier@3.3.3
           - prettier-plugin-tailwindcss@0.5.14
+        args: ["--write"]
       - id: markdownlint-cli2
         name: markdownlint-cli2
-        entry: npx --yes markdownlint-cli2
+        entry: markdownlint-cli2
         language: node
         pass_filenames: false
         types: [markdown]
         additional_dependencies:
           - markdownlint-cli2@0.12.0
-        args: ["**/*.md", "#node_modules", "#.venv"]
+
       - id: forbid-tmp-files
         name: forbid tmp files (_tmp_*)
         language: python

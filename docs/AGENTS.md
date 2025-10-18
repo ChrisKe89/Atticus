@@ -1,6 +1,6 @@
 # AGENTS — Atticus
 
-> Single source of truth for agent behavior, pipelines, and guardrails. Target stack: **Next.js + Postgres/pgvector + Prisma + Auth.js (Email magic link first, Azure AD later)**.
+> Single source of truth for agent behavior, pipelines, and guardrails. Target stack: **Next.js + Postgres/pgvector + Prisma**.
 
 ---
 
@@ -9,7 +9,8 @@
 - Refer to [AUDIT_REPORT.md](./AUDIT_REPORT.md) for the latest findings (FND-001 – FND-008).
 - Follow [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for phased remediation tied to [TODO.md](../TODO.md).
 - Run `make quality` (Ruff + mypy + pytest + Next lint/typecheck/build + audits) before opening a PR.
-- Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav gated behind authentication.
+- The admin service (`npm run dev --workspace admin`) handles escalation review and CSV filing; keep it in sync with the main UI.
+- Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav limited to upstream-authorised reviewers.
 
 ## Execution Criteria — **Must‑Follow for Repo Work**
 
@@ -106,9 +107,10 @@
 
 - **Prisma** for schema & migrations.
 
-### Auth
+### Access
 
-- **Auth.js (NextAuth)** — email magic link first.
+- Authentication and SSO are handled upstream; this workspace trusts the identity headers provided by the gateway.
+
 - **Azure AD** — to be implemented later (OIDC provider).
 
 ### Testing (layers quick map)
@@ -148,14 +150,13 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 - **Next.js (TypeScript)** app for chat + admin
 - **Tailwind** + **shadcn/ui** + **Lucide** + optional **Framer Motion**
 - Streaming answers via **SSE** route handlers
-- **Auth.js (NextAuth)** — start with **Email (magic link)**; add **Azure AD (OIDC)** later for SSO
 
 ### Data
 
 - **Postgres + pgvector** for relational data and embeddings (Docker for dev; Supabase acceptable for hosted)
 - **Prisma ORM** for schema & migrations
 
-### RAG
+### RAG Workflow
 
 - Ingest → Chunk → Embed → Store
 - Retrieve (vector + filters) → Compose context → Generate → Cite → Log
@@ -183,7 +184,7 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 - Email server: `EMAIL_SERVER_HOST`, `EMAIL_SERVER_PORT`, `EMAIL_SERVER_USER`, `EMAIL_SERVER_PASSWORD`
 - SMTP (fallbacks supported by the UI mailer): `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
 
-## RAG
+## RAG Configuration
 
 - `GEN_MODEL`, `EMBED_MODEL`, `EMBEDDING_MODEL_VERSION`, `TOP_K`, `CONFIDENCE_THRESHOLD`
 
@@ -198,7 +199,6 @@ Atticus is a Retrieval‑Augmented Generation (RAG) assistant designed to answer
 
 ```dotenv
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/atticus?schema=public"
-AUTH_SECRET="dev-secret"
 EMAIL_FROM="atticus@localhost"
 EMAIL_SERVER_HOST="localhost"
 EMAIL_SERVER_PORT=1025
@@ -233,7 +233,7 @@ python scripts/debug_env.py
 
 ### `POST /api/ask`
 
-## Request
+## Request - /api/ask
 
 ```json
 {
@@ -243,7 +243,7 @@ python scripts/debug_env.py
 }
 ```
 
-## Response
+## Response - /api/ask
 
 ```json
 {
@@ -257,7 +257,7 @@ python scripts/debug_env.py
 
 ### `POST /api/contact`
 
-## Request
+## Request - /api/contact
 
 ```json
 {
@@ -266,7 +266,7 @@ python scripts/debug_env.py
 }
 ```
 
-## Response
+## Response - /api/contact
 
 ```json
 {
@@ -358,7 +358,7 @@ python scripts/debug_env.py
 
 1. `make install` → deps; `make db.up` → Postgres (Docker)
 2. `make db.migrate` → Prisma migrations; `make seed` → tiny CED sample
-3. `make smoke` → health, auth (test mode), chat stream, admin gate
+3. `make smoke` → health, upstream headers, chat stream, admin gate
 4. `make test.unit` → chunkers, serializers, helpers
 5. `make test.api` → route handlers with real DB
 6. `make test.eval` → retrieval metrics vs **gold_set** (Recall@k, MRR@k, exact match)
@@ -370,7 +370,7 @@ python scripts/debug_env.py
 ### Start small — 3 concrete moves
 
 1. **Make targets + npm scripts** — thin wrappers for Windows & CI.
-2. **Smoke tests** — assert health/auth/chat/admin/db in <20s.
+2. **Smoke tests** — assert health/header propagation/chat/admin/db in <20s.
 3. **Retrieval eval** — compute Recall@k (5/8) & MRR@k; produce HTML/CSV under `./reports/` and fail CI on regression.
 
 ### What to test specifically (RAG/app)
@@ -428,7 +428,6 @@ python scripts/debug_env.py
 
 ## Notes on Conflicts (resolved)
 
-- Legacy docs referenced **FastAPI + Jinja2** and **FAISS**. Standardize on **Next.js + Postgres/pgvector + Prisma + Auth.js** as above. Migration tasks are captured in [TODO.md](../TODO.md).
 - Static HTML prototypes now live under `archive/legacy-ui/`; ship only the Next.js application under `app/`.
 
 ---

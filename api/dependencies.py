@@ -56,4 +56,3 @@ def require_admin_token(request: Request, settings: SettingsDep) -> None:
 
 
 AdminGuard = Annotated[None, Depends(require_admin_token)]
-

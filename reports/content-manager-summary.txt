@@ -1,0 +1,12 @@
+Content Manager Summary
+=======================
+- UI: /admin/content (Next.js server component + client board)
+- API handlers:
+  • GET /api/admin/content/list – directory listings
+  • POST /api/admin/content/upload – multi-file uploads
+  • POST /api/admin/content/folder – create subdirectories
+  • DELETE /api/admin/content/entry – remove files or folders
+  • POST /api/admin/content/reingest – runs scripts/ingest_cli.py and returns logs
+- Logging: every operation appends to reports/content-actions.log
+- Change prompts: UI flags pending changes and offers a "Re-ingest Content" action
+- CSV exports and ingestion counts surface in the admin service log viewer

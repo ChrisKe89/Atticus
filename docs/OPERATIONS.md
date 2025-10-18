@@ -9,11 +9,11 @@ This document provides day‑to‑day runbooks and a quick guide for interpretin
 1. Add or update source files under `content/`.
 2. Run ingestion:
 
-```bash
-make ingest
-```
+    ```bash
+    make ingest
+    ```
 
-This parses, chunks (CED policy with SHA‑256 de‑dupe), embeds, and updates the vector index.
+    > This parses, chunks (CED policy with SHA‑256 de‑dupe), embeds, and updates the vector index.
 
 3. Check logs in `logs/app.jsonl` for document counts, chunk totals, and token ranges.
 4. When ready for release, commit the updated `indexes/` snapshot and `indexes/manifest.json`.
@@ -26,9 +26,9 @@ This parses, chunks (CED policy with SHA‑256 de‑dupe), embeds, and updates t
 1. Ensure Docker Compose Postgres is running (`make db.up`).
 2. Validate the schema, pgvector extension, and IVFFlat configuration:
 
-```bash
-make db.verify
-```
+    ```bash
+    make db.verify
+    ```
 
 3. For ad‑hoc checks, run the SQL script directly with psql.
 
@@ -81,6 +81,31 @@ make e2e
 
 ---
 
+## Admin Service
+
+The standalone admin workspace handles escalated chat review and lives in the `admin/` directory.
+
+```bash
+npm run dev --workspace admin    # http://localhost:3101
+```
+
+- Set `ATTICUS_MAIN_BASE_URL` if the primary UI runs behind nginx or a custom domain.
+- Docker Compose exposes the same workspace via the `admin` service (`docker compose up admin`).
+- Approved answers append to `content/<family>/<model>.csv`; all actions log to `reports/content-actions.log`.
+
+---
+
+## Content Manager
+
+Use `/admin/content` to browse, upload, and curate files in `content/`.
+
+- Upload Markdown, PDF, and text sources; deletions and uploads are logged to `reports/content-actions.log`.
+- Create folders directly from the UI; directories mirror the structure used during ingestion.
+- Run the "Re-ingest Content" action after changes to execute `scripts/ingest_cli.py` without leaving the browser.
+- The UI prompts reviewers when pending changes require ingestion to avoid accidental drift.
+
+---
+
 ## Escalation Email
 
 See SECURITY.md for the canonical SES/email policy, credential guidance, and IAM restrictions.
@@ -100,9 +125,9 @@ Uses sandbox/non‑delivery settings in local environments; production must foll
 1. Snapshot `indexes/` during each release.
 2. To revert to a previous snapshot:
 
-```bash
-python scripts/rollback.py --manifest indexes/manifest.json
-```
+    ```bash
+    python scripts/rollback.py --manifest indexes/manifest.json
+    ```
 
 3. After rollback, run a smoke evaluation (`make eval`).
 
@@ -143,9 +168,11 @@ Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10
 | ADMIN_API_TOKEN           | required | required |       |
 | ADMIN_EMAIL               | required | required |       |
 | ADMIN_NAME                | required | required |       |
+| ATTICUS_MAIN_BASE_URL     | optional | optional | Admin service upstream base URL |
+| ATTICUS_REVIEWER_ID      | optional | optional | Admin service reviewer identifier |
+| ATTICUS_REVIEWER_NAME    | optional | optional | Display name for curator logs |
+| ATTICUS_REVIEWER_EMAIL   | optional | optional | Reviewer email for audit trails |
 | ASK_SERVICE_URL           | required | required |       |
-| AUTH_DEBUG_MAILBOX_DIR    | required | required |       |
-| AUTH_SECRET               | required | required |       |
 | CHUNK_MIN_TOKENS          | required | required |       |
 | CHUNK_OVERLAP_TOKENS      | required | required |       |
 | CHUNK_TARGET_TOKENS       | required | required |       |
@@ -175,9 +202,6 @@ Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10
 | LOG_TRACE                 | required | required |       |
 | LOG_VERBOSE               | required | required |       |
 | MAX_CONTEXT_CHUNKS        | required | required |       |
-| NEXTAUTH_SECRET           | required | required |       |
-| NEXTAUTH_URL              | required | required |       |
-| NEXTAUTH_URL_INTERNAL     | required | required |       |
 | OPENAI_API_KEY            | required | required |       |
 | PGVECTOR_LISTS            | required | required |       |
 | PGVECTOR_PROBES           | required | required |       |

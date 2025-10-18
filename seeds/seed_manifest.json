@@ -33,7 +33,7 @@
     "document": "content\\model\\Reiki\\Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf",
     "sha256": "4f2a7a02784415c6881f55ee575391b1ed879b400f93bc168535181a0e038a4e",
     "source_type": "pdf",
-    "chunk_count": 57,
+    "chunk_count": 1058,
     "chunks": [
       {
         "chunk_id": "content\\model\\Reiki\\Apeos C8180 C7580 C6580 CSO-FN-CED 363.pdf::chunk_0",
@@ -399,7 +399,7 @@
     "document": "content\\model\\Shobu\\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf",
     "sha256": "aed11959541cc0aec6b9777ce48adbb9d23cfc76ba8e909176aef049502bccbe",
     "source_type": "pdf",
-    "chunk_count": 55,
+    "chunk_count": 1018,
     "chunks": [
       {
         "chunk_id": "content\\model\\Shobu\\Apeos C7070-C6570-C5570-C4570-C3570-C3070-C2570-CSO-FN-CED-362.pdf::chunk_0",

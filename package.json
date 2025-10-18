@@ -2,6 +2,9 @@
   "name": "atticus-webdev",
   "version": "0.0.0",
   "private": true,
+  "workspaces": [
+    "admin"
+  ],
   "description": "Sandbox copy of the Atticus Next.js frontend for local experimentation.",
   "scripts": {
     "dev": "next dev -p 3000",
@@ -11,6 +14,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list",
@@ -18,7 +24,6 @@
     "audit:routes": "node scripts/route-audit.mjs"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^2.10.0",
     "@prisma/client": "^5.18.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.0.4",
@@ -26,8 +31,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.452.0",
     "next": "^14.2.33",
-    "next-auth": "^4.24.7",
-    "nodemailer": "^6.9.14",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^10.1.0",
@@ -38,7 +41,6 @@
   "devDependencies": {
     "@playwright/test": "^1.45.2",
     "@types/node": "20.14.9",
-    "@types/nodemailer": "7.0.2",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.21",
@@ -48,6 +50,8 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-tailwindcss": "^3.13.0",
     "knip": "5.66.0",
+    "markdownlint-cli": "^0.45.0",
+    "markdownlint-cli2": "^0.18.1",
     "postcss": "8.4.40",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.5.14",
@@ -57,5 +61,8 @@
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",
     "vitest": "^3.2.4"
+  },
+  "prisma": {
+    "seed": "ts-node --esm prisma/seed.ts"
   }
 }

@@ -83,8 +83,8 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
    docker compose up -d --build
    ```
 
-> **Note:** Release 0.7.11 adds Prisma `Chat`/`Ticket` tables plus the tabbed admin console and RBAC APIs. Run `make db.migrate && make db.seed` before `npm run build` so low-confidence chat data and escalations materialise in the UI.
-> **Note:** Release 0.8.0 enforces the `app.pgvector_lists` GUC, introduces the `RagEvent` audit ledger, and adds glossary upsert/follow-up workflows. Run `make db.migrate`, `make db.verify`, and `npm run db:seed` before `npm run build`, and wire `make version-check` into CI to detect version drift early.
+    > **Note:** Release 0.7.11 adds Prisma `Chat`/`Ticket` tables plus the tabbed admin console and RBAC APIs. Run `make db.migrate && make db.seed` before `npm run build` so low-confidence chat data and escalations materialise in the UI.
+    > **Note:** Release 0.8.0 enforces the `app.pgvector_lists` GUC, introduces the `RagEvent` audit ledger, and adds glossary upsert/follow-up workflows. Run `make db.migrate`, `make db.verify`, and `npm run db:seed` before `npm run build`, and wire `make version-check` into CI to detect version drift early.
 
 4. Verify health:
 

@@ -9,10 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
 import { AdminOpsConsole, TicketSummary, UncertainChat } from "@/components/admin/admin-ops-console";
 import type { GlossaryEntryDto } from "@/components/glossary/admin-panel";
+import { getRequestContext } from "@/lib/request-context";
 
 export const metadata: Metadata = {
   title: "Admin - Atticus",
@@ -34,15 +34,12 @@ type GlossaryEntryRecord = {
 };
 
 export default async function AdminPage() {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/signin?from=/admin");
-  }
-  if (session.user.role !== Role.ADMIN && session.user.role !== Role.REVIEWER) {
+  const { user } = getRequestContext();
+  if (user.role !== Role.ADMIN && user.role !== Role.REVIEWER) {
     redirect("/");
   }
 
-  const { chats, tickets, glossary } = await withRlsContext(session, async (tx) => {
+  const { chats, tickets, glossary } = await withRlsContext(user, async (tx) => {
     const [pendingChats, ticketRows, glossaryRows] = await Promise.all([
       tx.chat.findMany({
         where: { status: "pending_review" },
@@ -170,7 +167,7 @@ export default async function AdminPage() {
         description="Review low-confidence chats, manage ticket escalations, and curate glossary terminology."
       />
       <AdminOpsConsole
-        role={session.user.role}
+        role={user.role}
         uncertain={uncertainChats}
         tickets={ticketSummaries}
         glossaryEntries={glossaryEntries}

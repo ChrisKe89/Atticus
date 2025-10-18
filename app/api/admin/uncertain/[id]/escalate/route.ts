@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
+import { getRequestContext } from "@/lib/request-context";
 
 function generateTicketKey(now: Date): string {
   const year = now.getUTCFullYear();
@@ -17,11 +17,8 @@ type EscalateBody = {
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
-  if (session.user.role !== Role.ADMIN) {
+  const { user } = getRequestContext();
+  if (user.role !== Role.ADMIN) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
@@ -37,7 +34,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const summary = typeof body.summary === "string" && body.summary.trim().length > 0 ? body.summary.trim() : undefined;
   const assignee = typeof body.assignee === "string" && body.assignee.trim().length > 0 ? body.assignee.trim() : undefined;
 
-  const result = await withRlsContext(session, async (tx) => {
+  const result = await withRlsContext(user, async (tx) => {
     const chat = await tx.chat.findUnique({
       where: { id },
       select: {
@@ -59,8 +56,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const auditLog = Array.isArray(chat.auditLog) ? [...chat.auditLog] : [];
     auditLog.push({
       action: "escalate",
-      actorId: session.user.id,
-      actorRole: session.user.role,
+      actorId: user.id,
+      actorRole: user.role,
       at: nowIso,
       assignee: assignee ?? null,
       summary: summary ?? chat.question,
@@ -78,8 +75,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
         auditLog: [
           {
             action: "created",
-            actorId: session.user.id,
-            actorRole: session.user.role,
+            actorId: user.id,
+            actorRole: user.role,
             at: nowIso,
           },
         ],
@@ -105,8 +102,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
     await tx.ragEvent.create({
       data: {
         orgId: chat.orgId,
-        actorId: session.user.id,
-        actorRole: session.user.role,
+        actorId: user.id,
+        actorRole: user.role,
         action: "chat.escalated",
         entity: "chat",
         chatId: chat.id,

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
+import { getRequestContext } from "@/lib/request-context";
 
 function canRecordFollowUp(role: Role | undefined): boolean {
   return role === Role.ADMIN || role === Role.REVIEWER;
@@ -12,11 +12,8 @@ type FollowUpBody = {
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
-  if (!canRecordFollowUp(session.user.role)) {
+  const { user } = getRequestContext();
+  if (!canRecordFollowUp(user.role)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
@@ -38,7 +35,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   const timestamp = new Date().toISOString();
 
-  const result = await withRlsContext(session, async (tx) => {
+  const result = await withRlsContext(user, async (tx) => {
     const existing = await tx.chat.findUnique({
       where: { id },
       select: { id: true, status: true, auditLog: true, orgId: true },
@@ -51,8 +48,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
     auditLog.push({
       action: "followup",
       at: timestamp,
-      actorId: session.user.id,
-      actorRole: session.user.role,
+      actorId: user.id,
+      actorRole: user.role,
       prompt,
     });
 
@@ -71,8 +68,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
     await tx.ragEvent.create({
       data: {
         orgId: existing.orgId,
-        actorId: session.user.id,
-        actorRole: session.user.role,
+        actorId: user.id,
+        actorRole: user.role,
         action: "chat.followup_recorded",
         entity: "chat",
         chatId: updated.id,

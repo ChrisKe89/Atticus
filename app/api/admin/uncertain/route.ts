@@ -1,24 +1,30 @@
 import { NextResponse } from "next/server";
 import { Prisma, Role } from "@prisma/client";
-import { getServerAuthSession } from "@/lib/auth";
 import { withRlsContext } from "@/lib/rls";
+import { getRequestContext } from "@/lib/request-context";
 
 function canReview(role: Role | undefined): boolean {
   return role === Role.ADMIN || role === Role.REVIEWER;
 }
 
+const reviewableStatuses: string[] = ["pending_review", "draft", "rejected"];
+type ReviewableChat = Prisma.ChatGetPayload<{
+  include: {
+    author: { select: { id: true; email: true; name: true } };
+    reviewer: { select: { id: true; email: true; name: true } };
+    tickets: { select: { id: true; key: true; status: true; assignee: true; lastActivity: true } };
+  };
+}>;
+
 export async function GET() {
-  const session = await getServerAuthSession();
-  if (!session) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
-  if (!canReview(session.user.role)) {
+  const { user } = getRequestContext();
+  if (!canReview(user.role)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
-  const chats = await withRlsContext(session, (tx) =>
+  const chats = await withRlsContext<ReviewableChat[]>(user, (tx) =>
     tx.chat.findMany({
-      where: { status: "pending_review" },
+      where: { status: { in: reviewableStatuses } },
       include: {
         author: { select: { id: true, email: true, name: true } },
         reviewer: { select: { id: true, email: true, name: true } },

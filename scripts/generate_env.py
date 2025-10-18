@@ -69,23 +69,6 @@ DEFAULTS = {
     "SMTP_DRY_RUN": "1",
     "EMAIL_SANDBOX": "true",
     "SMTP_ALLOW_LIST": "",
-    # Auth & admin
-    "AUTH_SECRET": "dev-secret",
-    "NEXTAUTH_SECRET": "dev-secret",
-    "NEXTAUTH_URL": "http://localhost:3000",
-    "NEXTAUTH_URL_INTERNAL": "http://localhost:3000",
-    "DEFAULT_ORG_ID": "org-atticus",
-    "DEFAULT_ORG_NAME": "Atticus Default",
-    "ADMIN_EMAIL": "admin@atticus.local",
-    "ADMIN_NAME": "Atticus Admin",
-    "ADMIN_API_TOKEN": "set-a-strong-admin-token",
-    "AUTH_DEBUG_MAILBOX_DIR": "./logs/mailbox",
-    # Local email sandbox
-    "EMAIL_SERVER_HOST": "localhost",
-    "EMAIL_SERVER_PORT": "1025",
-    "EMAIL_SERVER_USER": "",
-    "EMAIL_SERVER_PASSWORD": "",
-    "EMAIL_FROM": "no-reply@atticus.local",
     # Frontend/API integration
     "RAG_SERVICE_URL": "http://localhost:8000",
     "ASK_SERVICE_URL": "http://localhost:8000",

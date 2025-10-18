@@ -1,0 +1,19 @@
+export type SourceSummary = {
+  path: string;
+  score: number | null;
+  page: number | null;
+  heading: string | null;
+  chunkId: string | null;
+};
+
+export type ReviewChat = {
+  id: string;
+  question: string;
+  answer: string | null;
+  confidence: number;
+  status: string;
+  requestId: string | null;
+  createdAt: string;
+  topSources: SourceSummary[];
+  auditLog: Array<Record<string, unknown>> | null;
+};

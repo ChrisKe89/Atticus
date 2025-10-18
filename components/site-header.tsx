@@ -4,20 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-import type { Role } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type NavLink = {
   href: string;
   label: string;
-  roles?: readonly Role[];
 };
 
 const links: readonly NavLink[] = [
   { href: "/", label: "Chat" },
-  { href: "/admin", label: "Admin", roles: ["ADMIN"] as readonly Role[] },
+  { href: "/admin", label: "Admin" },
+  { href: "/admin/content", label: "Content" },
   { href: "/settings", label: "Settings" },
   { href: "/contact", label: "Contact" },
   { href: "/apps", label: "Apps" },
@@ -26,24 +24,7 @@ const links: readonly NavLink[] = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session, status } = useSession();
-
-  const role = useMemo(() => {
-    const userWithRole = session?.user as { role?: Role } | undefined;
-    return userWithRole?.role ?? null;
-  }, [session?.user]);
-
-  const visibleLinks = useMemo(() => {
-    return links.filter((link) => {
-      if (link.href === "/settings" && status !== "authenticated") {
-        return false;
-      }
-      if (!role) {
-        return !link.roles;
-      }
-      return !link.roles || link.roles.includes(role);
-    });
-  }, [role, status]);
+  const visibleLinks = useMemo(() => links, []);
 
   const activeHref = useMemo(() => {
     if (!pathname) {
@@ -53,9 +34,6 @@ export function SiteHeader() {
       visibleLinks.find((link) => pathname === link.href || pathname.startsWith(`${link.href}/`))?.href ?? "/"
     );
   }, [pathname, visibleLinks]);
-
-  const isAuthenticated = status === "authenticated";
-  const userLabel = session?.user?.email ?? session?.user?.name ?? "Account";
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/80">
@@ -86,26 +64,6 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          {isAuthenticated ? (
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="hidden rounded-full sm:inline-flex"
-              onClick={() => signOut({ callbackUrl: "/" })}
-            >
-              Sign out
-            </Button>
-          ) : (
-            <Button
-              asChild
-              variant="secondary"
-              size="sm"
-              className="hidden rounded-full sm:inline-flex"
-            >
-              <Link href="/signin">Sign in</Link>
-            </Button>
-          )}
           <Button
             type="button"
             variant="outline"
@@ -149,24 +107,6 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-          <div className="border-t border-slate-200 pt-3 text-sm dark:border-slate-800">
-            {isAuthenticated ? (
-              <Button
-                type="button"
-                className="w-full"
-                onClick={() => {
-                  setIsOpen(false);
-                  signOut({ callbackUrl: "/" });
-                }}
-              >
-                Sign out ({userLabel})
-              </Button>
-            ) : (
-              <Button asChild className="w-full" onClick={() => setIsOpen(false)}>
-                <Link href="/signin">Sign in</Link>
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </header>

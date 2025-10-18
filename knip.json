@@ -5,8 +5,7 @@
     "components/**/*.{ts,tsx}",
     "lib/**/*.{ts,tsx}",
     "scripts/**/*.{ts,tsx,js,mjs}",
-    "tests/**/*.{ts,tsx}",
-    "middleware.ts"
+    "tests/**/*.{ts,tsx}"
   ],
   "project": [
     "app/**/*.{ts,tsx}",
@@ -31,7 +30,6 @@
     ]
   },
   "ignoreDependencies": [
-    "@auth/prisma-adapter",
     "@radix-ui/react-dialog",
     "@radix-ui/react-slot",
     "@radix-ui/react-tabs",
