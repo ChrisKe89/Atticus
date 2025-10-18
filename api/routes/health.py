@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from atticus.config import load_manifest
+from core.config import load_manifest
 
 from ..dependencies import SettingsDep
 from ..schemas import HealthResponse

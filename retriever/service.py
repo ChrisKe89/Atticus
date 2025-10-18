@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from atticus.config import AppSettings, load_settings
+from core.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
 
 from .answer_format import format_answer_markdown

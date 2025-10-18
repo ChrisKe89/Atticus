@@ -12,7 +12,7 @@ from typing import Any, cast
 
 from rapidfuzz import fuzz
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 
 from .prompts import get_prompt_template
 

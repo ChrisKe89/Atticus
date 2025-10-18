@@ -10,7 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Iterable, Sequence
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 
 _DIACRITIC_PATTERN = re.compile(r"[\u0300-\u036f]")
 

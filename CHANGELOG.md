@@ -4,6 +4,18 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.3] - 2025-11-06
+
+### Added
+
+- Shared SSE event contract generated from `core/schemas/sse.py` and consumed by the Next.js client via `lib/sse-events.ts`, ensuring `answer`/`end` events stay in sync across services.
+- `SERVICE_MODE` environment flag (`chat` or `admin`) with FastAPI router toggles and documentation updates for split-port deployments.
+
+### Changed
+
+- Consolidated configuration loading into `core/config.AppSettings` with compatibility shims, updating imports across services and scripts.
+- Regenerated docs to capture the split API surface and SSE schema, plus added a repository-level test bootstrap for the new package namespace.
+
 ## [0.10.2] - 2025-11-02
 
 ### Changed

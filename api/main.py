@@ -91,9 +91,14 @@ app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, unhandled_exception_handler)
 app.include_router(health.router)
-app.include_router(ingest.router)
-app.include_router(chat.router)
-app.include_router(admin.router)
-app.include_router(eval.router)
-app.include_router(contact.router)
-app.include_router(ui.router)
+
+if _initial_settings.service_mode == "chat":
+    app.include_router(ingest.router)
+    app.include_router(chat.router)
+    app.include_router(eval.router)
+    app.include_router(contact.router)
+    app.include_router(ui.router)
+elif _initial_settings.service_mode == "admin":
+    app.include_router(admin.router)
+else:  # pragma: no cover - defensive guard for unexpected configuration
+    raise ValueError(f"Unsupported SERVICE_MODE: {_initial_settings.service_mode}")
