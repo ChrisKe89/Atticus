@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import types
 
-from atticus.config import AppSettings
+from core.config import AppSettings
 
 psycopg_stub = types.ModuleType("psycopg")
 psycopg_stub.rows = types.SimpleNamespace(dict_row=None)

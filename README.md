@@ -40,6 +40,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` â€“ SES SMTP credentials
    - `SMTP_ALLOW_LIST` â€“ comma-separated sender/recipient allow list
    - `ALLOWED_ORIGINS` â€“ comma-separated enterprise gateway origins allowed for browser requests
+   - `SERVICE_MODE` â€“ `chat` (default) exposes chat/ingest/eval routes; set to `admin` for the dedicated admin deployment
    - `RAG_SERVICE_URL` â€“ FastAPI retrieval service (defaults to `http://localhost:8000`)
    - `ENFORCE_GATEWAY_BOUNDARY`, `REQUIRE_FORWARDED_FOR_HEADER`, `REQUIRE_HTTPS_FORWARD_PROTO`, `TRUSTED_GATEWAY_SUBNETS` â€“ lock down the enterprise perimeter. Loopback traffic stays permitted via `ALLOW_LOOPBACK_REQUESTS` for local development.
 

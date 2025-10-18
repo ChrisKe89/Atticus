@@ -7,7 +7,7 @@ import os
 import shutil
 from pathlib import Path
 
-from atticus.config import AppSettings, load_manifest, load_settings, write_manifest
+from core.config import AppSettings, load_manifest, load_settings, write_manifest
 from atticus.logging import configure_logging, log_event
 from atticus.vector_db import PgVectorRepository, load_metadata
 from eval.runner import load_gold_set

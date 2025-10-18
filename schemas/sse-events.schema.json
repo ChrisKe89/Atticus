@@ -1,0 +1,689 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://atticus.invalid/sse-events.schema.json",
+  "title": "AtticusSseEvents",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "start"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "requestId"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "end"
+        },
+        "requestId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "requestId"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "answer"
+        },
+        "payload": {
+          "$defs": {
+            "AskAnswer": {
+              "properties": {
+                "answer": {
+                  "title": "Answer",
+                  "type": "string"
+                },
+                "confidence": {
+                  "title": "Confidence",
+                  "type": "number"
+                },
+                "should_escalate": {
+                  "title": "Should Escalate",
+                  "type": "boolean"
+                },
+                "model": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Model"
+                },
+                "family": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Family"
+                },
+                "family_label": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Family Label"
+                },
+                "sources": {
+                  "items": {
+                    "$ref": "#/definitions/AskSource"
+                  },
+                  "title": "Sources",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "answer",
+                "confidence",
+                "should_escalate",
+                "sources"
+              ],
+              "title": "AskAnswer",
+              "type": "object"
+            },
+            "AskSource": {
+              "description": "Structured citation returned to the UI.",
+              "properties": {
+                "path": {
+                  "title": "Path",
+                  "type": "string"
+                },
+                "page": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Page"
+                },
+                "heading": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Heading"
+                },
+                "chunkId": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Chunkid"
+                },
+                "score": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null,
+                  "title": "Score"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "title": "AskSource",
+              "type": "object"
+            },
+            "ClarificationOption": {
+              "properties": {
+                "id": {
+                  "title": "Id",
+                  "type": "string"
+                },
+                "label": {
+                  "title": "Label",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "title": "ClarificationOption",
+              "type": "object"
+            },
+            "ClarificationPayload": {
+              "properties": {
+                "message": {
+                  "title": "Message",
+                  "type": "string"
+                },
+                "options": {
+                  "items": {
+                    "$ref": "#/definitions/ClarificationOption"
+                  },
+                  "title": "Options",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "message",
+                "options"
+              ],
+              "title": "ClarificationPayload",
+              "type": "object"
+            },
+            "GlossaryHit": {
+              "properties": {
+                "term": {
+                  "title": "Term",
+                  "type": "string"
+                },
+                "definition": {
+                  "title": "Definition",
+                  "type": "string"
+                },
+                "aliases": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Aliases",
+                  "type": "array"
+                },
+                "units": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Units",
+                  "type": "array"
+                },
+                "productFamilies": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Productfamilies",
+                  "type": "array"
+                },
+                "matchedValue": {
+                  "title": "Matchedvalue",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "term",
+                "definition",
+                "matchedValue"
+              ],
+              "title": "GlossaryHit",
+              "type": "object"
+            }
+          },
+          "properties": {
+            "answer": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Answer"
+            },
+            "confidence": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Confidence"
+            },
+            "should_escalate": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Should Escalate"
+            },
+            "request_id": {
+              "title": "Request Id",
+              "type": "string"
+            },
+            "sources": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/definitions/AskSource"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Sources"
+            },
+            "answers": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/definitions/AskAnswer"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Answers"
+            },
+            "clarification": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClarificationPayload"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            },
+            "glossaryHits": {
+              "anyOf": [
+                {
+                  "items": {
+                    "$ref": "#/definitions/GlossaryHit"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Glossaryhits"
+            }
+          },
+          "required": [
+            "request_id"
+          ],
+          "title": "AskResponse",
+          "type": "object"
+        }
+      },
+      "required": [
+        "type",
+        "payload"
+      ]
+    }
+  ],
+  "definitions": {
+    "AskResponse": {
+      "$defs": {
+        "AskAnswer": {
+          "properties": {
+            "answer": {
+              "title": "Answer",
+              "type": "string"
+            },
+            "confidence": {
+              "title": "Confidence",
+              "type": "number"
+            },
+            "should_escalate": {
+              "title": "Should Escalate",
+              "type": "boolean"
+            },
+            "model": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Model"
+            },
+            "family": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Family"
+            },
+            "family_label": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Family Label"
+            },
+            "sources": {
+              "items": {
+                "$ref": "#/definitions/AskSource"
+              },
+              "title": "Sources",
+              "type": "array"
+            }
+          },
+          "required": [
+            "answer",
+            "confidence",
+            "should_escalate",
+            "sources"
+          ],
+          "title": "AskAnswer",
+          "type": "object"
+        },
+        "AskSource": {
+          "description": "Structured citation returned to the UI.",
+          "properties": {
+            "path": {
+              "title": "Path",
+              "type": "string"
+            },
+            "page": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page"
+            },
+            "heading": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Heading"
+            },
+            "chunkId": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Chunkid"
+            },
+            "score": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Score"
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "title": "AskSource",
+          "type": "object"
+        },
+        "ClarificationOption": {
+          "properties": {
+            "id": {
+              "title": "Id",
+              "type": "string"
+            },
+            "label": {
+              "title": "Label",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "label"
+          ],
+          "title": "ClarificationOption",
+          "type": "object"
+        },
+        "ClarificationPayload": {
+          "properties": {
+            "message": {
+              "title": "Message",
+              "type": "string"
+            },
+            "options": {
+              "items": {
+                "$ref": "#/definitions/ClarificationOption"
+              },
+              "title": "Options",
+              "type": "array"
+            }
+          },
+          "required": [
+            "message",
+            "options"
+          ],
+          "title": "ClarificationPayload",
+          "type": "object"
+        },
+        "GlossaryHit": {
+          "properties": {
+            "term": {
+              "title": "Term",
+              "type": "string"
+            },
+            "definition": {
+              "title": "Definition",
+              "type": "string"
+            },
+            "aliases": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Aliases",
+              "type": "array"
+            },
+            "units": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Units",
+              "type": "array"
+            },
+            "productFamilies": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Productfamilies",
+              "type": "array"
+            },
+            "matchedValue": {
+              "title": "Matchedvalue",
+              "type": "string"
+            }
+          },
+          "required": [
+            "term",
+            "definition",
+            "matchedValue"
+          ],
+          "title": "GlossaryHit",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "answer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "should_escalate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Should Escalate"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "sources": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/AskSource"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sources"
+        },
+        "answers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/AskAnswer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answers"
+        },
+        "clarification": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ClarificationPayload"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "glossaryHits": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/GlossaryHit"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Glossaryhits"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "AskResponse",
+      "type": "object"
+    }
+  }
+}

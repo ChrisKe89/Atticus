@@ -11,7 +11,7 @@ from collections.abc import Iterable, Sequence
 
 import pytest
 
-from atticus.config import AppSettings, load_manifest, reset_settings_cache
+from core.config import AppSettings, load_manifest, reset_settings_cache
 from atticus.vector_db import StoredChunk
 from ingest.pipeline import IngestionOptions, ingest_corpus
 from retriever.service import answer_question
