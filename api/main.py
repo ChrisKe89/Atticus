@@ -22,6 +22,7 @@ from .errors import (
 from .middleware import RequestContextMiddleware
 from .rate_limit import RateLimiter
 from .routes import admin, chat, contact, eval, health, ingest, ui
+from .security import TrustedGatewayMiddleware
 
 
 @asynccontextmanager
@@ -66,6 +67,7 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan,
 )
+app.add_middleware(TrustedGatewayMiddleware)
 app.add_middleware(RequestContextMiddleware)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)

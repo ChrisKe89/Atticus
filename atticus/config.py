@@ -7,6 +7,7 @@ import json
 import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from ipaddress import ip_network
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -75,6 +76,13 @@ class AppSettings(BaseSettings):
     verbose_logging: bool = Field(default=False, alias="LOG_VERBOSE")
     trace_logging: bool = Field(default=False, alias="LOG_TRACE")
     timezone: str = Field(default="UTC", alias="TIMEZONE")
+    enforce_gateway_boundary: bool = Field(default=True, alias="ENFORCE_GATEWAY_BOUNDARY")
+    allow_loopback_requests: bool = Field(default=True, alias="ALLOW_LOOPBACK_REQUESTS")
+    require_forwarded_for_header: bool = Field(default=True, alias="REQUIRE_FORWARDED_FOR_HEADER")
+    require_https_forward_proto: bool = Field(default=True, alias="REQUIRE_HTTPS_FORWARD_PROTO")
+    trusted_gateway_subnets_raw: str | list[str] | None = Field(
+        default="127.0.0.1/32,::1/128", alias="TRUSTED_GATEWAY_SUBNETS"
+    )
     evaluation_runs_dir: Path = Field(default=Path("eval/runs"))
     baseline_path: Path = Field(default=Path("eval/baseline.json"))
     gold_set_path: Path = Field(default=Path("eval/gold_set.csv"))
@@ -120,6 +128,21 @@ class AppSettings(BaseSettings):
     @property
     def evaluation_thresholds(self) -> dict[str, float]:
         return {"nDCG@10": self.eval_min_ndcg, "MRR": self.eval_min_mrr}
+
+    @property
+    def trusted_gateway_subnets(self) -> tuple[str, ...]:
+        raw = self.trusted_gateway_subnets_raw
+        if raw is None:
+            return ("127.0.0.1/32", "::1/128")
+        if isinstance(raw, str):
+            values = [item.strip() for item in raw.split(",") if item.strip()]
+        else:
+            values = [str(item).strip() for item in raw if str(item).strip()]
+        return tuple(values) if values else ("127.0.0.1/32", "::1/128")
+
+    @property
+    def trusted_gateway_networks(self) -> tuple[Any, ...]:
+        return tuple(ip_network(subnet, strict=False) for subnet in self.trusted_gateway_subnets)
 
     def ensure_directories(self) -> None:
         for path in [

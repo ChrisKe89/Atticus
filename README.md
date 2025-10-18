@@ -7,6 +7,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 
 > **Release 0.7.10** â€“ Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
 > Enterprise authentication and SSO are managed externally. This app assumes user access is handled upstream.
+> Requests that do not traverse the enterprise gateway are now blocked by default via `TrustedGatewayMiddleware`.
 
 ## Model Disambiguation Flows
 
@@ -39,6 +40,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` â€“ SES SMTP credentials
    - `SMTP_ALLOW_LIST` â€“ comma-separated sender/recipient allow list
    - `RAG_SERVICE_URL` â€“ FastAPI retrieval service (defaults to `http://localhost:8000`)
+   - `ENFORCE_GATEWAY_BOUNDARY`, `REQUIRE_FORWARDED_FOR_HEADER`, `REQUIRE_HTTPS_FORWARD_PROTO`, `TRUSTED_GATEWAY_SUBNETS` â€“ lock down the enterprise perimeter. Loopback traffic stays permitted via `ALLOW_LOOPBACK_REQUESTS` for local development.
 
 1. Install dependencies
 
@@ -147,6 +149,13 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
   > Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
+
+## Enterprise Boundary Enforcement
+
+- **Trusted gateway middleware.** `api/security.py` introduces `TrustedGatewayMiddleware`, which validates that every request originates from a CIDR block listed in `TRUSTED_GATEWAY_SUBNETS`. Requests from unknown networks receive a structured `403` with a hashed identifier so IPs never leak into logs.
+- **Forwarded headers required.** When the caller is not loopback, Atticus now requires both `X-Forwarded-For` and `X-Forwarded-Proto=https`, confirming that the enterprise SSO gateway terminated TLS before forwarding traffic.
+- **Configurable but strict by default.** Production `.env` files should keep `ENFORCE_GATEWAY_BOUNDARY=1`. Developers can temporarily set `ALLOW_LOOPBACK_REQUESTS=1` or disable header requirements when running without the gateway, but direct remote access is denied out of the box.
+- **Documentation + tooling.** `.env.example` and `config.yaml` capture the new defaults so CI, Docker Compose, and generated manifests inherit the trusted-perimeter posture automatically.
 
 1. `/api/ask` contract
 

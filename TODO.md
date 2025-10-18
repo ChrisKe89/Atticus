@@ -73,7 +73,7 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## 🛡️ Security & Compliance
 
-* [ ] **Enterprise Boundary Enforcement**
+* [x] **Enterprise Boundary Enforcement**
 
   * Confirm that **authentication, authorization, and TLS termination** are handled upstream by the enterprise SSO gateway.
   * Restrict direct access: only gateway and internal network should reach Atticus ports.

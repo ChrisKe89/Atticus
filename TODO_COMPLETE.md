@@ -157,6 +157,11 @@ The following items are done or no longer relevant and are recorded here for tra
 
 - [x] TODO "Admin Ops Console (Uncertain Chats, Tickets, Glossary)" — completed 2025-10-15 (introduced Prisma chat/ticket models, Next.js admin tabs, RBAC-aware API routes, and seeds/tests covering the reviewer/admin workflow).
 
+## 2025-10-18
+
+✅ Completed: Enterprise boundary enforcement via trusted gateway middleware, forwarded-header validation, and documentation updates covering the SSO-only perimeter.
+PR: feat/enterprise_boundary_enforcement
+
 ## 2025-10-19
 
 - [x] TODO "pgvector GUC Bootstrap" - completed 2025-10-19 (release 0.8.0 adds migrations and verification checks for `app.pgvector_lists`).
