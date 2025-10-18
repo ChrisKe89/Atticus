@@ -24,6 +24,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-11-02
+
+- [x] TODO "Hybrid Retrieval" — added explicit retrieval modes (hybrid, vector, lexical), multi-mode evaluation outputs (`retrieval_modes.json`), configuration toggles, documentation updates, and regression tests to track BM25 + vector fusion metrics end to end — completed 2025-11-02 (this change set).
+
+---
+
 ## 2025-10-31
 
 - [x] Admin Page Extensions — delivered ingestion panel, glossary viewer, and eval seed manager in the standalone admin console with secured FastAPI endpoints, tests, docs, and configuration updates — completed 2025-10-31 (this change set).
@@ -33,6 +39,7 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-18
 
 - [x] Delivered the multi-model query splitter (AI / RAG Enhancements) with targeted prompts, chat integration, documentation, tests, and version bump — completed 2025-10-18 (this change set).
+- [x] TODO "Feedback Loop" — implemented the end-to-end capture, seed document generation, admin triage workflows, documentation, and regression tests for the new feedback loop — completed 2025-10-18 (this change set).
 
 ---
 

@@ -57,10 +57,10 @@ Here’s the exact addition you should drop into your `TODO.md` under the **🧠
 
   * Aliases, units, and product family normalization.
   * Display glossary hits inline in chat answers.
-* [ ] **Feedback Loop**
+* [x] **Feedback Loop**
 
   * Capture unclear queries → add targeted seed documents.
-* [ ] **Hybrid Retrieval**
+* [x] **Hybrid Retrieval**
 
   * Test BM25 + vector fusion, store eval metrics.
 * [ ] **Prompt/Eval Governance**

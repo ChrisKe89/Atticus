@@ -11,7 +11,7 @@ from .answer_format import format_answer_markdown
 from .citation_utils import dedupe_citations
 from .generator import GeneratorClient
 from .models import Answer, Citation
-from .vector_store import SearchResult, VectorStore
+from .vector_store import RetrievalMode, SearchResult, VectorStore
 
 
 def _format_contexts(results: list[SearchResult], limit: int) -> tuple[list[str], list[Citation]]:
@@ -76,7 +76,12 @@ def answer_question(
     merged_filters = dict(filters or {})
     if product_family:
         merged_filters["product_family"] = product_family
-    results = store.search(question, top_k=window, filters=merged_filters, hybrid=True)
+    results = store.search(
+        question,
+        top_k=window,
+        filters=merged_filters,
+        mode=RetrievalMode.HYBRID,
+    )
 
     if not results:
         response = "I don't have enough information in the current index to answer this."

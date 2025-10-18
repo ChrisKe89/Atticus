@@ -12,7 +12,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import yaml
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SECRET_FIELD_NAMES = {
@@ -78,6 +78,9 @@ class AppSettings(BaseSettings):
     baseline_path: Path = Field(default=Path("eval/baseline.json"))
     gold_set_path: Path = Field(default=Path("eval/gold_set.csv"))
     eval_regression_threshold: float = Field(default=3.0, alias="EVAL_REGRESSION_THRESHOLD")
+    evaluation_modes: list[str] = Field(
+        default_factory=lambda: ["hybrid", "vector"], alias="EVAL_MODES"
+    )
     config_path: Path = Field(default=Path("config.yaml"), alias="CONFIG_PATH")
 
     # Notification / escalation (from .env)
@@ -135,6 +138,13 @@ class AppSettings(BaseSettings):
         if isinstance(raw, str):
             return [item.strip() for item in raw.split(",") if item.strip()]
         return [str(item).strip() for item in raw if str(item).strip()]
+
+    @field_validator("evaluation_modes", mode="before")
+    @classmethod
+    def _normalize_modes(cls, value: Any) -> list[str] | Any:
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
 
 
 @dataclass(slots=True)
