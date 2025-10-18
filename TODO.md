@@ -50,7 +50,7 @@ Here’s the exact addition you should drop into your `TODO.md` under the **🧠
     * Independent retrieval per sub-query using `run_rag_for_each()`.
     * Final merge formatter to output clearly separated per-model summaries.
   * Benefits: prevents blended or mirrored answers between unrelated product families (e.g., Shobu vs. Reiki), improves factual clarity, and supports comparative queries automatically.
-* [ ] **Admin Page Extensions**
+* [x] **Admin Page Extensions**
 
   * Embed new documents, view glossary entries, manage eval seeds.
 * [ ] **Glossary Enrichment**

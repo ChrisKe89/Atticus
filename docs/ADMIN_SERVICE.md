@@ -29,15 +29,10 @@ By default the service forwards requests to `http://localhost:3000`. Override `A
 
 ## Workflow outline
 
-1. Retrieve escalation queue via `GET /api/admin/uncertain` (includes `pending_review`, `draft`, and `rejected` states).
-2. Review the chat card:
-   - Inspect captured answer, sources, and audit log.
-   - Edit the curated answer in-line.
-3. Take an action:
-   - **Save Draft** &rarr; persists the updated answer in Atticus with status `draft`.
-   - **Reject** &rarr; records a rejection audit entry and keeps the item visible.
-   - **Approve** &rarr; finalises the chat, updates Atticus to `reviewed`, and appends the curated answer to CSV.
-4. Approved records are filed under `content/<model_family>/<model>.csv` with the schema `timestamp,question,answer,model,reviewer`.
+1. **Embed new documents** — invoke POST `/api/ingest` with optional path filters or a full-refresh toggle. Responses include document counts, chunk totals, and manifest/index paths for downstream auditing.
+2. **Review escalated chats** — retrieve the queue via `GET /api/admin/uncertain` (includes `pending_review`, `draft`, and `rejected` states), inspect the transcript, edit the curated answer, and approve/reject as needed. Approved records append to `content/<model_family>/<model>.csv` with the schema `timestamp,question,answer,model,reviewer`.
+3. **Glossary library** — call `GET /api/admin/dictionary` to confirm synonyms and aliases before updating `indices/dictionary.json`.
+4. **Evaluation seeds** — manage `eval/gold_set.csv` via `GET/POST /api/admin/eval-seeds`. The admin UI writes directly to the CSV with canonical headers (`question,relevant_documents,expected_answer,notes`).
 
 ## Headers & identity
 
@@ -67,4 +62,4 @@ export ATTICUS_REVIEWER_EMAIL="psharma@example.com"
 ## Next steps
 
 - Integrate real-time status updates when multiple reviewers are active.
-- Extend CSV metadata with model family selection controls when content paths are ambiguous.
+- Extend ingestion panel with run history, including metrics snapshots under `reports/`.
