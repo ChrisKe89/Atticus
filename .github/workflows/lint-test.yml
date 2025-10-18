@@ -28,15 +28,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Set up Python for audits
         uses: actions/setup-python@v5
@@ -47,13 +51,13 @@ jobs:
         run: python -m pip install --upgrade pip vulture
 
       - name: Next.js lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Next.js typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Next.js build
-        run: npm run build
+        run: pnpm run build
 
       - name: Prepare audit report directory
         run: mkdir -p reports/ci
@@ -61,22 +65,22 @@ jobs:
       - name: Audit TypeScript usage graph
         run: |
           set -o pipefail
-          npm run audit:ts -- --reporter json | tee reports/ci/knip-strict.json
+          pnpm run audit:ts -- --reporter json | tee reports/ci/knip-strict.json
 
       - name: Audit icon usage
         run: |
           set -o pipefail
-          npm run audit:icons | tee reports/ci/icon-audit.log
+          pnpm run audit:icons | tee reports/ci/icon-audit.log
 
       - name: Audit Next.js routes
         run: |
           set -o pipefail
-          npm run audit:routes | tee reports/ci/routes.json
+          pnpm run audit:routes | tee reports/ci/routes.json
 
       - name: Audit Python unused code
         run: |
           set -o pipefail
-          npm run audit:py | tee reports/ci/python-unused.json
+          pnpm run audit:py | tee reports/ci/python-unused.json
 
       - name: Upload audit reports
         if: always()
@@ -132,7 +136,7 @@ jobs:
       - name: Pre-commit (all files)
         run: pre-commit run --all-files --show-diff-on-failure
 
-  pgvector-check:
+  migration-smoke:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -142,36 +146,71 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: atticus
+          POSTGRES_DB: postgres
         options: >-
-          --health-cmd "pg_isready -U postgres -d atticus"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/atticus
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/atticus_smoke
       PGVECTOR_DIMENSION: 3072
       PGVECTOR_LISTS: 100
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install psql client
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
 
-      - name: Apply Prisma migrations
-        run: npx prisma migrate deploy
+      - name: Create ephemeral database
+        run: psql postgresql://postgres:postgres@localhost:5432/postgres -c "CREATE DATABASE atticus_smoke;"
+
+      - name: Generate Prisma client
+        run: pnpm run prisma:generate
+
+      - name: Apply Prisma migrations (smoke)
+        run: pnpm exec prisma migrate deploy
+
+      - name: Seed database (non-blocking)
+        run: pnpm run db:seed
+        continue-on-error: true
 
       - name: Verify pgvector schema
         run: make db.verify
+
+      - name: Drop ephemeral database
+        if: always()
+        run: psql postgresql://postgres:postgres@localhost:5432/postgres -c "DROP DATABASE IF EXISTS atticus_smoke WITH (FORCE);"
+
+  compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compose smoke test
+        env:
+          DOCKER_BUILDKIT: 1
+        run: make compose-up

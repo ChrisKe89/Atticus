@@ -58,6 +58,7 @@ DEFAULTS = {
     # Rate limiting
     "RATE_LIMIT_REQUESTS": "5",
     "RATE_LIMIT_WINDOW_SECONDS": "60",
+    "ALLOWED_ORIGINS": "https://gateway.atticus.example",
     # Notifications & escalation
     "CONTACT_EMAIL": "atticus-contact@example.com",
     "SMTP_HOST": "smtp.example.com",

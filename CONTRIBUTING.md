@@ -15,7 +15,7 @@ Thank you for contributing to Atticus! This guide explains how to set up your en
   ```
 - Install Node dependencies:
   ```bash
-  npm install
+  pnpm install
   ```
 
 ---
@@ -26,7 +26,7 @@ Before committing any change, run:
 
 ```bash
 make quality         # Ruff + mypy + pytest + Next lint/typecheck/build + audits
-npm run format:check # Prettier (with tailwind sorting)
+pnpm run format:check # Prettier (with tailwind sorting)
 pre-commit run --all-files --show-diff-on-failure
 ```
 
@@ -34,7 +34,7 @@ Guidelines:
 
 - Maintain >=90% test coverage. Add or update tests for every behaviour change.
 - Keep documentation in sync, especially [README.md](README.md), [OPERATIONS.md](OPERATIONS.md), [RELEASE.md](RELEASE.md), and [AGENTS.md](AGENTS.md).
-- Use `npm run format` and `make format` to auto-fix style issues before re-running the checks above.
+- Use `pnpm run format` and `make format` to auto-fix style issues before re-running the checks above.
 
 ---
 

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from atticus.logging import configure_logging
@@ -60,6 +61,9 @@ def _load_version() -> str:
     return version or "0.0.0"
 
 
+_initial_settings = get_settings()
+
+
 app = FastAPI(
     title="Atticus RAG API",
     version=_load_version(),
@@ -67,6 +71,20 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan,
 )
+if _initial_settings.cors_allowed_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(_initial_settings.cors_allowed_origins),
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["*"],
+        expose_headers=[
+            "X-Request-ID",
+            "X-RateLimit-Limit",
+            "X-RateLimit-Remaining",
+            "Retry-After",
+        ],
+    )
+app.state.settings = _initial_settings
 app.add_middleware(TrustedGatewayMiddleware)
 app.add_middleware(RequestContextMiddleware)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
