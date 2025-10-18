@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 from typing import Any
@@ -19,6 +20,57 @@ def load_dictionary(path: Path) -> list[dict[str, object]]:
 def save_dictionary(path: Path, entries: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def load_eval_seeds(path: Path) -> list[dict[str, object]]:
+    if not path.exists():
+        return []
+    seeds: list[dict[str, object]] = []
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            question = (row.get("question") or "").strip()
+            documents_raw = row.get("relevant_documents") or ""
+            documents = [
+                item.strip() for item in str(documents_raw).split(";") if item and item.strip()
+            ]
+            expected = (row.get("expected_answer") or "").strip() or None
+            notes = (row.get("notes") or "").strip() or None
+            seeds.append(
+                {
+                    "question": question,
+                    "relevant_documents": documents,
+                    "expected_answer": expected,
+                    "notes": notes,
+                }
+            )
+    return seeds
+
+
+def save_eval_seeds(path: Path, seeds: list[dict[str, object]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = ["question", "relevant_documents", "expected_answer", "notes"]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for seed in seeds:
+            raw_documents = seed.get("relevant_documents", [])
+            documents: list[str]
+            if isinstance(raw_documents, (list, tuple)):
+                documents = [str(item).strip() for item in raw_documents if str(item).strip()]
+            elif raw_documents is None:
+                documents = []
+            else:
+                value = str(raw_documents).strip()
+                documents = [value] if value else []
+            writer.writerow(
+                {
+                    "question": str(seed.get("question", "")).strip(),
+                    "relevant_documents": ";".join(documents),
+                    "expected_answer": (str(seed.get("expected_answer", "")).strip() or None),
+                    "notes": (str(seed.get("notes", "")).strip() or None),
+                }
+            )
 
 
 def load_error_logs(path: Path, limit: int = 50) -> list[dict[str, object]]:

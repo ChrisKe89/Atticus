@@ -95,14 +95,13 @@ npm run dev --workspace admin    # http://localhost:3101
 
 ---
 
-## Content Manager
+## Ingestion & Evaluation Panels
 
-Use `/admin/content` to browse, upload, and curate files in `content/`.
+Use the admin console to orchestrate ingestion and evaluation upkeep without leaving the browser.
 
-- Upload Markdown, PDF, and text sources; deletions and uploads are logged to `reports/content-actions.log`.
-- Create folders directly from the UI; directories mirror the structure used during ingestion.
-- Run the "Re-ingest Content" action after changes to execute `scripts/ingest_cli.py` without leaving the browser.
-- The UI prompts reviewers when pending changes require ingestion to avoid accidental drift.
+- **Embed new documents** &rarr; submit partial or full refresh jobs through the ingestion panel. Results surface document/chunk counts plus manifest, index, and snapshot paths.
+- **Glossary library** &rarr; audit `indices/dictionary.json` entries before applying synonym updates.
+- **Evaluation seeds** &rarr; edit `eval/gold_set.csv` in place; updates drive CI retrieval benchmarks.
 
 ---
 
