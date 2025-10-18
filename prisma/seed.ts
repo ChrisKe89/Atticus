@@ -130,64 +130,64 @@ async function main() {
     throw new Error("Failed to seed glossary users");
   }
 
-const glossarySeeds: GlossarySeed[] = [
-  {
-    id: "glossary-entry-managed-print-services",
-    term: "Managed Print Services",
-    definition:
-      "End-to-end management of printers, consumables, maintenance, and support delivered as a subscription.",
-    synonyms: ["MPS", "Print-as-a-service"],
-    aliases: ["Managed Print"],
-    units: ["fleets"],
-    productFamilies: ["Enterprise Services"],
-    status: GlossaryStatus.APPROVED,
-    reviewNotes: "Approved for launch collateral and onboarding playbooks.",
-    reviewerId: approver.id,
-    reviewedAt: new Date("2024-05-01T12:00:00Z"),
-  },
-  {
-    id: "glossary-entry-proactive-maintenance",
-    term: "Proactive Maintenance",
-    definition:
-      "Scheduled device inspections and firmware rollouts designed to prevent outages before they impact revenue teams.",
-    synonyms: ["Preventative maintenance"],
-    aliases: ["Predictive maintenance"],
-    units: ["visits/year"],
-    productFamilies: ["Field Services"],
-    status: GlossaryStatus.PENDING,
-  },
-  {
-    id: "glossary-entry-toner-optimization",
-    term: "Toner Optimization",
-    definition:
-      "Adaptive print routing and toner yield tracking that reduce waste while maintaining SLA-compliant image quality.",
-    synonyms: ["Smart toner", "Consumable optimisation"],
-    aliases: ["Toner yield optimization"],
-    units: ["pages"],
-    productFamilies: ["C7070", "C8180"],
-    status: GlossaryStatus.REJECTED,
-    reviewNotes: "Rejected pending customer-ready evidence and usage data.",
-    reviewerId: approver.id,
-    reviewedAt: new Date("2024-05-15T09:30:00Z"),
-  },
-];
+  const glossarySeeds: GlossarySeed[] = [
+    {
+      id: "glossary-entry-managed-print-services",
+      term: "Managed Print Services",
+      definition:
+        "End-to-end management of printers, consumables, maintenance, and support delivered as a subscription.",
+      synonyms: ["MPS", "Print-as-a-service"],
+      aliases: ["Managed Print"],
+      units: ["fleets"],
+      productFamilies: ["Enterprise Services"],
+      status: GlossaryStatus.APPROVED,
+      reviewNotes: "Approved for launch collateral and onboarding playbooks.",
+      reviewerId: approver.id,
+      reviewedAt: new Date("2024-05-01T12:00:00Z"),
+    },
+    {
+      id: "glossary-entry-proactive-maintenance",
+      term: "Proactive Maintenance",
+      definition:
+        "Scheduled device inspections and firmware rollouts designed to prevent outages before they impact revenue teams.",
+      synonyms: ["Preventative maintenance"],
+      aliases: ["Predictive maintenance"],
+      units: ["visits/year"],
+      productFamilies: ["Field Services"],
+      status: GlossaryStatus.PENDING,
+    },
+    {
+      id: "glossary-entry-toner-optimization",
+      term: "Toner Optimization",
+      definition:
+        "Adaptive print routing and toner yield tracking that reduce waste while maintaining SLA-compliant image quality.",
+      synonyms: ["Smart toner", "Consumable optimisation"],
+      aliases: ["Toner yield optimization"],
+      units: ["pages"],
+      productFamilies: ["C7070", "C8180"],
+      status: GlossaryStatus.REJECTED,
+      reviewNotes: "Rejected pending customer-ready evidence and usage data.",
+      reviewerId: approver.id,
+      reviewedAt: new Date("2024-05-15T09:30:00Z"),
+    },
+  ];
 
-function normalizeToken(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/gi, "")
-    .toLowerCase();
-}
+  function normalizeToken(value: string): string {
+    return value
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/gi, "")
+      .toLowerCase();
+  }
 
-function normalizeFamily(value: string): string {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s_-]+/g, " ")
-    .trim()
-    .toUpperCase();
-}
+  function normalizeFamily(value: string): string {
+    return value
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[\s_-]+/g, " ")
+      .trim()
+      .toUpperCase();
+  }
 
   await Promise.all(
     glossarySeeds.map((entry) =>
@@ -196,31 +196,35 @@ function normalizeFamily(value: string): string {
         update: {
           term: entry.term,
           definition: entry.definition,
-          synonyms: entry.synonyms,
-          aliases: entry.aliases ?? [],
-          units: entry.units ?? [],
-          productFamilies: entry.productFamilies ?? [],
-          normalizedAliases: Array.from(
-            new Set(
-              [entry.term, ...entry.synonyms, ...(entry.aliases ?? [])]
-                .map((value) => normalizeToken(value))
-                .filter((value) => value.length > 0),
+          synonyms: { set: entry.synonyms },
+          aliases: { set: entry.aliases ?? [] },
+          units: { set: entry.units ?? [] },
+          productFamilies: { set: entry.productFamilies ?? [] },
+          normalizedAliases: {
+            set: Array.from(
+              new Set(
+                [entry.term, ...entry.synonyms, ...(entry.aliases ?? [])]
+                  .map((value) => normalizeToken(value))
+                  .filter((value) => value.length > 0)
+              )
             ),
-          ),
-          normalizedFamilies: Array.from(
-            new Set(
-              (entry.productFamilies ?? [])
-                .map((value) => normalizeFamily(value))
-                .filter((value) => value.length > 0),
+          },
+          normalizedFamilies: {
+            set: Array.from(
+              new Set(
+                (entry.productFamilies ?? [])
+                  .map((value) => normalizeFamily(value))
+                  .filter((value) => value.length > 0)
+              )
             ),
-          ),
+          },
           status: entry.status,
           orgId: organization.id,
           authorId: author.id,
           reviewerId: entry.reviewerId ?? null,
           reviewNotes: entry.reviewNotes ?? null,
           reviewedAt: entry.reviewedAt ?? null,
-        },
+        } as unknown as Prisma.GlossaryEntryUpdateInput,
         create: {
           id: entry.id,
           term: entry.term,
@@ -233,15 +237,15 @@ function normalizeFamily(value: string): string {
             new Set(
               [entry.term, ...entry.synonyms, ...(entry.aliases ?? [])]
                 .map((value) => normalizeToken(value))
-                .filter((value) => value.length > 0),
-            ),
+                .filter((value) => value.length > 0)
+            )
           ),
           normalizedFamilies: Array.from(
             new Set(
               (entry.productFamilies ?? [])
                 .map((value) => normalizeFamily(value))
-                .filter((value) => value.length > 0),
-            ),
+                .filter((value) => value.length > 0)
+            )
           ),
           status: entry.status,
           orgId: organization.id,
@@ -249,7 +253,7 @@ function normalizeFamily(value: string): string {
           reviewerId: entry.reviewerId ?? null,
           reviewNotes: entry.reviewNotes ?? null,
           reviewedAt: entry.reviewedAt ?? null,
-        },
+        } as unknown as Prisma.GlossaryEntryCreateInput,
       })
     )
   );
@@ -294,7 +298,8 @@ function normalizeFamily(value: string): string {
     },
     {
       id: "chat-escalated-calibration",
-      question: "Color calibration fails with streak artifacts on the ProLine 5100 series. What should we try next?",
+      question:
+        "Color calibration fails with streak artifacts on the ProLine 5100 series. What should we try next?",
       confidence: 0.41,
       status: "escalated",
       requestId: "req-seed-002",

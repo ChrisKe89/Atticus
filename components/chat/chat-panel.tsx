@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Send } from "lucide-react";
-import { streamAsk, type AskStreamEvent } from "@/lib/ask-client";
 import type { AskResponse, AskSource } from "@/lib/ask-contract";
 import AnswerRenderer from "@/components/AnswerRenderer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useAskStream } from "@/components/chat/use-ask-stream";
 
 interface ChatMessage {
   id: string;
@@ -34,8 +34,13 @@ export function ChatPanel() {
     "There is no context to that question or it is not a proper question, please try again";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [composer, setComposer] = useState("");
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    start: startAsk,
+    isStreaming,
+    error,
+  } = useAskStream({
+    friendlyErrorMessage: FRIENDLY_VALIDATION_MSG,
+  });
   const [showIntro, setShowIntro] = useState(true);
   const formRef = useRef<HTMLFormElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -48,7 +53,8 @@ export function ChatPanel() {
     const style = window.getComputedStyle(el);
     const lineHeight = parseFloat(style.lineHeight || "20");
     const padding = parseFloat(style.paddingTop || "0") + parseFloat(style.paddingBottom || "0");
-    const border = parseFloat(style.borderTopWidth || "0") + parseFloat(style.borderBottomWidth || "0");
+    const border =
+      parseFloat(style.borderTopWidth || "0") + parseFloat(style.borderBottomWidth || "0");
     const minHeight = Math.max(0, lineHeight * 3 + padding + border);
     const maxHeight = Math.max(minHeight, lineHeight * maxRows + padding + border);
     el.style.height = "auto";
@@ -67,7 +73,6 @@ export function ChatPanel() {
     if (!trimmed || isStreaming) {
       return;
     }
-    setError(null);
     if (showIntro) {
       setShowIntro(false);
     }
@@ -88,52 +93,38 @@ export function ChatPanel() {
 
     setMessages((prev) => [...prev, userMessage, placeholder]);
     setComposer("");
-    setIsStreaming(true);
 
-    try {
-      await streamAsk(
-        { question: trimmed, filters: undefined, contextHints: undefined, topK: undefined, models: undefined },
-        {
-          onEvent: (event: AskStreamEvent) => {
-            if (event.type === "answer") {
-              const response = event.payload;
-              setMessages((prev) =>
-                prev.map((message) =>
-                  message.id === placeholder.id
-                    ? {
-                        ...message,
-                        status: "complete",
-                        content: response.answer ?? response.clarification?.message ?? "",
-                        response,
-                      }
-                    : message
-                )
-              );
-            }
-            if (event.type === "end") {
-              setIsStreaming(false);
-            }
-          },
-        }
-      );
-    } catch (err) {
-      setIsStreaming(false);
-      const messageError = err instanceof Error ? err.message : FRIENDLY_VALIDATION_MSG;
-      // Only show bottom error if it's not the friendly validation message
-      setError(messageError === FRIENDLY_VALIDATION_MSG ? null : messageError);
-      setMessages((prev) =>
-        prev.map((message) =>
-          message.id === placeholder.id
-            ? {
-                ...message,
-                status: "error",
-                content: FRIENDLY_VALIDATION_MSG,
-                error: messageError,
-              }
-            : message
-        )
-      );
-    }
+    await startAsk({
+      question: trimmed,
+      onAnswer: (response: AskResponse) => {
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === placeholder.id
+              ? {
+                  ...message,
+                  status: "complete",
+                  content: response.answer ?? response.clarification?.message ?? "",
+                  response,
+                }
+              : message
+          )
+        );
+      },
+      onError: ({ display, actual }) => {
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === placeholder.id
+              ? {
+                  ...message,
+                  status: "error",
+                  content: display,
+                  error: actual,
+                }
+              : message
+          )
+        );
+      },
+    });
   }
 
   async function handleClarificationChoice(messageId: string, models: string[]) {
@@ -144,11 +135,9 @@ export function ChatPanel() {
     if (!target?.question) {
       return;
     }
-    setError(null);
     if (showIntro) {
       setShowIntro(false);
     }
-    setIsStreaming(true);
     setMessages((prev) =>
       prev.map((message) =>
         message.id === messageId
@@ -156,68 +145,51 @@ export function ChatPanel() {
               ...message,
               status: "pending",
               content: "Atticus is thinking...",
-              response: message.response ? { ...message.response, clarification: undefined } : message.response,
+              response: message.response
+                ? { ...message.response, clarification: undefined }
+                : message.response,
             }
           : message
       )
     );
 
-    try {
-      await streamAsk(
-        {
-          question: target.question,
-          models,
-          filters: undefined,
-          contextHints: undefined,
-          topK: undefined,
-        },
-        {
-          onEvent: (event: AskStreamEvent) => {
-            if (event.type === "answer") {
-              const response = event.payload;
-              setMessages((prev) =>
-                prev.map((message) =>
-                  message.id === messageId
-                    ? {
-                        ...message,
-                        status: "complete",
-                        content: response.answer ?? response.clarification?.message ?? "",
-                        response,
-                      }
-                    : message
-                )
-              );
-            }
-            if (event.type === "end") {
-              setIsStreaming(false);
-            }
-          },
-        }
-      );
-    } catch (err) {
-      const messageError = err instanceof Error ? err.message : FRIENDLY_VALIDATION_MSG;
-      // Only show bottom error if it's not the friendly validation message
-      setError(messageError === FRIENDLY_VALIDATION_MSG ? null : messageError);
-      setMessages((prev) =>
-        prev.map((message) =>
-          message.id === messageId
-            ? {
-                ...message,
-                status: "error",
-                content: FRIENDLY_VALIDATION_MSG,
-                error: messageError,
-              }
-            : message
-        )
-      );
-    } finally {
-      setIsStreaming(false);
-    }
+    await startAsk({
+      question: target.question,
+      models,
+      onAnswer: (response: AskResponse) => {
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === messageId
+              ? {
+                  ...message,
+                  status: "complete",
+                  content: response.answer ?? response.clarification?.message ?? "",
+                  response,
+                }
+              : message
+          )
+        );
+      },
+      onError: ({ display, actual }) => {
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === messageId
+              ? {
+                  ...message,
+                  status: "error",
+                  content: display,
+                  error: actual,
+                }
+              : message
+          )
+        );
+      },
+    });
   }
 
   return (
     <section className="flex h-full min-h-0 flex-1 flex-col">
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 lg:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-6 [-ms-overflow-style:none] [scrollbar-width:none] sm:px-6 lg:px-8 [&::-webkit-scrollbar]:hidden">
         {showIntro && messages.length === 0 ? (
           <div className="flex h-full min-h-full items-center justify-center text-center">
             <div className="max-w-xl space-y-3">
@@ -228,8 +200,8 @@ export function ChatPanel() {
                 Hi there — I’m Atticus.
               </h2>
               <p className="text-base text-slate-600 dark:text-slate-300">
-                Ask me about any FUJIFILM product, process, or spec. Every answer comes sourced
-                from verified documentation.
+                Ask me about any FUJIFILM product, process, or spec. Every answer comes sourced from
+                verified documentation.
               </p>
             </div>
           </div>
@@ -238,9 +210,7 @@ export function ChatPanel() {
             {messages.map((message) => (
               <article
                 key={message.id}
-                className={
-                  message.role === "assistant" ? "flex justify-start" : "flex justify-end"
-                }
+                className={message.role === "assistant" ? "flex justify-start" : "flex justify-end"}
               >
                 <div
                   className={
@@ -281,8 +251,8 @@ export function ChatPanel() {
                         {message.response.should_escalate === undefined
                           ? "-"
                           : message.response.should_escalate
-                          ? "Yes"
-                          : "No"}
+                            ? "Yes"
+                            : "No"}
                       </span>
                       <span className="truncate">Request ID: {message.response.request_id}</span>
                     </footer>
@@ -311,7 +281,8 @@ export function ChatPanel() {
               ref={textareaRef}
               onKeyDown={(event) => {
                 // Enter: send. Shift+Enter: newline
-                const composing = (event.nativeEvent as unknown as { isComposing?: boolean }).isComposing;
+                const composing = (event.nativeEvent as unknown as { isComposing?: boolean })
+                  .isComposing;
                 if (event.key === "Enter" && !event.shiftKey && !composing) {
                   event.preventDefault();
                   // Only submit if there is content and not streaming
@@ -326,7 +297,11 @@ export function ChatPanel() {
               className="min-h-[72px] resize-none overflow-y-hidden"
             />
           </div>
-          <Button type="submit" disabled={isStreaming || !composer.trim()} className="self-end rounded-xl">
+          <Button
+            type="submit"
+            disabled={isStreaming || !composer.trim()}
+            className="self-end rounded-xl"
+          >
             {isStreaming ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             ) : (

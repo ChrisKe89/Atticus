@@ -4,6 +4,12 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.2] - 2025-11-02
+
+### Changed
+
+- Chat submission and clarification flows now rely on a shared `useAskStream` hook, unifying streaming lifecycle handling and error messaging between initial questions and follow-up model selections.
+
 ## [0.10.1] - 2025-10-18
 
 ### Added

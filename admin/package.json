@@ -1,6 +1,6 @@
 {
   "name": "atticus-admin-service",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 -p 9000",
