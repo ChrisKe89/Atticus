@@ -39,7 +39,7 @@ Here’s the exact addition you should drop into your `TODO.md` under the **🧠
 
 ## 🧠 AI / RAG Enhancements
 
-* [ ] **Implement Multi-Model Query Splitter**
+* [x] **Implement Multi-Model Query Splitter**
 
   * Add a pre-RAG **query decomposition layer** that detects when a user mentions multiple distinct model families (e.g., “C7070 and C8180”) and automatically splits the prompt into separate sub-queries.
   * Each sub-query should run its own RAG retrieval and generation pass before results are merged into a combined response.

@@ -272,7 +272,7 @@ def iter_candidates(root: Path, include_hidden: bool) -> Iterator[Path]:
             cand = dir_path / d
             if _is_under_any(cand, hard_ex):
                 continue
-            if should_skip_dir_parts(rel_parts + (d,), include_hidden):
+            if should_skip_dir_parts((*rel_parts, d), include_hidden):
                 continue
             pruned.append(d)
         dirnames[:] = pruned

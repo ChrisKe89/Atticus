@@ -12,7 +12,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 
 - **Direct hit** â€” when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
 - **Unclear** â€” if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
-- **Multi-model** â€” if several models are detected or supplied, Atticus fans out retrieval per model and responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
+- **Multi-model** â€” if several models are detected or supplied, Atticus now decomposes the question into per-model prompts before retrieval. Each targeted prompt runs its own RAG pass via the multi-model query splitter (`retriever/query_splitter.py`), and the API responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
 - **Testing** â€” `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
 
 ---
