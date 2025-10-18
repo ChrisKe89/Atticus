@@ -4,6 +4,17 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.8.7] - 2025-11-03
+
+### Added
+
+- Versioned prompt template registry (`retriever/prompts.py`) with default `atticus-v1` instructions and tests.
+
+### Changed
+
+- `GeneratorClient` now resolves prompts via configurable versions (`GEN_PROMPT_VERSION`) and logs active prompt metadata.
+- Evaluation harness enforces pinned aggregate thresholds for nDCG@10 (≥0.55) and MRR (≥0.50), returning structured failures for CI gates.
+
 ## [0.8.6] - 2025-11-02
 
 ### Added

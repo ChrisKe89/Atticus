@@ -149,7 +149,9 @@ Core metrics:
 - MRR@K — how early correct hits appear
 - Precision@K — relevance of retrieved chunks
 
-Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10% MRR@10 drop vs baseline.
+Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10% MRR@10 drop vs baseline. CI now hard-enforces
+`EVAL_MIN_NDCG` (default **0.55**) and `EVAL_MIN_MRR` (default **0.50**) through `scripts/eval_run.py`; runs breaching these
+minimums exit non-zero.
 
 ---
 
@@ -176,6 +178,7 @@ Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10
 | CHUNK_OVERLAP_TOKENS      | required | required |       |
 | CHUNK_TARGET_TOKENS       | required | required |       |
 | CONFIDENCE_THRESHOLD      | required | required |       |
+| GEN_PROMPT_VERSION        | required | required | Versioned generator prompt registry key |
 | CONTACT_EMAIL             | required | required |       |
 | CONTENT_ROOT              | required | required |       |
 | DATABASE_URL              | required | required |       |
@@ -188,6 +191,8 @@ Typical CI thresholds: fail on 3–5% nDCG@10 drop, 5% Recall@10 drop, or 5–10
 | EMAIL_SERVER_PASSWORD     | required | required |       |
 | EMAIL_SERVER_PORT         | required | required |       |
 | EMAIL_SERVER_USER         | required | required |       |
+| EVAL_MIN_NDCG             | required | required | Minimum acceptable aggregate nDCG@10 |
+| EVAL_MIN_MRR              | required | required | Minimum acceptable aggregate MRR |
 | EMBED_MODEL               | required | required |       |
 | EMBEDDING_MODEL_VERSION   | required | required |       |
 | ENABLE_RERANKER           | required | required |       |
