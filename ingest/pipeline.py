@@ -10,11 +10,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from core.config import AppSettings, Manifest, load_manifest, load_settings, write_manifest
 from atticus.embeddings import EmbeddingClient
 from atticus.logging import configure_logging, log_event
 from atticus.utils import sha256_file, sha256_text
 from atticus.vector_db import PgVectorRepository, StoredChunk, save_metadata
+from core.config import AppSettings, Manifest, load_manifest, load_settings, write_manifest
 from retriever.models import ModelCatalog, extract_models, load_model_catalog
 
 from .chunker import chunk_document

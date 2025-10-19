@@ -4,6 +4,17 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.5] - 2025-11-08
+
+### Added
+- Enforced configurable prompt (1.5k) and answer (1k) token ceilings with safe truncation and surfaced validation errors for oversize chat inputs.
+- Published a lightweight HTML dashboard index (`index.html`) alongside evaluation artifacts so CI uploads expose every per-mode `metrics.html` report directly.
+- Logged rolling token and cost estimates for every 100 chat queries, persisting totals in metrics snapshots and emitting structured JSON events.
+
+### Changed
+- Batched OpenAI embedding requests during ingestion using the new `EMBEDDING_BATCH_SIZE` knob to reduce API round-trips while preserving deterministic fallbacks.
+- Cached the last 10 normalized retrieval queries and tuned pgvector probe counts dynamically based on query length/top-k, improving recall without manual tweaks.
+- Disabled the chat composer while responses stream and wired aggregated answer text through the new answer token cap to match backend limits.
 ## [0.10.4] - 2025-11-07
 ### Added
 - Enforced embedding-specific dimensions and probe ranges in configuration; `make db.verify` now validates `app.pgvector_probes` alongside IVFFlat lists.

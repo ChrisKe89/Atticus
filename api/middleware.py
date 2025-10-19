@@ -11,8 +11,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
-from core.config import load_settings
 from atticus.logging import log_error, log_event
+from core.config import load_settings
 
 from .rate_limit import RateLimiter
 
@@ -120,11 +120,16 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
             and request.url.path == "/ask"
             and hasattr(request.state, "confidence")
         ):
+            prompt_tokens = getattr(request.state, "prompt_tokens", 0)
+            answer_tokens = getattr(request.state, "answer_tokens", 0)
             metrics.record(
                 float(request.state.confidence),
                 elapsed_ms,
                 bool(getattr(request.state, "escalate", False)),
                 trace_id=request_id,
+                prompt_tokens=int(prompt_tokens) if prompt_tokens is not None else 0,
+                answer_tokens=int(answer_tokens) if answer_tokens is not None else 0,
+                logger=logger,
             )
 
         return response

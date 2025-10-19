@@ -127,13 +127,13 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## ⚡ Performance & Cost
 
-* [ ] Add prompt and answer token caps (1.5K/1K).
-* [ ] Cache last 10 normalized queries.
-* [ ] Batch embeddings for ingestion efficiency.
-* [ ] Tune pgvector probes dynamically.
-* [ ] Disable chat input while streaming.
-* [ ] Render evaluation dashboards as HTML in CI artifacts.
-* [ ] Log tokens and cost estimates per 100 queries.
+* [x] Add prompt and answer token caps (1.5K/1K).
+* [x] Cache last 10 normalized queries.
+* [x] Batch embeddings for ingestion efficiency.
+* [x] Tune pgvector probes dynamically.
+* [x] Disable chat input while streaming.
+* [x] Render evaluation dashboards as HTML in CI artifacts.
+* [x] Log tokens and cost estimates per 100 queries.
 
 ---
 

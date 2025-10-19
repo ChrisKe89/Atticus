@@ -5,16 +5,17 @@ from __future__ import annotations
 import logging
 import math
 import re
-from dataclasses import dataclass
+from collections import OrderedDict
+from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Any
 
 from rapidfuzz import fuzz
 
-from core.config import AppSettings, Manifest, load_manifest
 from atticus.embeddings import EmbeddingClient
 from atticus.logging import log_event
 from atticus.vector_db import PgVectorRepository, StoredChunk
+from core.config import EMBEDDING_MODEL_SPECS, AppSettings, Manifest, load_manifest
 
 
 class RetrievalMode(str, Enum):
@@ -82,6 +83,8 @@ class VectorStore:
         }
         self.chunk_lookup: dict[str, StoredChunk] = {chunk.chunk_id: chunk for chunk in self.chunks}
         self.embedding_client = EmbeddingClient(settings, logger=logger)
+        self._cache_limit = 10
+        self._query_cache: OrderedDict[str, list[SearchResult]] = OrderedDict()
 
         self._lex_tokens: list[list[str]] = []
         self._lex_df: dict[str, int] = {}
@@ -89,6 +92,64 @@ class VectorStore:
         self._lex_avgdl: float = 0.0
         self._lex_ready: bool = False
         self._build_lexical_index()
+
+    def _cache_key(
+        self,
+        query: str,
+        top_k: int,
+        filters: dict[str, str] | None,
+        mode: RetrievalMode,
+    ) -> str:
+        normalized = re.sub(r"\s+", " ", query).strip().lower()
+        filter_items = tuple(sorted((filters or {}).items()))
+        return f"{mode.value}|{top_k}|{normalized}|{filter_items}"
+
+    def _clone_results(self, results: list[SearchResult]) -> list[SearchResult]:
+        return [replace(item, metadata=dict(item.metadata)) for item in results]
+
+    def _cache_get(self, key: str) -> list[SearchResult] | None:
+        cached = self._query_cache.get(key)
+        if cached is None:
+            return None
+        self._query_cache.move_to_end(key)
+        return self._clone_results(cached)
+
+    def _cache_store(self, key: str, results: list[SearchResult]) -> None:
+        self._query_cache[key] = self._clone_results(results)
+        self._query_cache.move_to_end(key)
+        while len(self._query_cache) > self._cache_limit:
+            self._query_cache.popitem(last=False)
+
+    def _resolve_probes(self, retrieval_mode: RetrievalMode, top_k: int, query: str) -> int:
+        if retrieval_mode is RetrievalMode.LEXICAL:
+            return 0
+        base = max(1, int(self.settings.pgvector_probes))
+        lists = max(1, int(self.settings.pgvector_lists))
+        dynamic = base
+        word_count = len(re.findall(r"\w+", query))
+        if word_count <= 3:
+            dynamic += 4
+        elif word_count <= 6:
+            dynamic += 2
+        elif word_count >= 18:
+            dynamic += 2
+        elif word_count >= 12:
+            dynamic += 1
+
+        if top_k >= 40:
+            dynamic += 4
+        elif top_k >= 20:
+            dynamic += 2
+        elif top_k >= 10:
+            dynamic += 1
+
+        spec = EMBEDDING_MODEL_SPECS.get(self.settings.embed_model, {})
+        probe_range = spec.get("probe_range")
+        if isinstance(probe_range, tuple) and len(probe_range) == 2:
+            lower, upper = map(int, probe_range)
+            dynamic = min(max(dynamic, lower), upper)
+
+        return max(1, min(dynamic, lists))
 
     def _apply_filters(self, chunk: StoredChunk, filters: dict[str, str] | None) -> bool:
         if not filters:
@@ -201,6 +262,23 @@ class VectorStore:
             return []
 
         retrieval_mode = RetrievalMode.from_inputs(mode, hybrid)
+        probes = self._resolve_probes(retrieval_mode, top_k, query)
+        cache_key = self._cache_key(query, top_k, filters, retrieval_mode)
+        cached_results = self._cache_get(cache_key)
+        if cached_results is not None:
+            log_event(
+                self.logger,
+                "retrieval_query",
+                query=query,
+                top_k=top_k,
+                results=len(cached_results),
+                filters=filters or {},
+                mode=retrieval_mode.value,
+                cache_hit=True,
+                probes=probes,
+            )
+            return cached_results
+
         vector_rows: list[dict[str, Any]] = []
         if retrieval_mode is not RetrievalMode.LEXICAL:
             query_embedding = self.embedding_client.embed_texts([query])
@@ -212,7 +290,7 @@ class VectorStore:
             vector_rows = self.repository.query_similar_chunks(
                 embedding_vector,
                 limit=candidate_limit,
-                probes=self.settings.pgvector_probes,
+                probes=probes,
             )
 
         bm25_all = self._bm25_scores(query)
@@ -316,6 +394,7 @@ class VectorStore:
 
         results = results[:top_k]
 
+        self._cache_store(cache_key, results)
         log_event(
             self.logger,
             "retrieval_query",
@@ -324,5 +403,7 @@ class VectorStore:
             results=len(results),
             filters=filters or {},
             mode=retrieval_mode.value,
+            cache_hit=False,
+            probes=probes,
         )
         return results

@@ -21,6 +21,7 @@ class EmbeddingClient:
         self.logger = logger or logging.getLogger("atticus")
         self.model_name = settings.embed_model
         self.dimension = settings.embed_dimensions
+        self.batch_size = max(1, int(getattr(settings, "embedding_batch_size", 32)))
 
         # Resolve API key and record source for diagnostics
         source = "none"
@@ -67,8 +68,25 @@ class EmbeddingClient:
 
         if self._client is not None:  # pragma: no cover - requires network
             try:
-                response: Any = self._client.embeddings.create(model=self.model_name, input=payload)
-                return [list(map(float, item.embedding)) for item in response.data]
+                embeddings: list[list[float]] = []
+                for start in range(0, len(payload), self.batch_size):
+                    batch = payload[start : start + self.batch_size]
+                    response: Any = self._client.embeddings.create(
+                        model=self.model_name, input=batch
+                    )
+                    embeddings.extend([list(map(float, item.embedding)) for item in response.data])
+                if len(embeddings) == len(payload):
+                    return embeddings
+                self.logger.warning(
+                    "embedding_batch_mismatch",
+                    extra={
+                        "extra_payload": {
+                            "expected": len(payload),
+                            "received": len(embeddings),
+                            "model": self.model_name,
+                        }
+                    },
+                )
             except Exception as exc:
                 self.logger.error(
                     "OpenAI embedding request failed; falling back to deterministic embeddings",

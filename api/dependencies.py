@@ -7,9 +7,9 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
 
-from core.config import AppSettings, load_settings
 from atticus.logging import configure_logging
 from atticus.metrics import MetricsRecorder
+from core.config import AppSettings, load_settings
 
 
 def get_settings() -> AppSettings:

@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from atticus.glossary import find_glossary_hits, load_glossary_entries
 from atticus.logging import log_event
-from atticus.tokenization import count_tokens
+from atticus.tokenization import count_tokens, truncate_text
 from retriever.models import Citation
 from retriever.query_splitter import run_rag_for_each
 from retriever.resolver import ModelResolution, ModelScope, resolve_models
@@ -133,14 +133,28 @@ async def ask_endpoint(
             detail="Provide a real question (not a placeholder like 'string')",
         )
 
+    try:
+        prompt_tokens = count_tokens(question)
+    except Exception:
+        prompt_tokens = None
+    max_prompt_tokens = getattr(settings, "prompt_token_limit", 1500)
+    if prompt_tokens is not None and prompt_tokens > max_prompt_tokens:
+        raise HTTPException(
+            status_code=400,
+            detail=(f"Question too long. Please keep queries under {max_prompt_tokens} tokens."),
+        )
+
     resolution = resolve_models(question, payload.models)
 
     request_id = getattr(request.state, "request_id", "unknown")
+    request.state.prompt_tokens = prompt_tokens or 0
+    request.state.answer_tokens = 0
 
     if resolution.needs_clarification:
         response = _clarification_response(resolution, request_id)
         request.state.confidence = 0.0
         request.state.escalate = False
+        request.state.answer_tokens = 0
         elapsed_ms = (time.perf_counter() - start) * 1000
         log_event(
             logger,
@@ -169,6 +183,10 @@ async def ask_endpoint(
     aggregated_escalation = any(entry.should_escalate for entry in answers)
     flattened_sources = [source for entry in answers for source in entry.sources]
     aggregated_answer = _aggregate_answer_text(answers)
+    if aggregated_answer:
+        aggregated_answer = truncate_text(
+            aggregated_answer, getattr(settings, "answer_token_limit", 1000)
+        )
     base_answer_text = aggregated_answer
     if len(answers) == 1:
         base_answer_text = answers[0].answer
@@ -193,6 +211,13 @@ async def ask_endpoint(
 
     request.state.confidence = aggregated_confidence
     request.state.escalate = aggregated_escalation
+
+    try:
+        answer_tokens = count_tokens(base_answer_text or "")
+    except Exception:
+        answer_tokens = None
+
+    request.state.answer_tokens = answer_tokens or 0
 
     elapsed_ms = (time.perf_counter() - start) * 1000
 
