@@ -1,0 +1,25 @@
+[
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "knip",
+      "--reporter",
+      "json"
+    ],
+    "returncode": 1,
+    "stdout": "reports/quality/knip-report.json",
+    "stderr": "reports/quality/knip-report.stderr.log"
+  },
+  {
+    "command": [
+      "pnpm",
+      "exec",
+      "ts-prune",
+      "--json"
+    ],
+    "returncode": 0,
+    "stdout": "reports/quality/ts-prune-report.json",
+    "stderr": "reports/quality/ts-prune-report.stderr.log"
+  }
+]

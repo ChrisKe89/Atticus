@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 function getMetricsServiceUrl(): string {
   const base =
@@ -9,18 +10,23 @@ function getMetricsServiceUrl(): string {
   return base.replace(/\/+$/, "");
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const ids = resolveTraceIdentifiers(request);
   const target = `${getMetricsServiceUrl()}/admin/metrics`;
   try {
     const upstream = await fetch(target, {
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        "X-Request-ID": ids.requestId,
+        "X-Trace-ID": ids.traceId,
+      },
       cache: "no-store",
     });
     const body = await upstream.json().catch(() => ({}));
-    return NextResponse.json(body, { status: upstream.status });
+    return jsonWithTrace(body, ids, { status: upstream.status });
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Unable to contact metrics service.";
-    return NextResponse.json({ error: "upstream_error", detail }, { status: 502 });
+    return jsonWithTrace({ error: "upstream_error", detail }, ids, { status: 502 });
   }
 }
 

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { logContentAction } from "@/lib/content-manager";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 function runIngestion(): Promise<{ logs: string[]; code: number }> {
   return new Promise((resolve, reject) => {
@@ -40,29 +40,34 @@ function extractDocumentCount(logs: string[]): number | null {
   return null;
 }
 
-export async function POST() {
+export async function POST(request: Request) {
+  const ids = resolveTraceIdentifiers(request);
   try {
     const { logs, code } = await runIngestion();
     const documents = extractDocumentCount(logs);
     await logContentAction("reingest", ".", `exit=${code}${documents != null ? ` docs=${documents}` : ""}`);
 
     if (code !== 0) {
-      return NextResponse.json(
+      return jsonWithTrace(
         { error: "Ingestion failed", logs, exitCode: code },
-        { status: 500 }
+        ids,
+        { status: 500 },
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      logs,
-      exitCode: code,
-      documents,
-    });
+    return jsonWithTrace(
+      {
+        ok: true,
+        logs,
+        exitCode: code,
+        documents,
+      },
+      ids,
+    );
   } catch (error) {
     const message = error instanceof Error ? error.message : "Ingestion process failed.";
     await logContentAction("reingest", ".", `error=${message}`);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return jsonWithTrace({ error: message }, ids, { status: 500 });
   }
 }
 
