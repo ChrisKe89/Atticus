@@ -1,6 +1,18 @@
 # SECURITY — Atticus
 
-This guide defines security boundaries for secrets, email/SES, admin tokens, logging, and reporting.
+This guide defines security boundaries for the trusted network perimeter, secrets, email/SES, admin tokens, logging, and reporting.
+
+---
+
+## Trusted Network & Upstream SSO
+
+Atticus only accepts traffic that has already passed through the enterprise SSO gateway.
+
+- **No in-app auth** — the application never renders login forms or validates passwords/tokens.
+- **Gateway enforced TLS** — require `X-Forwarded-Proto=https` for every non-loopback request.
+- **Identity headers required** — deployments must forward `X-Request-Id`, `X-User-Id`, and `X-User-Email` (or equivalent) so downstream services inherit the authenticated context.
+- **Network restriction** — expose ports `8000` (chat/API) and `9000` (admin) only within the trusted network ranges or through the gateway.
+- **Incident escalation** — if identity headers are missing or the gateway becomes unavailable, follow the support playbook to contact the perimeter team before re-exposing services.
 
 ---
 

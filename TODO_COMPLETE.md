@@ -209,3 +209,9 @@ PR: feat/split_service_design
 - [x] TODO "Store embedding model/version in `seed_manifest.json`." — completed 2025-11-07 (seed manifest promotes embedding metadata to the top-level payload, tests updated, docs refreshed).
 - [x] TODO "Migrations smoke test in CI." — completed 2025-11-07 (CI job now exports probe GUC expectations and runs backup/restore smoke to guard migrations).
 - [x] TODO "Backup/restore job and integrity validation script." — completed 2025-11-07 (added backup + restore CLI wrappers, integrity checks, and GitHub Actions coverage).
+
+## 2025-11-08
+
+- [x] TODO "Document enterprise SSO boundary (“Atticus runs behind SSO, no user auth inside”)." — completed 2025-11-08 (added `docs/SSO_BOUNDARY.md`, linked it from the docs index, and referenced the gateway contract across operations docs).
+- [x] TODO "Add `docs/SECURITY.md` for trusted network assumptions." — completed 2025-11-08 (document now leads with trusted network requirements, identity headers, and escalation guidance).
+- [x] TODO "Add support playbook in `docs/OPERATIONS.md`." — completed 2025-11-08 (support checklist covers capture → stabilise → diagnose → escalate → post-incident, aligned with the SSO boundary contract).

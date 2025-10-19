@@ -147,6 +147,30 @@ Uses sandbox/non‑delivery settings in local environments; production must foll
 
 ---
 
+## Support Playbook
+
+When frontline support is paged, follow this checklist before escalating:
+
+1. **Capture context**
+   - Collect `request_id`, `trace_id` (if available), timestamp, affected route, and user email from the gateway logs.
+   - Note whether the issue originated from the chat service (`:8000`) or admin service (`:9000`).
+2. **Stabilise the experience**
+   - If the chat UI is degraded, enable the maintenance banner via the admin console and post the current incident ID.
+   - For admin outages, pause ingestion/eval jobs with `make admin-maintenance` to avoid partial writes.
+3. **Initial diagnostics**
+   - Tail `logs/app.jsonl` filtered by the captured `request_id` to confirm the failure surface.
+   - Run `python scripts/debug_env.py` to verify environment variables and upstream connectivity.
+4. **Escalate with a complete packet**
+   - Open an incident ticket and attach: summarized timeline, gateway log excerpts, recent deploys, and any remediation already attempted.
+   - Contact the SSO/network team immediately if identity headers are missing or TLS termination looks misconfigured.
+5. **Post-incident actions**
+   - Document customer impact and remediation notes in `reports/support/incidents/<date>.md`.
+   - Update this playbook if new steps or contacts were required.
+
+See `docs/SSO_BOUNDARY.md` for the perimeter contract that governs when to involve the gateway team.
+
+---
+
 ## Evaluation Metrics Interpretation
 
 Core metrics:
