@@ -66,7 +66,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    set -a
    . .env
    set +a
-   make db.verify    # pgvector extension, dimension, IVFFlat probes
+   make db.verify    # pgvector extension, dimensions, IVFFlat lists/probes
    make db.seed
    ```
 
@@ -85,7 +85,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    make db.seed
    ```
 
-   `make db.verify` auto-loads `.env`, then shells out to `psql` (falling back to `docker compose exec postgres psql` when the CLI is unavailable) and will emit a notice if your pgvector build caps ANN indexes at 2K dimensions; upgrade the image to regain IVFFlat on 3K-dim embeddings.
+   `make db.verify` auto-loads `.env`, then shells out to `psql` (falling back to `docker compose exec postgres psql` when the CLI is unavailable), validates that `app.pgvector_lists`/`app.pgvector_probes` match configuration, and will emit a notice if your pgvector build caps ANN indexes at 2K dimensions; upgrade the image to regain IVFFlat on 3K-dim embeddings.
 
    Run the verification SQL directly when debugging:
 
@@ -93,15 +93,18 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    psql "$DATABASE_URL" \
      -v expected_pgvector_dimension=${PGVECTOR_DIMENSION:-3072} \
      -v expected_pgvector_lists=${PGVECTOR_LISTS:-100} \
+     -v expected_pgvector_probes=${PGVECTOR_PROBES:-4} \
      -f scripts/verify_pgvector.sql
    ```
 
    ```powershell
    if (-not $env:PGVECTOR_DIMENSION) { $env:PGVECTOR_DIMENSION = 3072 }
    if (-not $env:PGVECTOR_LISTS) { $env:PGVECTOR_LISTS = 100 }
+   if (-not $env:PGVECTOR_PROBES) { $env:PGVECTOR_PROBES = 4 }
    psql "$env:DATABASE_URL" `
    -v expected_pgvector_dimension=$env:PGVECTOR_DIMENSION `
    -v expected_pgvector_lists=$env:PGVECTOR_LISTS `
+   -v expected_pgvector_probes=$env:PGVECTOR_PROBES `
    -f scripts/verify_pgvector.sql
    ```
 
@@ -114,6 +117,8 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
   make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
   make eval       # run retrieval evaluation (hybrid/vector) and emit metrics under eval/runs/
   ```
+
+   The seed manifest now records the active embedding model, version, embedding dimensions, and pgvector tuning so restores can fail fast if configuration drifts.
 
    Each evaluation run now benchmarks both the BM25+vector fusion strategy and pure vector search.
    Results for every mode live alongside per-query CSV/HTML artifacts, with a combined
@@ -260,7 +265,7 @@ Always confirm local `make quality` mirrors CI before pushing.
 | --------------------------- | ---------------------------------------------------------------------- |
 | `make env`                  | Generate `.env` from defaults                                          |
 | `make ingest`               | Parse, chunk, embed, and update the pgvector index                     |
-| `make seed`                 | Generate deduplicated seed manifest (`seeds/seed_manifest.json`)       |
+| `make seed`                 | Generate deduplicated seed manifest with embedding metadata (`seeds/seed_manifest.json`) |
 | `make eval`                 | Run retrieval evaluation (hybrid + vector fusion) and write metrics plus `retrieval_modes.json` under `eval/runs/` |
 | `make api`                  | Start FastAPI backend                                                  |
 | `make web-dev`              | Run Next.js dev server (port 3000)                                     |
@@ -269,6 +274,9 @@ Always confirm local `make quality` mirrors CI before pushing.
 | `make db.down`              | Stop Postgres (Docker)                                                 |
 | `make db.migrate`           | Run Prisma migrations                                                  |
 | `make db.verify`            | Ensure pgvector extension, dimensions, and IVFFlat settings            |
+| `make db.backup`            | Create a pg_dump archive in `backups/` using `scripts/db_backup.py`    |
+| `make db.restore`          | Restore a pg_dump archive (set `BACKUP=/path/to.dump`) via `scripts/db_restore.py` |
+| `make db.integrity`        | Run pgvector schema + index checks against a restored database         |
 | `make db.seed`              | Seed baseline demo content                                             |
 | `make help`                 | List available make targets                                            |
 | `make web-build`            | Build the production Next.js bundle                                    |

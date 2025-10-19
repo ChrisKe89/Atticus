@@ -181,6 +181,21 @@ class PgVectorRepository:
                 ON atticus_chunks(document_id, sha256)
                 """
             )
+            metadata_index_definitions = {
+                "idx_atticus_chunks_metadata_category": "metadata ->> 'category'",
+                "idx_atticus_chunks_metadata_product": "metadata ->> 'product'",
+                "idx_atticus_chunks_metadata_product_family": "metadata ->> 'product_family'",
+                "idx_atticus_chunks_metadata_version": "metadata ->> 'version'",
+                "idx_atticus_chunks_metadata_org": "metadata ->> 'org_id'",
+                "idx_atticus_chunks_metadata_acl": "metadata ->> 'acl'",
+            }
+            for index_name, expression in metadata_index_definitions.items():
+                conn.execute(
+                    f"""
+                    CREATE INDEX IF NOT EXISTS {index_name}
+                    ON atticus_chunks (({expression}))
+                    """
+                )
             if ann_supported:
                 conn.execute(
                     f"""
