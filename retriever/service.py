@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import logging
 
-from core.config import AppSettings, load_settings
 from atticus.logging import configure_logging, log_event
+from core.config import AppSettings, load_settings
 
 from .answer_format import format_answer_markdown
 from .citation_utils import dedupe_citations

@@ -98,6 +98,7 @@ if _initial_settings.service_mode == "chat":
     app.include_router(eval.router)
     app.include_router(contact.router)
     app.include_router(ui.router)
+    app.include_router(admin.router)
 elif _initial_settings.service_mode == "admin":
     app.include_router(admin.router)
 else:  # pragma: no cover - defensive guard for unexpected configuration

@@ -11,8 +11,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse, Response
 
-from core.config import load_settings
 from atticus.logging import log_event
+from core.config import load_settings
 
 
 def _hash_identifier(value: str | None) -> str | None:

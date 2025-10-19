@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from core.config import AppSettings, load_settings  # noqa: E402
 from atticus.embeddings import EmbeddingClient  # noqa: E402
+from core.config import AppSettings, load_settings  # noqa: E402
 from eval.runner import _default_output_dir, load_gold_set  # noqa: E402
 from retriever.service import answer_question  # noqa: E402
 

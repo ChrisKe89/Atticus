@@ -6,9 +6,9 @@ import json
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
-from core.config import AppSettings
 from atticus.tokenization import decode, encode, split_tokens
 from atticus.utils import sha256_text
+from core.config import AppSettings
 
 from .models import Chunk, ParsedDocument, ParsedSection
 
