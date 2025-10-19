@@ -45,15 +45,15 @@ from ingest.chunker import chunk_document
 from ingest.parsers import discover_documents, parse_document
 
 
-def build_seed_manifest() -> list[dict[str, object]]:
+def build_seed_manifest() -> dict[str, object]:
     settings = load_settings()
     settings.ensure_directories()
-    manifest: list[dict[str, object]] = []
+    documents: list[dict[str, object]] = []
     for index, path in enumerate(discover_documents(settings.content_dir)):
         document = parse_document(path)
         document.sha256 = sha256_file(path)
         chunks = chunk_document(document, settings)
-        manifest.append(
+        documents.append(
             {
                 "document": str(path),
                 "sha256": document.sha256,
@@ -71,9 +71,20 @@ def build_seed_manifest() -> list[dict[str, object]]:
                 ],
             }
         )
-        if index >= 9:  # keep seed small
+        if index >= 9:
             break
-    return manifest
+    return {
+        "embedding_model": settings.embed_model,
+        "embedding_model_version": settings.embedding_model_version,
+        "embedding_dimensions": settings.embed_dimensions,
+        "pgvector_lists": settings.pgvector_lists,
+        "pgvector_probes": settings.pgvector_probes,
+        "document_count": len(documents),
+        "documents": documents,
+    }
+
+
+
 
 
 def main() -> None:
@@ -84,7 +95,8 @@ def main() -> None:
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-    print(f"Wrote seed manifest with {len(manifest)} documents to {output_path}")
+    document_count = int(manifest.get("document_count", 0))
+    print(f"Wrote seed manifest with {document_count} documents to {output_path}")
 
 
 if __name__ == "__main__":
