@@ -13,7 +13,7 @@ from typing import Any, Literal
 from zoneinfo import ZoneInfo
 
 import yaml
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SECRET_FIELD_NAMES = {
@@ -26,6 +26,13 @@ SECRET_FIELD_NAMES = {
     "smtp_allow_list_raw",
     "contact_email",
     "admin_api_token",
+}
+
+
+EMBEDDING_MODEL_SPECS: dict[str, dict[str, object]] = {
+    "text-embedding-3-large": {"dimensions": 3072, "probe_range": (2, 16)},
+    "text-embedding-3-small": {"dimensions": 1536, "probe_range": (1, 12)},
+    "text-embedding-ada-002": {"dimensions": 1536, "probe_range": (1, 12)},
 }
 
 
@@ -188,6 +195,29 @@ class AppSettings(BaseSettings):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
+
+
+    @model_validator(mode="after")
+    def _validate_embedding_configuration(cls, values: "AppSettings") -> "AppSettings":
+        if values.pgvector_probes < 1:
+            raise ValueError("pgvector_probes must be >= 1")
+        spec = EMBEDDING_MODEL_SPECS.get(values.embed_model)
+        if spec:
+            expected_dimension = int(spec.get("dimensions", values.embed_dimensions))
+            if values.embed_dimensions != expected_dimension:
+                raise ValueError(
+                    f"embed_dimensions={values.embed_dimensions} does not match the expected dimension {expected_dimension} for {values.embed_model}"
+                )
+            probe_range = spec.get("probe_range")
+            if isinstance(probe_range, tuple) and len(probe_range) == 2:
+                lower, upper = probe_range
+                if not (int(lower) <= int(values.pgvector_probes) <= int(upper)):
+                    raise ValueError(
+                        f"pgvector_probes={values.pgvector_probes} is outside the recommended range {probe_range} for {values.embed_model}"
+                    )
+        if values.pgvector_probes > values.pgvector_lists:
+            raise ValueError("pgvector_probes cannot exceed pgvector_lists")
+        return values
 
 
 @dataclass(slots=True)

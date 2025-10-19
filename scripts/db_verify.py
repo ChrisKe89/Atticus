@@ -48,9 +48,13 @@ def main() -> int:
 
     dimension = os.environ.get("PGVECTOR_DIMENSION", "3072")
     lists = os.environ.get("PGVECTOR_LISTS", "100")
+    probes = os.environ.get("PGVECTOR_PROBES", "4")
     sql_template = sql_path.read_text(encoding="utf-8")
-    sql_rendered = sql_template.replace(":expected_pgvector_dimension", dimension).replace(
-        ":expected_pgvector_lists", lists
+    sql_rendered = (
+        sql_template
+        .replace(":expected_pgvector_dimension", dimension)
+        .replace(":expected_pgvector_lists", lists)
+        .replace(":expected_pgvector_probes", probes)
     )
 
     with NamedTemporaryFile("w", encoding="utf-8", suffix=".sql", delete=False) as tmp_file:
@@ -115,6 +119,8 @@ def main() -> int:
         f"expected_pgvector_dimension={dimension}",
         "-v",
         f"expected_pgvector_lists={lists}",
+        "-v",
+        f"expected_pgvector_probes={probes}",
         "-f",
         sql_arg,
     ]

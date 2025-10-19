@@ -233,3 +233,25 @@ minimums exit non-zero.
 | SMTP_USER                 | required | required |       |
 | TIMEZONE                  | required | required |       |
 | TOP_K                     | required | required |       |
+
+## Backup & Restore
+
+1. Create an encrypted-friendly pg_dump archive (custom format) locally:
+
+    ```bash
+    make db.backup
+    ```
+
+2. Restore the archive into an empty database (set `BACKUP` to the dump path). Use `--force` only in non-production automation.
+
+    ```bash
+    BACKUP=backups/atticus-latest.dump make db.restore
+    ```
+
+3. After restoring, validate schema, IVFFlat GUCs, and required indexes:
+
+    ```bash
+    make db.integrity
+    ```
+
+    This wraps `scripts/check_backup_integrity.py`, which re-runs `make db.verify`, ensures metadata indexes exist, and cross-checks chunk counts.

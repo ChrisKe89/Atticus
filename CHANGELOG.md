@@ -4,6 +4,13 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.4] - 2025-11-07
+### Added
+- Enforced embedding-specific dimensions and probe ranges in configuration; `make db.verify` now validates `app.pgvector_probes` alongside IVFFlat lists.
+- Created Prisma/runtime JSONB metadata indexes with verification notices for missing expressions.
+- Promoted embedding model/version/dimensions into `seeds/seed_manifest.json` with refreshed tests and docs.
+- Introduced backup/restore CLI wrappers, integrity checks, and a GitHub Actions smoke job covering pg_dump restores.
+
 ## [0.10.3] - 2025-11-06
 
 ### Added

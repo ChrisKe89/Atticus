@@ -51,9 +51,17 @@ def test_build_seed_manifest_includes_chunk_metadata(tmp_path, monkeypatch):
     monkeypatch.setenv("EVALUATION_RUNS_DIR", str(tmp_path / "eval_runs"))
 
     manifest = build_seed_manifest()
-    assert len(manifest) == 1
+    documents = manifest.get("documents")
+    assert isinstance(documents, list)
+    assert len(documents) == 1
 
-    entry = manifest[0]
+    entry = documents[0]
+    settings = load_settings()
+    assert manifest["embedding_model"] == settings.embed_model
+    assert manifest["embedding_model_version"] == settings.embedding_model_version
+    assert manifest["embedding_dimensions"] == settings.embed_dimensions
+    assert manifest["pgvector_probes"] == settings.pgvector_probes
+
     assert entry["document"].endswith("sample.txt")
     assert entry["sha256"] == sha256_file(document_path)
 
@@ -68,7 +76,6 @@ def test_build_seed_manifest_includes_chunk_metadata(tmp_path, monkeypatch):
     assert len(hashes) == len(chunks)
 
     # Cross-check against the chunker directly for metadata consistency.
-    settings = load_settings()
     parsed = parse_document(Path(entry["document"]))
     parsed.sha256 = entry["sha256"]
     actual_chunks = chunk_document(parsed, settings)
