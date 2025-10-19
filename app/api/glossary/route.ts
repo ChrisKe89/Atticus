@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import {
@@ -13,6 +13,7 @@ import {
   snapshotEntry,
 } from "@/app/api/glossary/utils";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 const relationSelect = {
   author: { select: { id: true, email: true, name: true } },
@@ -20,7 +21,8 @@ const relationSelect = {
   reviewer: { select: { id: true, email: true, name: true } },
 } as const;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const ids = resolveTraceIdentifiers(request);
   try {
     const { user } = getRequestContext();
     const entries = (await withRlsContext(user, (tx) =>
@@ -33,13 +35,14 @@ export async function GET() {
         },
       } as any)
     )) as unknown[];
-    return NextResponse.json(entries.map(serializeEntry));
+    return jsonWithTrace(entries.map(serializeEntry), ids);
   } catch (error) {
-    return handleGlossaryError(error);
+    return handleGlossaryError(error, ids);
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const ids = resolveTraceIdentifiers(request);
   try {
     const { user } = getRequestContext();
     const payload = await request.json();
@@ -50,9 +53,10 @@ export async function POST(request: Request) {
     const units = parseUnits(payload.units);
     const families = parseProductFamilies(payload.productFamilies);
     if (!term || !definition) {
-      return NextResponse.json(
+      return jsonWithTrace(
         { error: "invalid_request", detail: "Both term and definition are required." },
-        { status: 400 }
+        ids,
+        { status: 400 },
       );
     }
 
@@ -130,9 +134,9 @@ export async function POST(request: Request) {
       return { entry, created: !existing };
     });
 
-    return NextResponse.json(serializeEntry(result.entry), { status: result.created ? 201 : 200 });
+    return jsonWithTrace(serializeEntry(result.entry), ids, { status: result.created ? 201 : 200 });
   } catch (error) {
-    return handleGlossaryError(error);
+    return handleGlossaryError(error, ids);
   }
 }
 

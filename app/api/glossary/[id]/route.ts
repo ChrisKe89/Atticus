@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import {
@@ -13,6 +12,7 @@ import {
   snapshotEntry,
 } from "@/app/api/glossary/utils";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 const relationSelect = {
   author: { select: { id: true, email: true, name: true } },
@@ -21,14 +21,16 @@ const relationSelect = {
 } as const;
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   try {
     const { user } = getRequestContext();
     const payload = await request.json();
     const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
     if (!definition) {
-      return NextResponse.json(
+      return jsonWithTrace(
         { error: "invalid_request", detail: "Definition is required." },
-        { status: 400 }
+        ids,
+        { status: 400 },
       );
     }
     const term = typeof payload.term === "string" && payload.term.trim().length > 0 ? payload.term.trim() : undefined;
@@ -102,12 +104,12 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     });
 
     if (!entry) {
-      return NextResponse.json({ error: "not_found" }, { status: 404 });
+      return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
     }
 
-    return NextResponse.json(serializeEntry(entry));
+    return jsonWithTrace(serializeEntry(entry), ids);
   } catch (error) {
-    return handleGlossaryError(error);
+    return handleGlossaryError(error, ids);
   }
 }
 
@@ -115,7 +117,8 @@ export async function PATCH(request: Request, ctx: { params: { id: string } }) {
   return PUT(request, ctx);
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   try {
     const { user } = getRequestContext();
     const result = await withRlsContext(user, async (tx) => {
@@ -139,11 +142,11 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       return true;
     });
     if (result === null) {
-      return NextResponse.json({ error: "not_found" }, { status: 404 });
+      return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
     }
-    return NextResponse.json({ status: "ok" });
+    return jsonWithTrace({ status: "ok" }, ids);
   } catch (error) {
-    return handleGlossaryError(error);
+    return handleGlossaryError(error, ids);
   }
 }
 

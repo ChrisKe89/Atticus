@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 type FollowUpBody = {
   prompt?: string;
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   const { user } = getRequestContext();
 
   const { id } = params;
@@ -19,9 +20,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
   if (!prompt) {
-    return NextResponse.json(
+    return jsonWithTrace(
       { error: "invalid_request", detail: "Follow-up prompt is required." },
-      { status: 400 }
+      ids,
+      { status: 400 },
     );
   }
 
@@ -77,13 +79,16 @@ export async function POST(request: Request, { params }: { params: { id: string 
   });
 
   if (result === null) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
   }
 
-  return NextResponse.json({
-    id: result.id,
-    followUpPrompt: result.followUpPrompt,
-    auditLog: result.auditLog ?? [],
-  });
+  return jsonWithTrace(
+    {
+      id: result.id,
+      followUpPrompt: result.followUpPrompt,
+      auditLog: result.auditLog ?? [],
+    },
+    ids,
+  );
 }
 

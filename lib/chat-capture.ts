@@ -134,7 +134,14 @@ export async function captureLowConfidenceChat({ question, response, user }: Cap
       });
     });
   } catch (error) {
-    console.error("Failed to capture low-confidence chat", error);
+    const payload = {
+      level: "error",
+      event: "low_confidence_capture_failed",
+      request_id: response.request_id,
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error && error.stack ? error.stack : undefined,
+    };
+    console.error(JSON.stringify(payload));
   }
 }
 

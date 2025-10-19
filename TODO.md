@@ -141,10 +141,10 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## 🧭 Observability & DX
 
-* [ ] Add `request_id` and `trace_id` headers across services.
-* [ ] Use structured JSON logging.
-* [ ] Dead-code audits via `knip`, `ts-prune`; log results to `reports/quality/`.
-* [ ] Update troubleshooting docs with split-port setup instructions.
+* [x] Add `request_id` and `trace_id` headers across services.
+* [x] Use structured JSON logging.
+* [x] Dead-code audits via `knip`, `ts-prune`; log results to `reports/quality/`.
+* [x] Update troubleshooting docs with split-port setup instructions.
 * [x] Add support playbook in `docs/OPERATIONS.md`.
 
 ---

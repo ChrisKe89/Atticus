@@ -26,8 +26,9 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
+        trace_id = request.headers.get("X-Trace-ID") or request_id
         request.state.request_id = request_id
-        request.state.trace_id = request_id
+        request.state.trace_id = trace_id
 
         start = time.perf_counter()
         logger = getattr(request.app.state, "logger", None)
@@ -61,6 +62,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                         logger,
                         "rate_limit_blocked",
                         request_id=request_id,
+                        trace_id=trace_id,
                         identifier_hash=hashed,
                         retry_after=decision.retry_after,
                         path=request.url.path,
@@ -69,10 +71,12 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                     "error": "rate_limited",
                     "detail": "Rate limit exceeded. Please retry later.",
                     "request_id": request_id,
+                    "trace_id": trace_id,
                 }
                 headers = {
                     "Retry-After": str(decision.retry_after or 0),
                     "X-Request-ID": request_id,
+                    "X-Trace-ID": trace_id,
                     "X-RateLimit-Limit": str(limiter.limit),
                     "X-RateLimit-Remaining": "0",
                 }
@@ -88,6 +92,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                     logger,
                     "request_error",
                     request_id=request_id,
+                    trace_id=trace_id,
                     method=request.method,
                     path=request.url.path,
                     error_type=exc.__class__.__name__,
@@ -96,6 +101,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
 
         elapsed_ms = (time.perf_counter() - start) * 1000
         response.headers["X-Request-ID"] = request_id
+        response.headers["X-Trace-ID"] = trace_id
         if limiter is not None:
             limit_value = getattr(request.state, "rate_limit_limit", limiter.limit)
             response.headers["X-RateLimit-Limit"] = str(limit_value)
@@ -108,6 +114,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 logger,
                 "request_complete",
                 request_id=request_id,
+                trace_id=trace_id,
                 method=request.method,
                 path=request.url.path,
                 status=response.status_code,
@@ -126,7 +133,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                 float(request.state.confidence),
                 elapsed_ms,
                 bool(getattr(request.state, "escalate", False)),
-                trace_id=request_id,
+                trace_id=trace_id,
                 prompt_tokens=int(prompt_tokens) if prompt_tokens is not None else 0,
                 answer_tokens=int(answer_tokens) if answer_tokens is not None else 0,
                 logger=logger,

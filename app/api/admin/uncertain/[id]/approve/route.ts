@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 type ApproveBody = {
   notes?: string;
@@ -9,6 +9,7 @@ type ApproveBody = {
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   const { user } = getRequestContext();
 
   const { id } = params;
@@ -95,21 +96,29 @@ export async function POST(request: Request, { params }: { params: { id: string 
     });
 
     if (result === null) {
-      return NextResponse.json({ error: "not_found" }, { status: 404 });
+      return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
     }
     if (result === "not_pending") {
-      return NextResponse.json({ error: "invalid_status" }, { status: 409 });
+      return jsonWithTrace({ error: "invalid_status" }, ids, { status: 409 });
     }
 
-    return NextResponse.json({
-      id: result.id,
-      status: result.status,
-      reviewedAt: result.reviewedAt?.toISOString() ?? null,
-      reviewer: result.reviewer,
-      auditLog: result.auditLog ?? [],
-    });
+    return jsonWithTrace(
+      {
+        id: result.id,
+        status: result.status,
+        reviewedAt: result.reviewedAt?.toISOString() ?? null,
+        reviewer: result.reviewer,
+        auditLog: result.auditLog ?? [],
+      },
+      ids,
+    );
   } catch (error) {
-    return NextResponse.json({ error: "server_error" }, { status: 500 });
+    const detail = error instanceof Error ? error.message : undefined;
+    return jsonWithTrace(
+      { error: "server_error", detail: detail ?? "Failed to approve chat." },
+      ids,
+      { status: 500 },
+    );
   }
 }
 

@@ -1,6 +1,6 @@
 # Makefile — Atticus
-.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \        db.up db.down db.migrate db.seed db.verify db.backup db.restore db.integrity seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up
-	db.up db.down db.migrate db.seed db.verify seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up
+.PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
+        db.up db.down db.migrate db.seed db.verify db.backup db.restore db.integrity seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up deadcode-audit
 
 PYTHON ?= python
 PNPM ?= pnpm
@@ -142,6 +142,7 @@ typecheck:
 	mypy atticus api ingest retriever eval
 
 quality: lint typecheck test version-check web-lint web-typecheck web-test web-build web-audit web-e2e admin-lint admin-typecheck admin-build
+	$(PYTHON) scripts/dead_code_audit.py
 
 # Full verification pass for CI / release
 verify:
@@ -187,3 +188,5 @@ web-audit:
 # Ensure VERSION and package.json are aligned
 version-check:
 	@$(PYTHON) scripts/check_version_parity.py
+deadcode-audit:
+	$(PYTHON) scripts/dead_code_audit.py

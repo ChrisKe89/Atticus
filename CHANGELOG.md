@@ -4,6 +4,26 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+## [0.10.7] - 2025-11-12
+
+### Added
+- Trace header utilities for Next.js routes (`lib/trace-headers.ts`) so admin and glossary APIs echo gateway-supplied `X-Request-ID`/`X-Trace-ID` values back to clients and forward them to FastAPI services.
+- JSON-formatted `knip`/`ts-prune` audit outputs under `reports/quality/`, including normalized summaries for easier CI ingestion.
+
+### Changed
+- Structured logging now emits a `timestamp` field (replacing `time`) and respects `LOG_FORMAT`, with admin diagnostics updated to read either key.
+- Split-port troubleshooting guidance now documents the required service modes, proxy wiring, and verification commands for the 3000/8000/9000 deployment model.
+
+## [0.10.6] - 2025-10-19
+
+### Added
+- Automated dead-code audit script that runs `pnpm exec knip --reporter json` and `pnpm exec ts-prune --json`, capturing outputs under `reports/quality/` via the Makefile quality gate.
+
+### Changed
+- Propagated `X-Request-ID`/`X-Trace-ID` headers across FastAPI middleware, Next.js chat routes, and the admin service, ensuring downstream responses and logs include correlated identifiers.
+- Standardised structured JSON logging for Node-side capture flows and admin/content file operations, including console error telemetry for low-confidence chat persistence.
+- Expanded troubleshooting guidance for split-port deployments covering chat (`:3000`), admin (`:9000`), and API (`:8000`) coordination.
+
 ## [0.10.5] - 2025-11-08
 
 ### Added

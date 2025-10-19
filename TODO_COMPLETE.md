@@ -30,6 +30,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-11-12
+
+- [x] TODO "Observability & DX — split-port + trace IDs" — added shared Next.js trace header helpers so glossary/admin routes forward and echo `X-Request-ID`/`X-Trace-ID`, normalized logging to emit `timestamp` fields under the JSON formatter, captured `knip`/`ts-prune` outputs as structured JSON in `reports/quality/`, and expanded troubleshooting docs with the split-port deployment checklist — completed 2025-11-12 (this change set).
+
+---
+
 ## 2025-11-04
 
 - [x] TODO "Central Config Loader" — ensured all Python services rely on `core.config.load_settings` by removing direct environment lookups in generator, embeddings, and logging utilities, wired structured logging to the shared settings, refreshed tests, and updated backlog — completed 2025-11-04 (this change set).
@@ -51,6 +57,12 @@ The following items are done or no longer relevant and are recorded here for tra
 ## 2025-10-31
 
 - [x] Admin Page Extensions — delivered ingestion panel, glossary viewer, and eval seed manager in the standalone admin console with secured FastAPI endpoints, tests, docs, and configuration updates — completed 2025-10-31 (this change set).
+
+---
+
+## 2025-10-19
+
+- [x] TODO "Observability & DX — request/trace IDs, structured logging, dead-code audits" — propagated `X-Request-ID`/`X-Trace-ID` headers through FastAPI, chat UI, and admin service, aligned Node/Python logging to emit JSON, automated `knip`/`ts-prune` reports into `reports/quality/`, refreshed troubleshooting guidance for split-port deployments, and wired the Makefile quality gate to capture audit outputs — completed 2025-10-19 (this change set).
 
 ---
 

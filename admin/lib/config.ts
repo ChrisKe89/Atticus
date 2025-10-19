@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 const DEFAULT_BASE_URL = "http://localhost:3000";
 const DEFAULT_REVIEWER_ID = "admin-service";
 const DEFAULT_REVIEWER_NAME = "Admin Service";
@@ -23,5 +25,9 @@ export function buildUpstreamHeaders(additional?: HeadersInit): Headers {
   headers.set("x-atticus-user-name", reviewer.name);
   headers.set("x-atticus-user-email", reviewer.email);
   headers.set("x-atticus-org-id", "org-atticus");
+  const requestId = headers.get("x-request-id") ?? randomUUID();
+  const traceId = headers.get("x-trace-id") ?? requestId;
+  headers.set("x-request-id", requestId);
+  headers.set("x-trace-id", traceId);
   return headers;
 }

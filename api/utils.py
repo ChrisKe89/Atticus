@@ -123,7 +123,7 @@ def load_session_logs(path: Path, limit: int = 20) -> list[dict[str, Any]]:  # n
                 "path": payload.get("path"),
                 "status": payload.get("status"),
                 "latency_ms": payload.get("latency_ms"),
-                "time": record.get("time"),
+                "timestamp": record.get("timestamp") or record.get("time"),
             }
             if request_id in ask_metadata:
                 entry.update(ask_metadata[request_id])
