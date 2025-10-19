@@ -6,9 +6,7 @@ import pytest
 from core.config import AppSettings
 
 
-def _reload_logging_utils(
-    monkeypatch: pytest.MonkeyPatch, *, log_level: str, log_format: str
-):
+def _reload_logging_utils(monkeypatch: pytest.MonkeyPatch, *, log_level: str, log_format: str):
     sys.modules.pop("atticus.logging_utils", None)
     module = importlib.import_module("atticus.logging_utils")
     settings = AppSettings(log_level=log_level, log_format=log_format)
@@ -17,9 +15,7 @@ def _reload_logging_utils(
 
 
 def test_get_logger_json_format(monkeypatch: pytest.MonkeyPatch) -> None:
-    logging_utils = _reload_logging_utils(
-        monkeypatch, log_level="INFO", log_format="json"
-    )
+    logging_utils = _reload_logging_utils(monkeypatch, log_level="INFO", log_format="json")
 
     logger = logging_utils.get_logger("atticus-tests")
     assert hasattr(logger, "bind")
@@ -28,9 +24,7 @@ def test_get_logger_json_format(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_get_logger_console_format(monkeypatch: pytest.MonkeyPatch) -> None:
-    logging_utils = _reload_logging_utils(
-        monkeypatch, log_level="DEBUG", log_format="console"
-    )
+    logging_utils = _reload_logging_utils(monkeypatch, log_level="DEBUG", log_format="console")
 
     logger = logging_utils.get_logger("atticus-console")
     assert hasattr(logger, "bind")

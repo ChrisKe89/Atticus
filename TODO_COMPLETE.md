@@ -24,6 +24,12 @@ The following items are done or no longer relevant and are recorded here for tra
 
 ---
 
+## 2025-11-08
+
+- [x] TODO "Performance & Cost — token caps, caching, probes" — implemented prompt (1.5k) and answer (1k) token ceilings with safe truncation, cached the last ten normalized queries with dynamic pgvector probe tuning, batched ingestion embeddings, disabled chat input during streaming, emitted CI evaluation dashboards with an index HTML, and logged per-100-query token/cost windows — completed 2025-11-08 (this change set).
+
+---
+
 ## 2025-11-04
 
 - [x] TODO "Central Config Loader" — ensured all Python services rely on `core.config.load_settings` by removing direct environment lookups in generator, embeddings, and logging utilities, wired structured logging to the shared settings, refreshed tests, and updated backlog — completed 2025-11-04 (this change set).

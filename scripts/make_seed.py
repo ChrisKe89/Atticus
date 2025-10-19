@@ -39,8 +39,8 @@ except ModuleNotFoundError:  # pragma: no cover - lightweight fallback for seed 
     sys.modules.setdefault("camelot", types.SimpleNamespace(read_pdf=lambda *args, **kwargs: []))
     sys.modules.setdefault("tabula", types.SimpleNamespace(read_pdf=lambda *args, **kwargs: []))
 
-from core.config import load_settings
 from atticus.utils import sha256_file
+from core.config import load_settings
 from ingest.chunker import chunk_document
 from ingest.parsers import discover_documents, parse_document
 
@@ -82,9 +82,6 @@ def build_seed_manifest() -> dict[str, object]:
         "document_count": len(documents),
         "documents": documents,
     }
-
-
-
 
 
 def main() -> None:

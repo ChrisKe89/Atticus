@@ -25,6 +25,15 @@ def count_tokens(text: str) -> int:
     return len(encode(text))
 
 
+def truncate_text(text: str, limit: int) -> str:
+    if limit <= 0:
+        return ""
+    tokens = encode(text)
+    if len(tokens) <= limit:
+        return text
+    return decode(tokens[:limit]).rstrip()
+
+
 def split_tokens(tokens: Sequence[int], window: int, overlap: int) -> Iterable[tuple[int, int]]:
     if window <= 0:
         raise ValueError("window must be positive")

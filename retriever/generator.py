@@ -11,6 +11,7 @@ from typing import Any, cast
 
 from rapidfuzz import fuzz
 
+from atticus.tokenization import count_tokens, decode, encode, truncate_text
 from core.config import AppSettings
 
 from .prompts import get_prompt_template
@@ -32,6 +33,8 @@ class GeneratorClient:
         self.settings = settings
         self.logger = logger or logging.getLogger("atticus")
         template_version = getattr(settings, "generation_prompt_version", "atticus-v1")
+        self.prompt_token_limit = int(getattr(settings, "prompt_token_limit", 1500))
+        self.answer_token_limit = int(getattr(settings, "answer_token_limit", 1000))
         try:
             self.prompt_template = get_prompt_template(template_version)
         except KeyError as exc:
@@ -82,6 +85,28 @@ class GeneratorClient:
                 },
             )
 
+    def _trim_context_window(self, contexts: list[str], available_tokens: int) -> list[str]:
+        if available_tokens <= 0:
+            return []
+        trimmed: list[str] = []
+        remaining = available_tokens
+        for block in contexts:
+            tokens = encode(block)
+            if not tokens:
+                trimmed.append(block)
+                continue
+            if len(tokens) <= remaining:
+                trimmed.append(block)
+                remaining -= len(tokens)
+            else:
+                if remaining > 0:
+                    trimmed.append(decode(tokens[:remaining]))
+                break
+        return trimmed
+
+    def _finalize_answer(self, text: str) -> str:
+        return truncate_text(text, self.answer_token_limit)
+
     def generate(  # noqa: PLR0912, PLR0915
         self,
         prompt: str,
@@ -89,9 +114,27 @@ class GeneratorClient:
         citations: Iterable[str] | None = None,
         temperature: float = 0.2,
     ) -> str:
-        context_text = "\n\n".join(contexts)
+        context_list = list(contexts)
+        prompt_tokens = count_tokens(prompt)
+        available_tokens = max(self.prompt_token_limit - prompt_tokens, 0)
+        trimmed_contexts = self._trim_context_window(context_list, available_tokens)
+        if len(trimmed_contexts) < len(context_list):
+            self.logger.info(
+                "context_trimmed_for_prompt_limit",
+                extra={
+                    "extra_payload": {
+                        "prompt_tokens": prompt_tokens,
+                        "limit": self.prompt_token_limit,
+                        "retained_contexts": len(trimmed_contexts),
+                        "dropped_contexts": len(context_list) - len(trimmed_contexts),
+                    }
+                },
+            )
+        context_text = "\n\n".join(trimmed_contexts)
         if not context_text:
-            return "I was unable to find supporting context for this question."
+            return self._finalize_answer(
+                "I was unable to find supporting context for this question."
+            )
 
         if self._client is not None:  # pragma: no cover - requires network
             try:
@@ -104,12 +147,13 @@ class GeneratorClient:
                         {"role": "user", "content": user_prompt},
                     ],
                     temperature=temperature,
+                    max_output_tokens=self.answer_token_limit,
                 )
                 if getattr(response, "output", None):
                     first_output = response.output[0]
                     content = getattr(first_output, "content", None)
                     if content and getattr(content[0], "text", None):
-                        return str(content[0].text).strip()
+                        return self._finalize_answer(str(content[0].text).strip())
             except Exception as exc:
                 self.logger.error(
                     "OpenAI generation failed; using offline summarizer",
@@ -121,7 +165,7 @@ class GeneratorClient:
         # Q/A pairs like: "Q: ..." followed later by "A: ..."
         try:
             QA_MATCH_THRESHOLD = 0.6
-            for block in contexts:
+            for block in trimmed_contexts:
                 lines = block.splitlines()
                 content_lines = lines[1:] if lines and ":" in lines[0] else lines
                 for i, line in enumerate(content_lines):
@@ -132,7 +176,7 @@ class GeneratorClient:
                             for j in range(i + 1, min(i + 5, len(content_lines))):
                                 nxt = content_lines[j].strip()
                                 if nxt.lower().startswith("a:"):
-                                    return nxt.split(":", 1)[1].strip()
+                                    return self._finalize_answer(nxt.split(":", 1)[1].strip())
         except Exception:
             pass
 
@@ -140,7 +184,7 @@ class GeneratorClient:
         lowered_prompt = prompt.lower()
         if any(key in lowered_prompt for key in ["resolution", "dpi", "print resolution"]):
             phrases: list[str] = []
-            for block in contexts:
+            for block in trimmed_contexts:
                 # Search each line for DPI patterns (e.g., 1200 x 1200 dpi, 600 dpi)
                 for line in block.splitlines():
                     m_iter = re.finditer(
@@ -164,10 +208,10 @@ class GeneratorClient:
                     lines.append("Citations:")
                     for idx, citation in enumerate(cite_list[:10], start=1):
                         lines.append(f"[{idx}] {citation}")
-                return "\n".join(lines)
+                return self._finalize_answer("\n".join(lines))
 
         summary_lines = ["I found the following grounded details:"]
-        for idx, snippet in enumerate(contexts, start=1):
+        for idx, snippet in enumerate(trimmed_contexts, start=1):
             headline = snippet.splitlines()[0][:200]
             summary_lines.append(f"- [{idx}] {headline}")
         citation_list = list(citations or [])
@@ -176,7 +220,7 @@ class GeneratorClient:
             summary_lines.append("Citations:")
             for idx, citation in enumerate(citation_list, start=1):
                 summary_lines.append(f"[{idx}] {citation}")
-        return "\n".join(summary_lines)
+        return self._finalize_answer("\n".join(summary_lines))
 
     def heuristic_confidence(self, answer: str) -> float:
         lowered = answer.lower()

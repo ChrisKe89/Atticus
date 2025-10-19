@@ -301,8 +301,8 @@ Always confirm local `make quality` mirrors CI before pushing.
 
 - Every request receives a `request_id` propagated through logs, metrics, and escalation emails.
 - Rate limiting enforces `RATE_LIMIT_REQUESTS` per `RATE_LIMIT_WINDOW_SECONDS`; extra calls return a structured `429 rate_limited` payload.
-- Metrics (queries, escalations, latency) persist via `atticus.metrics.MetricsRecorder` and surface on `/admin/metrics` and CSV exports under `reports/`.
-- Evaluation artifacts live under `eval/runs/<timestamp>/` and `reports/` for CI comparisons.
+- Metrics (queries, escalations, latency, token usage, and rolling cost estimates) persist via `atticus.metrics.MetricsRecorder` and surface on `/admin/metrics` plus CSV exports under `reports/`.
+- Evaluation artifacts live under `eval/runs/<timestamp>/` and `reports/` for CI comparisons, now including an `index.html` dashboard that links to each per-mode `metrics.html` report in CI artifacts.
 
 ---
 

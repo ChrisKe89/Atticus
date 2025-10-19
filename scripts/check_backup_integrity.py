@@ -10,7 +10,6 @@ from typing import Iterable
 import psycopg
 from psycopg import Cursor
 
-
 REQUIRED_INDEXES: tuple[str, ...] = (
     "idx_atticus_chunks_document",
     "idx_atticus_chunks_source_path",

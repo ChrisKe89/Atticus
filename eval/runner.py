@@ -315,8 +315,8 @@ def run_evaluation(
     modes: Sequence[str] | None = None,
 ) -> EvaluationResult:
     # Lazy imports to keep unit tests lightweight
-    from core.config import load_settings  # noqa: PLC0415
     from atticus.logging import configure_logging, log_event  # noqa: PLC0415
+    from core.config import load_settings  # noqa: PLC0415
     from retriever.vector_store import VectorStore  # noqa: PLC0415
 
     settings = settings or load_settings()
