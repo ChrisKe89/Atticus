@@ -11,6 +11,11 @@
   \set expected_pgvector_lists 100
 \endif
 
+\if :{?expected_pgvector_probes}
+\else
+  \set expected_pgvector_probes 4
+\endif
+
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector') THEN
@@ -102,6 +107,45 @@ BEGIN
   IF trim(configured) <> trim(expected) THEN
     RAISE EXCEPTION 'app.pgvector_lists is %, expected %', configured, expected;
   END IF;
+END$$;
+
+-- Confirm pgvector probe GUC is aligned with configuration.
+DO $$
+DECLARE
+  configured TEXT;
+  expected TEXT := :expected_pgvector_probes::TEXT;
+BEGIN
+  configured := current_setting('app.pgvector_probes', true);
+  IF configured IS NULL THEN
+    RAISE EXCEPTION 'app.pgvector_probes GUC not configured';
+  END IF;
+  IF trim(configured) <> trim(expected) THEN
+    RAISE EXCEPTION 'app.pgvector_probes is %, expected %', configured, expected;
+  END IF;
+END$$;
+
+-- Confirm JSONB metadata indexes exist for common filters.
+DO $$
+DECLARE
+  missing_indexes TEXT[] := ARRAY[]::TEXT[];
+BEGIN
+  FOREACH indexname IN ARRAY ARRAY[
+    'idx_atticus_chunks_metadata_category',
+    'idx_atticus_chunks_metadata_product',
+    'idx_atticus_chunks_metadata_product_family',
+    'idx_atticus_chunks_metadata_version',
+    'idx_atticus_chunks_metadata_org',
+    'idx_atticus_chunks_metadata_acl'
+  ] LOOP
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = indexname) THEN
+      missing_indexes := array_append(missing_indexes, indexname);
+    END IF;
+  END LOOP;
+  IF array_length(missing_indexes, 1) IS NOT NULL THEN
+    RAISE NOTICE 'Missing metadata indexes: %', missing_indexes;
+  END IF;
+END$$;
+
 END$$;
 
 -- Confirm metadata defaults are applied so ingestion can omit the column explicitly.

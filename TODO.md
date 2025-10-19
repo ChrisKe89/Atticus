@@ -117,11 +117,11 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## 💾 Data & Retrieval
 
-* [ ] Validate pgvector dimensions and probes match embedding model.
-* [ ] Add indexes on metadata fields (`category`, `product`, etc.).
-* [ ] Store embedding model/version in `seed_manifest.json`.
-* [ ] Migrations smoke test in CI.
-* [ ] Backup/restore job and integrity validation script.
+* [x] Validate pgvector dimensions and probes match embedding model.
+* [x] Add indexes on metadata fields (`category`, `product`, etc.).
+* [x] Store embedding model/version in `seed_manifest.json`.
+* [x] Migrations smoke test in CI.
+* [x] Backup/restore job and integrity validation script.
 
 ---
 

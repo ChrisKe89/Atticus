@@ -195,3 +195,11 @@ PR: feat/enterprise_boundary_enforcement
 ## 2025-10-18 — split_service_design
 ✅ Completed: Split the chat and admin UIs onto dedicated ports, added admin Make targets, and refreshed docs to emphasize independent builds.
 PR: feat/split_service_design
+
+## 2025-11-07
+
+- [x] TODO "Validate pgvector dimensions and probes match embedding model." — completed 2025-11-07 (AppSettings now enforces embedding-specific dimensions/probe ranges, db.verify checks `app.pgvector_probes`, and CI exports the probe setting).
+- [x] TODO "Add indexes on metadata fields (`category`, `product`, etc.)." — completed 2025-11-07 (Prisma migration + runtime bootstrap create JSONB indexes and verification scripts surface any missing index).
+- [x] TODO "Store embedding model/version in `seed_manifest.json`." — completed 2025-11-07 (seed manifest promotes embedding metadata to the top-level payload, tests updated, docs refreshed).
+- [x] TODO "Migrations smoke test in CI." — completed 2025-11-07 (CI job now exports probe GUC expectations and runs backup/restore smoke to guard migrations).
+- [x] TODO "Backup/restore job and integrity validation script." — completed 2025-11-07 (added backup + restore CLI wrappers, integrity checks, and GitHub Actions coverage).
