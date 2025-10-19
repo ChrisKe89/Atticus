@@ -5,22 +5,26 @@
 Atticus is a Retrieval-Augmented Generation (RAG) assistant built on **Next.js**, **FastAPI**, **Postgres + pgvector**, and **Prisma**.
 It ingests content, indexes it with pgvector, and serves grounded answers with citations. When confidence is low the system sends a cautious partial answer and escalates via email.
 
-> **Release 0.7.10** â€“ Locked the Next.js workspace in as the only UI, aligned API metadata with the central `VERSION` file, and refreshed operations docs for the split frontend/backend stack.
-> Enterprise authentication and SSO are managed externally. This app assumes user access is handled upstream.
-> Requests that do not traverse the enterprise gateway are now blocked by default via `TrustedGatewayMiddleware`.
-
 ## Model Disambiguation Flows
 
 - **Direct hit** â€” when a question names a specific model (for example, "Apeos C4570"), retrieval is scoped to that family and a single answer with family-tagged sources is returned.
 - **Unclear** â€” if no confident match is found, `/api/ask` returns a `clarification` payload with the available families. The chat UI renders the clarification card and resubmits the prior question with an explicit `models` array when the user picks an option.
-- **Multi-model** â€” if several models are detected or supplied, Atticus now decomposes the question into per-model prompts before retrieval. Each targeted prompt runs its own RAG pass via the multi-model query splitter (`retriever/query_splitter.py`), and the API responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
-- **Testing** â€” `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
+- **Multi-model**
+  - if several models are detected or supplied, Atticus now decomposes the question into per-model prompts before retrieval. Each targeted prompt runs its own RAG pass via the multi-model query splitter (`retriever/query_splitter.py`), and the API responds with `answers[]`, keeping citations separate for each model while still providing the aggregated `sources` list for backwards compatibility.
+- **Testing**
+  - â€” `tests/test_model_parser.py`, `tests/test_retrieval_filters.py`, `tests/test_chat_route.py`, `tests/test_ui_route.py`, and `tests/playwright/chat.spec.ts` lock these behaviours in place.
 
 ## Feedback Loop & Targeted Seeds
 
-- **Flag unclear answers directly in chat.** The chat panel now exposes a _Flag for seeds_ action when an answer returns with citations. Atticus posts the flagged question, answer snippet, and cited paths to `/api/feedback`, which persists a `SeedRequest` row and generates a markdown scaffold under `content/seed_requests/` via `lib/seed-request-writer`.
-- **Seed backlog management.** Admin reviewers gain a new _Seed requests_ tab in the operations console. Each entry shows captured context, regenerates the draft document on demand, and can be marked _completed_ once the curated documentation is published and ingested. Under the hood these actions call `/api/admin/seed-requests/:id/regenerate` and `/api/admin/seed-requests/:id/complete` to update Prisma + emit audit events.
-- **Runbook.** Refer to `docs/runbooks/feedback-loop.md` for day-two operations, including regeneration, ingestion, and troubleshooting steps.
+- **Flag unclear answers directly in chat.**
+  - The chat panel now exposes a _Flag for seeds_ action when an answer returns with citations.
+  - Atticus posts the flagged question, answer snippet, and cited paths to `/api/feedback`, which persists a `SeedRequest` row and generates a markdown scaffold under `content/seed_requests/` via `lib/seed-request-writer`.
+- **Seed backlog management.**
+  - Admin reviewers gain a new _Seed requests_ tab in the operations console.
+  - Each entry shows captured context, regenerates the draft document on demand, and can be marked _completed_ once the curated documentation is published and ingested.
+  - Under the hood these actions call `/api/admin/seed-requests/:id/regenerate` and `/api/admin/seed-requests/:id/complete` to update Prisma + emit audit events.
+- **Runbook.**
+  - Refer to `docs/runbooks/feedback-loop.md` for day-two operations, including regeneration, ingestion, and troubleshooting steps.
 
 ---
 
@@ -58,19 +62,6 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 1. Database and Prisma
 
    Launch Postgres, apply migrations, and seed baseline data.
-
-   ```bash
-   make db.up
-   make db.migrate   # runs `prisma generate` before applying migrations
-   # POSIX shells (bash/zsh): export DATABASE_URL before verification
-   set -a
-   . .env
-   set +a
-   make db.verify    # pgvector extension, dimensions, IVFFlat lists/probes
-   make db.seed
-   ```
-
-   > Windows users: do **not** run the `set -a` snippetâ€”instead use the PowerShell block below (or rely on `make db.verify`, which now auto-loads `.env` values automatically).
 
    ```powershell
    make db.up
@@ -112,11 +103,11 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 
    Run ingestion once after the database is ready so the assistant has content to answer with; rerun whenever new documents land. `make eval` and `make seed` help during iteration.
 
-  ```bash
-  make ingest     # parse, chunk, embed, and update pgvector index
-  make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
-  make eval       # run retrieval evaluation (hybrid/vector) and emit metrics under eval/runs/
-  ```
+    ```bash
+    make ingest     # parse, chunk, embed, and update pgvector index
+    make seed       # generate deterministic seed manifest (seeds/seed_manifest.json)
+    make eval       # run retrieval evaluation (hybrid/vector) and emit metrics under eval/runs/
+    ```
 
    The seed manifest now records the active embedding model, version, embedding dimensions, and pgvector tuning so restores can fail fast if configuration drifts.
 
@@ -124,7 +115,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    Results for every mode live alongside per-query CSV/HTML artifacts, with a combined
    `retrieval_modes.json` summary for dashboards and regression tracking.
 
-  > **Note:** The CED chunker now operates with zero token overlap by default
+    > **Note:** The CED chunker now operates with zero token overlap by default
 
 1. Smoke test the container stack
 
@@ -134,8 +125,9 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 
    This target generates a local `.env` (if missing), builds the hardened FastAPI image, and boots the Postgres/API/Nginx stack.
    It waits for `/health` to return `200 OK`, captures the latest API logs, and tears the stack down to keep environments clean.
-  > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
-  > different stride is required for specialised corpora.
+
+    > (`CHUNK_OVERLAP_TOKENS=0`). Override the environment variable if a
+    > different stride is required for specialised corpora.
 
 1. Run services
 
@@ -161,8 +153,8 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    make quality
    ```
 
-  > `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright admin flows, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
-  > Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
+     > `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright admin flows, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
+    > Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link
 
@@ -209,13 +201,17 @@ Send `Accept: text/event-stream` to receive incremental events; `lib/ask-client.
 1. **Environment**:
    - Generate `.env` and update SMTP + Postgres credentials.
 2. **Dependencies**:
-  - install Python + Node dependencies (`pip-sync` and `pnpm install`).
+
+   - install Python + Node dependencies (`pip-sync` and `pnpm install`).
+
 3. **Database**:
    - Run `make db.up && make db.migrate && make db.seed`.
    - Export `.env` before `make db.verify` so `DATABASE_URL` is available (`set -a; . .env; set +a` on POSIX shells, or use the PowerShell snippet in Quick Start on Windows).
 4. **Quality**:
    - Run `make quality` locally before every PR.
-  - Fix formatting with `pnpm run format` (Prettier) and `make format` (Ruff) as needed.
+
+   - Fix formatting with `pnpm run format` (Prettier) and `make format` (Ruff) as needed.
+
 5. **Run**
    - `make api`
    - `make web-dev` for local development.
