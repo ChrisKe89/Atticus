@@ -125,7 +125,9 @@ async def get_errors(
             ErrorLogEntry(
                 time=str(timestamp),
                 message=str(entry.get("message", "")),
-                details={k: str(v) for k, v in entry.items() if k not in {"time", "message"}},
+                details={
+                    k: str(v) for k, v in entry.items() if k not in {"time", "timestamp", "message"}
+                },
             )
         )
     return filtered
@@ -136,9 +138,10 @@ def _render_session_html(entries: list[dict[str, object]]) -> str:
     for entry in entries:
         filters = entry.get("filters")
         filters_str = json.dumps(filters, indent=2) if isinstance(filters, dict) else str(filters)
+        timestamp = entry.get("timestamp", entry.get("time", ""))
         rows.append(
             "<tr>"
-            f"<td>{entry.get('time', '')}</td>"
+            f"<td>{timestamp}</td>"
             f"<td>{entry.get('request_id', '')}</td>"
             f"<td>{entry.get('method', '')}</td>"
             f"<td>{entry.get('path', '')}</td>"

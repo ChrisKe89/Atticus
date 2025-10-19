@@ -49,12 +49,18 @@ export async function streamAsk(
   options: StreamOptions = {}
 ): Promise<AskResponse> {
   const normalized = askRequestSchema.parse(request);
+  const generatedId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : undefined;
+  const requestHeaders: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "text/event-stream",
+  };
+  if (generatedId) {
+    requestHeaders["X-Request-ID"] = generatedId;
+    requestHeaders["X-Trace-ID"] = generatedId;
+  }
   const response = await fetch("/api/ask", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "text/event-stream",
-    },
+    headers: requestHeaders,
     body: JSON.stringify(normalized),
     signal: options.signal,
   });

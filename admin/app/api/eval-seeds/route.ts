@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { atticusFetch } from "../../../lib/atticus-client";
+import { atticusFetch, extractTraceHeaders, resolveRequestIds } from "../../../lib/atticus-client";
 
 type EvalSeedInput = {
   question: string;
@@ -13,10 +13,16 @@ type EvalSeedPayload = {
   seeds: EvalSeedInput[];
 };
 
-export async function GET() {
-  const upstream = await atticusFetch("/api/admin/eval-seeds");
+export async function GET(request: Request) {
+  const ids = resolveRequestIds({ headers: request.headers });
+  const upstream = await atticusFetch("/api/admin/eval-seeds", {
+    headers: {
+      "X-Request-ID": ids.requestId,
+      "X-Trace-ID": ids.traceId,
+    },
+  });
   const body = await upstream.json().catch(() => ({}));
-  return NextResponse.json(body, { status: upstream.status });
+  return NextResponse.json(body, { status: upstream.status, headers: extractTraceHeaders(upstream, ids) });
 }
 
 export async function POST(request: Request) {
@@ -31,11 +37,16 @@ export async function POST(request: Request) {
     notes: seed.notes?.trim() ?? null,
   }));
 
+  const ids = resolveRequestIds({ headers: request.headers });
   const upstream = await atticusFetch("/api/admin/eval-seeds", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Request-ID": ids.requestId,
+      "X-Trace-ID": ids.traceId,
+    },
     body: JSON.stringify({ seeds: normalized }),
   });
   const body = await upstream.json().catch(() => ({}));
-  return NextResponse.json(body, { status: upstream.status });
+  return NextResponse.json(body, { status: upstream.status, headers: extractTraceHeaders(upstream, ids) });
 }

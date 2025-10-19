@@ -1,0 +1,95 @@
+{
+  "files": [],
+  "issues": [
+    {
+      "file": "package.json",
+      "dependencies": [],
+      "devDependencies": [
+        {
+          "name": "markdownlint-cli",
+          "line": 56,
+          "col": 6,
+          "pos": 1720
+        },
+        {
+          "name": "markdownlint-cli2",
+          "line": 57,
+          "col": 6,
+          "pos": 1754
+        },
+        {
+          "name": "ts-prune",
+          "line": 65,
+          "col": 6,
+          "pos": 1998
+        }
+      ],
+      "optionalPeerDependencies": [],
+      "unlisted": [],
+      "binaries": [
+        {
+          "name": "python"
+        }
+      ],
+      "unresolved": [],
+      "exports": [],
+      "types": [],
+      "enumMembers": {},
+      "duplicates": []
+    },
+    {
+      "file": "vitest.config.ts",
+      "dependencies": [],
+      "devDependencies": [],
+      "optionalPeerDependencies": [],
+      "unlisted": [
+        {
+          "name": "@vitest/coverage-v8"
+        }
+      ],
+      "binaries": [],
+      "unresolved": [],
+      "exports": [],
+      "types": [],
+      "enumMembers": {},
+      "duplicates": []
+    },
+    {
+      "file": ".github/workflows/repo-guards.yml",
+      "dependencies": [],
+      "devDependencies": [],
+      "optionalPeerDependencies": [],
+      "unlisted": [],
+      "binaries": [
+        {
+          "name": "diff"
+        }
+      ],
+      "unresolved": [],
+      "exports": [],
+      "types": [],
+      "enumMembers": {},
+      "duplicates": []
+    },
+    {
+      "file": "admin/lib/types.ts",
+      "dependencies": [],
+      "devDependencies": [],
+      "optionalPeerDependencies": [],
+      "unlisted": [],
+      "binaries": [],
+      "unresolved": [],
+      "exports": [],
+      "types": [
+        {
+          "name": "MetricsHistogramBucket",
+          "line": 44,
+          "col": 13,
+          "pos": 831
+        }
+      ],
+      "enumMembers": {},
+      "duplicates": []
+    }
+  ]
+}

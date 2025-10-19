@@ -1,6 +1,9 @@
-import { randomUUID } from "node:crypto";
-import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
+import {
+  type TraceIdentifiers,
+  jsonWithTrace,
+  resolveTraceIdentifiers,
+} from "@/lib/trace-headers";
 
 function normalizeToken(value: string): string {
   return value
@@ -20,22 +23,21 @@ function normalizeFamily(value: string): string {
 
 function buildError(
   status: number,
+  ids: TraceIdentifiers,
   error: string,
   detail: string,
-  fields?: Record<string, string>
+  fields?: Record<string, string>,
 ) {
-  const requestId = randomUUID();
   const payload: Record<string, unknown> = {
     error,
     detail,
-    request_id: requestId,
+    request_id: ids.requestId,
+    trace_id: ids.traceId,
   };
   if (fields) {
     payload.fields = fields;
   }
-  const response = NextResponse.json(payload, { status });
-  response.headers.set("X-Request-ID", requestId);
-  return response;
+  return jsonWithTrace(payload, ids, { status });
 }
 
 export function parseStatus(value: unknown): GlossaryStatus {
@@ -150,16 +152,23 @@ export function snapshotEntry(entry: any) {
   };
 }
 
-export function handleGlossaryError(error: unknown) {
+export function handleGlossaryError(
+  error: unknown,
+  source?: Parameters<typeof resolveTraceIdentifiers>[0] | TraceIdentifiers,
+) {
+  const ids =
+    source && typeof source === "object" && "requestId" in source && "traceId" in source
+      ? (source as TraceIdentifiers)
+      : resolveTraceIdentifiers(source);
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-    return buildError(409, "conflict", "Term already exists for this organization.");
+    return buildError(409, ids, "conflict", "Term already exists for this organization.");
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-    return buildError(404, "not_found", "Glossary entry not found.");
+    return buildError(404, ids, "not_found", "Glossary entry not found.");
   }
   if (error instanceof Error && error.message?.toLowerCase().includes("status")) {
-    return buildError(400, "invalid_request", error.message);
+    return buildError(400, ids, "invalid_request", error.message);
   }
-  return buildError(500, "internal_error", "An internal error occurred.");
+  return buildError(500, ids, "internal_error", "An internal error occurred while processing the glossary request.");
 }
 

@@ -94,10 +94,15 @@ export async function deleteEntry(relativePath: string): Promise<void> {
 
 export async function logContentAction(action: string, targetPath: string, detail?: string): Promise<void> {
   const timestamp = new Date().toISOString();
-  const entry = `${timestamp} | ${action} | ${targetPath}${detail ? ` | ${detail}` : ""}\n`;
+  const entry = {
+    timestamp,
+    action,
+    target: targetPath,
+    detail: detail ?? null,
+  };
   try {
     await mkdir(path.dirname(LOG_PATH), { recursive: true });
-    await writeFile(LOG_PATH, entry, { encoding: "utf-8", flag: "a" });
+    await writeFile(LOG_PATH, `${JSON.stringify(entry)}\n`, { encoding: "utf-8", flag: "a" });
   } catch {
     // Ignore logging failures.
   }
