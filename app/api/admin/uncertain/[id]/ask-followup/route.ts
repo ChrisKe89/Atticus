@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
-
-function canRecordFollowUp(role: Role | undefined): boolean {
-  return role === Role.ADMIN || role === Role.REVIEWER;
-}
 
 type FollowUpBody = {
   prompt?: string;
@@ -13,9 +8,6 @@ type FollowUpBody = {
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const { user } = getRequestContext();
-  if (!canRecordFollowUp(user.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
 
   const { id } = params;
   let body: FollowUpBody;
@@ -49,7 +41,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       action: "followup",
       at: timestamp,
       actorId: user.id,
-      actorRole: user.role,
+      actorRole: null,
       prompt,
     });
 
@@ -69,7 +61,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       data: {
         orgId: existing.orgId,
         actorId: user.id,
-        actorRole: user.role,
+        actorRole: null,
         action: "chat.followup_recorded",
         entity: "chat",
         chatId: updated.id,
@@ -94,3 +86,4 @@ export async function POST(request: Request, { params }: { params: { id: string 
     auditLog: result.auditLog ?? [],
   });
 }
+

@@ -1,4 +1,4 @@
-import { Prisma, Role } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import type { AskResponse } from "@/lib/ask-contract";
 import { withRlsContext } from "@/lib/rls";
 import type { RequestUser } from "@/lib/request-context";
@@ -120,7 +120,7 @@ export async function captureLowConfidenceChat({ question, response, user }: Cap
         data: {
           orgId: user.orgId,
           actorId: user.id,
-          actorRole: user.role ?? Role.USER,
+          actorRole: null,
           action: "chat.captured",
           entity: "chat",
           chatId: chat.id,
@@ -137,3 +137,4 @@ export async function captureLowConfidenceChat({ question, response, user }: Cap
     console.error("Failed to capture low-confidence chat", error);
   }
 }
+

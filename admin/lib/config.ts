@@ -22,11 +22,6 @@ export function buildUpstreamHeaders(additional?: HeadersInit): Headers {
   headers.set("x-atticus-user-id", reviewer.id);
   headers.set("x-atticus-user-name", reviewer.name);
   headers.set("x-atticus-user-email", reviewer.email);
-  headers.set("x-atticus-role", "ADMIN");
   headers.set("x-atticus-org-id", "org-atticus");
-  const adminToken = process.env.ATTICUS_ADMIN_TOKEN?.trim();
-  if (adminToken) {
-    headers.set("X-Admin-Token", adminToken);
-  }
   return headers;
 }

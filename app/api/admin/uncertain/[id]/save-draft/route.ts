@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
-
-function canSaveDraft(role: Role | undefined): boolean {
-  return role === Role.ADMIN || role === Role.REVIEWER;
-}
 
 type DraftBody = {
   answer?: string;
@@ -14,9 +9,6 @@ type DraftBody = {
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const { user } = getRequestContext();
-  if (!canSaveDraft(user.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
 
   const { id } = params;
   let body: DraftBody = {};
@@ -50,7 +42,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       auditLog.push({
         action: "save_draft",
         actorId: user.id,
-        actorRole: user.role,
+        actorRole: null,
         at: eventTimestamp,
         notes: notes ?? null,
       });
@@ -76,7 +68,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         data: {
           orgId: existing.orgId,
           actorId: user.id,
-          actorRole: user.role,
+          actorRole: null,
           action: "chat.draft_saved",
           entity: "chat",
           chatId: updated.id,
@@ -107,3 +99,4 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
 }
+

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Shield, Zap } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import {
@@ -35,10 +34,15 @@ const toggles = [
 ];
 
 export const metadata: Metadata = {
-  title: "Settings · Atticus",
+  title: "Settings - Atticus",
 };
 
 export default function SettingsPage() {
+  const adminUrl = (process.env.NEXT_PUBLIC_ADMIN_URL?.trim() || "http://localhost:9000").replace(
+    /\/+$/,
+    ""
+  );
+
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-10">
       <PageHeader
@@ -46,8 +50,10 @@ export default function SettingsPage() {
         title="Workspace preferences"
         description="Configure escalation behaviour, logging guardrails, and chat defaults."
         actions={
-          <Button asChild variant="outline" className="rounded-full">
-            <Link href="/admin">View admin console</Link>
+          <Button variant="outline" className="rounded-full" asChild>
+            <a href={adminUrl} target="_blank" rel="noreferrer">
+              Open admin console
+            </a>
           </Button>
         }
       />
@@ -96,8 +102,8 @@ export default function SettingsPage() {
             </div>
             <CardTitle>Safety guardrails</CardTitle>
             <CardDescription>
-              Escalation allow-lists and role-based policies ensure sensitive documents never leave
-              your tenant.
+              Escalation allow-lists keep sensitive documents inside your tenant while the gateway
+              perimeter enforces identity and TLS.
             </CardDescription>
           </CardHeader>
         </Card>

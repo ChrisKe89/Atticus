@@ -107,7 +107,7 @@
 
 ### Changed
 
-- `admin/lib/config.ts` now forwards `ATTICUS_ADMIN_TOKEN` so downstream admin APIs remain guarded by `X-Admin-Token`.
+- Simplified admin upstream headers by trusting gateway-provided identity (no more `X-Admin-Token`).
 - Documentation and `.env.example` updated for the split-service workflow, including new admin environment variables and ingestion/eval runbooks.
 
 ## [0.8.2] - 2025-10-18

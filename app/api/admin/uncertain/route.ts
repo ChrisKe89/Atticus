@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
-import { Prisma, Role } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
-
-function canReview(role: Role | undefined): boolean {
-  return role === Role.ADMIN || role === Role.REVIEWER;
-}
 
 const reviewableStatuses: string[] = ["pending_review", "draft", "rejected"];
 type ReviewableChat = Prisma.ChatGetPayload<{
@@ -18,10 +14,6 @@ type ReviewableChat = Prisma.ChatGetPayload<{
 
 export async function GET() {
   const { user } = getRequestContext();
-  if (!canReview(user.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
-
   const chats = await withRlsContext<ReviewableChat[]>(user, (tx) =>
     tx.chat.findMany({
       where: { status: { in: reviewableStatuses } },
@@ -90,3 +82,4 @@ function normalizeSources(value: Prisma.JsonValue | null): Array<Record<string, 
   }
   return normalized;
 }
+

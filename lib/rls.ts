@@ -6,14 +6,13 @@ export async function withRlsContext<T>(
   user: RequestUser | null | undefined,
   fn: (client: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
-  if (!user?.id || !user.orgId || !user.role) {
-    throw new Error("RBAC enforcement requires an upstream user context.");
+  if (!user?.id || !user.orgId) {
+    throw new Error("User context with id and orgId is required for RLS.");
   }
 
   return prisma.$transaction(async (tx) => {
     await setRlsContext(tx, {
       userId: user.id,
-      role: user.role,
       orgId: user.orgId,
     });
 
