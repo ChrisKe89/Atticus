@@ -7,6 +7,7 @@ Each entry includes the completion date and commit reference for traceability.
 The following items are done or no longer relevant and are recorded here for traceability.
 
 ## Completed
+
 - **FND-001 → FND-008** (Audit): Next.js UI, proxy contracts, schema ownership, env scaffolding, request-id propagation, CI audits — delivered.
 - **Ask Contract & Streaming**: `/api/ask` SSE endpoint and UI consumer normalised; error contracts include `request_id`.
 - **Frontend Hygiene & Repo Structure**: Legacy FastAPI UI archived; canonical Next.js app; docs updated.
@@ -15,6 +16,7 @@ The following items are done or no longer relevant and are recorded here for tra
 - **Unified CLI**: `scripts/atticus_cli.py` with Makefile alias `atticus`.
 
 ## Obsolete / Superseded
+
 - “Prisma duplicates and `Glossary.synonyms` type fix” — resolved in current schema/migrations.
 - “Decide on Framer Motion” — kept as optional; AGENTS reflects this.
 - “Archive web/static” — done; legacy moved under `archive/legacy-ui/`.
@@ -25,10 +27,10 @@ The following items are done or no longer relevant and are recorded here for tra
 ---
 
 ## 2025-11-15
+
 - [x] TODO "Add `CHANGELOG.md` automation." - Added scripts/update_changelog_from_todos.py and Makefile target changelog.sync to rebuild the changelog backlog section from TODO completions. - completed 2025-11-15
 - [x] TODO "Maintain `TODO_COMPLETE.md` with date-stamped completions." - Introduced scripts/log_todo_completion.py and Makefile todo.log helper so tasks flip to [x] and log entries automatically. - completed 2025-11-15
 - [x] TODO "Expand `GLOSSARY.md` for dictionary agent baseline." - Published docs/GLOSSARY.md detailing the dictionary schema, workflow, and validation checklist for glossary automation. - completed 2025-11-15
-
 
 - [x] TODO "Architecture & Maintainability - SSE Event Schema" - generated a shared Pydantic union for start/answer/end events, wrote the JSON schema to `schemas/sse-events.schema.json`, updated the Next.js parity check to follow `$ref` definitions, and added Vitest/Pytest coverage for `answer`/`end` event validation - completed 2025-11-15 (this change set).
 
@@ -221,6 +223,7 @@ PR: feat/enterprise_boundary_enforcement
 - [x] TODO "Refactor Chat Flow" — completed 2025-11-02 (introduced a shared `useAskStream` hook powering both initial submissions and clarification follow-ups, eliminating duplicated streaming logic and preserving consistent error handling).
 
 ## 2025-10-18 — split_service_design
+
 ✅ Completed: Split the chat and admin UIs onto dedicated ports, added admin Make targets, and refreshed docs to emphasize independent builds.
 PR: feat/split_service_design
 
