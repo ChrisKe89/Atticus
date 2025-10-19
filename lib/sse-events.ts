@@ -29,8 +29,25 @@ function assertSchemaParity() {
   if (!schema || !Array.isArray(schema.oneOf)) {
     return;
   }
-  const definedTypes = new Set(schema.oneOf.map((entry) => entry?.properties?.type?.const));
-  for (const literal of ["start", "end", "answer"]) {
+  const definedTypes = new Set<string>();
+  for (const entry of schema.oneOf) {
+    const inlineType = entry?.properties?.type?.const;
+    if (inlineType && typeof inlineType === "string") {
+      definedTypes.add(inlineType);
+      continue;
+    }
+    const ref = typeof entry?.$ref === "string" ? entry.$ref : undefined;
+    if (ref && typeof ref === "string") {
+      const key = ref.split("/").pop();
+      const defs = (schema.definitions ?? (schema as { $defs?: Record<string, unknown> }).$defs) ?? {};
+      const node = key ? (defs as Record<string, any>)[key] : undefined;
+      const refType = node?.properties?.type?.const;
+      if (typeof refType === "string") {
+        definedTypes.add(refType);
+      }
+    }
+  }
+  for (const literal of ["start", "answer", "end"]) {
     if (!definedTypes.has(literal)) {
       throw new Error(`SSE schema mismatch: missing ${literal} event in JSON schema`);
     }
