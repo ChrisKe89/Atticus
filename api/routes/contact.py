@@ -73,6 +73,8 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
     body = "\n".join(body_lines)
 
     subject = f"Atticus escalation: {payload.reason}"[:200]
+    trace_context = getattr(request.state, "trace_id", request_id)
+
     try:
         send_escalation(subject=subject, body=body, trace=trace_payload)
     except EscalationDeliveryError as exc:
@@ -80,6 +82,7 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
             logger,
             "contact_escalation_failed",
             request_id=request_id,
+            trace_id=trace_context,
             reason=exc.reason,
         )
         raise HTTPException(
@@ -87,15 +90,13 @@ async def contact(payload: ContactRequest, request: Request) -> dict[str, str]:
             detail="Unable to deliver escalation email. Please try again shortly.",
         ) from exc
 
-    trace_id = None
-    if trace_payload:
-        trace_id = str(trace_payload.get("request_id") or request_id)
-
     log_event(
         logger,
         "contact_escalation_sent",
         request_id=request_id,
+        trace_id=trace_payload.get("request_id")
+        if isinstance(trace_payload, dict)
+        else trace_context,
         has_transcript=bool(payload.transcript),
-        trace_id=trace_id or request_id,
     )
     return {"status": "accepted"}

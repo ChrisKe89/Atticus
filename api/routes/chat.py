@@ -160,6 +160,7 @@ async def ask_endpoint(
             logger,
             "ask_endpoint_clarification",
             request_id=request_id,
+            trace_id=getattr(request.state, "trace_id", request_id),
             latency_ms=round(elapsed_ms, 2),
         )
         return response
@@ -247,6 +248,7 @@ async def ask_endpoint(
         logger,
         "ask_endpoint_complete",
         request_id=request_id,
+        trace_id=getattr(request.state, "trace_id", request_id),
         confidence=aggregated_confidence,
         escalate=aggregated_escalation,
         latency_ms=round(elapsed_ms, 2),

@@ -91,6 +91,35 @@ _Error codes:_ `recipient_not_allowed` or `sender_not_allowed` indicate allow-li
   - Check logs in `logs/errors.jsonl` for stack traces.
 - Confirm the UI is accessible at `http://localhost:3000/` via `make web-dev`.
   If the UI has been separated again, reintroduce a dedicated make target and update port mapping.
+- Split-port deployments require **three** processes:
+  - `make api` → FastAPI service on `:8000`
+  - `make web-dev` → chat UI on `:3000`
+  - `make admin-dev` → admin UI on `:9000`
+  - When using Docker Compose, ensure the reverse proxy forwards the appropriate hostnames to each port.
+  - If `admin` appears blank, confirm the gateway forwards `X-Request-ID`/`X-Trace-ID` headers; the admin service expects them for logging and will respond with `502` otherwise.
+
+### Split-Port Setup Checklist
+
+1. **Set service modes explicitly**
+   - Chat container: `SERVICE_MODE=chat`
+   - Admin container: `SERVICE_MODE=admin`
+   - Confirm `.env` exposes `NEXT_PUBLIC_ADMIN_URL` (default `http://localhost:9000`) and `ATTICUS_MAIN_BASE_URL` (default `http://localhost:3000`) so each UI links to the other service correctly.
+2. **Launch all three services**
+   ```bash
+   make api            # FastAPI on :8000
+   make web-dev        # Chat Next.js on :3000
+   pnpm --filter atticus-admin-service dev   # Admin Next.js on :9000
+   ```
+   Use `pnpm --filter atticus-admin-service start` in production containers.
+3. **Wire the reverse proxy**
+   - Map chat traffic to `:3000` and admin traffic to `:9000`.
+   - Forward `X-Request-ID`, `X-Trace-ID`, and identity headers (`X-Atticus-*`) from the gateway; both Next apps reuse those headers for upstream calls.
+4. **Smoke test from the gateway**
+   - `curl -I https://chat.internal.example.com/api/ask` should return `X-Request-ID`/`X-Trace-ID` headers.
+   - `curl -I https://admin.internal.example.com/api/admin/content/list` should echo the same identifiers.
+5. **Rotate logs in tandem**
+   - Tail `logs/app.jsonl` to confirm structured JSON entries include the propagated IDs and `service_mode` metadata.
+   - If IDs are missing, verify the proxy is not stripping custom headers and that CDN caches bypass the admin hostname.
 
 ## Streaming `/api/ask` Issues
 

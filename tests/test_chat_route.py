@@ -34,6 +34,7 @@ def test_chat_route_or_skip() -> None:
     data: dict[str, Any] = r.json()
     assert data["request_id"]
     assert r.headers.get("X-Request-ID") == data["request_id"]
+    assert r.headers.get("X-Trace-ID") == data["request_id"]
     assert r.headers.get("X-RateLimit-Limit") is not None
     assert r.headers.get("X-RateLimit-Remaining") is not None
     assert "answer" in data
@@ -67,6 +68,7 @@ def test_chat_route_rejects_placeholder_or_skip() -> None:
     assert "Provide a real question" in data["detail"]
     assert data["request_id"]
     assert r.headers.get("X-Request-ID") == data["request_id"]
+    assert r.headers.get("X-Trace-ID") == data["request_id"]
 
 
 def test_chat_route_rate_limit(monkeypatch) -> None:
@@ -97,9 +99,11 @@ def test_chat_route_rate_limit(monkeypatch) -> None:
     data = second.json()
     assert data["error"] == "rate_limited"
     assert "request_id" in data
+    assert "trace_id" in data
     assert second.headers.get("Retry-After") is not None
     assert second.headers.get("X-RateLimit-Limit") == "1"
     assert second.headers.get("X-RateLimit-Remaining") == "0"
+    assert second.headers.get("X-Trace-ID") == data["trace_id"]
 
 
 def test_ask_endpoint_returns_clarification(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 type DraftBody = {
   answer?: string;
@@ -8,6 +8,7 @@ type DraftBody = {
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   const { user } = getRequestContext();
 
   const { id } = params;
@@ -20,7 +21,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   const answer = typeof body.answer === "string" ? body.answer.trim() : "";
   if (!answer) {
-    return NextResponse.json({ error: "invalid_request", detail: "Answer draft cannot be empty." }, { status: 400 });
+    return jsonWithTrace(
+      { error: "invalid_request", detail: "Answer draft cannot be empty." },
+      ids,
+      { status: 400 },
+    );
   }
   const notes = typeof body.notes === "string" ? body.notes.trim() : undefined;
   const eventTimestamp = new Date().toISOString();
@@ -83,20 +88,28 @@ export async function POST(request: Request, { params }: { params: { id: string 
     });
 
     if (result === null) {
-      return NextResponse.json({ error: "not_found" }, { status: 404 });
+      return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
     }
     if (result === "not_reviewable") {
-      return NextResponse.json({ error: "invalid_status" }, { status: 409 });
+      return jsonWithTrace({ error: "invalid_status" }, ids, { status: 409 });
     }
 
-    return NextResponse.json({
-      id: result.id,
-      status: result.status,
-      answer: result.answer,
-      auditLog: result.auditLog ?? [],
-    });
-  } catch {
-    return NextResponse.json({ error: "server_error" }, { status: 500 });
+    return jsonWithTrace(
+      {
+        id: result.id,
+        status: result.status,
+        answer: result.answer,
+        auditLog: result.auditLog ?? [],
+      },
+      ids,
+    );
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : undefined;
+    return jsonWithTrace(
+      { error: "server_error", detail: detail ?? "Failed to save draft." },
+      ids,
+      { status: 500 },
+    );
   }
 }
 

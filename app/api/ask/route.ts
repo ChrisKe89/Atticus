@@ -27,6 +27,7 @@ function normalizeFields(value: unknown): Record<string, string> | undefined {
 function buildErrorResponse(
   status: number,
   requestId: string,
+  traceId: string,
   error: string,
   detail: string,
   fields?: Record<string, string>
@@ -35,6 +36,7 @@ function buildErrorResponse(
     error,
     detail,
     request_id: requestId,
+    trace_id: traceId,
   };
   if (fields) {
     payload.fields = fields;
@@ -43,11 +45,12 @@ function buildErrorResponse(
     status,
     headers: {
       "X-Request-ID": requestId,
+      "X-Trace-ID": traceId,
     },
   });
 }
 
-async function readErrorBody(response: Response, fallbackRequestId: string) {
+async function readErrorBody(response: Response, fallbackRequestId: string, fallbackTraceId: string) {
   const contentType = response.headers.get("content-type") ?? "";
   let parsedBody: unknown = null;
   if (contentType.includes("application/json")) {
@@ -59,6 +62,7 @@ async function readErrorBody(response: Response, fallbackRequestId: string) {
         error: "upstream_error",
         detail: "Failed to parse upstream JSON response.",
         requestId: fallbackRequestId,
+        traceId: fallbackTraceId,
       } as const;
     }
   } else {
@@ -70,19 +74,28 @@ async function readErrorBody(response: Response, fallbackRequestId: string) {
   if (parsedBody && typeof parsedBody === "object" && !Array.isArray(parsedBody)) {
     const body = parsedBody as Record<string, unknown>;
     const requestId = typeof body.request_id === "string" ? body.request_id : fallbackRequestId;
+    const traceId = typeof body.trace_id === "string" ? body.trace_id : fallbackTraceId;
     const error = typeof body.error === "string" ? body.error : "upstream_error";
     const detail = typeof body.detail === "string" ? body.detail : "Unknown upstream error.";
     const fields = normalizeFields(body.fields);
-    return { status, error, detail, fields, requestId } as const;
+    return { status, error, detail, fields, requestId, traceId } as const;
   }
 
   const detail = typeof parsedBody === "string" && parsedBody.length ? parsedBody : "Unknown upstream error.";
-  return { status, error: "upstream_error", detail, requestId: fallbackRequestId } as const;
+  return {
+    status,
+    error: "upstream_error",
+    detail,
+    requestId: fallbackRequestId,
+    traceId: fallbackTraceId,
+  } as const;
 }
 
 export async function POST(request: Request) {
   const acceptsSse = (request.headers.get("accept") ?? "").includes("text/event-stream");
-  const requestId = request.headers.get("x-request-id") ?? randomUUID();
+  const generatedId = randomUUID();
+  const requestId = request.headers.get("x-request-id") ?? generatedId;
+  const traceId = request.headers.get("x-trace-id") ?? requestId;
 
   let parsed: AskRequest;
   try {
@@ -90,7 +103,7 @@ export async function POST(request: Request) {
     parsed = askRequestSchema.parse(payload);
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Invalid request payload";
-    return buildErrorResponse(400, requestId, "validation_error", detail);
+    return buildErrorResponse(400, requestId, traceId, "validation_error", detail);
   }
 
   const requestUser = getRequestUser();
@@ -103,6 +116,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
         Accept: acceptsSse ? "text/event-stream" : "application/json",
         "X-Request-ID": requestId,
+        "X-Trace-ID": traceId,
       },
       body: JSON.stringify({
         question: parsed.question,
@@ -114,14 +128,22 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Failed to contact retrieval service.";
-    return buildErrorResponse(502, requestId, "upstream_unreachable", detail);
+    return buildErrorResponse(502, requestId, traceId, "upstream_unreachable", detail);
   }
 
   const upstreamRequestId = upstream.headers.get("x-request-id") ?? requestId;
+  const upstreamTraceId = upstream.headers.get("x-trace-id") ?? traceId;
 
   if (!upstream.ok) {
-    const normalized = await readErrorBody(upstream, upstreamRequestId);
-    return buildErrorResponse(normalized.status, normalized.requestId, normalized.error, normalized.detail, normalized.fields);
+    const normalized = await readErrorBody(upstream, upstreamRequestId, upstreamTraceId);
+    return buildErrorResponse(
+      normalized.status,
+      normalized.requestId,
+      normalized.traceId,
+      normalized.error,
+      normalized.detail,
+      normalized.fields,
+    );
   }
 
   const contentType = upstream.headers.get("content-type") ?? "";
@@ -199,6 +221,7 @@ export async function POST(request: Request) {
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
         "X-Request-ID": upstreamRequestId,
+        "X-Trace-ID": upstreamTraceId,
       },
     });
   }
@@ -209,7 +232,7 @@ export async function POST(request: Request) {
     askResponse = askResponseSchema.parse(raw);
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Invalid upstream response";
-    return buildErrorResponse(502, upstreamRequestId, "invalid_upstream_response", detail);
+    return buildErrorResponse(502, upstreamRequestId, upstreamTraceId, "invalid_upstream_response", detail);
   }
 
   await captureLowConfidenceChat({ question: parsed.question, response: askResponse, user: requestUser });
@@ -237,6 +260,7 @@ export async function POST(request: Request) {
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
         "X-Request-ID": askResponse.request_id,
+        "X-Trace-ID": upstreamTraceId,
       },
     });
   }
@@ -245,6 +269,7 @@ export async function POST(request: Request) {
     status: 200,
     headers: {
       "X-Request-ID": askResponse.request_id,
+      "X-Trace-ID": upstreamTraceId,
     },
   });
 }

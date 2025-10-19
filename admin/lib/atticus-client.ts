@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import type {
   ContentEntry,
   EvalSeed,
@@ -25,6 +27,31 @@ export async function atticusFetch(path: string, init: RequestInit = {}): Promis
     headers,
     cache: "no-store",
   });
+}
+
+export function resolveRequestIds(source?: { headers: Headers | HeadersInit }): { requestId: string; traceId: string } {
+  const base = randomUUID();
+  if (!source) {
+    return { requestId: base, traceId: base };
+  }
+  const headerBag = source.headers instanceof Headers ? source.headers : new Headers(source.headers);
+  const requestId = headerBag.get("x-request-id") ?? base;
+  const traceId = headerBag.get("x-trace-id") ?? requestId;
+  return { requestId, traceId };
+}
+
+export function extractTraceHeaders(
+  response: Response,
+  fallback?: { requestId?: string; traceId?: string }
+): Record<string, string> {
+  const fallbackRequestId = fallback?.requestId ?? randomUUID();
+  const requestId = response.headers.get("x-request-id") ?? fallbackRequestId;
+  const fallbackTrace = fallback?.traceId ?? requestId;
+  const traceId = response.headers.get("x-trace-id") ?? fallbackTrace;
+  return {
+    "X-Request-ID": requestId,
+    "X-Trace-ID": traceId,
+  };
 }
 
 export async function fetchReviewQueue(): Promise<ReviewChat[]> {

@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 function generateTicketKey(now: Date): string {
   const year = now.getUTCFullYear();
@@ -16,6 +16,7 @@ type EscalateBody = {
 };
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
+  const ids = resolveTraceIdentifiers(request);
   const { user } = getRequestContext();
 
   const { id } = params;
@@ -116,19 +117,22 @@ export async function POST(request: Request, { params }: { params: { id: string 
   });
 
   if (result === null) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return jsonWithTrace({ error: "not_found" }, ids, { status: 404 });
   }
   if (result === "already_escalated") {
-    return NextResponse.json({ error: "invalid_status" }, { status: 409 });
+    return jsonWithTrace({ error: "invalid_status" }, ids, { status: 409 });
   }
 
-  return NextResponse.json({
-    id: result.id,
-    key: result.key,
-    status: result.status,
-    assignee: result.assignee,
-    lastActivity: result.lastActivity ? result.lastActivity.toISOString() : null,
-    summary: result.summary ?? summary ?? null,
-  });
+  return jsonWithTrace(
+    {
+      id: result.id,
+      key: result.key,
+      status: result.status,
+      assignee: result.assignee,
+      lastActivity: result.lastActivity ? result.lastActivity.toISOString() : null,
+      summary: result.summary ?? summary ?? null,
+    },
+    ids,
+  );
 }
 

@@ -52,6 +52,7 @@ def _build_response(
     fields: dict[str, str] | None = None,
 ) -> JSONResponse:
     request_id = getattr(request.state, "request_id", "unknown")
+    trace_id = getattr(request.state, "trace_id", request_id)
     payload = ErrorResponse(
         error=error,
         detail=detail,
@@ -60,6 +61,7 @@ def _build_response(
     ).model_dump(exclude_none=True)
     response = JSONResponse(status_code=status_code, content=payload)
     response.headers["X-Request-ID"] = request_id
+    response.headers["X-Trace-ID"] = trace_id
     return response
 
 
@@ -73,6 +75,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException) 
                 logger,
                 "http_exception",
                 request_id=getattr(request.state, "request_id", "unknown"),
+                trace_id=getattr(request.state, "trace_id", "unknown"),
                 status_code=exc.status_code,
                 path=request.url.path,
             )
@@ -104,6 +107,7 @@ async def validation_exception_handler(
             logger,
             "request_validation_error",
             request_id=getattr(request.state, "request_id", "unknown"),
+            trace_id=getattr(request.state, "trace_id", "unknown"),
             path=request.url.path,
             field_count=len(fields),
         )
@@ -124,6 +128,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
             logger,
             "unhandled_exception",
             request_id=getattr(request.state, "request_id", "unknown"),
+            trace_id=getattr(request.state, "trace_id", "unknown"),
             path=request.url.path,
             error_type=exc.__class__.__name__,
         )

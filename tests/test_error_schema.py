@@ -27,6 +27,7 @@ def test_validation_error_schema(app_with_settings):
     assert "reason" in payload.get("fields", {})
     assert payload["request_id"]
     assert response.headers.get("X-Request-ID") == payload["request_id"]
+    assert response.headers.get("X-Trace-ID") == payload["request_id"]
 
 
 def test_unauthorized_error_schema(app_with_settings):
@@ -47,3 +48,4 @@ def test_unauthorized_error_schema(app_with_settings):
     assert payload["error"] == "unauthorized"
     assert payload["detail"] == "Auth required"
     assert payload["request_id"]
+    assert response.headers.get("X-Trace-ID") == payload["request_id"]

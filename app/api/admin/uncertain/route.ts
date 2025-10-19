@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
+import { jsonWithTrace, resolveTraceIdentifiers } from "@/lib/trace-headers";
 
 const reviewableStatuses: string[] = ["pending_review", "draft", "rejected"];
 type ReviewableChat = Prisma.ChatGetPayload<{
@@ -12,7 +13,8 @@ type ReviewableChat = Prisma.ChatGetPayload<{
   };
 }>;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const ids = resolveTraceIdentifiers(request);
   const { user } = getRequestContext();
   const chats = await withRlsContext<ReviewableChat[]>(user, (tx) =>
     tx.chat.findMany({
@@ -56,7 +58,7 @@ export async function GET() {
     auditLog: Array.isArray(chat.auditLog) ? chat.auditLog : [],
   }));
 
-  return NextResponse.json(payload);
+  return jsonWithTrace(payload, ids);
 }
 
 function normalizeSources(value: Prisma.JsonValue | null): Array<Record<string, unknown>> {
