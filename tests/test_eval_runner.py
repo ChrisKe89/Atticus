@@ -4,6 +4,7 @@ from __future__ import annotations
 
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -15,6 +16,7 @@ from eval.runner import (
     _write_outputs,
 )
 from retriever.vector_store import RetrievalMode
+from scripts import eval_run
 
 
 def test_write_outputs_creates_csv_json_and_html(tmp_path):
@@ -76,3 +78,23 @@ def test_write_modes_summary_creates_overview(tmp_path):
     assert summary_path.exists()
     data = json.loads(summary_path.read_text(encoding="utf-8"))
     assert data["hybrid"]["metrics"]["MRR"] == 0.7
+
+
+def test_eval_run_writes_ci_index(tmp_path):
+    output_dir = tmp_path / "ci"
+    metrics_dir = output_dir / "mode-hybrid"
+    metrics_dir.mkdir(parents=True)
+    summary_html = metrics_dir / "metrics.html"
+    summary_html.write_text("<html></html>", encoding="utf-8")
+    result = SimpleNamespace(
+        metrics={"nDCG@10": 0.92, "Recall@50": 0.88},
+        modes=[SimpleNamespace(mode="hybrid", summary_html=summary_html)],
+    )
+
+    eval_run._write_ci_index(output_dir, result)
+
+    index_path = output_dir / "index.html"
+    assert index_path.exists()
+    html = index_path.read_text(encoding="utf-8")
+    assert "hybrid" in html.lower()
+    assert "0.92" in html

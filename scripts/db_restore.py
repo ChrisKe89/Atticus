@@ -11,7 +11,9 @@ from pathlib import Path
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Restore an Atticus pg_dump archive.")
-    parser.add_argument("input", type=Path, help="Path to the pg_dump archive produced by db_backup")
+    parser.add_argument(
+        "input", type=Path, help="Path to the pg_dump archive produced by db_backup"
+    )
     parser.add_argument(
         "--database-url",
         dest="database_url",

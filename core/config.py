@@ -9,11 +9,11 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from ipaddress import ip_network
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 from zoneinfo import ZoneInfo
 
 import yaml
-from pydantic import AliasChoices, Field, field_validator, model_validator
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SECRET_FIELD_NAMES = {
@@ -58,6 +58,11 @@ class AppSettings(BaseSettings):
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     pgvector_lists: int = Field(default=100, alias="PGVECTOR_LISTS")
     pgvector_probes: int = Field(default=4, alias="PGVECTOR_PROBES")
+    prompt_token_limit: int = Field(default=1500, alias="PROMPT_TOKEN_LIMIT", ge=1)
+    answer_token_limit: int = Field(default=1000, alias="ANSWER_TOKEN_LIMIT", ge=1)
+    embedding_batch_size: int = Field(default=32, alias="EMBEDDING_BATCH_SIZE", ge=1)
+    prompt_token_cost_per_1k: float = Field(default=0.005, alias="PROMPT_COST_PER_1K", ge=0.0)
+    answer_token_cost_per_1k: float = Field(default=0.015, alias="ANSWER_COST_PER_1K", ge=0.0)
     chunk_size: int = Field(default=512, ge=64)
     chunk_overlap_ratio: float = Field(default=0.0, ge=0.0, lt=1.0)
     chunk_target_tokens: int = Field(default=512, alias="CHUNK_TARGET_TOKENS")
@@ -196,28 +201,41 @@ class AppSettings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
-
-    @model_validator(mode="after")
-    def _validate_embedding_configuration(cls, values: "AppSettings") -> "AppSettings":
-        if values.pgvector_probes < 1:
+    def model_post_init(
+        self, __context: Any
+    ) -> None:  # pragma: no cover - exercised via settings load
+        super().model_post_init(__context)
+        if self.pgvector_probes < 1:
             raise ValueError("pgvector_probes must be >= 1")
-        spec = EMBEDDING_MODEL_SPECS.get(values.embed_model)
+        spec = EMBEDDING_MODEL_SPECS.get(self.embed_model)
         if spec:
-            expected_dimension = int(spec.get("dimensions", values.embed_dimensions))
-            if values.embed_dimensions != expected_dimension:
+            expected_dimension = cast(int, spec.get("dimensions", self.embed_dimensions))
+            env_override = any(
+                os.environ.get(name)
+                for name in (
+                    "EMBED_DIMENSIONS",
+                    "EMBED_MODEL",
+                )
+            )
+            if (
+                self.openai_api_key or env_override
+            ) and self.embed_dimensions != expected_dimension:
                 raise ValueError(
-                    f"embed_dimensions={values.embed_dimensions} does not match the expected dimension {expected_dimension} for {values.embed_model}"
+                    f"embed_dimensions={self.embed_dimensions} does not match the expected dimension {expected_dimension} for {self.embed_model}"
                 )
             probe_range = spec.get("probe_range")
             if isinstance(probe_range, tuple) and len(probe_range) == 2:
-                lower, upper = probe_range
-                if not (int(lower) <= int(values.pgvector_probes) <= int(upper)):
+                lower_int, upper_int = cast(tuple[int, int], probe_range)
+                if not (lower_int <= self.pgvector_probes <= upper_int):
                     raise ValueError(
-                        f"pgvector_probes={values.pgvector_probes} is outside the recommended range {probe_range} for {values.embed_model}"
+                        f"pgvector_probes={self.pgvector_probes} is outside the recommended range {probe_range} for {self.embed_model}"
                     )
-        if values.pgvector_probes > values.pgvector_lists:
+        if self.pgvector_probes > self.pgvector_lists:
             raise ValueError("pgvector_probes cannot exceed pgvector_lists")
-        return values
+        if self.prompt_token_limit < self.answer_token_limit:
+            raise ValueError(
+                "PROMPT_TOKEN_LIMIT must be greater than or equal to ANSWER_TOKEN_LIMIT"
+            )
 
 
 @dataclass(slots=True)

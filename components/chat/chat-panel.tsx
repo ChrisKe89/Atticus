@@ -279,6 +279,9 @@ export function ChatPanel() {
               value={composer}
               onChange={(event) => setComposer(event.target.value)}
               ref={textareaRef}
+              disabled={isStreaming}
+              aria-disabled={isStreaming}
+              aria-busy={isStreaming}
               onKeyDown={(event) => {
                 // Enter: send. Shift+Enter: newline
                 const composing = (event.nativeEvent as unknown as { isComposing?: boolean })
@@ -307,7 +310,7 @@ export function ChatPanel() {
             ) : (
               <Send className="h-4 w-4" aria-hidden="true" />
             )}
-            <span>{isStreaming ? "Sending..." : "Send"}</span>
+            <span aria-live="polite">{isStreaming ? "Sending..." : "Send"}</span>
           </Button>
         </form>
         {error ? (

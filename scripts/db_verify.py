@@ -51,8 +51,7 @@ def main() -> int:
     probes = os.environ.get("PGVECTOR_PROBES", "4")
     sql_template = sql_path.read_text(encoding="utf-8")
     sql_rendered = (
-        sql_template
-        .replace(":expected_pgvector_dimension", dimension)
+        sql_template.replace(":expected_pgvector_dimension", dimension)
         .replace(":expected_pgvector_lists", lists)
         .replace(":expected_pgvector_probes", probes)
     )

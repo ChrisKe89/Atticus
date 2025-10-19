@@ -10,9 +10,9 @@ import json
 from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
-from core.config import load_settings
 from atticus.logging import configure_logging, log_error, log_event
 from atticus.notify.mailer import EscalationDeliveryError, send_escalation
+from core.config import load_settings
 
 router = APIRouter()
 

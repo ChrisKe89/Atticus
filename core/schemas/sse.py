@@ -14,7 +14,7 @@ SCHEMA_PATH = Path("schemas/sse-events.schema.json")
 def _ask_response_schema() -> dict[str, Any]:
     """Return the JSON schema for AskResponse without importing at module load."""
 
-    from api.schemas import AskResponse  # local import avoids circular dependency
+    from api.schemas import AskResponse  # noqa: PLC0415  # local import avoids circular dependency
 
     return AskResponse.model_json_schema(ref_template="#/definitions/{model}")
 
@@ -86,8 +86,8 @@ class AnswerEvent(BaseModel):
     payload: dict[str, Any]
 
     @model_validator(mode="after")
-    def _validate_payload(self) -> "AnswerEvent":
-        from api.schemas import AskResponse
+    def _validate_payload(self) -> AnswerEvent:
+        from api.schemas import AskResponse  # noqa: PLC0415
 
         AskResponse.model_validate(self.payload)
         return self
@@ -95,4 +95,11 @@ class AnswerEvent(BaseModel):
 
 AnySseEvent = StartEvent | AnswerEvent | EndEvent
 
-__all__ = ["StartEvent", "AnswerEvent", "EndEvent", "AnySseEvent", "write_json_schema", "SCHEMA_PATH"]
+__all__ = [
+    "SCHEMA_PATH",
+    "AnswerEvent",
+    "AnySseEvent",
+    "EndEvent",
+    "StartEvent",
+    "write_json_schema",
+]
