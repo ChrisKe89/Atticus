@@ -9,6 +9,7 @@ Start here for Atticus docs. Root **README.md** is the quick start; everything e
 - [REQUIREMENTS.md](./REQUIREMENTS.md)
 - [OPERATIONS.md](./OPERATIONS.md)
 - [SECURITY.md](./SECURITY.md)
+- [SSO Boundary](./SSO_BOUNDARY.md)
 - [RELEASE.md](./RELEASE.md)
 - [REPO_STRUCTURE.md](../REPO_STRUCTURE.md)
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)

@@ -145,15 +145,15 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 * [ ] Use structured JSON logging.
 * [ ] Dead-code audits via `knip`, `ts-prune`; log results to `reports/quality/`.
 * [ ] Update troubleshooting docs with split-port setup instructions.
-* [ ] Add support playbook in `docs/OPERATIONS.md`.
+* [x] Add support playbook in `docs/OPERATIONS.md`.
 
 ---
 
 ## 📚 Documentation & Governance
 
 * [x] Update `README.md` and `ARCHITECTURE.md` for two-service model.
-* [ ] Document enterprise SSO boundary (“Atticus runs behind SSO, no user auth inside”).
-* [ ] Add `docs/SECURITY.md` for trusted network assumptions.
+* [x] Document enterprise SSO boundary (“Atticus runs behind SSO, no user auth inside”).
+* [x] Add `docs/SECURITY.md` for trusted network assumptions.
 * [ ] Add `CHANGELOG.md` automation.
 * [ ] Maintain `TODO_COMPLETE.md` with date-stamped completions.
 * [ ] Expand `GLOSSARY.md` for dictionary agent baseline.
