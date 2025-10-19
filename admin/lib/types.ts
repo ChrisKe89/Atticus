@@ -32,3 +32,27 @@ export type EvalSeed = {
   expectedAnswer: string | null;
   notes: string | null;
 };
+
+export type ContentEntry = {
+  name: string;
+  path: string;
+  type: "file" | "directory";
+  size: number;
+  modified: string;
+};
+
+export type MetricsHistogramBucket = {
+  bucket: string;
+  count: number;
+};
+
+export type MetricsDashboard = {
+  queries: number;
+  avg_confidence: number;
+  escalations: number;
+  avg_latency_ms: number;
+  p95_latency_ms: number;
+  histogram: MetricsHistogramBucket[];
+  recent_trace_ids: string[];
+  rate_limit: Record<string, number> | null;
+};

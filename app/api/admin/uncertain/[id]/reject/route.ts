@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
-
-function canReject(role: Role | undefined): boolean {
-  return role === Role.ADMIN || role === Role.REVIEWER;
-}
 
 type RejectBody = {
   notes?: string;
@@ -13,9 +8,6 @@ type RejectBody = {
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const { user } = getRequestContext();
-  if (!canReject(user.role)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
 
   const { id } = params;
   let body: RejectBody = {};
@@ -45,7 +37,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       auditLog.push({
         action: "reject",
         actorId: user.id,
-        actorRole: user.role,
+        actorRole: null,
         at: eventTimestamp,
         notes: notes ?? null,
       });
@@ -69,7 +61,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
         data: {
           orgId: existing.orgId,
           actorId: user.id,
-          actorRole: user.role,
+          actorRole: null,
           action: "chat.rejected",
           entity: "chat",
           chatId: updated.id,
@@ -99,3 +91,4 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
 }
+

@@ -20,11 +20,11 @@ type PrismaContextClient = PrismaClient | Prisma.TransactionClient;
 
 export async function setRlsContext(
   client: PrismaContextClient,
-  options: { userId: string; role: string; orgId: string }
+  options: { userId: string; orgId: string }
 ) {
-  const { userId, role, orgId } = options;
+  const { userId, orgId } = options;
   await client.$executeRaw`SELECT set_config('app.current_user_id', ${userId}, true)`;
-  await client.$executeRaw`SELECT set_config('app.current_user_role', ${role}, true)`;
+  await client.$executeRaw`SELECT set_config('app.current_user_role', 'SERVICE', true)`;
   await client.$executeRaw`SELECT set_config('app.current_org_id', ${orgId}, true)`;
 }
 

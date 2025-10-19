@@ -26,6 +26,12 @@ The Next.js application is the canonical UI; historical static assets live under
 
 ---
 
+### Split Deployment
+
+- **Chat bundle** – the primary Next.js app listens on port **3000** with `SERVICE_MODE=chat`. It exposes the chat UI, public APIs, and acts as the gateway for admin API calls consumed by the dedicated workspace.
+- **Admin workspace** – the `admin/` Next.js project runs on port **9000** and targets the chat bundle via `ATTICUS_MAIN_BASE_URL` (defaults to `http://localhost:3000`). Links from the chat UI use `NEXT_PUBLIC_ADMIN_URL` so operators jump straight to the admin surface.
+- **FastAPI** – toggles routers based on `SERVICE_MODE`. `chat` mode enables `/ingest`, `/ask`, `/eval`, `/contact`, and `/ui`; `admin` mode enables `/admin/**` for dictionary management, metrics, logs, and session views.
+
 ## Data Flow
 
 1. **Content Addition**
@@ -73,3 +79,6 @@ The Next.js application is the canonical UI; historical static assets live under
 - [AGENTS.md](AGENTS.md) — Detailed agent responsibilities and error policy.
 - [OPERATIONS.md](OPERATIONS.md) — Runbooks and evaluation metrics.
 - [README.md](../README.md) — Setup instructions and Make targets.
+
+
+

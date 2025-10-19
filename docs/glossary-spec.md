@@ -1,16 +1,16 @@
 # Glossary Specification
 
-The glossary module enables reviewers to propose terminology updates and administrators
-to approve or reject entries. The workflow is designed to mirror the RBAC policies in the
-Next.js admin UI and Prisma models.
+The glossary module enables curators to propose terminology updates and the dedicated
+admin service to approve or reject entries. Identity and access control are enforced at
+the network boundary; the chat surface is read-only while the admin workspace (port 9000)
+provides the review tooling.
 
-## Roles
+## Service Responsibilities
 
-| Role       | Permissions                                                |
-| ---------- | ---------------------------------------------------------- |
-| `user`     | Read-only access to approved glossary entries.             |
-| `reviewer` | Submit new terms and propose edits.                        |
-| `admin`    | Approve/reject proposals, manage history, export glossary. |
+- **Chat service (port 3000)** &mdash; consumes approved glossary entries to render highlights
+  and definitions. It never mutates glossary data.
+- **Admin service (port 9000)** &mdash; surfaces review queues, allows edits, and writes audit
+  events via the shared Prisma models.
 
 ## Data Model
 
@@ -47,24 +47,21 @@ model GlossaryEntry {
 
 All mutations emit structured `RagEvent` audit rows (mirrored in `logs/app.jsonl`) including the acting user,
 the request/trace ID, and the state transition. Row-level security is enforced through
-Prisma queries executed inside `withRlsContext` and mirrored on the FastAPI admin APIs via
-the `X-Admin-Token` header.
+Prisma queries executed inside `withRlsContext`; the admin service forwards the trusted gateway
+headers and does not require any shared tokens.
 
 ## API Contracts
 
-- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
-- `GET /api/glossary` – reviewer/admin session required; returns serialized entries with
-  author/reviewer metadata plus glossary metadata (aliases, units, normalized product
-  families) used by the chat experience.
-- `POST /api/glossary` – admin session required; idempotent upsert keyed by `(orgId, term)`
+- `GET /api/glossary` – exposed to the trusted chat surface; returns serialized entries with
+  author metadata plus glossary fields (aliases, units, normalized product families) used by the UI.
+- `POST /api/glossary` – called by the admin service; idempotent upsert keyed by `(orgId, term)`
   that accepts term, definition, synonyms, aliases, units, product families, and status updates
   while recording author/reviewer metadata and request IDs.
-- `PUT /api/glossary/:id` – admin session required; updates an entry in place (definition,
-  synonyms, aliases, units, product families, status, review notes) and stamps reviewer metadata
-  when a decision is made. Normalized aliases/families are recomputed server-side to keep
-  chat lookups consistent.
-- FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and
-  require a matching `X-Admin-Token` header; failures emit contract-compliant error
+- `PUT /api/glossary/:id` – admin service update that edits an entry in place (definition,
+  synonyms, aliases, units, product families, status, review notes). Normalized aliases/families
+  are recomputed server-side to keep chat lookups consistent.
+- FastAPI `/admin/dictionary` endpoints mirror the glossary state for legacy tooling and are
+  reachable only from the trusted network segment; failures emit contract-compliant error
   payloads with `request_id` for observability.
 
 ## UI Flow
@@ -89,8 +86,8 @@ sequenceDiagram
 
 ### Decision Notes
 
-- **Single admin review gate** keeps quality control centralized and aligns with our RBAC policy where only admins can approve or
-  reject terms. This mirrors the Prisma ownership model and prevents conflicting reviewer decisions.
+- **Single admin review gate** keeps quality control centralized and mirrors the service split:
+  only the admin workspace can approve or reject terms, preventing conflicting reviewer decisions.
 - **Audit-first feedback** relies on structured events written during each transition so downstream services can reconcile glossary
   changes without polling Prisma directly.
 - **FastAPI bridge retained** to support legacy tooling that still depends on the `/admin/dictionary` endpoints during the migration
@@ -105,7 +102,7 @@ sequenceDiagram
 
 - `make db.seed` provisions:
   - Organization `org-atticus` (overridable via `DEFAULT_ORG_ID`).
-  - Service users `glossary.author@seed.atticus` (reviewer) and `glossary.approver@seed.atticus` (admin) for deterministic RBAC checks.
+  - Service users `glossary.author@seed.atticus` and `glossary.approver@seed.atticus` for deterministic audit trails in tests.
   - Three glossary rows covering the primary workflow states:
     - `glossary-entry-managed-print-services` → **APPROVED** with reviewer metadata for smoke tests.
     - `glossary-entry-proactive-maintenance` → **PENDING** awaiting admin action.
@@ -126,5 +123,5 @@ sequenceDiagram
 ## CI Expectations
 
 - `make test.api` exercises glossary endpoints under auth.
-- `make quality` runs Prisma client type checks, Vitest RBAC unit tests, and Playwright admin flows to guard glossary access.
+- `make quality` runs Prisma client type checks, Vitest coverage, and Playwright admin flows to guard glossary access.
 - Seed data for glossary lives alongside the CED seed manifest (`make seed`).

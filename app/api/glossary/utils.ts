@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
-import { ForbiddenError, UnauthorizedError } from "@/lib/rbac";
 
 function normalizeToken(value: string): string {
   return value
@@ -152,12 +151,6 @@ export function snapshotEntry(entry: any) {
 }
 
 export function handleGlossaryError(error: unknown) {
-  if (error instanceof UnauthorizedError) {
-    return buildError(401, "unauthorized", error.message || "Authentication required.");
-  }
-  if (error instanceof ForbiddenError) {
-    return buildError(403, "forbidden", error.message || "Forbidden");
-  }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
     return buildError(409, "conflict", "Term already exists for this organization.");
   }
@@ -169,3 +162,4 @@ export function handleGlossaryError(error: unknown) {
   }
   return buildError(500, "internal_error", "An internal error occurred.");
 }
+

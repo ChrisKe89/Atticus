@@ -1,4 +1,10 @@
-import type { EvalSeed, GlossaryEntry, ReviewChat } from "./types";
+import type {
+  ContentEntry,
+  EvalSeed,
+  GlossaryEntry,
+  MetricsDashboard,
+  ReviewChat,
+} from "./types";
 import { buildUpstreamHeaders, getAtticusBaseUrl } from "./config";
 
 function mergeHeaders(base: Headers, extra?: HeadersInit): Headers {
@@ -11,10 +17,7 @@ function mergeHeaders(base: Headers, extra?: HeadersInit): Headers {
   return merged;
 }
 
-export async function atticusFetch(
-  path: string,
-  init: RequestInit = {}
-): Promise<Response> {
+export async function atticusFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const target = path.startsWith("/") ? path : `/${path}`;
   const headers = mergeHeaders(buildUpstreamHeaders(), init.headers);
   return fetch(`${getAtticusBaseUrl()}${target}`, {
@@ -100,3 +103,82 @@ export async function fetchEvalSeeds(): Promise<EvalSeed[]> {
   }
   return [];
 }
+
+export async function fetchContentEntries(path = "."): Promise<ContentEntry[]> {
+  const targetPath = path && path.trim().length > 0 ? path.trim() : ".";
+  const response = await atticusFetch(`/api/admin/content/list?path=${encodeURIComponent(targetPath)}`);
+  if (!response.ok) {
+    throw new Error(`Failed to list content (status ${response.status}).`);
+  }
+  const payload = (await response.json()) as { entries?: Array<Record<string, unknown>> };
+  const entries = Array.isArray(payload.entries) ? payload.entries : [];
+  return entries
+    .map((entry) => {
+      const name = typeof entry.name === "string" ? entry.name : "";
+      const entryPath = typeof entry.path === "string" ? entry.path : "";
+      if (!name || !entryPath) {
+        return null;
+      }
+      const type: ContentEntry["type"] = entry.type === "directory" ? "directory" : "file";
+      const size = typeof entry.size === "number" && Number.isFinite(entry.size) ? entry.size : 0;
+      const modified =
+        typeof entry.modified === "string" && entry.modified.trim().length > 0
+          ? entry.modified
+          : new Date().toISOString();
+      return {
+        name,
+        path: entryPath,
+        type,
+        size,
+        modified,
+      } satisfies ContentEntry;
+    })
+    .filter((value): value is ContentEntry => value !== null);
+}
+
+export async function fetchMetricsDashboard(): Promise<MetricsDashboard | null> {
+  const response = await atticusFetch("/api/admin/metrics");
+  if (!response.ok) {
+    return null;
+  }
+  const payload = (await response.json().catch(() => null)) as Partial<MetricsDashboard> | null;
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+  const histogramSource = Array.isArray(payload.histogram) ? payload.histogram : [];
+  const histogram = histogramSource
+    .map((item) => {
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+      const bucket = "bucket" in item && typeof item.bucket === "string" ? item.bucket : String(item.bucket ?? "");
+      const count = Number.isFinite((item as { count?: unknown }).count)
+        ? Number((item as { count?: unknown }).count)
+        : 0;
+      return { bucket, count };
+    })
+    .filter((value): value is MetricsDashboard["histogram"][number] => value !== null);
+
+  const recentIds = Array.isArray(payload.recent_trace_ids)
+    ? payload.recent_trace_ids.map((item) => String(item))
+    : [];
+
+  const rateLimit =
+    payload.rate_limit && typeof payload.rate_limit === "object" && !Array.isArray(payload.rate_limit)
+      ? Object.fromEntries(
+          Object.entries(payload.rate_limit).map(([key, value]) => [key, Number(value) || 0])
+        )
+      : null;
+
+  return {
+    queries: Number(payload.queries) || 0,
+    avg_confidence: Number(payload.avg_confidence) || 0,
+    escalations: Number(payload.escalations) || 0,
+    avg_latency_ms: Number(payload.avg_latency_ms) || 0,
+    p95_latency_ms: Number(payload.p95_latency_ms) || 0,
+    histogram,
+    recent_trace_ids: recentIds,
+    rate_limit: rateLimit,
+  };
+}
+

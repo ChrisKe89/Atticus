@@ -156,7 +156,7 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
    make quality
    ```
 
-  > `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright RBAC coverage, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
+  > `make quality` mirrors CI by running Ruff, mypy, pytest (>=90% coverage), Vitest unit tests, Next.js lint/typecheck/build, Playwright admin flows, version parity checks, and all audit scripts (Knip, icon usage, route inventory, Python dead-code audit).
   > Pre-commit hooks now include Ruff, mypy, ESLint (Next + tailwindcss), Prettier (with tailwind sorting), and markdownlint. Install with `pre-commit install`.
 
 1. Authenticate with magic link

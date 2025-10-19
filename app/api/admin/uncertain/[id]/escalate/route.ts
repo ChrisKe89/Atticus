@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Role } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
 import { getRequestContext } from "@/lib/request-context";
 
@@ -18,9 +17,6 @@ type EscalateBody = {
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const { user } = getRequestContext();
-  if (user.role !== Role.ADMIN) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
 
   const { id } = params;
   let body: EscalateBody = {};
@@ -57,7 +53,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     auditLog.push({
       action: "escalate",
       actorId: user.id,
-      actorRole: user.role,
+      actorRole: null,
       at: nowIso,
       assignee: assignee ?? null,
       summary: summary ?? chat.question,
@@ -76,7 +72,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
           {
             action: "created",
             actorId: user.id,
-            actorRole: user.role,
+            actorRole: null,
             at: nowIso,
           },
         ],
@@ -103,7 +99,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       data: {
         orgId: chat.orgId,
         actorId: user.id,
-        actorRole: user.role,
+        actorRole: null,
         action: "chat.escalated",
         entity: "chat",
         chatId: chat.id,
@@ -135,3 +131,4 @@ export async function POST(request: Request, { params }: { params: { id: string 
     summary: result.summary ?? summary ?? null,
   });
 }
+

@@ -14,8 +14,6 @@ type NavLink = {
 
 const links: readonly NavLink[] = [
   { href: "/", label: "Chat" },
-  { href: "/admin", label: "Admin" },
-  { href: "/admin/content", label: "Content" },
   { href: "/settings", label: "Settings" },
   { href: "/contact", label: "Contact" },
   { href: "/apps", label: "Apps" },
@@ -25,6 +23,10 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const visibleLinks = useMemo(() => links, []);
+  const adminUrl = useMemo(
+    () => (process.env.NEXT_PUBLIC_ADMIN_URL?.trim() || "http://localhost:9000").replace(/\/+$/, ""),
+    []
+  );
 
   const activeHref = useMemo(() => {
     if (!pathname) {
@@ -62,6 +64,14 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <a
+            href={adminUrl}
+            className="rounded-full px-3 py-1.5 text-slate-600 transition-colors hover:bg-indigo-50 hover:text-indigo-600 dark:text-slate-300 dark:hover:bg-indigo-500/10"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Admin
+          </a>
         </nav>
         <div className="flex items-center gap-3">
           <Button
@@ -106,6 +116,15 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
+            <a
+              href={adminUrl}
+              className="rounded-xl px-3 py-2 text-slate-700 transition hover:bg-indigo-50 dark:text-slate-300 dark:hover:bg-indigo-500/10"
+              rel="noreferrer"
+              target="_blank"
+              onClick={() => setIsOpen(false)}
+            >
+              Admin
+            </a>
           </nav>
         </div>
       </div>

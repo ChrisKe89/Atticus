@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { GlossaryStatus, Prisma } from "@prisma/client";
 import { withRlsContext } from "@/lib/rls";
-import { canEditGlossary } from "@/lib/rbac";
 import {
   buildNormalizedAliases,
   parseAliases,
@@ -24,7 +23,6 @@ const relationSelect = {
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const { user } = getRequestContext();
-    const editor = canEditGlossary(user);
     const payload = await request.json();
     const definition = typeof payload.definition === "string" ? payload.definition.trim() : "";
     if (!definition) {
@@ -46,7 +44,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         ? null
         : undefined;
 
-    const entry = await withRlsContext(editor, async (tx) => {
+    const entry = await withRlsContext(user, async (tx) => {
       const existing = await tx.glossaryEntry.findUnique({
         where: { id: params.id },
         include: relationSelect,
@@ -65,7 +63,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         normalizedAliases: buildNormalizedAliases(term ?? existing.term, synonyms, aliases),
         normalizedFamilies: families.normalized,
         status,
-        updatedById: editor.id,
+        updatedById: user.id,
       };
       if (term) {
         data.term = term;
@@ -78,7 +76,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         data.reviewerId = null;
       } else {
         data.reviewedAt = new Date();
-        data.reviewerId = editor.id;
+        data.reviewerId = user.id;
       }
 
       const updated = await tx.glossaryEntry.update({
@@ -89,9 +87,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
       await tx.ragEvent.create({
         data: {
-          orgId: editor.orgId,
-          actorId: editor.id,
-          actorRole: editor.role,
+          orgId: user.orgId,
+          actorId: user.id,
+          actorRole: null,
           action: "glossary.updated",
           entity: "glossary",
           glossaryId: updated.id,
@@ -120,8 +118,7 @@ export async function PATCH(request: Request, ctx: { params: { id: string } }) {
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   try {
     const { user } = getRequestContext();
-    const editor = canEditGlossary(user);
-    const result = await withRlsContext(editor, async (tx) => {
+    const result = await withRlsContext(user, async (tx) => {
       const existing = await tx.glossaryEntry.findUnique({ where: { id: params.id } });
       if (!existing) {
         return null;
@@ -129,9 +126,9 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       await tx.glossaryEntry.delete({ where: { id: params.id } });
       await tx.ragEvent.create({
         data: {
-          orgId: editor.orgId,
-          actorId: editor.id,
-          actorRole: editor.role,
+          orgId: user.orgId,
+          actorId: user.id,
+          actorRole: null,
           action: "glossary.deleted",
           entity: "glossary",
           glossaryId: existing.id,
@@ -149,3 +146,4 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
     return handleGlossaryError(error);
   }
 }
+

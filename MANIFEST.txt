@@ -133,7 +133,6 @@ Root: C:\Dev\Atticus
 [INCLUDED] docs/RELEASE.md (3,815 bytes / 0.00 MB)
 [INCLUDED] docs/REMOTE_ACCESS.md (4,892 bytes / 0.00 MB)
 [INCLUDED] docs/REQUIREMENTS.md (5,754 bytes / 0.01 MB)
-[INCLUDED] docs/runbooks/auth-rbac.md (4,718 bytes / 0.00 MB)
 [INCLUDED] docs/runbooks/seeding.md (1,374 bytes / 0.00 MB)
 [INCLUDED] docs/SECURITY.md (3,059 bytes / 0.00 MB)
 [INCLUDED] docs/STYLEGUIDE.md (1,718 bytes / 0.00 MB)
@@ -218,7 +217,6 @@ Root: C:\Dev\Atticus
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_RELEASE_md.txt
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_REMOTE_ACCESS_md.txt
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_REQUIREMENTS_md.txt
-[SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_runbooks_auth-rbac_md.txt
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_runbooks_seeding_md.txt
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_SECURITY_md.txt
 [SKIP: not-in-include-list] reports/md-links-C__Dev_Atticus_docs_STYLEGUIDE_md.txt

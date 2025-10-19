@@ -108,10 +108,10 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 * [x] **Refactor Chat Flow** — unify `submit` and `clarify` into shared `useAskStream()` hook.
 * [x] **Central Config Loader** — single `core/config.py` (Pydantic `AppSettings`).
 * [ ] **SSE Event Schema** — shared TS/Python schema for `answer` / `end` events.
-* [ ] **Architecture Doc** — update `docs/ARCHITECTURE.md` for split-port deployment.
-* [ ] **Admin UX** — move metrics/content into dedicated Next.js app on port 9000.
-* [ ] Remove all legacy login, token, or RBAC references from code.
-* [ ] Add `SERVICE_MODE` env var (`chat` or `admin`) to simplify containerization.
+* [x] **Architecture Doc** - update `docs/ARCHITECTURE.md` for split-port deployment.
+* [x] **Admin UX** - move metrics/content into dedicated Next.js app on port 9000.
+* [x] Remove all legacy login, token, or RBAC references from code.
+* [x] Add `SERVICE_MODE` env var (`chat` or `admin`) to simplify containerization.
 
 ---
 
@@ -151,7 +151,7 @@ Would you like me to also include a **“subtask breakdown”** for that item (e
 
 ## 📚 Documentation & Governance
 
-* [ ] Update `README.md` and `ARCHITECTURE.md` for two-service model.
+* [x] Update `README.md` and `ARCHITECTURE.md` for two-service model.
 * [ ] Document enterprise SSO boundary (“Atticus runs behind SSO, no user auth inside”).
 * [ ] Add `docs/SECURITY.md` for trusted network assumptions.
 * [ ] Add `CHANGELOG.md` automation.

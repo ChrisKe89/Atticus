@@ -1,10 +1,24 @@
 import { ChatReviewBoard } from "../components/chat-review-board";
+import { ContentManager } from "../components/content-manager";
 import { DocumentIngestionPanel } from "../components/document-ingestion-panel";
 import { EvalSeedManager } from "../components/eval-seed-manager";
 import { GlossaryViewer } from "../components/glossary-viewer";
-import { fetchEvalSeeds, fetchGlossaryEntries, fetchReviewQueue } from "../lib/atticus-client";
+import { MetricsDashboardPanel } from "../components/metrics-dashboard";
+import {
+  fetchContentEntries,
+  fetchEvalSeeds,
+  fetchGlossaryEntries,
+  fetchMetricsDashboard,
+  fetchReviewQueue,
+} from "../lib/atticus-client";
 import { logPhaseTwoError } from "../lib/logging";
-import type { EvalSeed, GlossaryEntry, ReviewChat } from "../lib/types";
+import type {
+  ContentEntry,
+  EvalSeed,
+  GlossaryEntry,
+  MetricsDashboard,
+  ReviewChat,
+} from "../lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +26,8 @@ export default async function AdminHome() {
   let chats: ReviewChat[] = [];
   let glossary: GlossaryEntry[] = [];
   let seeds: EvalSeed[] = [];
+  let contentEntries: ContentEntry[] = [];
+  let metrics: MetricsDashboard | null = null;
   try {
     chats = await fetchReviewQueue();
   } catch (error) {
@@ -34,6 +50,20 @@ export default async function AdminHome() {
     await logPhaseTwoError(`Admin service failed to load eval seeds: ${message}`);
   }
 
+  try {
+    contentEntries = await fetchContentEntries();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to load content listings.";
+    await logPhaseTwoError(`Admin service failed to load content listing: ${message}`);
+  }
+
+  try {
+    metrics = await fetchMetricsDashboard();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to load metrics dashboard.";
+    await logPhaseTwoError(`Admin service failed to load metrics: ${message}`);
+  }
+
   return (
     <main
       style={{
@@ -52,6 +82,8 @@ export default async function AdminHome() {
         </p>
       </header>
       <DocumentIngestionPanel />
+      <MetricsDashboardPanel initialMetrics={metrics} />
+      <ContentManager initialPath="." initialEntries={contentEntries} />
       <ChatReviewBoard initialChats={chats} />
       <GlossaryViewer entries={glossary} />
       <EvalSeedManager initialSeeds={seeds} />

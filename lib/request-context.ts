@@ -1,10 +1,8 @@
 import { headers } from "next/headers";
-import { Role } from "@prisma/client";
 
 export type RequestUser = {
   id: string;
   orgId: string;
-  role: Role;
   email: string | null;
   name: string | null;
 };
@@ -21,18 +19,6 @@ function normalize(value: string | null): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-function resolveRole(rawRole: string | null): Role {
-  if (!rawRole) {
-    return Role.ADMIN;
-  }
-  const normalized = rawRole.trim().toUpperCase();
-  const role = (Object.values(Role) as string[]).find((value) => value === normalized);
-  if (!role) {
-    return Role.ADMIN;
-  }
-  return role as Role;
-}
-
 const FALLBACK_USER_ID = "upstream-user";
 const FALLBACK_ORG_ID = "org-atticus";
 
@@ -43,13 +29,11 @@ export function getRequestContext(): RequestContext {
   const orgId = normalize(headerBag.get("x-atticus-org-id")) ?? FALLBACK_ORG_ID;
   const email = normalize(headerBag.get("x-atticus-user-email"));
   const name = normalize(headerBag.get("x-atticus-user-name"));
-  const role = resolveRole(normalize(headerBag.get("x-atticus-role")));
 
   return {
     user: {
       id: userId,
       orgId,
-      role,
       email,
       name,
     },

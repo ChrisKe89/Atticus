@@ -17,7 +17,8 @@
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["components/*"],
-      "@/app/*": ["app/*"]
+      "@/app/*": ["app/*"],
+      "@admin/*": ["admin/*"]
     },
     "types": ["node", "vitest"],
     "plugins": [
