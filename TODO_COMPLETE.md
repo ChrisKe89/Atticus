@@ -19,14 +19,24 @@ The following items are done or no longer relevant and are recorded here for tra
 - “Decide on Framer Motion” — kept as optional; AGENTS reflects this.
 - “Archive web/static” — done; legacy moved under `archive/legacy-ui/`.
 - “CONTENT_DIR → CONTENT_ROOT rename” — standardised across code/docs.
-- “Rebuild evaluator harness” — present via tests and `eval` target.
-- “Glossary API error normalisation” — implemented with `request_id`.
+- "Rebuild evaluator harness" - present via tests and `eval` target.
+- "Glossary API error normalisation" - implemented with `request_id`.
+
+---
+
+## 2025-11-15
+- [x] TODO "Add `CHANGELOG.md` automation." - Added scripts/update_changelog_from_todos.py and Makefile target changelog.sync to rebuild the changelog backlog section from TODO completions. - completed 2025-11-15
+- [x] TODO "Maintain `TODO_COMPLETE.md` with date-stamped completions." - Introduced scripts/log_todo_completion.py and Makefile todo.log helper so tasks flip to [x] and log entries automatically. - completed 2025-11-15
+- [x] TODO "Expand `GLOSSARY.md` for dictionary agent baseline." - Published docs/GLOSSARY.md detailing the dictionary schema, workflow, and validation checklist for glossary automation. - completed 2025-11-15
+
+
+- [x] TODO "Architecture & Maintainability - SSE Event Schema" - generated a shared Pydantic union for start/answer/end events, wrote the JSON schema to `schemas/sse-events.schema.json`, updated the Next.js parity check to follow `$ref` definitions, and added Vitest/Pytest coverage for `answer`/`end` event validation - completed 2025-11-15 (this change set).
 
 ---
 
 ## 2025-11-08
 
-- [x] TODO "Performance & Cost — token caps, caching, probes" — implemented prompt (1.5k) and answer (1k) token ceilings with safe truncation, cached the last ten normalized queries with dynamic pgvector probe tuning, batched ingestion embeddings, disabled chat input during streaming, emitted CI evaluation dashboards with an index HTML, and logged per-100-query token/cost windows — completed 2025-11-08 (this change set).
+- [x] TODO "Performance & Cost - token caps, caching, probes" - implemented prompt (1.5k) and answer (1k) token ceilings with safe truncation, cached the last ten normalized queries with dynamic pgvector probe tuning, batched ingestion embeddings, disabled chat input during streaming, emitted CI evaluation dashboards with an index HTML, and logged per-100-query token/cost windows - completed 2025-11-08 (this change set).
 
 ---
 

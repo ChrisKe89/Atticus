@@ -4,6 +4,11 @@
 
 ### Merged from TODO_COMPLETE (Unversioned)
 
+- 2025-11-15: TODO "Add `CHANGELOG.md` automation." - Added scripts/update_changelog_from_todos.py and Makefile target changelog.sync to rebuild the changelog backlog section from TODO completions.
+- 2025-11-15: TODO "Maintain `TODO_COMPLETE.md` with date-stamped completions." - Introduced scripts/log_todo_completion.py and Makefile todo.log helper so tasks flip to [x] and log entries automatically.
+- 2025-11-15: TODO "Expand `GLOSSARY.md` for dictionary agent baseline." - Published docs/GLOSSARY.md detailing the dictionary schema, workflow, and validation checklist for glossary automation.
+- 2025-11-15: TODO "Architecture & Maintainability - SSE Event Schema" - generated a shared Pydantic union for start/answer/end events, wrote the JSON schema to `schemas/sse-events.schema.json`, updated the Next.js parity check to follow `$ref` definitions, and added Vitest/Pytest coverage for `answer`/`end` event validation
+
 ## [0.10.7] - 2025-11-12
 
 ### Added

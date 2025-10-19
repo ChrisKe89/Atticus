@@ -1,6 +1,7 @@
 # Makefile — Atticus
 .PHONY: env ingest eval api e2e openapi smtp-test smoke test test.unit test.api lint format typecheck quality web-build web-start web-lint web-typecheck web-dev app-dev help \
-        db.up db.down db.migrate db.seed db.verify db.backup db.restore db.integrity seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up deadcode-audit
+        db.up db.down db.migrate db.seed db.verify db.backup db.restore db.integrity seed web-test web-e2e web-audit admin-dev admin-start admin-build admin-lint admin-typecheck compose-up deadcode-audit \
+        changelog.sync todo.log
 
 PYTHON ?= python
 PNPM ?= pnpm
@@ -190,3 +191,13 @@ version-check:
 	@$(PYTHON) scripts/check_version_parity.py
 deadcode-audit:
 	$(PYTHON) scripts/dead_code_audit.py
+
+changelog.sync:
+	$(PYTHON) scripts/update_changelog_from_todos.py
+
+todo.log:
+	@if [ -z "$(ENTRY)" ]; then \
+		echo "Usage: ENTRY='Task Title::details' make todo.log"; \
+		exit 1; \
+	fi
+	$(PYTHON) scripts/log_todo_completion.py --entry "$(ENTRY)"

@@ -18,6 +18,7 @@ Atticus uses **Semantic Versioning**: `MAJOR.MINOR.PATCH`.
 ## Release Checklist
 
 1. **Update CHANGELOG**
+   - Run `make changelog.sync` (or `python scripts/update_changelog_from_todos.py`) to pull recent TODO completions into the `[Unreleased]` section.
    - Edit [CHANGELOG.md](../CHANGELOG.md) with the new version number, date, and highlights.
 2. **Verify Environment**
    - Confirm `.env` is complete and correct using:

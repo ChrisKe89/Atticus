@@ -398,9 +398,10 @@ Use CI to build, tag, and deploy.
 
 Completion Summary Behavior
 
-Codex appends a dated entry in TODO_COMPLETE.md for each resolved item.
-
-After last task: open chore/todo-rollup PR summarizing the cycle (eval deltas, metrics, version bump).
+- Use `python scripts/log_todo_completion.py --entry "Task::Details"` (or `make todo.log ENTRY="Task::Details"`) to flip TODO checkboxes and append dated rows to TODO_COMPLETE.md.
+- Run `make changelog.sync` to rebuild the `[Unreleased]` backlog section before opening a PR.
+- Codex appends a dated entry in TODO_COMPLETE.md for each resolved item.
+- After the last task, open a chore/todo-rollup PR summarizing the cycle (eval deltas, metrics, version bump).
 
 
 
