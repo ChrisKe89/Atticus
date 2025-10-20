@@ -37,3 +37,5 @@
 {"timestamp":"2025-10-20T09:14:55.926Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
 {"timestamp":"2025-10-20T09:14:55.957Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
 {"timestamp":"2025-10-20T09:14:55.959Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-20T09:22:36.384Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-20T09:22:36.423Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
