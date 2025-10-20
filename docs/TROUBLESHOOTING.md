@@ -188,6 +188,18 @@ If local Node tooling drifts, reinstall via `pnpm install` and retry.
 
 ---
 
+## Admin metrics returns 401
+
+- The admin FastAPI routes require an `X-Admin-Token` header. The Next.js proxy at `app/api/admin/metrics` now forwards
+  `ADMIN_API_TOKEN` automatically, but the variable must still be available to the runtime (`.env`, `admin/.env.local`, or
+  process manager configuration).
+- Restart the Next.js dev server after exporting or updating the token so the new environment variable is visible to the
+  proxy handler.
+- Manually verify with `curl -H "X-Admin-Token: $ADMIN_API_TOKEN" http://localhost:8000/admin/metrics` if the proxy still
+  fails, then inspect FastAPI logs for additional detail.
+
+---
+
 ## Index and Retrieval Issues
 
 - **Rollback to a known-good index**:
