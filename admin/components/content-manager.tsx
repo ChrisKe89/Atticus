@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import type { ContentEntry } from "../lib/types";
+import { formatTimestamp } from "../lib/datetime";
 
 type AlertState =
   | { type: "success" | "error" | "info"; message: string }
@@ -433,7 +434,7 @@ export function ContentManager({ initialPath, initialEntries }: ContentManagerPr
                   </td>
                   <td style={{ padding: "0.75rem 1rem", color: "#64748b", textTransform: "capitalize" }}>{entry.type}</td>
                   <td style={{ padding: "0.75rem 1rem", color: "#64748b" }}>
-                    {new Date(entry.modified).toLocaleString()}
+                    {formatTimestamp(entry.modified)}
                   </td>
                   <td style={{ padding: "0.75rem 1rem", color: "#64748b" }}>
                     {entry.type === "directory" ? "—" : `${(entry.size / 1024).toFixed(1)} KB`}

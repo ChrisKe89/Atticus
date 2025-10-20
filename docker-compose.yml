@@ -1,6 +1,11 @@
 services:
   postgres:
-    image: pgvector/pgvector:pg16
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+      args:
+        PGVECTOR_VERSION: ${PGVECTOR_VERSION:-0.8.1}
+        INDEX_MAX_DIMENSIONS: ${INDEX_MAX_DIMENSIONS:-4096}
     container_name: atticus-postgres
     restart: unless-stopped
     env_file: .env
@@ -8,7 +13,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-atticus}
       POSTGRES_USER: ${POSTGRES_USER:-atticus}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-atticus}
-      VECTOR_INDEX_MAX_DIMENSIONS: 4096
+      PGVECTOR_INDEX_MAX_DIMENSIONS: ${PGVECTOR_INDEX_MAX_DIMENSIONS:-4096}
     ports:
       - "5433:5432"
     volumes:

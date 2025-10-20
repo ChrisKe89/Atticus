@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Send } from "lucide-react";
-import type { AskResponse, AskSource } from "@/lib/ask-contract";
+import type { AskResponse } from "@/lib/ask-contract";
 import AnswerRenderer from "@/components/AnswerRenderer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,13 +20,6 @@ interface ChatMessage {
 
 function createId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function formatConfidence(confidence: number | null | undefined) {
-  if (confidence === null || confidence === undefined || Number.isNaN(confidence)) {
-    return "—";
-  }
-  return `${Math.round(confidence * 100)}%`;
 }
 
 export function ChatPanel() {
@@ -229,34 +222,6 @@ export function ChatPanel() {
                   ) : (
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   )}
-                  {message.response?.sources?.length ? (
-                    <div className="mt-3 space-y-1 text-xs text-slate-600 dark:text-slate-400">
-                      <p className="font-semibold uppercase tracking-wide">Sources</p>
-                      <ul className="space-y-1">
-                        {message.response.sources.map((source: AskSource, index) => (
-                          <li key={`${message.id}-source-${index}`}>
-                            {source.path}
-                            {typeof source.page === "number" ? ` · page ${source.page}` : ""}
-                            {source.heading ? ` · ${source.heading}` : ""}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-                  {message.response ? (
-                    <footer className="mt-3 flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400">
-                      <span>Confidence: {formatConfidence(message.response.confidence)}</span>
-                      <span>
-                        Escalate:{" "}
-                        {message.response.should_escalate === undefined
-                          ? "-"
-                          : message.response.should_escalate
-                            ? "Yes"
-                            : "No"}
-                      </span>
-                      <span className="truncate">Request ID: {message.response.request_id}</span>
-                    </footer>
-                  ) : null}
                   {/* Suppress duplicate red error text inside bubbles; message content carries user-facing message */}
                 </div>
               </article>

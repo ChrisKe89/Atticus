@@ -19,6 +19,10 @@ from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable
 if TYPE_CHECKING:  # avoid importing heavy deps at import time
     from core.config import AppSettings
     from retriever.vector_store import RetrievalMode, SearchResult
+else:
+    AppSettings = "AppSettings"  # type: ignore[misc,assignment]
+    RetrievalMode = "RetrievalMode"  # type: ignore[misc,assignment]
+    SearchResult = "SearchResult"  # type: ignore[misc,assignment]
 
 
 def _default_output_dir(settings: AppSettings) -> Path:
@@ -130,6 +134,73 @@ def _canon(p: str) -> str:
         return str(p).replace("\\", "/").lower()
 
 
+def _make_snippet(text: str | None, limit: int = 280) -> str | None:
+    if not text:
+        return None
+    condensed = " ".join(text.split())
+    if len(condensed) <= limit:
+        return condensed
+    return condensed[: limit - 1].rstrip() + "…"
+
+
+def _scoped_search(
+    store: "VectorStore",
+    question: str,
+    *,
+    top_k: int,
+    mode: "RetrievalMode",
+) -> list["SearchResult"]:
+    """Augment base retrieval with product-family scoped searches."""
+
+    from retriever.resolver import resolve_models  # noqa: PLC0415
+
+    base_results = store.search(
+        question,
+        top_k=top_k,
+        filters=None,
+        mode=mode,
+    )
+
+    combined: dict[str, tuple["SearchResult", bool]] = {}
+
+    def _add(results: Sequence["SearchResult"], boosted: bool) -> None:
+        for item in results:
+            key = item.chunk_id
+            existing = combined.get(key)
+            if existing is None:
+                combined[key] = (item, boosted)
+                continue
+            stored_item, stored_boost = existing
+            if item.score > stored_item.score or (boosted and not stored_boost):
+                combined[key] = (item, boosted or stored_boost)
+
+    _add(base_results, False)
+
+    resolution = resolve_models(question)
+    scopes = resolution.scopes
+
+    for scope in scopes:
+        filters: dict[str, str] = {}
+        if getattr(scope, "family_id", None):
+            filters["product_family"] = scope.family_id  # type: ignore[assignment]
+        if not filters:
+            continue
+        scoped_results = store.search(
+            question,
+            top_k=top_k,
+            filters=filters,
+            mode=mode,
+        )
+        _add(scoped_results, True)
+
+    ordered = sorted(
+        combined.values(),
+        key=lambda entry: (1 if entry[1] else 0, entry[0].score),
+        reverse=True,
+    )
+    return [entry[0] for entry in ordered[:top_k]]
+
+
 @runtime_checkable
 class _HasSource(Protocol):
     source_path: str
@@ -181,12 +252,29 @@ def _write_outputs(
     summary_html = output_dir / "metrics.html"
 
     with summary_csv.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(
-            handle, fieldnames=["query", "nDCG@10", "Recall@50", "MRR", "top_document"]
-        )
+        fieldnames = [
+            "query",
+            "nDCG@10",
+            "Recall@50",
+            "MRR",
+            "top_document",
+            "top_snippet",
+            "expected_answer",
+        ]
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
-        writer.writerow({"query": "AVERAGE", **metrics})
+        writer.writerow(
+            {
+                "query": "AVERAGE",
+                "nDCG@10": metrics.get("nDCG@10", 0.0),
+                "Recall@50": metrics.get("Recall@50", 0.0),
+                "MRR": metrics.get("MRR", 0.0),
+                "top_document": None,
+                "top_snippet": None,
+                "expected_answer": None,
+            }
+        )
 
     summary_json.write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
 
@@ -195,16 +283,20 @@ def _write_outputs(
         f'<tr><th scope="row">{escape(name)}</th><td>{_format_float(value)}</td></tr>'
         for name, value in metrics.items()
     )
-    query_rows = "".join(
-        "<tr>"
-        f"<td>{escape(str(row.get('query', '')))}</td>"
-        f"<td>{_format_float(row.get('nDCG@10'))}</td>"
-        f"<td>{_format_float(row.get('Recall@50'))}</td>"
-        f"<td>{_format_float(row.get('MRR'))}</td>"
-        f"<td>{escape(str(row.get('top_document') or ''))}</td>"
-        "</tr>"
-        for row in rows
-    )
+    query_rows = []
+    for row in rows:
+        query_rows.append(
+            "<tr>"
+            f"<td>{escape(str(row.get('query', '')))}</td>"
+            f"<td>{_format_float(row.get('nDCG@10'))}</td>"
+            f"<td>{_format_float(row.get('Recall@50'))}</td>"
+            f"<td>{_format_float(row.get('MRR'))}</td>"
+            f"<td>{escape(str(row.get('top_document') or ''))}</td>"
+            f"<td>{escape(str(row.get('top_snippet') or ''))}</td>"
+            f"<td>{escape(str(row.get('expected_answer') or ''))}</td>"
+            "</tr>"
+        )
+    query_rows_html = "".join(query_rows)
 
     html_report = (
         "<!DOCTYPE html>"
@@ -237,8 +329,16 @@ def _write_outputs(
         "<section>"
         "<table>"
         "<caption>Per-query Breakdown</caption>"
-        "<thead><tr><th>Query</th><th>nDCG@10</th><th>Recall@50</th><th>MRR</th><th>Top Document</th></tr></thead>"
-        f"<tbody>{query_rows}</tbody>"
+        "<thead><tr>"
+        "<th>Query</th>"
+        "<th>nDCG@10</th>"
+        "<th>Recall@50</th>"
+        "<th>MRR</th>"
+        "<th>Top Document</th>"
+        "<th>Top Snippet</th>"
+        "<th>Expected Answer</th>"
+        "</tr></thead>"
+        f"<tbody>{query_rows_html}</tbody>"
         "</table>"
         "</section>"
         "</body></html>"
@@ -341,10 +441,10 @@ def run_evaluation(
         per_query_rows: list[dict[str, object]] = []
 
         for example in gold_examples:
-            results = store.search(
+            results = _scoped_search(
+                store,
                 example.question,
                 top_k=50,
-                filters=None,
                 mode=retrieval_mode,
             )
             doc_keys, documents_primary = _build_doc_keys(results)
@@ -353,15 +453,20 @@ def run_evaluation(
             ndcg_scores.append(ndcg)
             recall_scores.append(recall)
             mrr_scores.append(mrr)
-            per_query_rows.append(
-                {
-                    "query": example.question,
-                    "nDCG@10": round(ndcg, 4),
-                    "Recall@50": round(recall, 4),
-                    "MRR": round(mrr, 4),
-                    "top_document": documents_primary[0] if documents_primary else None,
-                }
-            )
+        top_document = documents_primary[0] if documents_primary else None
+        snippet = _make_snippet(results[0].text if results else None)
+
+        per_query_rows.append(
+            {
+                "query": example.question,
+                "nDCG@10": round(ndcg, 4),
+                "Recall@50": round(recall, 4),
+                "MRR": round(mrr, 4),
+                "top_document": top_document,
+                "top_snippet": snippet,
+                "expected_answer": example.expected_answer,
+            }
+        )
 
         metrics = _compute_metrics(ndcg_scores, recall_scores, mrr_scores)
         mode_dir = output_dir

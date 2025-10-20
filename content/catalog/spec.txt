@@ -1,2 +1,0 @@
-Atticus printers support up to 1200 x 1200 dpi resolution.
-Recommended duty cycle is 5,000 pages per month.

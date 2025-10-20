@@ -73,6 +73,7 @@ DEFAULTS = {
     # Frontend/API integration
     "RAG_SERVICE_URL": "http://localhost:8000",
     "ASK_SERVICE_URL": "http://localhost:8000",
+    "ADMIN_API_TOKEN": "change-me-admin-token",
 }
 
 

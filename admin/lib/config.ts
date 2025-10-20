@@ -25,6 +25,11 @@ export function buildUpstreamHeaders(additional?: HeadersInit): Headers {
   headers.set("x-atticus-user-name", reviewer.name);
   headers.set("x-atticus-user-email", reviewer.email);
   headers.set("x-atticus-org-id", "org-atticus");
+  const adminToken = process.env.ADMIN_API_TOKEN?.trim();
+  if (adminToken) {
+    headers.set("x-admin-token", adminToken);
+    headers.set("X-Admin-Token", adminToken);
+  }
   const requestId = headers.get("x-request-id") ?? randomUUID();
   const traceId = headers.get("x-trace-id") ?? requestId;
   headers.set("x-request-id", requestId);

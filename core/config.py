@@ -58,6 +58,12 @@ class AppSettings(BaseSettings):
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     pgvector_lists: int = Field(default=100, alias="PGVECTOR_LISTS")
     pgvector_probes: int = Field(default=4, alias="PGVECTOR_PROBES")
+    pgvector_index_max_dimensions: int = Field(
+        default=2000, alias="PGVECTOR_INDEX_MAX_DIMENSIONS", ge=1
+    )
+    pgvector_index_build_mem_mb: int = Field(
+        default=256, alias="PGVECTOR_INDEX_BUILD_MEM_MB", ge=16
+    )
     prompt_token_limit: int = Field(default=1500, alias="PROMPT_TOKEN_LIMIT", ge=1)
     answer_token_limit: int = Field(default=1000, alias="ANSWER_TOKEN_LIMIT", ge=1)
     embedding_batch_size: int = Field(default=32, alias="EMBEDDING_BATCH_SIZE", ge=1)

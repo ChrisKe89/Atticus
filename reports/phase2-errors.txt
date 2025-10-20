@@ -1,2 +1,24 @@
 [2025-10-18T03:37:45.407Z] Admin service failed to load queue: Upstream returned 500 while loading review queue.
 [2025-10-18T03:37:45.517Z] Admin service failed to load queue: Upstream returned 500 while loading review queue.
+{"timestamp":"2025-10-19T23:13:08.544Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:13:08.589Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:18:43.264Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:18:43.326Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:32:16.280Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:32:16.310Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:38:32.582Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:38:32.642Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:48:08.682Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:48:09.083Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:49:40.492Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:49:40.580Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:49:44.992Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:49:45.054Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:49:48.868Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:49:48.929Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:50:03.815Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:50:03.891Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:52:33.110Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:52:33.170Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-19T23:56:14.047Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-19T23:56:14.122Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}

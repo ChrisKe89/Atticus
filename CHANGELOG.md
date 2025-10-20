@@ -9,6 +9,10 @@
 - 2025-11-15: TODO "Expand `GLOSSARY.md` for dictionary agent baseline." - Published docs/GLOSSARY.md detailing the dictionary schema, workflow, and validation checklist for glossary automation.
 - 2025-11-15: TODO "Architecture & Maintainability - SSE Event Schema" - generated a shared Pydantic union for start/answer/end events, wrote the JSON schema to `schemas/sse-events.schema.json`, updated the Next.js parity check to follow `$ref` definitions, and added Vitest/Pytest coverage for `answer`/`end` event validation
 
+### Changed
+
+- Removed the legacy Settings, Contact, and Apps pages from the chat UI and hid the top navigation bar on the chat route now that the admin console runs as a standalone service.
+
 ## [0.10.7] - 2025-11-12
 
 ### Added

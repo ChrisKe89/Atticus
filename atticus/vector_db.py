@@ -123,7 +123,15 @@ class PgVectorRepository:
 
         lists = max(1, int(self.settings.pgvector_lists))
         dimension = int(self.settings.embed_dimensions)
-        ann_supported = dimension <= 2000
+        max_dimensions = max(1, int(getattr(self.settings, "pgvector_index_max_dimensions", 2000)))
+        index_build_mem_mb = max(
+            16, int(getattr(self.settings, "pgvector_index_build_mem_mb", 256))
+        )
+        block_size = 8192  # PostgreSQL default BLCKSZ
+        reserved_bytes = 64  # Page header + opaque metadata overhead
+        max_tuple_dim = max(1, (block_size - reserved_bytes) // 4)
+        effective_max_dimensions = min(max_dimensions, max_tuple_dim)
+        ann_supported = dimension <= effective_max_dimensions
         with self.connection(autocommit=True) as conn:
             conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
             conn.execute(
@@ -197,20 +205,24 @@ class PgVectorRepository:
                     """
                 )
             if ann_supported:
-                conn.execute(
-                    f"""
-                    CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding
-                    ON atticus_chunks USING ivfflat (embedding vector_cosine_ops)
-                    WITH (lists = {lists})
-                    """
-                )
+                conn.execute(f"SET maintenance_work_mem = '{index_build_mem_mb}MB'")
+                try:
+                    conn.execute(
+                        f"""
+                        CREATE INDEX IF NOT EXISTS idx_atticus_chunks_embedding
+                        ON atticus_chunks USING ivfflat (embedding vector_cosine_ops)
+                        WITH (lists = {lists})
+                        """
+                    )
+                finally:
+                    conn.execute("SET maintenance_work_mem = DEFAULT")
             else:
-                logger.warning(
+                logger.info(
                     "Skipping ivfflat index on atticus_chunks.embedding; "
-                    "dimension %s exceeds the 2000 limit for this pgvector build. "
-                    "Install a pgvector build compiled with a higher INDEX_MAX_DIMENSIONS "
-                    "to enable ANN search.",
+                    "dimension %s exceeds the practical %s limit for 8 KB PostgreSQL pages. "
+                    "Falling back to brute-force vector search.",
                     dimension,
+                    effective_max_dimensions,
                 )
             conn.execute(
                 "ALTER TABLE atticus_documents ALTER COLUMN metadata SET DEFAULT '{}'::jsonb"
