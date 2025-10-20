@@ -19,11 +19,14 @@ export type ReviewChat = {
 };
 
 export type GlossaryEntry = {
+  definition: string;
   term: string;
   synonyms: string[];
   aliases: string[];
   units: string[];
   productFamilies: string[];
+  status: string;
+  reviewNotes: string | null;
 };
 
 export type EvalSeed = {

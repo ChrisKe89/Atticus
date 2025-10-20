@@ -77,6 +77,9 @@ export async function fetchGlossaryEntries(): Promise<GlossaryEntry[]> {
       ? ((payload as { entries: GlossaryEntry[] }).entries ?? [])
       : [];
   return entries.map((entry) => ({
+    definition: typeof (entry as { definition?: unknown }).definition === "string"
+      ? ((entry as { definition: string }).definition ?? "")
+      : "",
     term: entry.term,
     synonyms: Array.isArray(entry.synonyms) ? entry.synonyms : [],
     aliases: Array.isArray(entry.aliases) ? entry.aliases : [],
@@ -84,6 +87,14 @@ export async function fetchGlossaryEntries(): Promise<GlossaryEntry[]> {
     productFamilies: Array.isArray((entry as { productFamilies?: unknown }).productFamilies)
       ? ((entry as { productFamilies: string[] }).productFamilies ?? [])
       : [],
+    status:
+      typeof (entry as { status?: unknown }).status === "string"
+        ? ((entry as { status: string }).status ?? "PENDING")
+        : "PENDING",
+    reviewNotes:
+      typeof (entry as { reviewNotes?: unknown }).reviewNotes === "string"
+        ? ((entry as { reviewNotes: string }).reviewNotes ?? null)
+        : null,
   }));
 }
 

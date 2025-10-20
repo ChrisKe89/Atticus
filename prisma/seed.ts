@@ -69,6 +69,18 @@ const seedUsers: SeedUser[] = [
     name: "Glossary Seed Approver",
     role: Role.ADMIN,
   },
+  {
+    id: "admin-service",
+    email: "admin.service@seed.atticus",
+    name: "Admin Service",
+    role: Role.ADMIN,
+  },
+  {
+    id: "upstream-user",
+    email: "upstream.user@seed.atticus",
+    name: "Upstream User",
+    role: Role.REVIEWER,
+  },
 ];
 
 async function main() {
@@ -169,6 +181,19 @@ async function main() {
       reviewNotes: "Rejected pending customer-ready evidence and usage data.",
       reviewerId: approver.id,
       reviewedAt: new Date("2024-05-15T09:30:00Z"),
+    },
+    {
+      id: "glossary-entry-popo",
+      term: "POPO",
+      definition: "Power off, power on.",
+      synonyms: ["Power cycle"],
+      aliases: ["Restart"],
+      units: [],
+      productFamilies: [],
+      status: GlossaryStatus.APPROVED,
+      reviewNotes: "Canonical troubleshooting reset guidance.",
+      reviewerId: approver.id,
+      reviewedAt: new Date("2024-06-01T08:00:00Z"),
     },
   ];
 
