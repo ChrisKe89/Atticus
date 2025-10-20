@@ -14,12 +14,18 @@ export async function GET(request: NextRequest) {
   const ids = resolveTraceIdentifiers(request);
   const target = `${getMetricsServiceUrl()}/admin/metrics`;
   try {
+    const headers: Record<string, string> = {
+      Accept: "application/json",
+      "X-Request-ID": ids.requestId,
+      "X-Trace-ID": ids.traceId,
+    };
+    const adminToken = process.env.ADMIN_API_TOKEN?.trim();
+    if (adminToken) {
+      headers["X-Admin-Token"] = adminToken;
+    }
+
     const upstream = await fetch(target, {
-      headers: {
-        Accept: "application/json",
-        "X-Request-ID": ids.requestId,
-        "X-Trace-ID": ids.traceId,
-      },
+      headers,
       cache: "no-store",
     });
     const body = await upstream.json().catch(() => ({}));
