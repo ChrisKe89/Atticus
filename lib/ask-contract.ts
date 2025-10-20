@@ -56,7 +56,10 @@ export const askResponseSchema = z.preprocess(
     sources: z.array(askSourceSchema).optional(),
     answers: z.array(askAnswerSchema).optional(),
     clarification: clarificationPayloadSchema.nullish(),
-    glossaryHits: z.array(glossaryHitSchema).optional(),
+    glossaryHits: z
+      .array(glossaryHitSchema)
+      .nullish()
+      .transform((value) => value ?? undefined),
   }),
 );
 

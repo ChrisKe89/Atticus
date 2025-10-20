@@ -307,8 +307,8 @@ Always confirm local `make quality` mirrors CI before pushing.
 The Next.js application in `app/` is the supported interface.
 
 - `app/page.tsx` hosts the streaming chat surface using `/api/ask`, renders citations, and now injects glossary highlights (term definition, aliases, units, normalized product families) inline when responses reference curated terms.
-- `app/contact/page.tsx` handles escalations to the FastAPI `/contact` endpoint.
-- `app/admin/page.tsx` powers the glossary workflow and respects upstream reviewer/admin context.
+- Escalations now route through the FastAPI `/contact` endpoint or the dedicated admin workspace without a standalone Next.js contact page.
+- The admin workflows live in the separate `admin/` Next.js workspace (port 9000) instead of under `app/`.
 
 Legacy static assets live under `archive/legacy-ui/` for reference only.
 

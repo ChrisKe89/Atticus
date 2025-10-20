@@ -1,5 +1,6 @@
 """Unified chat route returning the canonical ask response contract."""
 
+import re
 import time
 from collections.abc import Iterable, Sequence
 
@@ -41,6 +42,27 @@ def _format_sources(citations: Iterable[AskSource]) -> list[str]:
     return sources
 
 
+def _clean_answer_text(body: str, scope: ModelScope, scopes: Sequence[ModelScope]) -> str:
+    other_tokens: list[str] = []
+    for candidate_scope in scopes:
+        if candidate_scope is scope:
+            continue
+        for candidate in (candidate_scope.model, candidate_scope.family_label, candidate_scope.family_id):
+            if candidate:
+                other_tokens.append(candidate.strip().lower())
+    if not other_tokens:
+        return body
+    sentences = re.split(r"(?<=\.)\s+", body.strip())
+    filtered: list[str] = []
+    for sentence in sentences:
+        normal = sentence.lower()
+        if any(token and token in normal for token in other_tokens) and ("no information" in normal or "no info" in normal):
+            continue
+        filtered.append(sentence)
+    cleaned = " ".join(filtered).strip()
+    cleaned = re.sub(r"\s{3,}", " ", cleaned)
+    return cleaned or body
+
 def _convert_citations(citations: Iterable[Citation]) -> list[AskSource]:
     return [
         AskSource(
@@ -75,9 +97,10 @@ def _build_answer_payloads(
         scope = item.scope
         answer = item.answer
         ask_sources = _convert_citations(answer.citations)
+        cleaned_text = _clean_answer_text(answer.response, scope, scopes)
         answers.append(
             AskAnswer(
-                answer=answer.response,
+                answer=cleaned_text,
                 confidence=answer.confidence,
                 should_escalate=answer.should_escalate,
                 model=getattr(answer, "model", scope.model),
@@ -99,6 +122,8 @@ def _aggregate_answer_text(answers: Sequence[AskAnswer]) -> str:
             segments.append(f"### {header}\n\n{body}")
         else:
             segments.append(body)
+    if len(answers) > 1:
+        segments.insert(0, "I'll answer that as two separate questions.")
     return "\n\n".join(segment for segment in segments if segment).strip()
 
 

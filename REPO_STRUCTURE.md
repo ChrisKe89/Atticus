@@ -4,9 +4,8 @@ Key directories to understand when working on Atticus.
 
 - `app/`
   - `page.tsx` – streaming chat surface using the unified `/api/ask` contract.
-  - `admin/` – admin console surfacing Uncertain, Tickets, and Glossary tabs for reviewers/admins.
-  - `contact/` – escalation form backed by the FastAPI `/contact` endpoint.
-  - `signin/`, `settings/`, `apps/` – additional Next.js routes.
+  - `api/` – Next.js route handlers that proxy chat/ingest/eval calls to FastAPI.
+  - `providers.tsx`, `layout.tsx` – application shell wiring shared context providers.
 - `components/`
   - `chat/` – chat panel client components.
   - `admin/` – console widgets (tabs, tables) powering `/admin`.

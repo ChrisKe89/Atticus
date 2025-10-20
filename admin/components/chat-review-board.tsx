@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ReviewChat, SourceSummary } from "../lib/types";
+import { formatTimestamp } from "../lib/datetime";
 
 type AlertState =
   | { type: "success"; message: string }
@@ -18,17 +19,6 @@ const statusPalette: Record<string, string> = {
   rejected: "#ef4444",
   reviewed: "#10b981",
 };
-
-function formatTimestamp(iso: string | null | undefined): string {
-  if (!iso) {
-    return "Unknown timestamp";
-  }
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
-}
 
 function summarise(value: string | null | undefined): string {
   if (!value) {

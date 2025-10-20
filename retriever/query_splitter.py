@@ -72,7 +72,11 @@ def split_question(question: str, scopes: Sequence[ModelScope]) -> list[SplitQue
     split_queries: list[SplitQuery] = []
     for scope in scopes:
         focus = _format_focus(scope)
-        focus_clause = f"Focus only on information relevant to {focus}."
+        focus_clause = (
+            "Focus only on information relevant to {focus}. "
+            "If the original question mentions other models or families, do not reference them or note missing information in your answer. "
+            "Answer as if the user only asked about this specific model or family."
+        ).format(focus=focus)
         prompt = f"{question}\n\n{focus_clause}"
         split_queries.append(SplitQuery(prompt=prompt, scope=scope))
     return split_queries
