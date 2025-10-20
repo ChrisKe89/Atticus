@@ -1,7 +1,6 @@
 """Shared FastAPI dependencies."""
 
 import logging
-from functools import lru_cache
 from pathlib import Path
 from typing import Annotated
 
@@ -25,10 +24,18 @@ def get_logger(settings: SettingsDep) -> logging.Logger:
     return configure_logging(settings)
 
 
-@lru_cache(maxsize=1)
+_METRICS_SINGLETON: MetricsRecorder | None = None
+
+
 def get_metrics(settings: SettingsDep) -> MetricsRecorder:
-    recorder = MetricsRecorder(settings=settings, store_path=Path("logs/metrics/metrics.csv"))
-    return recorder
+    global _METRICS_SINGLETON
+    if _METRICS_SINGLETON is None or _METRICS_SINGLETON.settings is not settings:
+        settings.ensure_directories()
+        _METRICS_SINGLETON = MetricsRecorder(
+            settings=settings,
+            store_path=Path("logs/metrics/metrics.csv"),
+        )
+    return _METRICS_SINGLETON
 
 
 LoggerDep = Annotated[logging.Logger, Depends(get_logger)]
