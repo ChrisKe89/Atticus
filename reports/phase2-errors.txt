@@ -22,3 +22,11 @@
 {"timestamp":"2025-10-19T23:52:33.170Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
 {"timestamp":"2025-10-19T23:56:14.047Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
 {"timestamp":"2025-10-19T23:56:14.122Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-20T08:18:25.636Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-20T08:18:25.663Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-20T08:32:30.189Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-20T08:32:30.249Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-20T08:33:09.127Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-20T08:33:09.170Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
+{"timestamp":"2025-10-20T08:40:01.958Z","level":"error","event":"phase_two_error","message":"Admin service failed to load glossary: Failed to load glossary entries (status 404)."}
+{"timestamp":"2025-10-20T08:40:01.995Z","level":"error","event":"phase_two_error","message":"Admin service failed to load eval seeds: Failed to load evaluation seeds (status 404)."}
