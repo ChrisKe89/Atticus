@@ -153,6 +153,17 @@ def test_glossary_seed_entries_round_trip() -> None:
             "normalized_families": ["C7070", "C8180"],
             "requires_reviewer": True,
         },
+        "glossary-entry-popo": {
+            "term": "POPO",
+            "status": "APPROVED",
+            "synonyms": ["Power cycle"],
+            "aliases": ["Restart"],
+            "units": [],
+            "families": [],
+            "normalized_aliases": ["popo", "powercycle", "restart"],
+            "normalized_families": [],
+            "requires_reviewer": True,
+        },
     }
 
     with psycopg.connect(database_url) as connection:  # type: ignore[attr-defined]
