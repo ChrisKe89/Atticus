@@ -285,43 +285,6 @@ async function main() {
 
   const chatSeeds: ChatSeed[] = [
     {
-      id: "chat-low-confidence-toner",
-      question: "Why are toner replacement alerts firing for the West team despite new cartridges?",
-      confidence: 0.38,
-      status: "pending_review",
-      requestId: "req-seed-001",
-      topSources: [
-        {
-          path: "content/operations/toner-optimization.md#alerts",
-          score: 0.82,
-          heading: "Alert tuning guidance",
-          chunkId: "chunk-toner-alerts",
-        },
-        {
-          path: "content/playbooks/ced-toner-guide.pdf",
-          score: 0.74,
-          page: 3,
-          heading: "Replace cartridges sequence",
-          chunkId: "chunk-toner-guide-3",
-        },
-      ],
-      createdAt: new Date("2024-07-08T10:15:00Z"),
-      auditLog: [
-        {
-          action: "captured",
-          at: "2024-07-08T10:15:10.000Z",
-          confidence: 0.38,
-        },
-        {
-          action: "followup",
-          at: "2024-07-08T10:17:00.000Z",
-          prompt: "Confirm the affected device serial numbers and share recent firmware updates.",
-        },
-      ],
-      userId: author.id,
-      followUpPrompt: "Confirm serial numbers and firmware applied last week.",
-    },
-    {
       id: "chat-escalated-calibration",
       question:
         "Color calibration fails with streak artifacts on the ProLine 5100 series. What should we try next?",

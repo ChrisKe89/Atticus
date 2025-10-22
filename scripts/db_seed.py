@@ -78,47 +78,6 @@ GLOSSARY_SEEDS = [
 
 CHAT_SEEDS = [
     {
-        "id": "chat-low-confidence-toner",
-        "question": (
-            "Why are toner replacement alerts firing for the West team despite new cartridges?"
-        ),
-        "confidence": 0.38,
-        "status": "pending_review",
-        "request_id": "req-seed-001",
-        "top_sources": [
-            {
-                "path": "content/operations/toner-optimization.md#alerts",
-                "score": 0.82,
-                "heading": "Alert tuning guidance",
-                "chunkId": "chunk-toner-alerts",
-            },
-            {
-                "path": "content/playbooks/ced-toner-guide.pdf",
-                "score": 0.74,
-                "page": 3,
-                "heading": "Replace cartridges sequence",
-                "chunkId": "chunk-toner-guide-3",
-            },
-        ],
-        "created_at": "2024-07-08T10:15:00Z",
-        "audit_log": [
-            {
-                "action": "captured",
-                "at": "2024-07-08T10:15:10.000Z",
-                "confidence": 0.38,
-            },
-            {
-                "action": "followup",
-                "at": "2024-07-08T10:17:00.000Z",
-                "prompt": (
-                    "Confirm the affected device serial numbers and share recent firmware updates."
-                ),
-            },
-        ],
-        "user_id": "user-seed-author",
-        "follow_up_prompt": "Confirm serial numbers and firmware applied last week.",
-    },
-    {
         "id": "chat-escalated-calibration",
         "question": (
             "Color calibration fails with streak artifacts on the ProLine 5100 series. "
