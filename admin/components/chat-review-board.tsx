@@ -405,6 +405,20 @@ export function ChatReviewBoard({ initialChats }: ChatReviewBoardProps) {
                 </span>
               </footer>
             </>
+          ) : chats.length === 0 ? (
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#94a3b8",
+                fontSize: "0.95rem",
+                textAlign: "center",
+              }}
+            >
+              {"You're all caught up. New escalations will land here the moment they require review."}
+            </div>
           ) : (
             <div
               style={{
