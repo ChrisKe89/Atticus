@@ -1,9 +1,6 @@
-AGENTS — Atticus
+# AGENTS — Atticus
 
 > Single source of truth for agent behavior, pipelines, and guardrails. Target stack: Next.js + Postgres/pgvector + Prisma.
-
-
-
 
 ---
 
@@ -19,11 +16,9 @@ Do not wait for review, chat confirmation, or manual triggers between items.
 
 Only stop when all items are completed, blocked (PR with diagnostics), or deferred (dependency not yet available).
 
-
-
 ---
 
-Current Audit Status
+## Current Audit Status
 
 Refer to AUDIT_REPORT.md for the latest findings (FND-001 – FND-008).
 
@@ -35,17 +30,13 @@ The admin service (`pnpm --filter admin dev`) handles escalation review and CSV 
 
 Release 0.7.4 streamlines the chat workspace and contact surface; keep the Settings nav limited to upstream-authorised reviewers.
 
-
-
 ---
 
-Execution Criteria — Must-Follow for Repo Work
+## Execution Criteria — Must-Follow for Repo Work
 
 > Treat these as hard requirements for anyone (or any agent) touching the repo.
 
-
-
-Instructions
+### Instructions
 
 Working on the repo(s) in the current environment is allowed, even if proprietary.
 
@@ -71,13 +62,9 @@ Follow formatting standards: pnpm run format (Prettier) / ruff format.
 
 No license headers unless explicitly required.
 
-
-
-
-
 ---
 
-Persistence (continuous loop)
+### Persistence (continuous loop)
 
 Continue executing tasks until the backlog is empty or all remaining items are BLOCKED/DEFERRED.
 
@@ -87,11 +74,9 @@ Never pause mid-cycle for confirmation; document assumptions inside the PR.
 
 Always run in autonomous mode — no user prompts between tasks.
 
-
-
 ---
 
-Tool Preambles (non-blocking)
+### Tool Preambles (non-blocking)
 
 Infer the task scope from TODO.md and repository context (no user confirmation).
 
@@ -99,21 +84,17 @@ Outline the plan internally and execute; avoid conversational pauses.
 
 Summarize actions in the PR description, not interactively during execution.
 
-
-
 ---
 
-Self-Reflection (internal)
+### Self-Reflection (internal)
 
 Maintain an internal rubric for quality: correctness, style, test coverage, performance, documentation, and maintainability.
 
 Iterate until all categories meet or exceed internal thresholds.
 
-
-
 ---
 
-Code Editing Rules
+### Code Editing Rules
 
 Context understanding — Read the full repo context before editing.
 
@@ -123,13 +104,11 @@ UI defaults — Next.js (TS) + Tailwind + shadcn/ui + Lucide.
 
 Accessibility — semantic HTML/ARIA; use Radix or shadcn components.
 
-
-
 ---
 
-App Framework (authoritative)
+### App Framework (authoritative)
 
-UI
+#### UI
 
 Frameworks: Next.js (TypeScript)
 
@@ -143,11 +122,9 @@ Fonts: Inter via next/font/google
 
 Animation: Framer Motion only when needed
 
-
-
 ---
 
-App (server & routing)
+#### App (server & routing)
 
 Chat/UI: / (chat)
 
@@ -161,16 +138,13 @@ API (FastAPI) → :8000
 
 Admin → :9000
 
-
 Remove /settings, /apps, or legacy pages unless explicitly required.
 
 FastAPI serves JSON APIs only; old UIs live under archive/legacy-ui.
 
-
-
 ---
 
-Access (authoritative)
+#### Access (authoritative)
 
 Authentication handled upstream by enterprise SSO (gateway identity headers).
 
@@ -178,11 +152,9 @@ Atticus trusts inbound identity; do not implement in-app auth or RBAC.
 
 No session or cookie management inside this workspace.
 
-
-
 ---
 
-Database Layer
+#### Database Layer
 
 Engine: Postgres with pgvector
 
@@ -194,11 +166,9 @@ ORM: Prisma
 
 Metadata: doc_id, source, product, version, acl, org_id, sha256, embedding_model, embedding_version.
 
-
-
 ---
 
-Multi-Model Query Decomposition
+#### Multi-Model Query Decomposition
 
 When a query names multiple models (e.g., “C7070 and C8180”), split into per-model sub-queries before retrieval.
 
@@ -206,35 +176,25 @@ Run independent RAG passes per family; merge into a final unified answer.
 
 Implement as a pre-RAG “query splitter” step and test accordingly.
 
-
-
 ---
 
-Chunking Policy (CED)
+#### Chunking Policy (CED)
 
 1. Prose (H2 sections) — 400–700 tokens, ~10% overlap.
 
-
 2. Tables — Chunk per logical row or spec×model pair.
-
 
 3. Footnotes — One per note block.
 
-
 4. Series facts — scope="series".
-
 
 5. Page-level — Only when self-contained.
 
-
 6. Include model[], source, chunking, and sha256 in metadata.
-
-
-
 
 ---
 
-Retrieval & RAG Pipeline
+#### Retrieval & RAG Pipeline
 
 Similarity: cosine (vector_cosine_ops)
 
@@ -248,11 +208,9 @@ Confidence threshold: 0.70
 
 Re-embed policy: add new vector column/table on model change, backfill, switch, prune old.
 
-
-
 ---
 
-Generation & Escalation
+#### Generation & Escalation
 
 Generate concise, cited answers.
 
@@ -262,11 +220,9 @@ Escalations → email ticket (AE100+).
 
 Include user, question, top_k docs, scores, request_id.
 
-
-
 ---
 
-Logging & Observability
+#### Logging & Observability
 
 Structured JSON (LOG_FORMAT=json) → logs/app.jsonl + logs/errors.jsonl.
 
@@ -276,45 +232,31 @@ Record metrics (Recall@k, MRR@k, latency_ms) to CSV reports.
 
 Mask API keys and PII.
 
-
-
 ---
 
-Testing Strategy
+#### Testing Strategy
 
 1. make install → deps
 
-
 2. make db.up / make db.migrate / make seed
-
 
 3. make smoke → health & route checks
 
-
 4. make test.unit → chunkers, serializers, helpers
-
 
 5. make test.api → FastAPI endpoints with Postgres
 
-
 6. make test.eval → RAG eval vs gold set
-
 
 7. make quality → lint/type/test/build audit
 
-
 8. Nightly E2E optional (Playwright)
-
-
 
 > CI runs 1–6 on PRs, 7 nightly.
 
-
-
-
 ---
 
-CI/CD
+#### CI/CD
 
 Matrix: Node 20 + Python 3.12
 
@@ -324,11 +266,9 @@ Artifacts: reports/eval-*.csv, Playwright traces on failure
 
 Fail pipeline on regression >3% recall or quality drop.
 
-
-
 ---
 
-Documentation Map
+#### Documentation Map
 
 README.md — overview and commands
 
@@ -346,11 +286,9 @@ ALL_FILES.md — consolidated source
 
 AUDIT_REPORT.md — compliance findings
 
-
-
 ---
 
-Security Guardrails
+#### Security Guardrails
 
 Never commit secrets.
 
@@ -362,11 +300,9 @@ PII redacted from logs and traces.
 
 Limit SMTP/SES to authorized regions.
 
-
-
 ---
 
-UI/UX Best Practices
+#### UI/UX Best Practices
 
 4–5 font sizes; text-xs for captions.
 
@@ -376,11 +312,9 @@ Spacing in multiples of 4.
 
 Use skeleton loaders, hover states, and accessible ARIA markup.
 
-
-
 ---
 
-Operations Cheatsheet
+#### Operations Cheatsheet
 
 Local Dev:
 make db.up && make db.migrate && make seed
@@ -393,25 +327,21 @@ Supabase or hosted Postgres; daily backups; rotate secrets.
 Do not commit .env files.
 Use CI to build, tag, and deploy.
 
-
 ---
 
-Completion Summary Behavior
+#### Completion Summary Behavior
 
 - Use `python scripts/log_todo_completion.py --entry "Task::Details"` (or `make todo.log ENTRY="Task::Details"`) to flip TODO checkboxes and append dated rows to TODO_COMPLETE.md.
 - Run `make changelog.sync` to rebuild the `[Unreleased]` backlog section before opening a PR.
 - Codex appends a dated entry in TODO_COMPLETE.md for each resolved item.
 - After the last task, open a chore/todo-rollup PR summarizing the cycle (eval deltas, metrics, version bump).
 
-
-
 ---
 
-End of AGENTS — Atticus (Continuous Execution Version)
+#### End of AGENTS — Atticus (Continuous Execution Version)
 
 This configuration authorizes full autonomous Codex execution for the Atticus repository.
 No pauses, no confirmations — continuous, safe, and documented improvement cycle.
-
 
 ---
 

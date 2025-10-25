@@ -25,6 +25,15 @@ UNCERTAINTY_PATTERNS: tuple[str, ...] = (
     r"\binsufficient\s+(?:information|context)\b",
 )
 
+NO_DATA_PATTERNS: tuple[str, ...] = (
+    r"\bnot\s+(?:explicitly\s+)?(?:specified|documented)\b",
+    r"\bnot\s+mentioned\b",
+    r"\bno\s+(?:relevant\s+)?information\b",
+    r"\bno\s+(?:available|supporting)\s+details\b",
+    r"\bcontext\s+does\s+not\s+contain\b",
+    r"\bunable\s+to\s+find\s+(?:support|information)\b",
+    r"\bconsult\s+.*?representative\b",
+)
 
 class GeneratorClient:
     """Wrapper around OpenAI responses with offline fallback."""
@@ -230,6 +239,8 @@ class GeneratorClient:
                 return 0.9
         if any(re.search(pattern, lowered) for pattern in UNCERTAINTY_PATTERNS):
             return 0.3
+        if any(re.search(pattern, lowered) for pattern in NO_DATA_PATTERNS):
+            return 0.2
         if "confidence" in lowered and "%" in lowered:
             try:
                 percent_tokens = (

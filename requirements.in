@@ -29,6 +29,7 @@ beautifulsoup4
 pandas
 camelot-py
 tabula-py
+jpype1
 
 # Utilities
 tenacity

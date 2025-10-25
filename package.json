@@ -1,6 +1,6 @@
 {
   "name": "atticus-webdev",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "packageManager": "pnpm@9.12.0",
   "private": true,
   "workspaces": [
@@ -34,6 +34,7 @@
     "clsx": "2.1.1",
     "lucide-react": "0.452.0",
     "next": "14.2.33",
+    "papaparse": "^5.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "10.1.0",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@playwright/test": "1.45.2",
     "@types/node": "20.19.0",
+    "@types/papaparse": "^5.3.16",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
     "autoprefixer": "10.4.21",

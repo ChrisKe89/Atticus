@@ -19,12 +19,23 @@ It ingests content, indexes it with pgvector, and serves grounded answers with c
 - **Flag unclear answers directly in chat.**
   - The chat panel now exposes a _Flag for seeds_ action when an answer returns with citations.
   - Atticus posts the flagged question, answer snippet, and cited paths to `/api/feedback`, which persists a `SeedRequest` row and generates a markdown scaffold under `content/seed_requests/` via `lib/seed-request-writer`.
-- **Seed backlog management.**
-  - Admin reviewers gain a new _Seed requests_ tab in the operations console.
-  - Each entry shows captured context, regenerates the draft document on demand, and can be marked _completed_ once the curated documentation is published and ingested.
-  - Under the hood these actions call `/api/admin/seed-requests/:id/regenerate` and `/api/admin/seed-requests/:id/complete` to update Prisma + emit audit events.
-- **Runbook.**
-  - Refer to `docs/runbooks/feedback-loop.md` for day-two operations, including regeneration, ingestion, and troubleshooting steps.
+  - **Seed backlog management.**
+    - Admin reviewers gain a new _Seed requests_ tab in the operations console.
+    - Each entry shows captured context, regenerates the draft document on demand, and can be marked _completed_ once the curated documentation is published and ingested.
+    - Under the hood these actions call `/api/admin/seed-requests/:id/regenerate` and `/api/admin/seed-requests/:id/complete` to update Prisma + emit audit events.
+  - **Runbook.**
+    - Refer to `docs/runbooks/feedback-loop.md` for day-two operations, including regeneration, ingestion, and troubleshooting steps.
+
+## Batch Question Upload
+
+- **Upload CSV batches directly from the chat UI.**
+  - Visit `/batch` (Batch in the top navigation) to upload a CSV containing up to 100 questions at a time.
+  - Use the built-in **Download template** button to grab a blank `ID,Product,Question` sheet.
+- **Automated answering and export.**
+  - Atticus processes each question sequentially, resolving clarifications when needed so every row receives an answer.
+  - Results surface inline with status badges, citations, and confidence estimates; download them as `ID,Product,Question,Answer,Citation,Confidence` once complete.
+- **Validation safeguards.**
+  - The uploader enforces the template columns, skips malformed rows, and blocks batches that exceed 100 entries.
 
 ---
 

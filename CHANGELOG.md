@@ -18,6 +18,16 @@
 - Removed the legacy Settings, Contact, and Apps pages from the chat UI and hid the top navigation bar on the chat route now that the admin console runs as a standalone service.
 - `withRlsContext` now provisions request-scoped service users before running Prisma transactions and suppresses cleanup errors, preventing aborted transactions when rejecting escalations or saving drafts without a corresponding user record.
 
+## [0.10.9] - 2025-11-16
+
+### Added
+
+- Batch upload workspace at `/batch` allowing CSV uploads of up to 100 questions, automatic clarification handling, inline status tracking, and downloadable results (Answer, Citation, Confidence columns).
+
+### Changed
+
+- Site navigation now stays visible on the chat route so the Batch workspace is discoverable from anywhere in the UI.
+
 ## [0.10.7] - 2025-11-12
 
 ### Added

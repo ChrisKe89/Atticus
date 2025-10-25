@@ -29,20 +29,34 @@ function assertSchemaParity() {
   if (!schema || !Array.isArray(schema.oneOf)) {
     return;
   }
+  type SchemaEntry = {
+    properties?: {
+      type?: {
+        const?: unknown;
+      };
+    };
+    $ref?: unknown;
+  };
   const definedTypes = new Set<string>();
-  for (const entry of schema.oneOf) {
-    const inlineType = entry?.properties?.type?.const;
+  const entries = schema.oneOf as SchemaEntry[];
+  for (const entry of entries) {
+    const inlineConst = entry?.properties?.type?.const;
+    const inlineType = typeof inlineConst === "string" ? (inlineConst as string) : undefined;
     if (inlineType && typeof inlineType === "string") {
       definedTypes.add(inlineType);
       continue;
     }
-    const ref = typeof entry?.$ref === "string" ? entry.$ref : undefined;
+    const refValue = entry?.$ref;
+    const ref = typeof refValue === "string" ? refValue : undefined;
     if (ref && typeof ref === "string") {
       const key = ref.split("/").pop();
-      const defs = (schema.definitions ?? (schema as { $defs?: Record<string, unknown> }).$defs) ?? {};
-      const node = key ? (defs as Record<string, any>)[key] : undefined;
-      const refType = node?.properties?.type?.const;
-      if (typeof refType === "string") {
+      const collections =
+        (schema.definitions as Record<string, SchemaEntry> | undefined) ??
+        ((schema as { $defs?: Record<string, SchemaEntry> }).$defs ?? {});
+      const node = key ? collections[key] : undefined;
+      const refConst = node?.properties?.type?.const;
+      const refType = typeof refConst === "string" ? (refConst as string) : undefined;
+      if (refType) {
         definedTypes.add(refType);
       }
     }

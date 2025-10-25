@@ -5,9 +5,15 @@ import { sseEventSchema } from "@/lib/sse-events";
 describe("sseEventSchema", () => {
   it("validates start/end events with requestId", () => {
     const start = sseEventSchema.parse({ type: "start", requestId: "req-123" });
+    if (start.type !== "start") {
+      throw new Error("Expected start event");
+    }
     expect(start.requestId).toBe("req-123");
 
     const end = sseEventSchema.parse({ type: "end", requestId: "req-123" });
+    if (end.type !== "end") {
+      throw new Error("Expected end event");
+    }
     expect(end.requestId).toBe("req-123");
   });
 

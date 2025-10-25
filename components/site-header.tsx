@@ -12,7 +12,10 @@ type NavLink = {
   label: string;
 };
 
-const links: readonly NavLink[] = [{ href: "/", label: "Chat" }];
+const links: readonly NavLink[] = [
+  { href: "/", label: "Chat" },
+  { href: "/batch", label: "Batch" },
+];
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -30,10 +33,7 @@ export function SiteHeader() {
     return visibleLinks.find((link) => pathname === link.href || pathname.startsWith(`${link.href}/`))?.href ?? null;
   }, [pathname, visibleLinks]);
 
-  const showNavigation = useMemo(
-    () => Boolean(pathname && pathname !== "/" && visibleLinks.length > 0),
-    [pathname, visibleLinks]
-  );
+  const showNavigation = useMemo(() => Boolean(visibleLinks.length > 0), [visibleLinks]);
 
   useEffect(() => {
     if (!showNavigation && isOpen) {
