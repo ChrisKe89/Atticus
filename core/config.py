@@ -427,12 +427,15 @@ def reset_settings_cache() -> None:
 
 
 def load_settings() -> AppSettings:
-    env_path = _resolve_env_file() or Path(".env")
+    env_path = (_resolve_env_file() or Path(".env")).resolve()
     env_mtime = env_path.stat().st_mtime if env_path.exists() else -1.0
     env_values = _parse_env_file(env_path)
     env_fingerprint = _env_variables_fingerprint()
 
-    base = AppSettings()
+    base = AppSettings(
+        _env_file=str(env_path),
+        _env_file_encoding="utf-8",
+    )
     config_path = base.config_path
     config_mtime = config_path.stat().st_mtime if config_path.exists() else -1.0
 

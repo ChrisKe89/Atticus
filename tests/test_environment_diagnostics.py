@@ -37,6 +37,7 @@ PGVECTOR_LISTS=256
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("PGVECTOR_LISTS", raising=False)
     monkeypatch.setenv("SMTP_USER", "smtp-user")
 
     diagnostics = config_module.environment_diagnostics()

@@ -92,7 +92,8 @@ def test_glossary_seed_entries_round_trip() -> None:
     if not database_url:
         pytest.skip("DATABASE_URL must be set to verify glossary seeds.")
 
-    if shutil.which("npm") is None:
+    npm_executable = "npm.cmd" if os.name == "nt" else "npm"
+    if shutil.which(npm_executable) is None:
         pytest.skip("npm is required to execute make db.seed")
 
     psycopg = pytest.importorskip("psycopg")
@@ -103,7 +104,7 @@ def test_glossary_seed_entries_round_trip() -> None:
     env.setdefault("ADMIN_NAME", "Seed Admin")
     env.setdefault("ADMIN_EMAIL", "seed-admin@example.com")
 
-    subprocess.run(["npm", "run", "db:seed"], check=True, env=env)
+    subprocess.run([npm_executable, "run", "db:seed"], check=True, env=env)
 
     expected = {
         "glossary-entry-managed-print-services": {
