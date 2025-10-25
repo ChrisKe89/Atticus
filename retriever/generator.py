@@ -35,6 +35,7 @@ NO_DATA_PATTERNS: tuple[str, ...] = (
     r"\bconsult\s+.*?representative\b",
 )
 
+
 class GeneratorClient:
     """Wrapper around OpenAI responses with offline fallback."""
 

@@ -8,8 +8,8 @@
       "json"
     ],
     "returncode": 1,
-    "stdout": "reports/quality/knip-report.json",
-    "stderr": "reports/quality/knip-report.stderr.log"
+    "stdout": "reports\\quality\\knip-report.json",
+    "stderr": "reports\\quality\\knip-report.stderr.log"
   },
   {
     "command": [
@@ -19,7 +19,7 @@
       "--json"
     ],
     "returncode": 0,
-    "stdout": "reports/quality/ts-prune-report.json",
-    "stderr": "reports/quality/ts-prune-report.stderr.log"
+    "stdout": "reports\\quality\\ts-prune-report.json",
+    "stderr": "reports\\quality\\ts-prune-report.stderr.log"
   }
 ]

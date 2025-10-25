@@ -48,7 +48,7 @@ class AnswerEvent(BaseModel):
     """Streamed answer payload validated against the canonical response contract."""
 
     type: Literal["answer"]
-    payload: "AskResponse"
+    payload: AskResponse
 
     model_config = {"populate_by_name": True}
 
@@ -94,11 +94,11 @@ def write_json_schema(path: Path = SCHEMA_PATH) -> None:
 
 __all__ = [
     "SCHEMA_PATH",
+    "_ANY_EVENT_ADAPTER",
     "AnswerEvent",
     "AnySseEvent",
     "EndEvent",
     "StartEvent",
-    "_ANY_EVENT_ADAPTER",
     "event_schema",
     "write_json_schema",
 ]

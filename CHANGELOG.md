@@ -12,6 +12,8 @@
 ### Added
 
 - Admin console glossary panel now supports creating entries (including the initial “POPO – Power off, power on” definition), wiring a proxy API route so new terms persist via the main Atticus service.
+- Chat workspace now persists local conversation history, surfaces recent sessions in the sidebar, and lets users jump back into earlier threads.
+- Batch upload workspace stores prior CSV runs in local storage so teams can reload results or kick off a new processing pass without re-uploading files.
 
 ### Changed
 

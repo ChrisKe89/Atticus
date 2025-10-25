@@ -18,11 +18,12 @@ from typing import TYPE_CHECKING, Protocol, cast, runtime_checkable
 
 if TYPE_CHECKING:  # avoid importing heavy deps at import time
     from core.config import AppSettings
-    from retriever.vector_store import RetrievalMode, SearchResult
+    from retriever.vector_store import RetrievalMode, SearchResult, VectorStore
 else:
     AppSettings = "AppSettings"  # type: ignore[misc,assignment]
     RetrievalMode = "RetrievalMode"  # type: ignore[misc,assignment]
     SearchResult = "SearchResult"  # type: ignore[misc,assignment]
+    VectorStore = "VectorStore"  # type: ignore[misc,assignment]
 
 
 def _default_output_dir(settings: AppSettings) -> Path:
@@ -144,12 +145,12 @@ def _make_snippet(text: str | None, limit: int = 280) -> str | None:
 
 
 def _scoped_search(
-    store: "VectorStore",
+    store: VectorStore,
     question: str,
     *,
     top_k: int,
-    mode: "RetrievalMode",
-) -> list["SearchResult"]:
+    mode: RetrievalMode,
+) -> list[SearchResult]:
     """Augment base retrieval with product-family scoped searches."""
 
     from retriever.resolver import resolve_models  # noqa: PLC0415
@@ -161,9 +162,9 @@ def _scoped_search(
         mode=mode,
     )
 
-    combined: dict[str, tuple["SearchResult", bool]] = {}
+    combined: dict[str, tuple[SearchResult, bool]] = {}
 
-    def _add(results: Sequence["SearchResult"], boosted: bool) -> None:
+    def _add(results: Sequence[SearchResult], boosted: bool) -> None:
         for item in results:
             key = item.chunk_id
             existing = combined.get(key)

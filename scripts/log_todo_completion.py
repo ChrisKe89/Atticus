@@ -32,8 +32,7 @@ def parse_args() -> argparse.Namespace:
         "--entry",
         action="append",
         required=True,
-        help="Task entry in the format 'Task Title::Details'. "
-        "Repeat for multiple tasks.",
+        help="Task entry in the format 'Task Title::Details'. Repeat for multiple tasks.",
     )
     parser.add_argument(
         "--date",
@@ -72,7 +71,7 @@ def mark_todo_completed(todo_lines: list[str], task_title: str) -> list[str]:
 def ensure_date_section(log_lines: list[str], target_date: str) -> list[str]:
     """Ensure TODO_COMPLETE has a section for the given date."""
 
-    for idx, line in enumerate(log_lines):
+    for _idx, line in enumerate(log_lines):
         match = DATE_HEADING_PATTERN.match(line.strip())
         if match and match.group(1) == target_date:
             return log_lines  # section already exists
@@ -94,15 +93,17 @@ def append_log_entries(log_lines: list[str], entries: Iterable[str], date: str) 
     log_lines = ensure_date_section(log_lines, date)
 
     lines_with_index = list(enumerate(log_lines))
-    section_start = next(
-        idx for idx, line in lines_with_index if line.strip() == f"## {date}"
-    )
+    section_start = next(idx for idx, line in lines_with_index if line.strip() == f"## {date}")
 
     insertion_point = section_start + 1
-    while insertion_point < len(log_lines) and log_lines[insertion_point].strip().startswith("- [x]"):
+    while insertion_point < len(log_lines) and log_lines[insertion_point].strip().startswith(
+        "- [x]"
+    ):
         insertion_point += 1
 
-    insert_block = [f"- [x] TODO \"{title}\" - {details} - completed {date}" for title, details in entries]
+    insert_block = [
+        f'- [x] TODO "{title}" - {details} - completed {date}' for title, details in entries
+    ]
     insert_block.append("")  # trailing blank line for readability
 
     return log_lines[:insertion_point] + insert_block + log_lines[insertion_point:]

@@ -2,30 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Send } from "lucide-react";
+
 import type { AskResponse } from "@/lib/ask-contract";
+import { createId } from "@/lib/id";
+
 import AnswerRenderer from "@/components/AnswerRenderer";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAskStream } from "@/components/chat/use-ask-stream";
 
-interface ChatMessage {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  status?: "pending" | "complete" | "error";
-  response?: AskResponse;
-  error?: string;
-  question?: string;
+import type { ChatMessage, ChatSession } from "./types";
+
+interface ChatPanelProps {
+  session: ChatSession | null;
+  onMessagesChange: (messages: ChatMessage[]) => void;
+  disabled?: boolean;
 }
 
-function createId() {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-export function ChatPanel() {
+export function ChatPanel({ session, onMessagesChange, disabled }: ChatPanelProps) {
   const FRIENDLY_VALIDATION_MSG =
     "There is no context to that question or it is not a proper question, please try again";
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(session?.messages ?? []);
   const [composer, setComposer] = useState("");
   const {
     start: startAsk,
@@ -34,14 +31,31 @@ export function ChatPanel() {
   } = useAskStream({
     friendlyErrorMessage: FRIENDLY_VALIDATION_MSG,
   });
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(!session || session.messages.length === 0);
   const formRef = useRef<HTMLFormElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    setMessages(session?.messages ?? []);
+    setShowIntro(!session || session.messages.length === 0);
+    setComposer("");
+  }, [session]);
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+    if (session.messages === messages) {
+      return;
+    }
+    onMessagesChange(messages);
+  }, [messages, session, onMessagesChange]);
+
+  const isDisabled = disabled || !session;
 
   const autoResize = () => {
     const el = textareaRef.current;
     if (!el) return;
-    // Base: 3 rows; allow growth up to 6 rows, then scroll
     const maxRows = 6;
     const style = window.getComputedStyle(el);
     const lineHeight = parseFloat(style.lineHeight || "20");
@@ -62,6 +76,9 @@ export function ChatPanel() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!session) {
+      return;
+    }
     const trimmed = composer.trim();
     if (!trimmed || isStreaming) {
       return;
@@ -71,13 +88,13 @@ export function ChatPanel() {
     }
 
     const userMessage: ChatMessage = {
-      id: createId(),
+      id: createId("msg"),
       role: "user",
       status: "complete",
       content: trimmed,
     };
     const placeholder: ChatMessage = {
-      id: createId(),
+      id: createId("msg"),
       role: "assistant",
       status: "pending",
       content: "Atticus is thinking...",
@@ -121,6 +138,9 @@ export function ChatPanel() {
   }
 
   async function handleClarificationChoice(messageId: string, models: string[]) {
+    if (!session) {
+      return;
+    }
     if (!models.length || isStreaming) {
       return;
     }
@@ -216,13 +236,12 @@ export function ChatPanel() {
                     <AnswerRenderer
                       text={message.content}
                       response={message.response}
-                      disabled={isStreaming}
+                      disabled={isStreaming || isDisabled}
                       onClarify={(models) => handleClarificationChoice(message.id, models)}
                     />
                   ) : (
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   )}
-                  {/* Suppress duplicate red error text inside bubbles; message content carries user-facing message */}
                 </div>
               </article>
             ))}
@@ -244,30 +263,26 @@ export function ChatPanel() {
               value={composer}
               onChange={(event) => setComposer(event.target.value)}
               ref={textareaRef}
-              disabled={isStreaming}
-              aria-disabled={isStreaming}
+              disabled={isStreaming || isDisabled}
+              aria-disabled={isStreaming || isDisabled}
               aria-busy={isStreaming}
               onKeyDown={(event) => {
-                // Enter: send. Shift+Enter: newline
-                const composing = (event.nativeEvent as unknown as { isComposing?: boolean })
-                  .isComposing;
+                const composing = (event.nativeEvent as unknown as { isComposing?: boolean }).isComposing;
                 if (event.key === "Enter" && !event.shiftKey && !composing) {
                   event.preventDefault();
-                  // Only submit if there is content and not streaming
-                  if (!isStreaming && composer.trim()) {
-                    // Prefer requestSubmit for proper form submission semantics
+                  if (!isStreaming && !isDisabled && composer.trim()) {
                     formRef.current?.requestSubmit();
                   }
                 }
               }}
               rows={3}
-              placeholder="Message Atticus..."
+              placeholder={isDisabled ? "Loading chat history..." : "Message Atticus..."}
               className="min-h-[72px] resize-none overflow-y-hidden"
             />
           </div>
           <Button
             type="submit"
-            disabled={isStreaming || !composer.trim()}
+            disabled={isStreaming || !composer.trim() || isDisabled}
             className="self-end rounded-xl"
           >
             {isStreaming ? (

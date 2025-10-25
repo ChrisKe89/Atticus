@@ -78,7 +78,7 @@ def _summarise_ampv_chunk(
                     if pos < len(lines):
                         values.append(lines[pos])
                 if len(values) == len(codes):
-                    for code, value in zip(codes, values):
+                    for code, value in zip(codes, values, strict=True):
                         metrics.setdefault(code.upper(), {})[key] = value
                 break
         i += 1
@@ -90,11 +90,17 @@ def _summarise_ampv_chunk(
             continue
         segments: list[str] = []
         if include_minimum and info.get("minimum"):
-            segments.append(f"Minimum AMPV { _expand_ampv_value(info['minimum']) } A4 equivalent impressions")
+            segments.append(
+                f"Minimum AMPV {_expand_ampv_value(info['minimum'])} A4 equivalent impressions"
+            )
         if info.get("designed"):
-            segments.append(f"Designed AMPV { _expand_ampv_value(info['designed']) } A4 equivalent impressions")
+            segments.append(
+                f"Designed AMPV {_expand_ampv_value(info['designed'])} A4 equivalent impressions"
+            )
         if info.get("maximum"):
-            segments.append(f"Maximum AMPV { _expand_ampv_value(info['maximum']) } A4 equivalent impressions")
+            segments.append(
+                f"Maximum AMPV {_expand_ampv_value(info['maximum'])} A4 equivalent impressions"
+            )
         if segments:
             return f"{code}: " + "; ".join(segments)
     return None
@@ -123,7 +129,9 @@ def _ampv_hint(
         summary = _summarise_ampv_chunk(result.text, target_codes=target_codes)
         if not summary:
             continue
-        family_label = result.metadata.get("product_family_label") or result.metadata.get("product_family")
+        family_label = result.metadata.get("product_family_label") or result.metadata.get(
+            "product_family"
+        )
         if family_label:
             label = str(family_label).strip()
             if label and not summary.startswith(label):

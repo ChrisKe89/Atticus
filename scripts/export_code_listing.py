@@ -65,19 +65,17 @@ def should_skip_directory(name: str) -> bool:
 
 
 def should_skip_file(path: Path, max_bytes: int, root: Path) -> bool:
-    if path == root:
-        return True
-
+    relative_parts = path.relative_to(root).parts
     lowered_name = path.name.lower()
-    if "cache" in lowered_name:
-        return True
-
-    for part in path.relative_to(root).parts:
-        if "cache" in part.lower():
-            return True
-
     extension = path.suffix.lower()
-    if extension not in ALLOWED_EXTENSIONS:
+
+    should_skip = (
+        path == root
+        or "cache" in lowered_name
+        or any("cache" in part.lower() for part in relative_parts)
+        or extension not in ALLOWED_EXTENSIONS
+    )
+    if should_skip:
         return True
 
     try:
@@ -85,10 +83,7 @@ def should_skip_file(path: Path, max_bytes: int, root: Path) -> bool:
     except OSError:
         return True
 
-    if size > max_bytes:
-        return True
-
-    return False
+    return size > max_bytes
 
 
 def iter_source_files(root: Path, max_bytes: int) -> Iterable[Path]:

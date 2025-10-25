@@ -12,9 +12,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import re
-import sys
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -108,7 +106,9 @@ def replace_changelog_section(changelog_lines: list[str], new_block: Iterable[st
     try:
         heading_index = changelog_lines.index(SECTION_HEADING)
     except ValueError as exc:
-        raise RuntimeError(f"Unable to locate section heading {SECTION_HEADING!r} in CHANGELOG.md") from exc
+        raise RuntimeError(
+            f"Unable to locate section heading {SECTION_HEADING!r} in CHANGELOG.md"
+        ) from exc
 
     # Determine where the section ends (next heading at the same or higher level).
     end_index = len(changelog_lines)
@@ -118,12 +118,8 @@ def replace_changelog_section(changelog_lines: list[str], new_block: Iterable[st
             end_index = idx
             break
 
-    block_lines = [""] + list(new_block) + [""]  # ensure spacing
-    return (
-        changelog_lines[: heading_index + 1]
-        + block_lines
-        + changelog_lines[end_index:]
-    )
+    block_lines = ["", *list(new_block), ""]  # ensure spacing
+    return changelog_lines[: heading_index + 1] + block_lines + changelog_lines[end_index:]
 
 
 def main() -> int:

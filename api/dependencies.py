@@ -24,18 +24,26 @@ def get_logger(settings: SettingsDep) -> logging.Logger:
     return configure_logging(settings)
 
 
-_METRICS_SINGLETON: MetricsRecorder | None = None
+class _MetricsSingleton:
+    """Lazy MetricsRecorder cache keyed by the active settings object."""
+
+    instance: MetricsRecorder | None = None
+
+    @classmethod
+    def get(cls, settings: AppSettings) -> MetricsRecorder:
+        metrics = cls.instance
+        if metrics is None or metrics.settings is not settings:
+            settings.ensure_directories()
+            metrics = MetricsRecorder(
+                settings=settings,
+                store_path=Path("logs/metrics/metrics.csv"),
+            )
+            cls.instance = metrics
+        return metrics
 
 
 def get_metrics(settings: SettingsDep) -> MetricsRecorder:
-    global _METRICS_SINGLETON
-    if _METRICS_SINGLETON is None or _METRICS_SINGLETON.settings is not settings:
-        settings.ensure_directories()
-        _METRICS_SINGLETON = MetricsRecorder(
-            settings=settings,
-            store_path=Path("logs/metrics/metrics.csv"),
-        )
-    return _METRICS_SINGLETON
+    return _MetricsSingleton.get(settings)
 
 
 LoggerDep = Annotated[logging.Logger, Depends(get_logger)]

@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+// Windows sandboxes cannot create symlinks reliably, so skip standalone output unless explicitly requested.
+const useStandaloneOutput = process.platform !== "win32" || process.env.NEXT_STANDALONE === "1";
+
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -6,7 +9,7 @@ const nextConfig = {
       bodySizeLimit: "2mb",
     },
   },
-  output: "standalone",
+  output: useStandaloneOutput ? "standalone" : undefined,
   eslint: {
     ignoreDuringBuilds: false,
   },

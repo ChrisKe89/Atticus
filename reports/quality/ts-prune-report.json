@@ -1,417 +1,445 @@
 [
   {
-    "file": "vitest.config.ts",
+    "file": "\\vitest.config.ts",
     "line": 4,
     "symbol": "default"
   },
   {
-    "file": "components/site-footer.tsx",
+    "file": "\\components\\site-footer.tsx",
     "line": 1,
     "symbol": "SiteFooter"
   },
   {
-    "file": "lib/ask-contract.ts",
-    "line": 90,
+    "file": "\\lib\\ask-contract.ts",
+    "line": 93,
     "symbol": "ClarificationPayload"
   },
   {
-    "file": "lib/content-manager.ts",
+    "file": "\\lib\\batch-csv.ts",
+    "line": 3,
+    "symbol": "BATCH_TEMPLATE_HEADERS",
+    "note": "used in module"
+  },
+  {
+    "file": "\\lib\\batch-csv.ts",
+    "line": 4,
+    "symbol": "BATCH_RESULT_HEADERS",
+    "note": "used in module"
+  },
+  {
+    "file": "\\lib\\content-manager.ts",
     "line": 26,
     "symbol": "resolveContentPath",
     "note": "used in module"
   },
   {
-    "file": "lib/content-manager.ts",
+    "file": "\\lib\\content-manager.ts",
     "line": 111,
     "symbol": "readFilePreview"
   },
   {
-    "file": "lib/content-manager.ts",
+    "file": "\\lib\\content-manager.ts",
     "line": 117,
     "symbol": "getContentRoot"
   },
   {
-    "file": "lib/content-manager.ts",
+    "file": "\\lib\\content-manager.ts",
     "line": 7,
     "symbol": "ContentEntry",
     "note": "used in module"
   },
   {
-    "file": "lib/request-context.ts",
+    "file": "\\lib\\request-context.ts",
     "line": 10,
     "symbol": "RequestContext",
     "note": "used in module"
   },
   {
-    "file": "lib/trace-headers.ts",
+    "file": "\\lib\\trace-headers.ts",
     "line": 47,
     "symbol": "withTraceHeaders",
     "note": "used in module"
   },
   {
-    "file": "admin/app/layout.tsx",
+    "file": "\\admin\\app\\layout.tsx",
     "line": 10,
     "symbol": "default"
   },
   {
-    "file": "admin/app/layout.tsx",
+    "file": "\\admin\\app\\layout.tsx",
     "line": 5,
     "symbol": "metadata"
   },
   {
-    "file": "admin/app/page.tsx",
+    "file": "\\admin\\app\\page.tsx",
     "line": 25,
     "symbol": "default"
   },
   {
-    "file": "admin/app/page.tsx",
+    "file": "\\admin\\app\\page.tsx",
     "line": 23,
     "symbol": "dynamic"
   },
   {
-    "file": "admin/lib/types.ts",
-    "line": 44,
+    "file": "\\admin\\lib\\types.ts",
+    "line": 47,
     "symbol": "MetricsHistogramBucket",
     "note": "used in module"
   },
   {
-    "file": "app/apps/page.tsx",
-    "line": 47,
-    "symbol": "default"
-  },
-  {
-    "file": "app/apps/page.tsx",
-    "line": 43,
-    "symbol": "metadata"
-  },
-  {
-    "file": "app/contact/page.tsx",
-    "line": 20,
-    "symbol": "default"
-  },
-  {
-    "file": "app/contact/page.tsx",
-    "line": 16,
-    "symbol": "metadata"
-  },
-  {
-    "file": "app/settings/page.tsx",
-    "line": 40,
-    "symbol": "default"
-  },
-  {
-    "file": "app/settings/page.tsx",
-    "line": 36,
-    "symbol": "metadata"
-  },
-  {
-    "file": "components/chat/chat-sidebar.tsx",
-    "line": 38,
-    "symbol": "ChatSidebar"
-  },
-  {
-    "file": "components/chat/use-ask-stream.ts",
+    "file": "\\components\\chat\\use-ask-stream.ts",
     "line": 8,
     "symbol": "AskErrorInfo",
     "note": "used in module"
   },
   {
-    "file": "components/chat/use-ask-stream.ts",
+    "file": "\\components\\chat\\use-ask-stream.ts",
     "line": 13,
     "symbol": "StartAskOptions",
     "note": "used in module"
   },
   {
-    "file": "components/ui/card.tsx",
+    "file": "\\components\\ui\\card.tsx",
     "line": 75,
     "symbol": "CardFooter",
     "note": "used in module"
   },
   {
-    "file": "components/ui/dialog.tsx",
+    "file": "\\components\\ui\\dialog.tsx",
     "line": 92,
     "symbol": "DialogPortal",
     "note": "used in module"
   },
   {
-    "file": "components/ui/dialog.tsx",
+    "file": "\\components\\ui\\dialog.tsx",
     "line": 93,
     "symbol": "DialogOverlay",
     "note": "used in module"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 12,
     "symbol": "DrawerContent"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 33,
     "symbol": "DrawerHeader"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 52,
     "symbol": "DrawerBody"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 56,
     "symbol": "DrawerFooter"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 8,
     "symbol": "Drawer"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 9,
     "symbol": "DrawerTrigger"
   },
   {
-    "file": "components/ui/drawer.tsx",
+    "file": "\\components\\ui\\drawer.tsx",
     "line": 10,
     "symbol": "DrawerClose",
     "note": "used in module"
   },
   {
-    "file": "components/ui/select.tsx",
+    "file": "\\components\\ui\\input.tsx",
+    "line": 6,
+    "symbol": "Input",
+    "note": "used in module"
+  },
+  {
+    "file": "\\components\\ui\\label.tsx",
+    "line": 6,
+    "symbol": "Label",
+    "note": "used in module"
+  },
+  {
+    "file": "\\components\\ui\\select.tsx",
     "line": 6,
     "symbol": "Select",
     "note": "used in module"
   },
   {
-    "file": "components/ui/table.tsx",
-    "line": 10,
-    "symbol": "Table",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/table.tsx",
-    "line": 17,
-    "symbol": "TableHeader",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/table.tsx",
-    "line": 32,
-    "symbol": "TableBody",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/table.tsx",
-    "line": 44,
-    "symbol": "TableRow",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/table.tsx",
-    "line": 57,
-    "symbol": "TableHead",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/table.tsx",
-    "line": 73,
-    "symbol": "TableCell",
-    "note": "used in module"
-  },
-  {
-    "file": "components/ui/tabs.tsx",
+    "file": "\\components\\ui\\tabs.tsx",
     "line": 47,
     "symbol": "Tabs",
     "note": "used in module"
   },
   {
-    "file": "components/ui/tabs.tsx",
+    "file": "\\components\\ui\\tabs.tsx",
     "line": 47,
     "symbol": "TabsList",
     "note": "used in module"
   },
   {
-    "file": "components/ui/tabs.tsx",
+    "file": "\\components\\ui\\tabs.tsx",
     "line": 47,
     "symbol": "TabsTrigger",
     "note": "used in module"
   },
   {
-    "file": "components/ui/tabs.tsx",
+    "file": "\\components\\ui\\tabs.tsx",
     "line": 47,
     "symbol": "TabsContent",
     "note": "used in module"
   },
   {
-    "file": ".next/types/app/layout.ts",
+    "file": "\\.next\\types\\app\\layout.ts",
     "line": 49,
     "symbol": "PageProps"
   },
   {
-    "file": ".next/types/app/layout.ts",
+    "file": "\\.next\\types\\app\\layout.ts",
     "line": 53,
     "symbol": "LayoutProps",
     "note": "used in module"
   },
   {
-    "file": ".next/types/app/page.ts",
+    "file": "\\.next\\types\\app\\page.ts",
     "line": 49,
     "symbol": "PageProps",
     "note": "used in module"
   },
   {
-    "file": ".next/types/app/page.ts",
+    "file": "\\.next\\types\\app\\page.ts",
     "line": 53,
     "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/ask/route.ts",
-    "line": 94,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\batch\\page.ts",
+    "line": 49,
+    "symbol": "PageProps",
+    "note": "used in module"
   },
   {
-    "file": "app/api/glossary/route.ts",
-    "line": 24,
-    "symbol": "GET"
+    "file": "\\.next\\types\\app\\batch\\page.ts",
+    "line": 53,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/glossary/route.ts",
-    "line": 44,
-    "symbol": "POST"
-  },
-  {
-    "file": "admin/app/api/eval-seeds/route.ts",
+    "file": "\\admin\\app\\api\\eval-seeds\\route.ts",
     "line": 16,
     "symbol": "GET"
   },
   {
-    "file": "admin/app/api/eval-seeds/route.ts",
+    "file": "\\admin\\app\\api\\eval-seeds\\route.ts",
     "line": 28,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/ingest/route.ts",
+    "file": "\\admin\\app\\api\\glossary\\route.ts",
+    "line": 8,
+    "symbol": "POST"
+  },
+  {
+    "file": "\\admin\\app\\api\\ingest\\route.ts",
     "line": 10,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/metrics/route.ts",
+    "file": "\\admin\\app\\api\\metrics\\route.ts",
     "line": 4,
     "symbol": "GET"
   },
   {
-    "file": "app/api/admin/metrics/route.ts",
-    "line": 13,
-    "symbol": "GET"
+    "file": "\\.next\\types\\app\\api\\ask\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/admin/uncertain/route.ts",
-    "line": 16,
-    "symbol": "GET"
+    "file": "\\.next\\types\\app\\api\\ask\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/glossary/[id]/route.ts",
-    "line": 23,
-    "symbol": "PUT",
-    "note": "used in module"
+    "file": "\\.next\\types\\app\\api\\glossary\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/glossary/[id]/route.ts",
-    "line": 116,
-    "symbol": "PATCH"
+    "file": "\\.next\\types\\app\\api\\glossary\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/glossary/[id]/route.ts",
-    "line": 120,
-    "symbol": "DELETE"
-  },
-  {
-    "file": "admin/app/api/content/entry/route.ts",
+    "file": "\\admin\\app\\api\\content\\entry\\route.ts",
     "line": 4,
     "symbol": "DELETE"
   },
   {
-    "file": "admin/app/api/content/folder/route.ts",
+    "file": "\\admin\\app\\api\\content\\folder\\route.ts",
     "line": 4,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/content/list/route.ts",
+    "file": "\\admin\\app\\api\\content\\list\\route.ts",
     "line": 4,
     "symbol": "GET"
   },
   {
-    "file": "admin/app/api/content/reingest/route.ts",
+    "file": "\\admin\\app\\api\\content\\reingest\\route.ts",
     "line": 4,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/content/upload/route.ts",
+    "file": "\\admin\\app\\api\\content\\upload\\route.ts",
     "line": 4,
     "symbol": "POST"
   },
   {
-    "file": "app/api/admin/content/entry/route.ts",
-    "line": 8,
-    "symbol": "DELETE"
+    "file": "\\.next\\types\\app\\api\\admin\\metrics\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/admin/content/folder/route.ts",
-    "line": 9,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\metrics\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/admin/content/list/route.ts",
-    "line": 5,
-    "symbol": "GET"
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/admin/content/reingest/route.ts",
-    "line": 43,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/admin/content/upload/route.ts",
-    "line": 5,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\glossary\\[id]\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "admin/app/api/chats/[id]/approve/route.ts",
+    "file": "\\.next\\types\\app\\api\\glossary\\[id]\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\admin\\app\\api\\chats\\[id]\\approve\\route.ts",
     "line": 18,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/chats/[id]/reject/route.ts",
+    "file": "\\admin\\app\\api\\chats\\[id]\\reject\\route.ts",
     "line": 8,
     "symbol": "POST"
   },
   {
-    "file": "admin/app/api/chats/[id]/save-draft/route.ts",
+    "file": "\\admin\\app\\api\\chats\\[id]\\save-draft\\route.ts",
     "line": 12,
     "symbol": "POST"
   },
   {
-    "file": "app/api/admin/uncertain/[id]/approve/route.ts",
-    "line": 11,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\content\\entry\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/admin/uncertain/[id]/ask-followup/route.ts",
-    "line": 9,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\content\\entry\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/admin/uncertain/[id]/escalate/route.ts",
-    "line": 18,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\content\\folder\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
   },
   {
-    "file": "app/api/admin/uncertain/[id]/reject/route.ts",
-    "line": 9,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\content\\folder\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   },
   {
-    "file": "app/api/admin/uncertain/[id]/save-draft/route.ts",
-    "line": 10,
-    "symbol": "POST"
+    "file": "\\.next\\types\\app\\api\\admin\\content\\list\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\content\\list\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\content\\reingest\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\content\\reingest\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\content\\upload\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\content\\upload\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\approve\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\approve\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\ask-followup\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\ask-followup\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\escalate\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\escalate\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\reject\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\reject\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\save-draft\\route.ts",
+    "line": 309,
+    "symbol": "PageProps"
+  },
+  {
+    "file": "\\.next\\types\\app\\api\\admin\\uncertain\\[id]\\save-draft\\route.ts",
+    "line": 313,
+    "symbol": "LayoutProps"
   }
 ]

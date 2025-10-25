@@ -1,6 +1,6 @@
 {
   "name": "atticus-webdev",
-  "version": "0.10.9",
+  "version": "0.10.10",
   "packageManager": "pnpm@9.12.0",
   "private": true,
   "workspaces": [
@@ -21,7 +21,7 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test --reporter=list",
-    "audit:ts": "knip --reporter compact || true",
+    "audit:ts": "node scripts/run-knip-audit.mjs",
     "audit:icons": "node scripts/icon-audit.mjs",
     "audit:routes": "node scripts/route-audit.mjs",
     "audit:py": "python scripts/audit_unused.py --json"

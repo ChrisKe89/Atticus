@@ -155,7 +155,6 @@ def test_settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AppSetting
         logs_path=base / "logs" / "app.jsonl",
         errors_path=base / "logs" / "errors.jsonl",
         evaluation_runs_dir=base / "eval",
-        embed_dimensions=128,
         chunk_target_tokens=48,
         chunk_min_tokens=0,
         chunk_overlap_tokens_setting=8,

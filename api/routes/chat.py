@@ -47,7 +47,11 @@ def _clean_answer_text(body: str, scope: ModelScope, scopes: Sequence[ModelScope
     for candidate_scope in scopes:
         if candidate_scope is scope:
             continue
-        for candidate in (candidate_scope.model, candidate_scope.family_label, candidate_scope.family_id):
+        for candidate in (
+            candidate_scope.model,
+            candidate_scope.family_label,
+            candidate_scope.family_id,
+        ):
             if candidate:
                 other_tokens.append(candidate.strip().lower())
     if not other_tokens:
@@ -56,12 +60,15 @@ def _clean_answer_text(body: str, scope: ModelScope, scopes: Sequence[ModelScope
     filtered: list[str] = []
     for sentence in sentences:
         normal = sentence.lower()
-        if any(token and token in normal for token in other_tokens) and ("no information" in normal or "no info" in normal):
+        if any(token and token in normal for token in other_tokens) and (
+            "no information" in normal or "no info" in normal
+        ):
             continue
         filtered.append(sentence)
     cleaned = " ".join(filtered).strip()
     cleaned = re.sub(r"\s{3,}", " ", cleaned)
     return cleaned or body
+
 
 def _convert_citations(citations: Iterable[Citation]) -> list[AskSource]:
     return [

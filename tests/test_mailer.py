@@ -19,6 +19,7 @@ def test_send_escalation_smoke(monkeypatch):
     monkeypatch.setenv("SMTP_FROM", "atticus-escalations@agentk.fyi")
     monkeypatch.setenv("CONTACT_EMAIL", "support@example.com")
     monkeypatch.setenv("SMTP_ALLOW_LIST", "support@example.com,atticus-escalations@agentk.fyi")
+    monkeypatch.setenv("SMTP_DRY_RUN", "0")
 
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()
@@ -132,6 +133,7 @@ def test_send_escalation_raises_on_connection_error(monkeypatch):
     monkeypatch.setenv("CONTACT_EMAIL", "sales@example.com")
     monkeypatch.setenv("SMTP_FROM", "atticus@example.com")
     monkeypatch.setenv("SMTP_ALLOW_LIST", "sales@example.com,atticus@example.com")
+    monkeypatch.setenv("SMTP_DRY_RUN", "0")
 
     config_module = pytest.importorskip("atticus.config")
     config_module.reset_settings_cache()

@@ -7,21 +7,21 @@
       "devDependencies": [
         {
           "name": "markdownlint-cli",
-          "line": 56,
+          "line": 58,
           "col": 6,
-          "pos": 1720
+          "pos": 1783
         },
         {
           "name": "markdownlint-cli2",
-          "line": 57,
+          "line": 59,
           "col": 6,
-          "pos": 1754
+          "pos": 1817
         },
         {
           "name": "ts-prune",
-          "line": 65,
+          "line": 67,
           "col": 6,
-          "pos": 1998
+          "pos": 2061
         }
       ],
       "optionalPeerDependencies": [],
@@ -83,9 +83,9 @@
       "types": [
         {
           "name": "MetricsHistogramBucket",
-          "line": 44,
+          "line": 47,
           "col": 13,
-          "pos": 831
+          "pos": 901
         }
       ],
       "enumMembers": {},

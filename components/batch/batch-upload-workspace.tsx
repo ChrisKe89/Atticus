@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, UploadCloud } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -16,8 +16,11 @@ import {
   parseBatchCsv,
   type BatchResultExportRow,
 } from "@/lib/batch-csv";
+import { createId } from "@/lib/id";
 import { streamAsk } from "@/lib/ask-client";
 import type { AskRequest, AskResponse, AskSource } from "@/lib/ask-contract";
+
+type BatchHistoryStatus = "complete" | "stopped";
 
 interface BatchRunRow extends BatchQuestionRow {
   status: "pending" | "processing" | "complete" | "error";
@@ -25,6 +28,118 @@ interface BatchRunRow extends BatchQuestionRow {
   citations: string[];
   confidence: number | null;
   error?: string;
+}
+
+interface StoredBatch {
+  id: string;
+  name: string;
+  createdAt: number;
+  updatedAt: number;
+  rows: BatchQuestionRow[];
+  results: BatchRunRow[];
+  processedCount: number;
+  status: BatchHistoryStatus;
+}
+
+const BATCH_HISTORY_STORAGE_KEY = "atticus.batch.history.v1";
+const MAX_STORED_BATCHES = 15;
+
+function cloneBatchRows(rows: BatchQuestionRow[]): BatchQuestionRow[] {
+  return rows.map((row) => ({ ...row }));
+}
+
+function cloneRunRows(rows: BatchRunRow[]): BatchRunRow[] {
+  return rows.map((row) => ({ ...row, citations: [...row.citations] }));
+}
+
+function sanitizeBatchQuestionRow(value: unknown): BatchQuestionRow | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  const { id, product, question } = value as Partial<BatchQuestionRow>;
+  if (typeof question !== "string") {
+    return null;
+  }
+  return {
+    id: typeof id === "string" ? id : "",
+    product: typeof product === "string" ? product : "",
+    question,
+  } satisfies BatchQuestionRow;
+}
+
+function sanitizeBatchRunRow(value: unknown): BatchRunRow | null {
+  const base = sanitizeBatchQuestionRow(value);
+  if (!base) {
+    return null;
+  }
+  const { status, answer, citations, confidence, error } = value as Partial<BatchRunRow>;
+  if (status !== "pending" && status !== "processing" && status !== "complete" && status !== "error") {
+    return null;
+  }
+  return {
+    ...base,
+    status,
+    answer: typeof answer === "string" ? answer : "",
+    citations: Array.isArray(citations)
+      ? citations.filter((entry): entry is string => typeof entry === "string")
+      : [],
+    confidence: typeof confidence === "number" && Number.isFinite(confidence) ? confidence : null,
+    error: typeof error === "string" ? error : undefined,
+  } satisfies BatchRunRow;
+}
+
+function sanitizeStoredBatches(value: unknown): StoredBatch[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") {
+        return null;
+      }
+      const { id, name, createdAt, updatedAt, rows, results, processedCount, status } = entry as Partial<StoredBatch> & {
+        rows?: unknown;
+        results?: unknown;
+      };
+      if (typeof id !== "string" || typeof name !== "string") {
+        return null;
+      }
+      if (typeof createdAt !== "number" || typeof updatedAt !== "number") {
+        return null;
+      }
+      if (status !== "complete" && status !== "stopped") {
+        return null;
+      }
+      if (!Array.isArray(rows) || !Array.isArray(results)) {
+        return null;
+      }
+      const sanitizedRows = rows
+        .map((row) => sanitizeBatchQuestionRow(row))
+        .filter((row): row is BatchQuestionRow => Boolean(row));
+      if (!sanitizedRows.length) {
+        return null;
+      }
+      const sanitizedResults = results
+        .map((row) => sanitizeBatchRunRow(row))
+        .filter((row): row is BatchRunRow => Boolean(row));
+      const count =
+        typeof processedCount === "number" && Number.isFinite(processedCount) && processedCount >= 0
+          ? processedCount
+          : sanitizedResults.filter((row) => row.status === "complete" || row.status === "error").length;
+      return {
+        id,
+        name,
+        createdAt,
+        updatedAt,
+        rows: sanitizedRows,
+        results: sanitizedResults,
+        processedCount: count,
+        status,
+      } satisfies StoredBatch;
+    })
+    .filter((entry): entry is StoredBatch => Boolean(entry))
+    .sort((a, b) => b.updatedAt - a.updatedAt)
+    .slice(0, MAX_STORED_BATCHES);
 }
 
 function formatCitation(source: AskSource): string {
@@ -142,6 +257,10 @@ function buildExportRows(rows: BatchRunRow[]): BatchResultExportRow[] {
   }));
 }
 
+function processedEntriesCount(rows: BatchRunRow[]): number {
+  return rows.filter((row) => row.status === "complete" || row.status === "error").length;
+}
+
 export function BatchUploadWorkspace() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [rows, setRows] = useState<BatchQuestionRow[]>([]);
@@ -152,6 +271,104 @@ export function BatchUploadWorkspace() {
   const [processedCount, setProcessedCount] = useState(0);
   const [stopRequested, setStopRequested] = useState(false);
   const stopRequestedRef = useRef(false);
+
+  const [batchHistory, setBatchHistory] = useState<StoredBatch[]>([]);
+  const [historyReady, setHistoryReady] = useState(false);
+  const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
+  const [pendingReprocessId, setPendingReprocessId] = useState<string | null>(null);
+
+  const rowsRef = useRef(rows);
+  const runRowsRef = useRef(runRows);
+  const fileNameRef = useRef(fileName);
+
+  useEffect(() => {
+    rowsRef.current = rows;
+  }, [rows]);
+
+  useEffect(() => {
+    runRowsRef.current = runRows;
+  }, [runRows]);
+
+  useEffect(() => {
+    fileNameRef.current = fileName;
+  }, [fileName]);
+
+  useEffect(() => {
+    if (historyReady) {
+      return;
+    }
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      const raw = window.localStorage.getItem(BATCH_HISTORY_STORAGE_KEY);
+      if (!raw) {
+        setHistoryReady(true);
+        return;
+      }
+      const parsed = JSON.parse(raw) as unknown;
+      const sanitized = sanitizeStoredBatches(parsed);
+      setBatchHistory(sanitized);
+    } catch (error) {
+      console.error("Failed to load batch history", error);
+      setBatchHistory([]);
+    } finally {
+      setHistoryReady(true);
+    }
+  }, [historyReady]);
+
+  useEffect(() => {
+    if (!historyReady || typeof window === "undefined") {
+      return;
+    }
+    try {
+      window.localStorage.setItem(BATCH_HISTORY_STORAGE_KEY, JSON.stringify(batchHistory));
+    } catch (error) {
+      console.error("Failed to persist batch history", error);
+    }
+  }, [batchHistory, historyReady]);
+
+  const persistBatchHistory = useCallback(
+    (batchId: string, results: BatchRunRow[], status: BatchHistoryStatus) => {
+      const timestamp = Date.now();
+      const name = fileNameRef.current ?? `Batch ${new Date(timestamp).toLocaleString()}`;
+      const processed = processedEntriesCount(results);
+      const clonedResults = cloneRunRows(results);
+      const clonedRows = cloneBatchRows(rowsRef.current);
+      setBatchHistory((current) => {
+        const index = current.findIndex((entry) => entry.id === batchId);
+        if (index === -1) {
+          const entry: StoredBatch = {
+            id: batchId,
+            name,
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            rows: clonedRows,
+            results: clonedResults,
+            processedCount: processed,
+            status,
+          };
+          const next = [entry, ...current];
+          next.sort((a, b) => b.updatedAt - a.updatedAt);
+          return next.slice(0, MAX_STORED_BATCHES);
+        }
+        const next = [...current];
+        const existing = next[index];
+        next[index] = {
+          ...existing,
+          name,
+          updatedAt: timestamp,
+          rows: clonedRows,
+          results: clonedResults,
+          processedCount: processed,
+          status,
+        };
+        next.sort((a, b) => b.updatedAt - a.updatedAt);
+        return next.slice(0, MAX_STORED_BATCHES);
+      });
+    },
+    []
+  );
 
   const hasRows = rows.length > 0;
   const completedRows = runRows.filter((row) => row.status === "complete" || row.status === "error");
@@ -181,15 +398,19 @@ export function BatchUploadWorkspace() {
           setFileName(file.name);
           setStatusMessage(null);
           setProcessedCount(0);
+          setActiveBatchId(createId("batch"));
+          setPendingReprocessId(null);
           return;
         }
+        const batchId = createId("batch");
+        setActiveBatchId(batchId);
         setRows(parsedRows);
         setRunRows(
           parsedRows.map((row) => ({
             ...row,
-            status: "pending",
+            status: "pending" as const,
             answer: "",
-            citations: [],
+            citations: [] as string[],
             confidence: null,
             error: undefined,
           }))
@@ -198,6 +419,7 @@ export function BatchUploadWorkspace() {
         setFileName(file.name);
         setStatusMessage(null);
         setProcessedCount(0);
+        setPendingReprocessId(null);
       } catch (error) {
         if (error instanceof BatchParseError) {
           setParseErrors(error.details);
@@ -211,6 +433,8 @@ export function BatchUploadWorkspace() {
         setFileName(file.name);
         setStatusMessage(null);
         setProcessedCount(0);
+        setActiveBatchId(createId("batch"));
+        setPendingReprocessId(null);
       }
     };
     reader.onerror = () => {
@@ -220,6 +444,8 @@ export function BatchUploadWorkspace() {
       setFileName(file.name);
       setStatusMessage(null);
       setProcessedCount(0);
+      setActiveBatchId(createId("batch"));
+      setPendingReprocessId(null);
     };
     reader.readAsText(file);
   }, []);
@@ -228,21 +454,29 @@ export function BatchUploadWorkspace() {
     if (!rows.length || isProcessing) {
       return;
     }
+    const batchId = activeBatchId ?? createId("batch");
+    if (!activeBatchId) {
+      setActiveBatchId(batchId);
+    }
     setIsProcessing(true);
     setStopRequested(false);
     stopRequestedRef.current = false;
     setStatusMessage(null);
     setProcessedCount(0);
-    setRunRows((current) =>
-      current.map((entry) => ({
+    setPendingReprocessId(null);
+    let latestResults: BatchRunRow[] = [];
+    setRunRows((current) => {
+      const reset = current.map((entry) => ({
         ...entry,
-        status: "pending",
+        status: "pending" as const,
         answer: "",
-        citations: [],
+        citations: [] as string[],
         confidence: null,
         error: undefined,
-      }))
-    );
+      }));
+      latestResults = reset;
+      return reset;
+    });
 
     try {
       for (let index = 0; index < rows.length; index += 1) {
@@ -250,19 +484,21 @@ export function BatchUploadWorkspace() {
           break;
         }
         const questionRow = rows[index];
-        setRunRows((current) =>
-          current.map((entry, position) =>
+        setRunRows((current) => {
+          const next = current.map((entry, position) =>
             position === index
               ? {
                   ...entry,
-                  status: "processing",
+                  status: "processing" as const,
                   answer: entry.answer,
                   citations: entry.citations,
                   error: undefined,
                 }
               : entry
-          )
-        );
+          );
+          latestResults = next;
+          return next;
+        });
 
         try {
           const response = await resolveQuestion(questionRow.question, questionRow.product);
@@ -270,50 +506,57 @@ export function BatchUploadWorkspace() {
           const citations = extractCitations(response);
           const confidence = extractConfidence(response);
 
-          setRunRows((current) =>
-            current.map((entry, position) =>
-              position === index
-                ? {
-                    ...entry,
-                    status: "complete",
-                    answer,
-                    citations,
-                    confidence,
-                    error: undefined,
+          setRunRows((current) => {
+            const next = current.map((entry, position) =>
+            position === index
+              ? {
+                  ...entry,
+                  status: "complete" as const,
+                  answer,
+                  citations,
+                  confidence,
+                  error: undefined,
                   }
                 : entry
-            )
-          );
+            );
+            latestResults = next;
+            return next;
+          });
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unknown error";
-          setRunRows((current) =>
-            current.map((entry, position) =>
-              position === index
-                ? {
-                    ...entry,
-                    status: "error",
-                    answer: "",
-                    citations: [],
-                    confidence: null,
-                    error: message,
-                  }
+          setRunRows((current) => {
+            const next = current.map((entry, position) =>
+            position === index
+              ? {
+                  ...entry,
+                  status: "error" as const,
+                  answer: "",
+                  citations: [] as string[],
+                  confidence: null,
+                  error: message,
+                }
                 : entry
-            )
-          );
+            );
+            latestResults = next;
+            return next;
+          });
         }
 
         setProcessedCount(index + 1);
       }
 
+      const historyResults = latestResults.length ? latestResults : runRowsRef.current;
       if (stopRequestedRef.current) {
         setStatusMessage("Batch processing stopped.");
+        persistBatchHistory(batchId, historyResults, "stopped");
       } else {
         setStatusMessage("Batch processing complete.");
+        persistBatchHistory(batchId, historyResults, "complete");
       }
     } finally {
       setIsProcessing(false);
     }
-  }, [isProcessing, rows]);
+  }, [rows, isProcessing, activeBatchId, persistBatchHistory]);
 
   const handleStopProcessing = useCallback(() => {
     if (!isProcessing) {
@@ -334,6 +577,58 @@ export function BatchUploadWorkspace() {
       mimeType: "text/csv",
     });
   }, [completedRows]);
+
+  const handleLoadBatch = useCallback(
+    (entry: StoredBatch, options?: { reprocess?: boolean }) => {
+      if (isProcessing) {
+        return;
+      }
+      setActiveBatchId(entry.id);
+      setRows(cloneBatchRows(entry.rows));
+      const baseResults = entry.results.length
+        ? entry.results
+        : entry.rows.map((row) => ({
+            ...row,
+            status: "pending" as const,
+            answer: "",
+            citations: [] as string[],
+            confidence: null,
+            error: undefined,
+          }));
+      setRunRows(cloneRunRows(baseResults));
+      setParseErrors([]);
+      setFileName(entry.name);
+      setProcessedCount(entry.processedCount);
+      setStatusMessage(
+        entry.status === "complete"
+          ? `Last processed on ${new Date(entry.updatedAt).toLocaleString()}.`
+          : `Processing stopped on ${new Date(entry.updatedAt).toLocaleString()}.`
+      );
+      setStopRequested(false);
+      stopRequestedRef.current = false;
+      setPendingReprocessId(options?.reprocess ? entry.id : null);
+    },
+    [isProcessing]
+  );
+
+  useEffect(() => {
+    if (!pendingReprocessId) {
+      return;
+    }
+    if (pendingReprocessId !== activeBatchId) {
+      return;
+    }
+    if (isProcessing) {
+      return;
+    }
+    if (!rows.length) {
+      return;
+    }
+    handleProcess().catch((error) => {
+      console.error("Failed to reprocess batch", error);
+    });
+    setPendingReprocessId(null);
+  }, [pendingReprocessId, activeBatchId, isProcessing, rows.length, handleProcess]);
 
   return (
     <div className="space-y-8">
@@ -482,6 +777,49 @@ export function BatchUploadWorkspace() {
                 ))}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {batchHistory.length ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Previous batches</CardTitle>
+            <CardDescription>Reload a prior CSV run or reprocess it with the latest answers.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {batchHistory.map((entry) => (
+              <div
+                key={entry.id}
+                className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{entry.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {entry.rows.length} questions • {entry.status === "complete" ? "Completed" : "Stopped"} {" "}
+                    {new Date(entry.updatedAt).toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => handleLoadBatch(entry)}
+                    disabled={isProcessing}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => handleLoadBatch(entry, { reprocess: true })}
+                    disabled={isProcessing}
+                    className="gap-2"
+                  >
+                    Process again
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       ) : null}
